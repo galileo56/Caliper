@@ -1,0 +1,3640 @@
+:Evaluate:   BeginPackage["Caliper`"]
+
+:Evaluate:   Print["     Package for Massive and Massless Event Shapes "]
+:Evaluate:   Print["     Author:            Vicent Mateu               "]
+:Evaluate:   Print["     Last modification: 21 - 12 - 2016             "]
+:Evaluate:   Print["     Version:           test 1                     "]
+
+:Evaluate:  mZdef         = 91.187
+:Evaluate:  Gammadef      = 1553.0647546066
+:Evaluate:  gammaZdef     = 2.4952
+:Evaluate:  sin2ThetaWdef = 0.23119
+:Evaluate:  gammaZPythia     = 2.5042
+:Evaluate:  sin2ThetaWPythia = 0.2312
+
+:Evaluate:  pFq::usage = "pFq[a,b,z] computes the generalized hypergeometric function"
+:Evaluate:  FindOrigin::usage = "FindOrigin[shape, gap, orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eR, R0, muR0, delta0, h], finds the origin for massless Event Shapes"
+:Evaluate:  MassOrigin::usage = "MassOrigin[shape, EShape, gap, scheme, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, R0, muR0, del0, h], finds the origin of Massive Event Shapes"
+:Evaluate:  MasslessPieceBin::usage = "MasslessPieceBin[terms, hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen, lambda, R0, muR0, delta0, h, tauList], computes bins including profiles for massless cross section"
+:Evaluate:  MasslessBinList::usage = "MasslessBinList[terms, hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, lambda, R0, muR0, delta0, h, tauList], computes bins including profiles for massless cross section"
+:Evaluate:  MasslessProfList::usage = "MasslessProfList[terms, hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, lambda, R0, muR0, delta0, h, tauList], computes the cross section including profiles for massless cross section"
+:Evaluate:  MassiveBinList::usage = "MassiveBinList[terms, hard, shape, EShape, setup, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, c, clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tauList], computes bins including profiles for massive cross section"
+:Evaluate:  MassiveProfList::usage = "MassiveProfList[terms, hard, shape, EShape, setup, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, c, clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tauList], computes the cross section including profiles for massive cross section"
+:Evaluate:  MassiveProf::usage = "MassiveProf[terms, hard, shape, EShape, setup, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, c, clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau], computes the cross section including profiles for massive cross section"
+:Evaluate:  MassiveProfPiece::usage = "MassiveProfPiece[terms, hard, shape, EShape, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau], computes the cross section including profiles for massive cross section"
+:Evaluate:  MassiveProfPieceList::usage = "MassiveProfPieceList[terms, hard, shape, EShape, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau], computes the cross section including profiles for massive cross section"
+:Evaluate:  MassivePieceBin::usage = "MassivePieceBin[terms, hard, shape, EShape, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tauList], computes the cross section including profiles for massive cross section"
+:Evaluate:  MassiveMoment::usage = "MassiveMoment[terms, hard, shape, EShape, setup, gap, space, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, c, clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau, tau2, pow], computes the moment including profiles for massive cross section"
+:Evaluate:  MasslessMoment::usage = "MasslessMoment[terms, hard, shape, setup, gap, space, orderAlpha, runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, lambda, R0, muR0, delta0, h, tau, tau2, pow], computes moments including profiles for massless cross section"
+:Evaluate:  MasslessProf::usage = "MasslessProf[terms, hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, lambda, R0, muR0, delta0, h, tau], computes the cross section including profiles for massless cross section"
+:Evaluate:  MasslessProfPiece::usage = "MasslessProfPiece[terms, hard, shape, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen, lambda, R0, muR0, delta0, h, tau], computes the cross section including profiles for massless cross section"
+:Evaluate:  MasslessProfPieceList::usage = "MasslessProfPieceList[terms, hard, shape, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen, lambda, R0, muR0, delta0, h, tau], computes the cross section including profiles for massless cross section"
+:Evaluate:  MassIntersection::usage = "MassIntersection[Q, beta, mu0, delLamb, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, def, EShape], computes the Renormalization scales for massive event shapes"
+:Evaluate:  ProfilesMass::usage = "ProfilesMass[Q, beta, mu0, delLamb, R0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, def, EShape, tau], computes the Renormalization scales for massive event shapes"
+:Evaluate:  Profiles::usage = "Profiles[Q, mu0, R0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, tau], computes the Renormalization scales for massless event shapes"
+:Evaluate:  GammaR::usage = "GammaR[str, nf] computes the soft R anomalous Dimension"
+:Evaluate:  DiLog::usage = "DiLog[n,z] computes the polylogarithm"
+:Evaluate:  Elliptic3::usage = "Elliptic3[psi, k, c] computes the elliptic function of the third kind, using Carlson forms"
+:Evaluate:  Polylog::usage = "Polylog[n,z] computes the polylogarithm"
+:Evaluate:  NGLFunction::usage = "NGLFunction[n,z] computes the non-global part of the soft function"
+:Evaluate:  ComplexPolylog::usage = "ComplexPolylog[n,z] computes the polylogarithm"
+:Evaluate:  NGLSoft::usage = "NGLSoft[nf,z] computes the NGL function in complex space"
+:Evaluate:  CLi2::usage = "Cli2[z] computes the complex dilogarithm"
+:Evaluate:  CLi3::usage = "Cli3[z] computes the complex trilogarithm"
+:Evaluate:  Scoef::usage = "Scoef[str, nf] computes the soft R anomalous Dimension"
+:Evaluate:  AnomDim::usage = "AnomDim[str, nf, G4] computes the QCD anomalous function"
+:Evaluate:  Delta::usage = "Delta[str, nf, mu, R] computes the soft renormalon subtractions"
+:Evaluate:  DeltaGap::usage = "DeltaGap[str, orderAlpha, runAlpha, runMass, nf, mZ, aMz, mT, muT, mB, muB, mC, muC, mu, R] computes the soft renormalon subtractions"
+:Evaluate:  CoefMat::usage = "CoefMat[str, nf, s3] computes the hard, soft and jet matrix elements"
+:Evaluate:  wTilde::usage = "wTilde[order, nf, gamma, a0, a1] computes wTilde for a given anomalous dimension gamma"
+:Evaluate:  kTilde::usage = "kTilde[order, nf, gamma, a0, a1] computes kTilde for a given anomalous dimension gamma"
+:Evaluate:  AlphaQCD::usage = "AlphaQCD[scheme, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of alpha with flavor matching."
+:Evaluate:  MSbarMass::usage = "MSbarMass[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
+:Evaluate:  PoleMass::usage = "PoleMass[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
+:Evaluate:  MSbarMassLow::usage = "MSbarMassLow[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching below the mass."
+:Evaluate:  MSRMass::usage = "MSRMass[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
+:Evaluate:  mmfromMSR::usage = "mmfromMSR[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
+:Evaluate:  mmfromMSRNatural::usage = "mmfromMSRNatural[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR natural definition running of the quark masses with flavor matching."
+:Evaluate:  MSRNaturalMass::usage = "MSRNaturalMass[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR natural definition running of the quark masses with flavor matching."
+:Evaluate:  Rhad::usage = "Rhad[scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
+:Evaluate:  RhadMass::usage = "RhadMass[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
+:Evaluate:  LambdaQCD::usage = "LambdaQCD[scheme, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
+:Evaluate:  Hyper2F1::usage="Hyper2F1[a, b, c, x] Hypergeometric Function in Fortran"
+:Evaluate:  HyperF32Exact::usage="HyperF32Exact[w, x] Hypergeometric Function in Fortran"
+:Evaluate:  InteCorre::usage="InteCorre[b, x0, x1] Incomplete Gamma Function"
+:Evaluate:  DiffDeltaGap::usage = "DiffDeltaGap[gap, scheme, order, R0, R1, mu0, mu1, muLambda, orderAlpha, runAlpha, nf, Mz, aMz, mT, muT, mB, muB, mC, muC] computes the running of the gap parameter."
+:Evaluate:  DiffDeltaGapMass::usage = "DiffDeltaGapMass[gap, order, R0, R1, mu0, mu1, muM, muLambda1, muLambda2, orderAlpha, runAlpha, runMass, nf, Mz, aMz, mT, muT, mB, muB, mC, muC] computes the running of the gap parameter with flavor matching."
+:Evaluate:  Kernel::usage = "Kernel[n, width, w, mu, p] computes the first n+1 kernels needed for resummation"
+:Evaluate:  GammaDerList::usage = "GammaDerList[n, w] computes the first n+1 derivatives of 1/Gamma"
+:Evaluate:  polyGamma::usage = "polyGamma[n, w] computes the first n+1 derivatives of Gamma"
+:Evaluate:  NGLKernel::usage = "NGLKernel[n, n1, n2, width, w, mu, p] computes the first 2*n kernels needed for NGL resummation"
+:Evaluate:  Taylor::usage = "Taylor[c, lambda, k] computes the Taylor expansion of the shape function"
+:Evaluate:  Model::usage = "Model[c, lambda, k, l] computes the shape function"
+:Evaluate:  BreitModel::usage = "BreitModel[c, lambda, width, k, l] computes the shape function convoluted with a Breit Wigner"
+:Evaluate:  MomentModel::usage = "MomentModel[c, lambda, k] computes the shape function"
+:Evaluate:  ModelPiece::usage = "ModelPiece[c, lambda, k, l] computes the shape function"
+:Evaluate:  TaylorPiece::usage = "TaylorPiece[c, lambda, k] computes the Taylor coefficients of the shape function"
+:Evaluate:  DeltaMSbar::usage = "DeltaMSbar[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
+:Evaluate:  JetMass::usage = "JetMass[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R, mu] computes the Jet Mass running of the quark masses with flavor matching."
+:Evaluate:  mmFromJetMass::usage = "mmFromJetMass[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R, mu] computes the Jet Mass running of the quark masses with flavor matching."
+:Evaluate:  Singular::usage = "Singular[hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3, s3, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, c, lambda, R0, mu0, delta0, h, tau] computes the Singular Thrust and C-parameter distrubution"
+:Evaluate:  SingularList::usage = "SingularList[hard, shape, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3, s3, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, clen, lambda, R0, mu0, delta0, h, tau] computes the pieces of the Singular Thrust and C-parameter distrubution"
+:Evaluate:  MassNonDist::usage = "MassNonDist[hard, shape, Eshape, setup, gap, space, cum, scheme, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu, c, lambda, R0, mu0, delta0, h, tau] computes the Non distributional part of the Singular Massive Thrust and C-parameter distrubution"
+:Evaluate:  MassNonDistPiece::usage = "MassNonDistPiece[hard, shape, Eshape, gap, space, cum, scheme, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu, c, lambda, R0, mu0, delta0, h, tau] computes the Non distributional part of the Singular Massive Thrust and C-parameter distrubution"
+:Evaluate:  SingularMass::usage = "SingularMass[hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau] computes the Singular Massive Thrust and C-parameter distrubution"
+:Evaluate:  SingularMassPiece::usage = "SingularMassPiece[hard, shape, Eshape, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau] computes the Singular Massive Thrust and C-parameter distrubution"
+:Evaluate:  SingularPiece::usage = "SingularPiece[hard, shape, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3, s3, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, c, lambda, R0, mu0, delta0, h, tau] computes the Singular Thrust and C-parameter distrubution"
+:Evaluate:  SingularHJM::usage = "SingularHJM[hard, setup, gap, space, cum, orderAlpha, runAlpha, order, run, isoft, nf, j3, s3, s31, s32, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, c, lambda, R0, mu0, delta0, h, tau] computes the Singular Thrust and C-parameter distrubution"
+:Evaluate:  SingularHJMPiece::usage = "SingularHJMPiece[hard, gap, space, cum, orderAlpha, runAlpha, order, run, isoft, nf, j3, s3, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, c, lambda, R0, mu0, delta0, h, tau] computes the Singular Thrust and C-parameter distrubution"
+:Evaluate:  SingularDouble::usage = "SingularDouble[hard, setup, gap, space, cum1, cum2, orderAlpha, runAlpha, order, run, isoft, nf, j3, s3, s31, s32, s31, s32, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, c, lambda, R0, mu0, delta0, h, rho1, rho2] computes the Singular Thrust and C-parameter distrubution"
+:Evaluate:  SingularDoublePiece::usage = "SingularDoublePiece[hard, gap, space, cum1, cum2, orderAlpha, runAlpha, order, run, isoft, nf, j3, s3, s31, s32, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, c, lambda, R0, mu0, delta0, h, rho1, rho2] computes the Singular Thrust and C-parameter distrubution"
+:Evaluate:  SingularHJM1D::usage = "SingularHJM1D[hard, gap, cum, orderAlpha, runAlpha, order, run, isoft, nf, j3, s3, s31, s32, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, c, lambda, R0, mu0, delta0, h, tau] computes the Singular HJM distrubution with a 1D shape function"
+:Evaluate:  SingularHJM1DPiece::usage = "SingularHJM1DPiece[hard, gap, cum, orderAlpha, runAlpha, order, run, isoft, nf, j3, s3, s31, s32, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, c, lambda, R0, mu0, delta0, h, tau] computes the Singular HJM distrubution with the piece of a 1D shape function"
+:Evaluate:  EWFactors::usage = "EWFactors[nf, Q, Mz, GammaZ, sin2ThetaW] electroweak factors"
+:Evaluate:  NGLIntegral::usage = "NGLIntegral[nf, pow, w1, w2] computes the exact NGL integral"
+:Evaluate:  NGLDoubleIntegral::usage = "NGLDoubleIntegral[nf, pow, w1, w2, r] computes the exact NGL integral"
+:Evaluate:  ThrustNS1loop::usage = "ThrustNS1loop[tau] computes the 1-loop thrust NS function and its first two derivatives"
+:Evaluate:  FOMass::usage = "FOMass[shape, current, m, Q, Mz, gammaZ, sin2ThetaW, tau] computes the 1-loop massive thrust NS function"
+:Evaluate:  ThrustNS2loop::usage = "ThrustNS2loop[er, tau] computes the 2-loop thrust NS function and its first two derivatives"
+:Evaluate:  NSMass::usage = "NSMass[shape, setup, gap, cum, scheme, abs, current, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, Mz, aMz, mT, muT, mB, muBottom, mC, muC, muLambda1, muLambda2, Q, mu, muM, muB, muS, R, Rmass, width, c, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, t] computes the NonSingular Massive Thrust, HJM, SJM and C-parameter distribution, with a 1D model."
+:Evaluate:  NSMassPiece::usage = "NSMassPiece[shape, gap, cum, scheme, abs, current, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, Mz, aMz, mT, muT, mB, muBottom, mC, muC, muLambda1, muLambda2, Q, mu, muM, muB, muS, R, Rmass, width, c, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, t] computes the NonSingular Massive Thrust, HJM, SJM, and C-parameter distribution, with a 1D model."
+:Evaluate:  HJMNSMass::usage = "HJMNSMass[setup, gap, cum, scheme, abs, current, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, Mz, aMz, mT, muT, mB, muBottom, mC, muC, muLambda1, muLambda2, Q, mu, muM, muB, muS, R, Rmass, width, c, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, t] computes the NonSingular Massive HJM distribution, with a 2-D model."
+
+:Evaluate:  Begin["`Private`"]
+
+:Evaluate:  Print["You can access the complete function list typing '?Caliper`*' "]
+
+:Begin:
+:Function:      ewfactors
+:Pattern:       EWFactors[nf_, Q_, Mz_, GammaZ_, sin2ThetaW_]
+:Arguments:     {nf, Q, Mz, GammaZ, sin2ThetaW}
+:ArgumentTypes: {Integer, Real, Real, Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      gammar
+:Pattern:       GammaR[str_, nf_]
+:Arguments:     {str, nf}
+:ArgumentTypes: {String, Integer}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      masslessprof
+:Pattern:       MasslessProf[terms_, hard_, shape_, setup_, gap_, space_, cum_,
+                orderAlpha_, runAlpha_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_,
+                muT_, mB_, muB_, mC_, muC_, muLambda_, Q_, mu0_, Rat0_, n0_, n1_, t2_,
+                tR_, ts_, slope_, cnt_, eH_, eS_, eJ_, eR_, ns_, c_, lambda_, R0_, muR0_,
+                delta0_, h_, tau_]
+:Arguments:     {terms, hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order,
+                 run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q,
+                 mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, lambda,
+                 R0, muR0, delta0, h, tau}
+:ArgumentTypes: {String, String, String, String, String, String, String, Integer, Integer,
+                 Integer, Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Integer, RealList, Real, Real, Real,
+                 Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      findorigin
+:Pattern:       FindOrigin[shape_, gap_, orderAlpha_, runAlpha_, order_, run_, nf_,
+                mZ_, amZ_, mT_, muT_, mB_, muB_, mC_, muC_, muLambda_, Q_, mu0_, Rat0_,
+                n0_, n1_, t2_, tR_, ts_, slope_, cnt_, eH_, eS_, eR_, R0_, muR0_, delta0_,
+                h_]
+:Arguments:     {shape, gap, orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, mB,
+                 muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH,
+                 eS, eR, R0, muR0, delta0, h}
+:ArgumentTypes: {String, String, Integer, Integer, Integer, Integer, Integer, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      masslessprofpiece
+:Pattern:       MasslessProfPiece[terms_, hard_, shape_, gap_, space_, cum_,
+                orderAlpha_, runAlpha_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_,
+                muT_, mB_, muB_, mC_, muC_, muLambda_, Q_, mu0_, Rat0_, n0_, n1_, t2_,
+                tR_, ts_, slope_, cnt_, eH_, eS_, eJ_, eR_, ns_, clen_, lambda_, R0_,
+                muR0_, delta0_, h_, tau_]
+:Arguments:     {terms, hard, shape, gap, space, cum, orderAlpha, runAlpha, order,
+                 run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q,
+                 mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen,
+                 lambda, R0, muR0, delta0, h, tau}
+:ArgumentTypes: {String, String, String, String, String, String, Integer, Integer,
+                 Integer, Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Integer, Integer, Real, Real, Real,
+                 Real, Real, Real}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      masslessprofpiecelist
+:Pattern:       MasslessProfPieceList[terms_, hard_, shape_, gap_, space_, cum_,
+                orderAlpha_, runAlpha_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_,
+                muT_, mB_, muB_, mC_, muC_, muLambda_, Q_, mu0_, Rat0_, n0_, n1_, t2_,
+                tR_, ts_, slope_, cnt_, eH_, eS_, eJ_, eR_, ns_, clen_, lambda_, R0_,
+                muR0_, delta0_, h_, tauList_]
+:Arguments:     {terms, hard, shape, gap, space, cum, orderAlpha, runAlpha, order,
+                 run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q,
+                 mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen,
+                 lambda, R0, muR0, delta0, h, tauList}
+:ArgumentTypes: {String, String, String, String, String, String, Integer, Integer,
+                 Integer, Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Integer, Integer, Real, Real, Real,
+                 Real, Real, RealList}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      masslesspiecebin
+:Pattern:       MasslessPieceBin[terms_, hard_, shape_, gap_, space_, cum_,
+                orderAlpha_, runAlpha_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_,
+                muT_, mB_, muB_, mC_, muC_, muLambda_, Q_, mu0_, Rat0_, n0_, n1_, t2_,
+                tR_, ts_, slope_, cnt_, eH_, eS_, eJ_, eR_, ns_, clen_, lambda_, R0_,
+                muR0_, delta0_, h_, tauList_]
+:Arguments:     {terms, hard, shape, gap, space, cum, orderAlpha, runAlpha, order,
+                 run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q,
+                 mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen,
+                 lambda, R0, muR0, delta0, h, Flatten[tauList], Length[tauList]}
+:ArgumentTypes: {String, String, String, String, String, String, Integer, Integer,
+                 Integer, Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Integer, Integer, Real, Real, Real,
+                 Real, Real, RealList, Integer}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      masslessprofdiffpiece
+:Pattern:       MasslessProfPiece[terms_, hard_, shape_, gap_, space_, cum_,
+                orderAlpha_, runAlpha_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_,
+                muT_, mB_, muB_, mC_, muC_, muLambda_, Q_, mu0_, Rat0_, n0_, n1_, t2_,
+                tR_, ts_, slope_, cnt_, eH_, eS_, eJ_, eR_, ns_, clen_, lambda_, R0_,
+                muR0_, delta0_, h_, tau_, tau2_]
+:Arguments:     {terms, hard, shape, gap, space, cum, orderAlpha, runAlpha, order,
+                 run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q,
+                 mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen,
+                 lambda, R0, muR0, delta0, h, tau, tau2}
+:ArgumentTypes: {String, String, String, String, String, String, Integer, Integer,
+                 Integer, Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Integer, Integer, Real, Real, Real,
+                 Real, Real, Real, Real}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      masslessproflist
+:Pattern:       MasslessProfList[terms_, hard_, shape_, setup_, gap_, space_, cum_,
+                orderAlpha_, runAlpha_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_,
+                muT_, mB_, muB_, mC_, muC_, muLambda_, Q_, mu0_, Rat0_, n0_, n1_, t2_,
+                tR_, ts_, slope_, cnt_, eH_, eS_, eJ_, eR_, ns_, c_, lambda_, R0_, muR0_,
+                delta0_, h_, tauList_]
+:Arguments:     {terms, hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order,
+                 run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q,
+                 mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, lambda,
+                 R0, muR0, delta0, h, tauList}
+:ArgumentTypes: {String, String, String, String, String, String, String, Integer, Integer,
+                 Integer, Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Integer, RealList, Real, Real, Real,
+                 Real, Real, RealList}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      masslessbinlist
+:Pattern:       MasslessBinList[terms_, hard_, shape_, setup_, gap_, space_, cum_,
+                orderAlpha_, runAlpha_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_,
+                muT_, mB_, muB_, mC_, muC_, muLambda_, Q_, mu0_, Rat0_, n0_, n1_, t2_,
+                tR_, ts_, slope_, cnt_, eH_, eS_, eJ_, eR_, ns_, c_, lambda_, R0_, muR0_,
+                delta0_, h_, tauList_]
+:Arguments:     {terms, hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order,
+                 run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q,
+                 mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, lambda,
+                 R0, muR0, delta0, h, Flatten[tauList], Length[tauList]}
+:ArgumentTypes: {String, String, String, String, String, String, String, Integer, Integer,
+                 Integer, Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Integer, RealList, Real, Real, Real,
+                 Real, Real, RealList, Integer}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      masslessprofdiff
+:Pattern:       MasslessProf[terms_, hard_, shape_, setup_, gap_, space_, cum_,
+                orderAlpha_, runAlpha_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_,
+                muT_, mB_, muB_, mC_, muC_, muLambda_, Q_, mu0_, Rat0_, n0_, n1_, t2_,
+                tR_, ts_, slope_, cnt_, eH_, eS_, eJ_, eR_, ns_, c_, lambda_, R0_, muR0_,
+                delta0_, h_, tau_, tau2_]
+:Arguments:     {terms, hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order,
+                 run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q,
+                 mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, lambda,
+                 R0, muR0, delta0, h, tau, tau2}
+:ArgumentTypes: {String, String, String, String, String, String, String, Integer, Integer,
+                 Integer, Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Integer, RealList, Real, Real, Real,
+                 Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      masslessmoment
+:Pattern:       MasslessMoment[terms_, hard_, shape_, setup_, gap_, space_, orderAlpha_,
+                runAlpha_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,
+                muB_, mC_, muC_, muLambda_, Q_, mu0_, Rat0_, n0_, n1_, t2_, tR_, ts_,
+                slope_, cnt_, eH_, eS_, eJ_, eR_, ns_, c_, lambda_, R0_, muR0_, delta0_,
+                h_, tau_, tau2_, pow_]
+:Arguments:     {terms, hard, shape, setup, gap, space, orderAlpha, runAlpha, order, run,
+                 nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0,
+                 Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, lambda, R0,
+                 muR0, delta0, h, tau, tau2, pow}
+:ArgumentTypes: {String, String, String, String, String, String, Integer, Integer,
+                 Integer, Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Integer, RealList, Real, Real, Real,
+                 Real, Real, Real, Real, Integer}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      profiles
+:Pattern:       Profiles[Q_, mu0_, R0_, n0_, n1_, t2_, tR_, ts_, slope_, cnt_, eH_, eS_,
+                eJ_, eR_, ns_, tau_]
+:Arguments:     {Q, mu0, R0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, tau}
+:ArgumentTypes: {Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Integer, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      profilesmass
+:Pattern:       ProfilesMass[Q_, beta_, mu0_, delLamb_, R0_, n0_, delta0_, n1_,
+                delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_, mass_, muM_, ns_,
+                def_, EShape_, tau_]
+:Arguments:     {Q, beta, mu0, delLamb, R0, n0, delta0, n1, delta1, t2, ts, slope,
+                 cnt, eH, eS, eJ, mass, muM, ns, def, EShape, tau}
+:ArgumentTypes: {Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Integer, String, String, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      massintersection
+:Pattern:       MassIntersection[Q_, beta_, mu0_, delLamb_, n0_, delta0_, n1_,delta1_,
+                t2_, ts_, slope_, cnt_, eH_, eS_, eJ_, mass_, muM_, def_, EShape_]
+:Arguments:     {Q, beta, mu0, delLamb, n0, delta0, n1, delta1, t2, ts, slope,
+                 cnt, eH, eS, eJ, mass, muM, def, EShape}
+:ArgumentTypes: {Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, String, String}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      nsmasspiece
+:Pattern:       NSMassPiece[shape_, gap_, cum_, scheme_, abs_, current_, orderAlpha_,
+                runAlpha_, order_, run_, orderMass_ runMass_, nf_, mZ_, aMz_, mT_, muT_,
+                mB_, muBottom_, mC_, muC_, muLambda1_, muLambda2_, Q_, mu_, muM_, muB_,
+                muS_, R_, Rmass_, width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_,
+                sin2ThetaW_, tau_]
+:Arguments:     {shape, gap, cum, scheme, abs, current, orderAlpha, runAlpha, order, run,
+                orderMass, runMass, nf, mZ, aMz, mT, muT, mB, muBottom, mC, muC, muLambda1,
+                muLambda2, Q, mu, muM, muB, muS, R, Rmass, width, c, lambda, R0, mu0,
+                delta0, h, gammaZ, sin2ThetaW, tau}
+:ArgumentTypes: {String, String, String, String, String, String, Integer, Integer,
+                 Integer, Integer, Integer, Integer, Integer, Real, Real, Real , Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, IntegerList, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      nsmassdiffpiece
+:Pattern:       NSMassPiece[shape_, gap_, cum_, scheme_, abs_, current_, orderAlpha_,
+                runAlpha_, order_, run_, orderMass_ runMass_, nf_, mZ_, aMz_, mT_, muT_,
+                mB_, muBottom_, mC_, muC_, muLambda1_, muLambda2_, Q_, mu_, muM_, muB_,
+                muS_, R_, Rmass_, width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_,
+                sin2ThetaW_, tau_, tau2_]
+:Arguments:     {shape, gap, cum, scheme, abs, current, orderAlpha, runAlpha, order, run,
+                orderMass, runMass, nf, mZ, aMz, mT, muT, mB, muBottom, mC, muC, muLambda1,
+                muLambda2, Q, mu, muM, muB, muS, R, Rmass, width, c, lambda, R0, mu0,
+                delta0, h, gammaZ, sin2ThetaW, tau, tau2}
+:ArgumentTypes: {String, String, String, String, String, String, Integer, Integer,
+                 Integer, Integer, Integer, Integer, Integer, Real, Real, Real , Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, IntegerList, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      nsmass
+:Pattern:       NSMass[shape_, setup_, gap_, cum_, scheme_, abs_, current_, orderAlpha_,
+                runAlpha_, order_, run_, orderMass_, runMass_, nf_, mZ_, aMz_, mT_, muT_,
+                mB_, muBottom_, mC_, muC_, muLambda1_, muLambda2_, Q_, mu_, muM_, muB_,
+                muS_, R_, Rmass_, width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_,
+                sin2ThetaW_, tau_]
+:Arguments:     {shape, setup, gap, cum, scheme, abs, current, orderAlpha, runAlpha,
+                order, run, orderMass, runMass, nf, mZ, aMz, mT, muT, mB, muBottom, mC,
+                muC, muLambda1, muLambda2, Q, mu, muM, muB, muS, R, Rmass, width, c,
+                lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau}
+:ArgumentTypes: {String, String, String, String, String, String, String, Integer, Integer,
+                 Integer, Integer, Integer, Integer, Integer, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, RealList, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      nsmassdiff
+:Pattern:       NSMass[shape_, setup_, gap_, cum_, scheme_, abs_, current_, orderAlpha_,
+                runAlpha_, order_, run_, orderMass_, runMass_, nf_, mZ_, aMz_, mT_, muT_,
+                mB_, muBottom_, mC_, muC_, muLambda1_, muLambda2_, Q_, mu_, muM_, muB_,
+                muS_, R_, Rmass_, width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_,
+                sin2ThetaW_, tau_, tau2_]
+:Arguments:     {shape, setup, gap, cum, scheme, abs, current, orderAlpha, runAlpha,
+                order, run, orderMass, runMass, nf, mZ, aMz, mT, muT, mB, muBottom, mC,
+                muC, muLambda1, muLambda2, Q, mu, muM, muB, muS, R, Rmass, width, c,
+                lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, tau2}
+:ArgumentTypes: {String, String, String, String, String, String, String, Integer, Integer,
+                 Integer, Integer, Integer, Integer, Integer, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, RealList, Real, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      hjmnsmass
+:Pattern:       HJMNSMass[setup_, gap_, cum_, scheme_, abs_, current_, orderAlpha_,
+                runAlpha_, order_, run_, orderMass_, runMass_, nf_, mZ_, aMz_, mT_, muT_,
+                mB_, muBottom_, mC_, muC_, muLambda1_, muLambda2_, Q_, mu_, muM_, muB_,
+                muS_, R_, Rmass_, width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_,
+                sin2ThetaW_, tau_]
+:Arguments:     {setup, gap, cum, scheme, abs, current, orderAlpha, runAlpha, order, run,
+                orderMass, runMass, nf, mZ, aMz, mT, muT, mB, muBottom, mC, muC, muLambda1,
+                muLambda2, Q, mu, muM, muB, muS, R, Rmass, width, Flatten[Transpose[c]],
+                Length[c], lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau}
+:ArgumentTypes: {String, String, String, String, String, String, Integer, Integer,
+                 Integer, Integer, Integer, Integer, Integer, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, RealList, Integer, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      hjmnsmassdiff
+:Pattern:       HJMNSMass[setup_, gap_, cum_, scheme_, abs_, current_, orderAlpha_,
+                runAlpha_, order_, run_, orderMass_, runMass_, nf_, mZ_, aMz_, mT_, muT_,
+                mB_, muBottom_, mC_, muC_, muLambda1_, muLambda2_, Q_, mu_, muM_, muB_,
+                muS_, R_, Rmass_, width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_,
+                sin2ThetaW_, tau_, tau2_]
+:Arguments:     {setup, gap, cum, scheme, abs, current, orderAlpha, runAlpha, order, run,
+                orderMass, runMass, nf, mZ, aMz, mT, muT, mB, muBottom, mC, muC, muLambda1,
+                muLambda2, Q, mu, muM, muB, muS, R, Rmass, width, Flatten[Transpose[c]],
+                Length[c], lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, tau2}
+:ArgumentTypes: {String, String, String, String, String, String, Integer, Integer,
+                 Integer, Integer, Integer, Integer, Integer, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, RealList, Integer, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      singular
+:Pattern:       Singular[hard_, shape_, setup_, gap_, space_, cum_, orderAlpha_, runAlpha_,
+                order_, run_, nf_, j3_, s3_, G3_, mZ_, aMz_, mT_, muT_, mB_, muB_, mC_,
+                muC_, muLambda_, Q_, muH_, muJ_, muS_, R_, mu_, c_, lambda_, R0_, mu0_,
+                delta0_, h_, tau_]
+:Arguments:     {hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3,
+                 s3, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS,
+                 R, mu, c, lambda, R0, mu0, delta0, h, tau}
+:ArgumentTypes: {String, String, String, String, String, String, Integer, Integer, Integer, Integer,
+                 Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, RealList, Real, Real, Real, Real,
+                 Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      singularlist
+:Pattern:       SingularList[hard_, shape_, gap_, space_, cum_, orderAlpha_, runAlpha_,
+                order_, run_, nf_, j3_, s3_, G3_, mZ_, aMz_, mT_, muT_, mB_, muB_, mC_,
+                muC_, muLambda_, Q_, muH_, muJ_, muS_, R_, mu_, clen_, lambda_, R0_, mu0_,
+                delta0_, h_, tau_]
+:Arguments:     {hard, shape, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3,
+                 s3, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS,
+                 R, mu, clen, lambda, R0, mu0, delta0, h, tau}
+:ArgumentTypes: {String, String, String, String, String, Integer, Integer, Integer, Integer,
+                 Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Integer, Real, Real, Real, Real,
+                 Real, Real}
+:ReturnType:     Manual
+:End:
+
+
+:Begin:
+:Function:      singulardiff
+:Pattern:       Singular[hard_, shape_, setup_, gap_, space_, cum_, orderAlpha_, runAlpha_,
+                order_, run_, nf_, j3_, s3_, G3_, mZ_, aMz_, mT_, muT_, mB_, muB_, mC_,
+                muC_, muLambda_, Q_, muH_, muJ_, muS_, R_, mu_, c_, lambda_, R0_, mu0_,
+                delta0_, h_, tau1_, tau2_]
+:Arguments:     {hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3,
+                 s3, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS,
+                 R, mu, c, lambda, R0, mu0, delta0, h, tau1, tau2}
+:ArgumentTypes: {String, String, String, String, String, String, Integer, Integer, Integer, Integer,
+                 Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, RealList, Real, Real, Real, Real,
+                 Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      massiveprof
+:Pattern:       MassiveProf[terms_, hard_, shape_, Eshape_, setup_, gap_, space_, cum_,
+                scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,
+                runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,
+                muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,
+                Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,
+                mass_, muM_, ns_, width_, c_, lambda_, R0_, muR0_, del0_, h_, gammaZ_,
+                sin2ThetaW_, tau_]
+:Arguments:     {terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,
+                 xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,
+                 s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,
+                 beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,
+                 eH, eS, eJ, mass, muM, ns, width, c, lambda, R0, muR0, del0, h, gammaZ,
+                 sin2ThetaW, tau}
+:ArgumentTypes: {String, String, String, String, String, String, String, String, String,
+                 String, String, Real, Real, Integer, Integer, Integer, Integer, Integer,
+                 Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Integer,
+                 Real, RealList, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      massorigin
+:Pattern:       MassOrigin[shape_, Eshape_, gap_, scheme_, orderAlpha_, runAlpha_,
+                orderMass_, runMass_, order_, run_, nf_, mZ_, amZ_, mT_, muT_, mB_,
+                muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,
+                Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,
+                mass_, muM_, R0_, muR0_, del0_, h_]
+:Arguments:     {shape, Eshape, gap, scheme, orderAlpha, runAlpha, orderMass, runMass,
+                 order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2,
+                 Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope,
+                 cnt, eH, eS, eJ, mass, muM, R0, muR0, del0, h}
+:ArgumentTypes: {String, String, String, String, Integer, Integer, Integer, Integer,
+                 Integer, Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      massiveprofpiece
+:Pattern:       MassiveProfPiece[terms_, hard_, shape_, Eshape_, gap_, space_, cum_,
+                scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,
+                runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,
+                muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,
+                Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,
+                mass_, muM_, ns_, width_, clen_, lambda_, R0_, muR0_, del0_, h_, gammaZ_,
+                sin2ThetaW_, tau_]
+:Arguments:     {terms, hard, shape, Eshape, gap, space, cum, scheme, abs, current,
+                 xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,
+                 s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,
+                 beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,
+                 eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ,
+                 sin2ThetaW, tau}
+:ArgumentTypes: {String, String, String, String, String, String, String, String,
+                 String, String, Real, Real, Integer, Integer, Integer, Integer, Integer,
+                 Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Integer,
+                 Real, Integer, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      massiveprofpiecelist
+:Pattern:       MassiveProfPieceList[terms_, hard_, shape_, Eshape_, gap_, space_, cum_,
+                scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,
+                runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,
+                muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,
+                Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,
+                mass_, muM_, ns_, width_, clen_, lambda_, R0_, muR0_, del0_, h_, gammaZ_,
+                sin2ThetaW_, tauList_]
+:Arguments:     {terms, hard, shape, Eshape, gap, space, cum, scheme, abs, current,
+                 xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,
+                 s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,
+                 beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,
+                 eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ,
+                 sin2ThetaW, tauList}
+:ArgumentTypes: {String, String, String, String, String, String, String, String,
+                 String, String, Real, Real, Integer, Integer, Integer, Integer, Integer,
+                 Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Integer,
+                 Real, Integer, Real, Real, Real, Real, Real, Real, Real, RealList}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      massivepiecebin
+:Pattern:       MassivePieceBin[terms_, hard_, shape_, Eshape_, gap_, space_, cum_,
+                scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,
+                runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,
+                muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,
+                Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,
+                mass_, muM_, ns_, width_, clen_, lambda_, R0_, muR0_, del0_, h_, gammaZ_,
+                sin2ThetaW_, tauList_]
+:Arguments:     {terms, hard, shape, Eshape, gap, space, cum, scheme, abs, current,
+                 xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,
+                 s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,
+                 beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,
+                 eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ,
+                 sin2ThetaW, Flatten[tauList], Length[tauList]}
+:ArgumentTypes: {String, String, String, String, String, String, String, String,
+                 String, String, Real, Real, Integer, Integer, Integer, Integer, Integer,
+                 Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Integer,
+                 Real, Integer, Real, Real, Real, Real, Real, Real, Real, RealList,
+                 Integer}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      massiveprofdiffpiece
+:Pattern:       MassiveProfPiece[terms_, hard_, shape_, Eshape_, gap_, space_, cum_,
+                scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,
+                runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,
+                muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,
+                Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,
+                mass_, muM_, ns_, width_, clen_, lambda_, R0_, muR0_, del0_, h_, gammaZ_,
+                sin2ThetaW_, tau_, tau2_]
+:Arguments:     {terms, hard, shape, Eshape, gap, space, cum, scheme, abs, current,
+                 xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,
+                 s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,
+                 beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,
+                 eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ,
+                 sin2ThetaW, tau, tau2}
+:ArgumentTypes: {String, String, String, String, String, String, String, String,
+                 String, String, Real, Real, Integer, Integer, Integer, Integer, Integer,
+                 Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Integer,
+                 Real, Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      massiveprofdiff
+:Pattern:       MassiveProf[terms_, hard_, shape_, Eshape_, setup_, gap_, space_, cum_,
+                scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,
+                runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,
+                muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,
+                Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,
+                mass_, muM_, ns_, width_, c_, lambda_, R0_, muR0_, del0_, h_, gammaZ_,
+                sin2ThetaW_, tau_, tau2_]
+:Arguments:     {terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,
+                 xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,
+                 s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,
+                 beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,
+                 eH, eS, eJ, mass, muM, ns, width, c, lambda, R0, muR0, del0, h, gammaZ,
+                 sin2ThetaW, tau, tau2}
+:ArgumentTypes: {String, String, String, String, String, String, String, String, String,
+                 String, String, Real, Real, Integer, Integer, Integer, Integer, Integer,
+                 Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Integer,
+                 Real, RealList, Real, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      massiveproflist
+:Pattern:       MassiveProfList[terms_, hard_, shape_, Eshape_, setup_, gap_, space_, cum_,
+                scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,
+                runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,
+                muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,
+                Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,
+                mass_, muM_, ns_, width_, c_, lambda_, R0_, muR0_, del0_, h_, gammaZ_,
+                sin2ThetaW_, tauList_]
+:Arguments:     {terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,
+                 xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,
+                 s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,
+                 beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,
+                 eH, eS, eJ, mass, muM, ns, width, c, lambda, R0, muR0, del0, h, gammaZ,
+                 sin2ThetaW, tauList}
+:ArgumentTypes: {String, String, String, String, String, String, String, String, String,
+                 String, String, Real, Real, Integer, Integer, Integer, Integer, Integer,
+                 Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Integer,
+                 Real, RealList, Real, Real, Real, Real, Real, Real, Real, RealList}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      massivebinlist
+:Pattern:       MassiveBinList[terms_, hard_, shape_, Eshape_, setup_, gap_, space_, cum_,
+                scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,
+                runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,
+                muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,
+                Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,
+                mass_, muM_, ns_, width_, c_, lambda_, R0_, muR0_, del0_, h_, gammaZ_,
+                sin2ThetaW_, tauList_]
+:Arguments:     {terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,
+                 xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,
+                 s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,
+                 beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,
+                 eH, eS, eJ, mass, muM, ns, width, c, lambda, R0, muR0, del0, h, gammaZ,
+                 sin2ThetaW, Flatten[tauList], Length[tauList]}
+:ArgumentTypes: {String, String, String, String, String, String, String, String, String,
+                 String, String, Real, Real, Integer, Integer, Integer, Integer, Integer,
+                 Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Integer,
+                 Real, RealList, Real, Real, Real, Real, Real, Real, Real, RealList,
+                 Integer}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      massivemoment
+:Pattern:       MassiveMoment[terms_, hard_, shape_, Eshape_, setup_, gap_, space_,
+                scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,
+                runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,
+                muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,
+                Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,
+                mass_, muM_, ns_, width_, c_, lambda_, R0_, muR0_, delta0_, h_, gammaZ_,
+                sin2ThetaW_, tau_, tau2_, pow_]
+:Arguments:     {terms, hard, shape, Eshape, setup, gap, space, scheme, abs, current,
+                 xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,
+                 s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,
+                 beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,
+                 eH, eS, eJ, mass, muM, ns, width, c, lambda, R0, mu0, delta0, h, gammaZ,
+                 sin2ThetaW, tau, tau2, pow}
+:ArgumentTypes: {String, String, String, String, String, String, String, String, String,
+                 String, Real, Real, Integer, Integer, Integer, Integer, Integer,
+                 Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Integer,
+                 Real, RealList, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Integer}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      singularmass
+:Pattern:       SingularMass[hard_, shape_, Eshape_, setup_, gap_, space_, cum_, scheme_,
+                abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_, runMass_,
+                order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_,
+                muC_, muLambda1_, muLambda2_, Q_, muH_, muJ_, muS_, R_, Rmass_, muM_, mu_,
+                width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_, sin2ThetaW_, tau_]
+:Arguments:     {hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current, xi,
+                 xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3,
+                 mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ,
+                 muS, R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0, h, gammaZ,
+                 sin2ThetaW, tau}
+:ArgumentTypes: {String, String, String, String, String, String, String, String, String,
+                 String, Real, Real, Integer, Integer, Integer, Integer, Integer, Integer,
+                 Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 RealList, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      singularmassdiff
+:Pattern:       SingularMass[hard_, shape_, Eshape_, setup_, gap_, space_, cum_, scheme_,
+                abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_, runMass_,
+                order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_,
+                muC_, muLambda1_, muLambda2_, Q_, muH_, muJ_, muS_, R_, Rmass_, muM_, mu_,
+                width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_, sin2ThetaW_, tau_,
+                tau2_]
+:Arguments:     {hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current, xi,
+                 xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3,
+                 G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH,
+                 muJ, muS, R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0, h,
+                 gammaZ, sin2ThetaW, tau, tau2}
+:ArgumentTypes: {String, String, String, String, String, String, String, String, String,
+                 String, Real, Real, Integer, Integer, Integer, Integer, Integer, Integer,
+                 Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 RealList, Real, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      massnondist
+:Pattern:       MassNonDist[hard_, shape_, Eshape_, setup_, gap_, space_, cum_,
+                scheme_, orderAlpha_, runAlpha_, orderMass_, runMass_, order_,
+                run_, nf_, G3_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_, muC_,
+                muLambda1_, muLambda2_, Q_, muH_, muJ_, muS_, R_, Rmass_, muM_,
+                mu_, c_, lambda_, R0_, mu0_, delta0_, h_, tau_]
+:Arguments:     {hard, shape, Eshape, setup, gap, space, cum, scheme, orderAlpha,
+                 runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT,
+                 mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,
+                 muM, mu, c, lambda, R0, mu0, delta0, h, tau}
+:ArgumentTypes: {String, String, String, String, String, String, String, String,
+                 Integer, Integer, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, RealList, Real,
+                 Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      massnondistdiff
+:Pattern:       MassNonDist[hard_, shape_, Eshape_, setup_, gap_, space_, cum_,
+                scheme_, orderAlpha_, runAlpha_, orderMass_, runMass_, order_,
+                run_, nf_, G3_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_, muC_,
+                muLambda1_, muLambda2_, Q_, muH_, muJ_, muS_, R_, Rmass_, muM_,
+                mu_, c_, lambda_, R0_, mu0_, delta0_, h_, tau_, tau2_]
+:Arguments:     {hard, shape, Eshape, setup, gap, space, cum, scheme, orderAlpha,
+                 runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT,
+                 mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,
+                 muM, mu, c, lambda, R0, mu0, delta0, h, tau, tau2}
+:ArgumentTypes: {String, String, String, String, String, String, String, String,
+                 Integer, Integer, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, RealList, Real,
+                 Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      massnondistpiece
+:Pattern:       MassNonDistPiece[hard_, shape_, Eshape_, gap_, space_, cum_, scheme_,
+                 orderAlpha_, runAlpha_, orderMass_, runMass_, order_, run_, nf_, G3_,
+                 mZ_, amZ_, mT_, muT_, mB_, muB_, mC_, muC_, muLambda1_, muLambda2_,
+                 Q_, muH_, muJ_, muS_, R_, Rmass_, muM_, mu_, c_, lambda_, R0_, mu0_,
+                 delta0_, h_, tau_]
+:Arguments:     {hard, shape, Eshape, gap, space, cum, scheme, orderAlpha, runAlpha,
+                 orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT, mB, muB,
+                 mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu,
+                 c, lambda, R0, mu0, delta0, h, tau}
+:ArgumentTypes: {String, String, String, String, String, String, String, Integer,
+                 Integer, Integer, Integer, Integer, Integer, Integer, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, IntegerList, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      massnondistdiffpiece
+:Pattern:       MassNonDistPiece[hard_, shape_, Eshape_, gap_, space_, cum_, scheme_,
+                 orderAlpha_, runAlpha_, orderMass_, runMass_, order_, run_, nf_, G3_,
+                 mZ_, amZ_, mT_, muT_, mB_, muB_, mC_, muC_, muLambda1_, muLambda2_,
+                 Q_, muH_, muJ_, muS_, R_, Rmass_, muM_, mu_, c_, lambda_, R0_, mu0_,
+                 delta0_, h_, tau_, tau2_]
+:Arguments:     {hard, shape, Eshape, gap, space, cum, scheme, orderAlpha, runAlpha,
+                 orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT, mB, muB,
+                 mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu,
+                 c, lambda, R0, mu0, delta0, h, tau, tau2}
+:ArgumentTypes: {String, String, String, String, String, String, String, Integer,
+                 Integer, Integer, Integer, Integer, Integer, Integer, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, IntegerList, Real, Real, Real, Real, Real, Real,
+                 Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      singularmasspiece
+:Pattern:       SingularMassPiece[hard_, shape_, Eshape_, gap_, space_, cum_, scheme_,
+                abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_, runMass_,
+                order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_,
+                muC_, muLambda1_, muLambda2_, Q_, muH_, muJ_, muS_, R_, Rmass_, muM_, mu_,
+                width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_, sin2ThetaW_, tau_]
+:Arguments:     {hard, shape, Eshape, gap, space, cum, scheme, abs, current, xi, xiB,
+                 orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ,
+                 amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS,
+                 R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0, h, gammaZ,
+                 sin2ThetaW, tau}
+:ArgumentTypes: {String, String, String, String, String, String, String, String, String,
+                 Real, Real, Integer, Integer, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, IntegerList,
+                 Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      singularmassdiffpiece
+:Pattern:       SingularMassPiece[hard_, shape_, Eshape_, gap_, space_, cum_, scheme_,
+                abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_, runMass_,
+                order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_,
+                muC_, muLambda1_, muLambda2_, Q_, muH_, muJ_, muS_, R_, Rmass_, muM_, mu_,
+                width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_, sin2ThetaW_, tau_,
+                tau2_]
+:Arguments:     {hard, shape, Eshape, gap, space, cum, scheme, abs, current, xi, xiB,
+                 orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ,
+                 amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS,
+                 R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0, h, gammaZ,
+                 sin2ThetaW, tau, tau2}
+:ArgumentTypes: {String, String, String, String, String, String, String, String, String,
+                 Real, Real, Integer, Integer, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, IntegerList,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      singularhjm
+:Pattern:       SingularHJM[hard_, setup_, gap_, space_, cum_, orderAlpha_, runAlpha_, order_,
+                run_, isoft_, nf_, j3_, s3_, s31_, s32_, G3_, mZ_, aMz_, mT_, muT_, mB_,
+                muB_, mC_, muC_, muLambda_, Q_, muH_, muJ_, muS_, R_, mu_, c_, lambda_,
+                R0_, mu0_, delta0_, h_, tau_]
+:Arguments:     {hard, setup, gap, space, cum, orderAlpha, runAlpha, order, run, isoft, nf, j3,
+                 s3, s31, s32, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH,
+                 muJ, muS, R, mu, Flatten[Transpose[c]], Length[c], lambda, R0, mu0,
+                 delta0, h, tau}
+:ArgumentTypes: {String, String, String, String, String, Integer, Integer, Integer, Integer,
+                 Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 RealList, Integer, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      singularhjm1d
+:Pattern:       SingularHJM1D[hard_, gap_, cum_, orderAlpha_, runAlpha_, order_,
+                run_, isoft_, nf_, j3_, s3_, s31_, s32_, G3_, mZ_, aMz_, mT_, muT_, mB_,
+                muB_, mC_, muC_, muLambda_, Q_, muH_, muJ_, muS_, R_, mu_, c_, lambda_,
+                R0_, mu0_, delta0_, h_, tau_]
+:Arguments:     {hard, gap, cum, orderAlpha, runAlpha, order, run, isoft, nf, j3, s3, s31, s32,
+                 G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS,
+                 R, mu, c, lambda, R0, mu0, delta0, h, tau}
+:ArgumentTypes: {String, String, String, Integer, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, RealList, Real, Real,
+                 Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      singularhjm1dpiece
+:Pattern:       SingularHJM1DPiece[hard_, gap_, cum_, orderAlpha_, runAlpha_, order_, run_,
+                isoft_, nf_, j3_, s3_, s31_, s32_, G3_, mZ_, aMz_, mT_, muT_, mB_, muB_,
+                mC_, muC_, muLambda_, Q_, muH_, muJ_, muS_, R_, mu_, c_, lambda_, R0_,
+                mu0_, delta0_, h_, tau_]
+:Arguments:     {hard, gap, cum, orderAlpha, runAlpha, order, run, isoft, nf, j3,
+                 s3, s31, s32, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS,
+                 R, mu, c, lambda, R0, mu0, delta0, h, tau}
+:ArgumentTypes: {String, String, String, Integer, Integer, Integer, Integer,
+                 Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 IntegerList, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      singulardouble
+:Pattern:       SingularDouble[hard_, setup_, gap_, space_, cum1_, cum2_, orderAlpha_, runAlpha_,
+                order_, run_, isoft_, nf_, j3_, s3_, s31_, s32_, G3_, mZ_, aMz_, mT_,
+                muT_, mB_, muB_, mC_, muC_, muLambda_, Q_, muH_, muJ_, muS_, R_, mu_, c_, lambda_,
+                R0_, mu0_, delta0_, h_, rho1_, rho2_]
+:Arguments:     {hard, setup, gap, space, cum1, cum2, orderAlpha, runAlpha, order, run, isoft,
+                 nf, j3, s3, s31, s32, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH,
+                 muJ, muS, R, mu, Flatten[Transpose[c]], Length[c], lambda, R0, mu0,
+                 delta0, h, rho1, rho2}
+:ArgumentTypes: {String, String, String, String, String, String, Integer, Integer, Integer, Integer,
+                 Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 RealList, Integer, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      singularhjmpiece
+:Pattern:       SingularHJMPiece[hard_, gap_, space_, cum_, orderAlpha_, runAlpha_, order_, run_,
+                isoft_, nf_, j3_, s3_, s31_, s32_, G3_, mZ_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_,
+                muLambda_, Q_, muH_, muJ_, muS_, R_, mu_, c_, lambda_, R0_, mu0_, delta0_,
+                h_, tau_]
+:Arguments:     {hard, gap, space, cum, orderAlpha, runAlpha, order, run, isoft, nf, j3, s3, s31,
+                 s32, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R,
+                 mu, c, lambda, R0, mu0, delta0, h, tau}
+:ArgumentTypes: {String, String, String, String, Integer, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, IntegerList, Real, Real,
+                 Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      singulardoublepiece
+:Pattern:       SingularDoublePiece[hard_, gap_, space_, cum1_, cum2_, orderAlpha_, runAlpha_,
+                order_, run_, isoft_, nf_, j3_, s3_, s31_, s32_, G3_, mZ_, aMz_, mT_,
+                muT_, mB_, muB_, mC_, muC_, muLambda_, Q_, muH_, muJ_, muS_, R_, mu_, c_, lambda_,
+                R0_, mu0_, delta0_, h_, rho1_, rho2_]
+:Arguments:     {hard, gap, space, cum1, cum2, orderAlpha, runAlpha, order, run, isoft, nf, j3,
+                 s3, s31, s32, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS,
+                 R, mu, c, lambda, R0, mu0, delta0, h, rho1, rho2}
+:ArgumentTypes: {String, String, String, String, String, Integer, Integer, Integer, Integer,
+                 Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 IntegerList, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      singularpiece
+:Pattern:       SingularPiece[hard_, shape_, gap_, space_, cum_, orderAlpha_, runAlpha_, order_,
+                run_, nf_, j3_, s3_, G3_, mZ_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_,
+                muLambda_, Q_, muH_, muJ_, muS_, R_, mu_, c_, lambda_, R0_, mu0_, delta0_,
+                h_, tau_]
+:Arguments:     {hard, shape, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3, s3, G3,
+                 mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, c,
+                 lambda, R0, mu0, delta0, h, tau}
+:ArgumentTypes: {String, String, String, String, String, Integer, Integer, Integer, Integer,
+                 Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, IntegerList, Real, Real, Real,
+                 Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      singulardiffpiece
+:Pattern:       SingularPiece[hard_, shape_, gap_, space_, cum_, orderAlpha_, runAlpha_, order_,
+                run_, nf_, j3_, s3_, G3_, mZ_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_,
+                muLambda_, Q_, muH_, muJ_, muS_, R_, mu_, c_, lambda_, R0_, mu0_, delta0_,
+                h_, tau_, tau2_]
+:Arguments:     {hard, shape, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3, s3, G3,
+                 mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, c,
+                 lambda, R0, mu0, delta0, h, tau, tau2}
+:ArgumentTypes: {String, String, String, String, String, Integer, Integer, Integer, Integer,
+                 Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, IntegerList, Real, Real, Real,
+                 Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      diffdeltagap
+:Pattern:       DiffDeltaGap[str_, scheme_, order_, R0_, R1_, mu0_, mu1_, muLambda_,
+                orderAlpha_, runAlpha_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_]
+:Arguments:     {str, scheme, order, R0, R1, mu0, mu1, muLambda, orderAlpha, runAlpha,
+                 nf, Mz, aMz, mT, muT, mB, muB, mC, muC}
+:ArgumentTypes: {String, String, Integer, Real, Real, Real, Real, Real, Integer, Integer,
+                 Integer, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      diffdeltagapmass
+:Pattern:       DiffDeltaGapMass[str_, order_, R0_, R1_, mu0_, mu1_, muM_, muLambda1_,
+                muLambda2_, orderAlpha_, runAlpha_, runMass_, nf_, Mz_, aMz_, mT_, muT_,
+                mB_, muB_, mC_, muC_]
+:Arguments:     {str, order, R0, R1, mu0, mu1, muM, muLambda1, muLambda2, orderAlpha,
+                 runAlpha, runMass, nf, Mz, aMz, mT, muT, mB, muB, mC, muC}
+:ArgumentTypes: {String, Integer, Real, Real, Real, Real, Real, Real, Real, Integer,
+                 Integer, Integer, Integer, Real, Real, Real, Real, Real, Real, Real,
+                 Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      hyperf32exact
+:Pattern:       HyperF32Exact[w_, x_]
+:Arguments:     {w, x}
+:ArgumentTypes: {Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      model
+:Pattern:       Model[c_, lambda_, k_, l_]
+:Arguments:     {c, lambda, k, l}
+:ArgumentTypes: {RealList, Real, Integer, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      modeldiff
+:Pattern:       Model[c_, lambda_, k_, l_, l2_]
+:Arguments:     {c, lambda, k, l, l2}
+:ArgumentTypes: {RealList, Real, Integer, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      breitmodel
+:Pattern:       BreitModel[c_, lambda_, width_, k_, l_]
+:Arguments:     {c, lambda, width, k, l}
+:ArgumentTypes: {RealList, Real, Real, Integer, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      breitmodeldiff
+:Pattern:       BreitModel[c_, lambda_, width_, k_, l_, l2_]
+:Arguments:     {c, lambda, width, k, l, l2}
+:ArgumentTypes: {RealList, Real, Real, Integer, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      taylor
+:Pattern:       Taylor[c_, lambda_, k_]
+:Arguments:     {c, lambda, k}
+:ArgumentTypes: {RealList, Real, Integer}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      momentmodel
+:Pattern:       MomentModel[c_, lambda_, k_]
+:Arguments:     {c, lambda, k}
+:ArgumentTypes: {RealList, Real, Integer}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      modelpiece
+:Pattern:       ModelPiece[c_, lambda_, k_, l_]
+:Arguments:     {c, lambda, k, l}
+:ArgumentTypes: {IntegerList, Real, Integer, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      taylorpiece
+:Pattern:       TaylorPiece[c_, lambda_, k_]
+:Arguments:     {c, lambda, k}
+:ArgumentTypes: {IntegerList, Real, Integer}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      hyper2f1
+:Pattern:       Hyper2F1[a_, b_, c_, x_]
+:Arguments:     {a, b, c, x}
+:ArgumentTypes: {Real, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      intecorre
+:Pattern:       InteCorre[b_, x0_, x1_]
+:Arguments:     {b, x0, x1}
+:ArgumentTypes: {Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      anomdim
+:Pattern:       AnomDim[str_, nf_, G4_]
+:Arguments:     {str, nf, G4}
+:ArgumentTypes: {String, Integer, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      scoef
+:Pattern:       Scoef[str_, nf_]
+:Arguments:     {str, nf}
+:ArgumentTypes: {String, Integer}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      polylog
+:Pattern:       Polylog[n_, z_]
+:Arguments:     {n, z}
+:ArgumentTypes: {Integer, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      dilog
+:Pattern:       DiLog[z_]
+:Arguments:     {z}
+:ArgumentTypes: {Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      pfq
+:Pattern:       pFq[a_, b_, z_]
+:Arguments:     {a, b, z}
+:ArgumentTypes: {RealList, RealList, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      elliptic3
+:Pattern:       Elliptic3[psi_, k_, c_]
+:Arguments:     {psi, k, c}
+:ArgumentTypes: {Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      nglfunction
+:Pattern:       NGLFunction[n_, z_]
+:Arguments:     {n, z}
+:ArgumentTypes: {Integer, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      nglsoft
+:Pattern:       NGLSoft[n_, z_]
+:Arguments:     {n, Re[z], Im[z]}
+:ArgumentTypes: {Integer, Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      complexpolylog
+:Pattern:       ComplexPolylog[n_, z_]
+:Arguments:     {n, Re[z], Im[z]}
+:ArgumentTypes: {Integer, Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      cli2
+:Pattern:       CLi2[z_]
+:Arguments:     {Re[z], Im[z]}
+:ArgumentTypes: {Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      thrustns1loop
+:Pattern:       ThrustNS1loop[t_]
+:Arguments:     {t}
+:ArgumentTypes: {Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      fomass
+:Pattern:       FOMass[shape_, current_, m_, Q_, Mz_, gammaZ_, sin2ThetaW_, t_]
+:Arguments:     {shape, current, m, Q, Mz, gammaZ, sin2ThetaW, t}
+:ArgumentTypes: {String, String, Real, Real, Real, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      thrustns2loop
+:Pattern:       ThrustNS2loop[er_, t_]
+:Arguments:     {er, t}
+:ArgumentTypes: {Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      cli3
+:Pattern:       CLi3[z_]
+:Arguments:     {Re[z], Im[z]}
+:ArgumentTypes: {Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      delta
+:Pattern:       Delta[str_, nf_, mu_, R_]
+:Arguments:     {str, nf, mu, R}
+:ArgumentTypes: {String, Integer, Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      deltagap
+:Pattern:       DeltaGap[str_, orderAlpha_, runAlpha_, runMass_, nf_, mZ_, aMz_, mT_,
+                muT_, mB_, muB_, mC_, muC_, mu_, R_]
+:Arguments:     {str, orderAlpha, runAlpha, runMass, nf, mZ, aMz, mT, muT, mB, muB, mC,
+                 muC, mu, R}
+:ArgumentTypes: {String, Integer, Integer, Integer, Integer, Real, Real, Real, Real, Real,
+                Real, Real, Real, Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      coefmat
+:Pattern:       CoefMat[str_, nf_, s3_]
+:Arguments:     {str, nf, s3}
+:ArgumentTypes: {String, Integer, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      wtilde
+:Pattern:       wTilde[order_, nf_, gamma_, a0_, a1_]
+:Arguments:     {order, nf, gamma, a0, a1}
+:ArgumentTypes: {Integer, Integer, RealList, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      ktilde
+:Pattern:       kTilde[order_, nf_, gamma_, a0_, a1_]
+:Arguments:     {order, nf, gamma, a0, a1}
+:ArgumentTypes: {Integer, Integer, RealList, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      alphaqcd
+:Pattern:       AlphaQCD[str_, order_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_,
+                 muC_, mu_]
+:Arguments:     {str, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}
+:ArgumentTypes: {String, Integer, Integer, Integer, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      msbarmass
+:Pattern:       MSbarMass[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,
+                mC_, muC_, mu_]
+:Arguments:     {order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, Real, Real, Real, Real, Real, Real,
+                Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      polemass
+:Pattern:       PoleMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_, muT_,
+                mB_, muB_, mC_, muC_, mu_]
+:Arguments:     {orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC,
+                 mu}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, Integer, Real, Real, Real, Real,
+                Real, Real, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      msbarmasslow
+:Pattern:       MSbarMassLow[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_,
+                muB_, mC_, muC_, mu_]
+:Arguments:     {order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, Real, Real, Real, Real, Real, Real,
+                Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      msrmass
+:Pattern:       MSRMass[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,
+                mC_, muC_, mu_, R_]
+:Arguments:     {order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, R}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      mmfrommsr
+:Pattern:       mmfromMSR[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,
+                mC_, muC_, mu_, R_]
+:Arguments:     {order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, R}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      mmfrommsrnatural
+:Pattern:       mmfromMSRNatural[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_,
+                mT_, muT_, mB_, muB_, mC_, muC_, mu_, R_]
+:Arguments:     {orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC,
+                 mu, R}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, Integer, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      msrnaturalmass
+:Pattern:       MSRNaturalMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_,
+                mT_, muT_, mB_, muB_, mC_, muC_, mu_, R_]
+:Arguments:     {orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC,
+                 mu, R}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, Integer, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      jetmass
+:Pattern:       JetMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,
+                muT_, mB_, muB_, mC_, muC_, muLambda_, R_, mu_]
+:Arguments:     {orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC,
+                 muC, muLambda, R, mu}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, Integer, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      mmfromjetmass
+:Pattern:       mmFromJetMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,
+                muT_, mB_, muB_, mC_, muC_, muLambda_, R_, mu_]
+:Arguments:     {orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC,
+                 muC, muLambda, R, mu}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, Integer, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      deltamsbar
+:Pattern:       DeltaMSbar[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,
+                 mC_, muC_, mu_]
+:Arguments:     {order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      rhad
+:Pattern:       Rhad[scheme_, orderAlpha_, runAlpha_, order_, nf_, Mz_, aMz_, mT_, muT_,
+                 mB_, muB_, mC_, muC_, mu_, Q_]
+:Arguments:     {scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB, muB, mC,
+                 muC, mu, Q}
+:ArgumentTypes: {String, Integer, Integer, Integer, Integer, Real, Real, Real, Real, Real,
+                Real, Real, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      rhadmass
+:Pattern:       RhadMass[scheme_, current_, orderAlpha_, runAlpha_, runMass_, order_, nf_,
+                Mz_, GammaZ_, sin2ThetaW_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mu_, Q_]
+:Arguments:     {scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ,
+                sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q}
+:ArgumentTypes: {String, String, Integer, Integer, Integer, Integer, Integer, Real, Real,
+                Real, Real, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      lambdaqcd
+:Pattern:       LambdaQCD[scheme_, order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_,
+                 mB_, muB_, mC_, muC_, mu_]
+:Arguments:     {scheme, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}
+:ArgumentTypes: {String, Integer, Integer, Integer, Integer, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      kernels
+:Pattern:       Kernel[n_, width_, w_, mu_, p_]
+:Arguments:     {n, width, w, mu, p}
+:ArgumentTypes: {Integer, Real, Real, Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      gammaderlist
+:Pattern:       GammaDerList[n_, w_]
+:Arguments:     {n, w}
+:ArgumentTypes: {Integer, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      polygamma
+:Pattern:       polyGamma[n_, w_]
+:Arguments:     {n, w}
+:ArgumentTypes: {Integer, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      nglkernels
+:Pattern:       NGLKernel[n_, n1_, n2_, width_, w_, mu_, p_]
+:Arguments:     {n, n1, n2, width, w, mu, p}
+:ArgumentTypes: {Integer, Integer, Integer, Real, RealList, Real, RealList}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      nglintegral
+:Pattern:       NGLIntegral[nf_, pow_, w1_, w2_]
+:Arguments:     {nf, pow, w1, w2}
+:ArgumentTypes: {Integer, Integer, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      ngldoubleintegral
+:Pattern:       NGLDoubleIntegral[nf_, pow_, w1_, w2_, r_]
+:Arguments:     {nf, pow, w1, w2, r}
+:ArgumentTypes: {Integer, Integer, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Evaluate:   realQ = Head[# + 1.] === Real &
+
+:Evaluate:   End[]
+
+:Evaluate:   EndPackage[]
+
+#include "mathlink.h"
+#include "ftypes.h"
+#include <stdio.h>
+#include <unistd.h>
+
+extern double f90ewfactors_(int* nf, double* Q, double* Mz, double* GammaZ, double* sin2ThetaW, double* res);
+
+static void ewfactors(int nf, double Q, double Mz, double GammaZ, double sin2ThetaW){
+  double res[2];
+
+   f90ewfactors_(&nf, &Q, &Mz, &GammaZ, &sin2ThetaW, res);
+
+   MLPutRealList(stdlink, res, 2);
+   MLEndPacket(stdlink);
+}
+
+extern double f90kernels_(int* n, double* width, double* w, double* mu, double* p, double* result);
+
+static void kernels(int n, double width, double w, double mu, double p){
+  double res[n+1];
+
+   f90kernels_(&n, &width, &w, &mu, &p, res);
+
+   MLPutRealList(stdlink, res, n + 1);
+   MLEndPacket(stdlink);
+}
+
+extern double f90gammaderlist_(int* n, double* w, double* result);
+
+static void gammaderlist(int n, double w){
+  double res[n+1];
+
+   f90gammaderlist_(&n, &w, res);
+
+   MLPutRealList(stdlink, res, n + 1);
+   MLEndPacket(stdlink);
+}
+
+extern double f90polygamma_(int* n, double* w, double* result);
+
+static void polygamma(int n, double w){
+  double res[n+1];
+
+   f90polygamma_(&n, &w, res);
+
+   MLPutRealList(stdlink, res, n + 1);
+   MLEndPacket(stdlink);
+}
+
+extern double f90nglkernels_(int* n, int* n1, int*n2, double* width, double* w, double* mu, double* p, double* result);
+
+static void nglkernels(int n, int n1, int n2, double width, double w[], long wlen, double mu, double p[], long plen){
+  double res[n];
+
+   f90nglkernels_(&n, &n1, &n2, &width, w, &mu, p, res);
+
+   MLPutRealList(stdlink, res, n);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90nglintegral_(int* nf, int* pow, double* w1, double* w2, double* res);
+
+static double nglintegral(int nf, int pow, double w1, double w2){
+  double res;
+
+   f90nglintegral_(&nf, &pow, &w1, &w2, &res);
+
+   return res;
+}
+
+extern double f90ngldoubleintegral_(int* nf, int* pow, double* w1, double* w2, double* r, double* res);
+
+static double ngldoubleintegral(int nf, int pow, double w1, double w2, double r){
+  double res;
+
+   f90ngldoubleintegral_(&nf, &pow, &w1, &w2, &r, &res);
+
+   return res;
+}
+
+extern double f90singularhjmpiece_(char const* hard, char const* gap, char const* space, char const* cum,
+ int* orderAlpha, int* runAlpha, int* order, int* run, int* isoft, int* nf, double* j3,
+ double* s3, double* s31, double* s32, double* G3, double* mZ, double* aMz, double* mT,
+ double* muT, double* mB, double* muB, double* mC, double* muC, double* muLambda,
+ double* Q, double* muH, double* muJ, double* muS, double* R, double* mu, int* c,
+ double* lambda, double* R0, double* mu0, double* delta0, double* h, double* tau,
+ double* res);
+
+static double singularhjmpiece(char const* hard, char const* gap, char const* space, char const* cum,
+ int orderAlpha, int runAlpha, int order, int run, int isoft, int nf, double j3, double s3,
+ double s31, double s32, double G3, double mZ, double aMz, double mT, double muT,
+ double mB, double muB, double mC, double muC, double muLambda, double Q, double muH,
+ double muJ, double muS, double R, double mu, int c[], long len, double lambda, double R0,
+ double mu0, double delta0, double h, double tau){
+  double res;
+
+f90singularhjmpiece_(hard, gap, space, cum, &orderAlpha, &runAlpha, &order, &run, &isoft, &nf,
+ &j3, &s3, &s31, &s32, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda, &Q,
+ &muH, &muJ, &muS, &R, &mu, c, &lambda, &R0, &mu0, &delta0, &h, &tau, &res);
+
+return res;
+
+}
+
+extern double f90singulardoublepiece_(char const* hard, char const* gap, char const* space, char const* cum1,
+ char const* cum2, int* orderAlpha, int* runAlpha, int* order, int* run, int* isoft,
+ int* nf, double* j3, double* s3, double* s31, double* s32, double* G3, double* mZ,
+ double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+ double* muLambda, double* Q, double* muH, double* muJ, double* muS, double* R, double* mu,
+ int* c, double* lambda, double* R0, double* mu0, double* delta0, double* h, double* rho1,
+ double* rho2, double* res);
+
+static double singulardoublepiece(char const* hard, char const* gap, char const* space, char const* cum1,
+ char const* cum2, int orderAlpha, int runAlpha, int order, int run, int isoft, int nf,
+ double j3, double s3, double s31, double s32, double G3, double mZ, double aMz, double mT,
+ double muT, double mB, double muB, double mC, double muC, double muLambda, double Q,
+ double muH, double muJ, double muS, double R, double mu, int c[], long len, double lambda,
+ double R0, double mu0, double delta0, double h, double rho1, double rho2){
+  double res;
+
+f90singulardoublepiece_(hard, gap, space, cum1, cum2, &orderAlpha, &runAlpha, &order, &run,
+ &isoft, &nf, &j3, &s3, &s31, &s32, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
+ &muLambda, &Q, &muH, &muJ, &muS, &R, &mu, c, &lambda, &R0, &mu0, &delta0, &h, &rho1,
+ &rho2, &res);
+
+return res;
+
+}
+
+extern double f90singularhjm_(char const* hard, char const* setup, char const* gap, char const* space,
+ char const* cum, int* orderAlpha, int* runAlpha, int* order, int* run, int* isoft, int* nf,
+ double* j3, double* s3, double* s31, double* s32, double* G3, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+ double* muLambda, double* Q, double* muH, double* muJ, double* muS, double* R, double* mu,
+ double* c, int* clen, double* lambda, double* R0, double* mu0, double* delta0, double* h,
+ double* tau, double* res);
+
+static double singularhjm(char const* hard, char const* setup, char const* gap, char const* space,
+ char const* cum, int orderAlpha, int runAlpha, int order, int run, int isoft, int nf,
+ double j3, double s3, double s31, double s32, double G3, double mZ, double aMz, double mT,
+ double muT, double mB, double muB, double mC, double muC, double muLambda, double Q,
+ double muH, double muJ, double muS, double R, double mu, double c[], long len, int clen,
+ double lambda, double R0, double mu0, double delta0, double h, double tau){
+  double res;
+
+f90singularhjm_(hard, setup, gap, space, cum, &orderAlpha, &runAlpha, &order, &run, &isoft, &nf,
+ &j3, &s3, &s31, &s32, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda, &Q, &muH, &muJ,
+ &muS, &R, &mu, c, &clen, &lambda, &R0, &mu0, &delta0, &h, &tau, &res);
+
+return res;
+
+}
+
+extern double f90singularhjm1d_(char const* hard, char const* gap,
+ char const* cum, int* orderAlpha, int* runAlpha, int* order, int* run, int* isoft, int* nf,
+ double* j3, double* s3, double* s31, double* s32, double* G3, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+ double* muLambda, double* Q, double* muH, double* muJ, double* muS, double* R, double* mu,
+ double* c, int* clen, double* lambda, double* R0, double* mu0, double* delta0, double* h,
+ double* tau, double* res);
+
+static double singularhjm1d(char const* hard, char const* gap,
+ char const* cum, int orderAlpha, int runAlpha, int order, int run, int isoft, int nf,
+ double j3, double s3, double s31, double s32, double G3, double mZ, double aMz, double mT,
+ double muT, double mB, double muB, double mC, double muC, double muLambda, double Q,
+ double muH, double muJ, double muS, double R, double mu, double c[], long len,
+ double lambda, double R0, double mu0, double delta0, double h, double tau){
+  double res;
+
+ int clen = len;
+
+f90singularhjm1d_(hard, gap, cum, &orderAlpha, &runAlpha, &order, &run, &isoft, &nf,
+ &j3, &s3, &s31, &s32, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda, &Q,
+ &muH, &muJ, &muS, &R, &mu, c, &clen, &lambda, &R0, &mu0, &delta0, &h, &tau, &res);
+
+return res;
+
+}
+
+extern double f90singularhjm1dpiece_(char const* hard, char const* gap,
+ char const* cum, int* orderAlpha, int* runAlpha, int* order, int* run, int* isoft, int* nf,
+ double* j3, double* s3, double* s31, double* s32, double* G3, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muB, double* mC, double* muC, double* muLambda, double* Q, double* muH,
+ double* muJ, double* muS, double* R, double* mu, int* c, double* lambda,
+ double* R0, double* mu0, double* delta0, double* h, double* tau, double* res);
+
+static double singularhjm1dpiece(char const* hard, char const* gap,
+ char const* cum, int orderAlpha, int runAlpha, int order, int run, int isoft, int nf,
+ double j3, double s3, double s31, double s32, double G3, double mZ, double aMz, double mT,
+ double muT, double mB, double muB, double mC, double muC, double muLambda, double Q,
+ double muH, double muJ, double muS, double R, double mu, int c[], long len, double lambda,
+ double R0, double mu0, double delta0, double h, double tau){
+  double res;
+
+f90singularhjm1dpiece_(hard, gap, cum, &orderAlpha, &runAlpha, &order, &run, &isoft, &nf,
+ &j3, &s3, &s31, &s32, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda, &Q,
+ &muH, &muJ, &muS, &R, &mu, c, &lambda, &R0, &mu0, &delta0, &h, &tau, &res);
+
+return res;
+
+}
+
+extern double f90singulardouble_(char const* hard, char const* setup, char const* gap, char const* space,
+ char const* cum1, char const* cum2, int* orderAlpha, int* runAlpha, int* order, int* run,
+ int* isoft, int* nf, double* j3, double* s3, double* s31, double* s32, double* G3,
+ double* mZ, double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+ double* muC, double* muLambda, double* Q, double* muH, double* muJ, double* muS, double* R,
+ double* mu, double* c, int* clen, double* lambda, double* R0, double* mu0, double* delta0,
+ double* h, double* rho1, double* rho2, double* res);
+
+static double singulardouble(char const* hard, char const* setup, char const* gap, char const* space,
+ char const* cum1, char const* cum2, int orderAlpha, int runAlpha, int order, int run,
+ int isoft, int nf, double j3, double s3, double s31, double s32,double G3, double mZ,
+ double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+ double muLambda, double Q, double muH, double muJ, double muS, double R, double mu,
+ double c[], long len, int clen, double lambda, double R0, double mu0, double delta0,
+ double h, double rho1, double rho2){
+  double res;
+
+f90singulardouble_(hard, setup, gap, space, cum1, cum2, &orderAlpha, &runAlpha, &order, &run,
+ &isoft, &nf, &j3, &s3, &s31, &s32, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
+ &muLambda, &Q, &muH, &muJ, &muS, &R, &mu, c, &clen, &lambda, &R0, &mu0, &delta0, &h,
+ &rho1, &rho2, &res);
+
+return res;
+
+}
+
+extern double f90profiles_(double* Q, double* mu0, double* R0, double* n0, double* n1,
+double* t2, double* tR, double* ts, double* slope, double* cnt, double* eH, double* eS,
+double* eJ, double* eR, int* ns, double* tau, double* res);
+
+static void profiles(double Q, double mu0, double R0, double n0, double n1, double t2,
+double tR, double ts, double slope, double cnt, double eH, double eS, double eJ,
+double eR, int ns, double tau){
+  double result[5];
+
+   f90profiles_(&Q, &mu0, &R0, &n0, &n1, &t2, &tR, &ts, &slope, &cnt, &eH, &eS, &eJ, &eR,
+   &ns, &tau, result);
+
+   MLPutRealList(stdlink, result, 5);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90profilesmass_(double* Q, double* beta, double* mu0, double* delLamb,
+double* R0, double* n0, double* delta0, double* n1, double* delta1, double* t2, double* ts,
+double* slope, double* cnt, double* eH, double* eS, double* eJ, double* mass, double* muM,
+int* ns, char const* def, char const* EShape, double* tau, double* res);
+
+static void profilesmass(double Q, double beta, double mu0, double delLamb, double R0,
+double n0, double delta0, double n1, double delta1, double t2, double ts, double slope,
+double cnt, double eH, double eS, double eJ, double mass, double muM, int ns,
+char const* def, char const* EShape, double tau){
+  double result[6];
+
+   f90profilesmass_(&Q, &beta, &mu0, &delLamb, &R0, &n0, &delta0, &n1, &delta1, &t2,
+   &ts, &slope, &cnt, &eH, &eS, &eJ, &mass, &muM, &ns, def, EShape, &tau, result);
+
+   MLPutRealList(stdlink, result, 6);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90massintersection_(double* Q, double* beta, double* mu0, double* delLamb,
+double* n0, double* delta0, double* n1, double* delta1, double* t2, double* ts,
+double* slope, double* cnt, double* eH, double* eS, double* eJ, double* mass, double* muM,
+char const* def, char const* EShape, double* res);
+
+static void massintersection(double Q, double beta, double mu0, double delLamb, double n0,
+double delta0, double n1, double delta1, double t2, double ts, double slope, double cnt,
+double eH, double eS, double eJ, double mass, double muM, char const* def,
+char const* EShape){
+  double result[2];
+
+   f90massintersection_(&Q, &beta, &mu0, &delLamb, &n0, &delta0, &n1, &delta1, &t2,
+   &ts, &slope, &cnt, &eH, &eS, &eJ, &mass, &muM, def, EShape, result);
+
+   MLPutRealList(stdlink, result, 2);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90gammar_(char const* str, int* nf, double* result);
+
+static void gammar(char const* str, int nf){
+  double result[3];
+
+   f90gammar_(str, &nf, result);
+
+   MLPutRealList(stdlink, result, 3);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90masslessprof_(char const* terms, char const* hard, char const* shape,
+ char const* setup, char const* gap, char const* space, char const* cum, int* orderAlpha,
+ int* runAlpha, int* order, int* run, int* nf, double* j3, double* s3, double* G3,
+ double* mZ, double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+ double* muC, double* muLambda, double* Q, double* mu0, double* Rat0, double* n0,
+ double* n1, double* t2, double* tR, double* ts, double* slope, double* cnt, double* eH,
+ double* eS, double* eJ, double* eR, int* ns, double* c, int* clen, double* lambda,
+ double* R0, double* muR0, double* delta0, double* h, double* tau, double* res);
+
+static double masslessprof(char const* terms, char const* hard, char const* shape,
+ char const* setup, char const* gap, char const* space, char const* cum, int orderAlpha,
+ int runAlpha, int order, int run, int nf, double j3, double s3, double G3, double mZ,
+ double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+ double muLambda, double Q, double mu0, double Rat0, double n0, double n1, double t2,
+ double tR, double ts, double slope, double cnt, double eH, double eS, double eJ,
+ double eR, int ns, double c[], long len, double lambda, double R0, double muR0,
+ double delta0, double h, double tau){
+  double res;
+  int clen = len;
+
+f90masslessprof_(terms, hard, shape, setup, gap, space, cum, &orderAlpha, &runAlpha,
+&order, &run, &nf, &j3, &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda,
+&Q, &mu0, &Rat0, &n0, &n1, &t2, &tR, &ts, &slope, &cnt, &eH, &eS, &eJ, &eR, &ns, c, &clen,
+&lambda, &R0, &muR0, &delta0, &h, &tau, &res);
+
+return res;
+
+}
+
+extern double f90findorigin_(char const* shape, char const* gap, int* orderAlpha,
+ int* runAlpha, int* order, int* run, int* nf, double* mZ, double* aMz, double* mT,
+ double* muT, double* mB, double* muB, double* mC, double* muC, double* muLambda,
+ double* Q, double* mu0, double* Rat0, double* n0, double* n1, double* t2, double* tR,
+ double* ts, double* slope, double* cnt, double* eH, double* eS, double* eR,
+ double* R0, double* muR0, double* delta0, double* h, double* res);
+
+static double findorigin(char const* shape, char const* gap, int orderAlpha, int runAlpha,
+ int order, int run, int nf, double mZ, double aMz, double mT, double muT, double mB,
+ double muB, double mC, double muC, double muLambda, double Q, double mu0, double Rat0,
+ double n0, double n1, double t2, double tR, double ts, double slope, double cnt,
+ double eH, double eS, double eR, double R0, double muR0, double delta0, double h){
+  double res;
+
+f90findorigin_(shape, gap, &orderAlpha, &runAlpha, &order, &run, &nf, &mZ, &aMz, &mT,
+&muT, &mB, &muB, &mC, &muC, &muLambda, &Q, &mu0, &Rat0, &n0, &n1, &t2, &tR, &ts, &slope,
+&cnt, &eH, &eS, &eR, &R0, &muR0, &delta0, &h, &res);
+
+return res;
+
+}
+
+extern double f90masslessprofpiece_(char const* terms, char const* hard, char const* shape,
+ char const* gap, char const* space, char const* cum, int* orderAlpha,
+ int* runAlpha, int* order, int* run, int* nf, double* j3, double* s3, double* G3,
+ double* mZ, double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+ double* muC, double* muLambda, double* Q, double* mu0, double* Rat0, double* n0,
+ double* n1, double* t2, double* tR, double* ts, double* slope, double* cnt, double* eH,
+ double* eS, double* eJ, double* eR, int* ns, int* clen, double* lambda,
+ double* R0, double* muR0, double* delta0, double* h, double* tau, double* res);
+
+static void masslessprofpiece(char const* terms, char const* hard, char const* shape,
+ char const* gap, char const* space, char const* cum, int orderAlpha,
+ int runAlpha, int order, int run, int nf, double j3, double s3, double G3, double mZ,
+ double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+ double muLambda, double Q, double mu0, double Rat0, double n0, double n1, double t2,
+ double tR, double ts, double slope, double cnt, double eH, double eS, double eJ,
+ double eR, int ns, int clen, double lambda, double R0, double muR0, double delta0,
+ double h, double tau){
+  double res[(clen + 1) * (clen + 2)/2];
+
+f90masslessprofpiece_(terms, hard, shape, gap, space, cum, &orderAlpha, &runAlpha,
+&order, &run, &nf, &j3, &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda,
+&Q, &mu0, &Rat0, &n0, &n1, &t2, &tR, &ts, &slope, &cnt, &eH, &eS, &eJ, &eR, &ns, &clen,
+&lambda, &R0, &muR0, &delta0, &h, &tau, res);
+
+   MLPutRealList(stdlink, res, (clen + 1) * (clen + 2)/2);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90masslessprofpiecelist_(char const* terms, char const* hard,
+ char const* shape, char const* gap, char const* space, char const* cum, int* orderAlpha,
+ int* runAlpha, int* order, int* run, int* nf, double* j3, double* s3, double* G3,
+ double* mZ, double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+ double* muC, double* muLambda, double* Q, double* mu0, double* Rat0, double* n0,
+ double* n1, double* t2, double* tR, double* ts, double* slope, double* cnt, double* eH,
+ double* eS, double* eJ, double* eR, int* ns, int* clen, double* lambda, double* R0,
+ double* muR0, double* delta0, double* h, double* taulist, int* taulen, double* res);
+
+static void masslessprofpiecelist(char const* terms, char const* hard, char const* shape,
+ char const* gap, char const* space, char const* cum, int orderAlpha,
+ int runAlpha, int order, int run, int nf, double j3, double s3, double G3, double mZ,
+ double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+ double muLambda, double Q, double mu0, double Rat0, double n0, double n1, double t2,
+ double tR, double ts, double slope, double cnt, double eH, double eS, double eJ,
+ double eR, int ns, int clen, double lambda, double R0, double muR0, double delta0,
+ double h, double taulist[], long tlen){
+  int taulen = tlen;
+  double res[tlen * (clen + 1) * (clen + 2)/2];
+
+f90masslessprofpiecelist_(terms, hard, shape, gap, space, cum, &orderAlpha, &runAlpha,
+&order, &run, &nf, &j3, &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda,
+&Q, &mu0, &Rat0, &n0, &n1, &t2, &tR, &ts, &slope, &cnt, &eH, &eS, &eJ, &eR, &ns, &clen,
+&lambda, &R0, &muR0, &delta0, &h, taulist, &taulen, res);
+
+   MLPutFunction(stdlink, "Partition", 2 );
+   MLPutRealList(stdlink, res, tlen * (clen + 1) * (clen + 2)/2);
+   MLPutInteger(stdlink, (clen + 1) * (clen + 2)/2);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90masslesspiecebin_(char const* terms, char const* hard,
+ char const* shape, char const* gap, char const* space, char const* cum, int* orderAlpha,
+ int* runAlpha, int* order, int* run, int* nf, double* j3, double* s3, double* G3,
+ double* mZ, double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+ double* muC, double* muLambda, double* Q, double* mu0, double* Rat0, double* n0,
+ double* n1, double* t2, double* tR, double* ts, double* slope, double* cnt, double* eH,
+ double* eS, double* eJ, double* eR, int* ns, int* clen, double* lambda, double* R0,
+ double* muR0, double* delta0, double* h, double* taulist, int* taulen, double* res);
+
+static void masslesspiecebin(char const* terms, char const* hard, char const* shape,
+ char const* gap, char const* space, char const* cum, int orderAlpha,
+ int runAlpha, int order, int run, int nf, double j3, double s3, double G3, double mZ,
+ double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+ double muLambda, double Q, double mu0, double Rat0, double n0, double n1, double t2,
+ double tR, double ts, double slope, double cnt, double eH, double eS, double eJ,
+ double eR, int ns, int clen, double lambda, double R0, double muR0, double delta0,
+ double h, double taulist[], long tlen, int taulen){
+  double res[taulen * (clen + 1) * (clen + 2)/2];
+
+f90masslesspiecebin_(terms, hard, shape, gap, space, cum, &orderAlpha, &runAlpha,
+&order, &run, &nf, &j3, &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda,
+&Q, &mu0, &Rat0, &n0, &n1, &t2, &tR, &ts, &slope, &cnt, &eH, &eS, &eJ, &eR, &ns, &clen,
+&lambda, &R0, &muR0, &delta0, &h, taulist, &taulen, res);
+
+   MLPutFunction(stdlink, "Partition", 2 );
+   MLPutRealList(stdlink, res, taulen * (clen + 1) * (clen + 2)/2);
+   MLPutInteger(stdlink, (clen + 1) * (clen + 2)/2);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90masslessprofdiffpiece_(char const* terms, char const* hard,
+char const* shape, char const* gap, char const* space, char const* cum, int* orderAlpha,
+ int* runAlpha, int* order, int* run, int* nf, double* j3, double* s3, double* G3,
+ double* mZ, double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+ double* muC, double* muLambda, double* Q, double* mu0, double* Rat0, double* n0,
+ double* n1, double* t2, double* tR, double* ts, double* slope, double* cnt, double* eH,
+ double* eS, double* eJ, double* eR, int* ns, int* clen, double* lambda, double* R0,
+ double* muR0, double* delta0, double* h, double* tau, double* tau2, double* res);
+
+static void masslessprofdiffpiece(char const* terms, char const* hard, char const* shape,
+ char const* gap, char const* space, char const* cum, int orderAlpha,
+ int runAlpha, int order, int run, int nf, double j3, double s3, double G3, double mZ,
+ double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+ double muLambda, double Q, double mu0, double Rat0, double n0, double n1, double t2,
+ double tR, double ts, double slope, double cnt, double eH, double eS, double eJ,
+ double eR, int ns, int clen, double lambda, double R0, double muR0, double delta0,
+ double h, double tau, double tau2){
+  double res[(clen + 1) * (clen + 2)/2];
+
+f90masslessprofdiffpiece_(terms, hard, shape, gap, space, cum, &orderAlpha, &runAlpha,
+&order, &run, &nf, &j3, &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda,
+&Q, &mu0, &Rat0, &n0, &n1, &t2, &tR, &ts, &slope, &cnt, &eH, &eS, &eJ, &eR, &ns, &clen,
+&lambda, &R0, &muR0, &delta0, &h, &tau, &tau2, res);
+
+   MLPutRealList(stdlink, res, (clen + 1) * (clen + 2)/2);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90masslessproflist_(char const* terms, char const* hard, char const* shape,
+ char const* setup, char const* gap, char const* space, char const* cum, int* orderAlpha,
+ int* runAlpha, int* order, int* run, int* nf, double* j3, double* s3, double* G3,
+ double* mZ, double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+ double* muC, double* muLambda, double* Q, double* mu0, double* Rat0, double* n0,
+ double* n1, double* t2, double* tR, double* ts, double* slope, double* cnt, double* eH,
+ double* eS, double* eJ, double* eR, int* ns, double* c, int* clen, double* lambda,
+ double* R0, double* muR0, double* delta0, double* h, double* taulist, int* tlen,
+ double* result);
+
+static void masslessproflist(char const* terms, char const* hard, char const* shape,
+ char const* setup, char const* gap, char const* space, char const* cum, int orderAlpha,
+ int runAlpha, int order, int run, int nf, double j3, double s3, double G3, double mZ,
+ double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+ double muLambda, double Q, double mu0, double Rat0, double n0, double n1, double t2,
+ double tR, double ts, double slope, double cnt, double eH, double eS, double eJ,
+ double eR, int ns, double c[], long len, double lambda, double R0, double muR0,
+ double delta0, double h, double taulist[], long taulen){
+  double result[taulen];
+  int clen = len;
+  int tlen = taulen;
+
+f90masslessproflist_(terms, hard, shape, setup, gap, space, cum, &orderAlpha, &runAlpha,
+&order, &run, &nf, &j3, &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda,
+&Q, &mu0, &Rat0, &n0, &n1, &t2, &tR, &ts, &slope, &cnt, &eH, &eS, &eJ, &eR, &ns, c, &clen,
+&lambda, &R0, &muR0, &delta0, &h, taulist, &tlen, result);
+
+   MLPutRealList(stdlink, result, taulen);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90masslessbinlist_(char const* terms, char const* hard, char const* shape,
+ char const* setup, char const* gap, char const* space, char const* cum, int* orderAlpha,
+ int* runAlpha, int* order, int* run, int* nf, double* j3, double* s3, double* G3,
+ double* mZ, double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+ double* muC, double* muLambda, double* Q, double* mu0, double* Rat0, double* n0,
+ double* n1, double* t2, double* tR, double* ts, double* slope, double* cnt, double* eH,
+ double* eS, double* eJ, double* eR, int* ns, double* c, int* clen, double* lambda,
+ double* R0, double* muR0, double* delta0, double* h, double* taulist, int* tlen,
+ double* result);
+
+static void masslessbinlist(char const* terms, char const* hard, char const* shape,
+ char const* setup, char const* gap, char const* space, char const* cum, int orderAlpha,
+ int runAlpha, int order, int run, int nf, double j3, double s3, double G3, double mZ,
+ double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+ double muLambda, double Q, double mu0, double Rat0, double n0, double n1, double t2,
+ double tR, double ts, double slope, double cnt, double eH, double eS, double eJ,
+ double eR, int ns, double c[], long len, double lambda, double R0, double muR0,
+ double delta0, double h, double taulist[], long taulen, int tlen){
+  double result[tlen];
+  int clen = len;
+
+f90masslessbinlist_(terms, hard, shape, setup, gap, space, cum, &orderAlpha, &runAlpha,
+&order, &run, &nf, &j3, &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda,
+&Q, &mu0, &Rat0, &n0, &n1, &t2, &tR, &ts, &slope, &cnt, &eH, &eS, &eJ, &eR, &ns, c, &clen,
+&lambda, &R0, &muR0, &delta0, &h, taulist, &tlen, result);
+
+   MLPutRealList(stdlink, result, tlen);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90masslessprofdiff_(char const* terms, char const* hard, char const* shape,
+ char const* setup, char const* gap, char const* space, char const* cum, int* orderAlpha,
+ int* runAlpha, int* order, int* run, int* nf, double* j3, double* s3, double* G3,
+ double* mZ, double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+ double* muC, double* muLambda, double* Q, double* mu0, double* Rat0, double* n0,
+ double* n1, double* t2, double* tR, double* ts, double* slope, double* cnt, double* eH,
+ double* eS, double* eJ, double* eR, int* ns, double* c, int* clen, double* lambda,
+ double* R0, double* muR0, double* delta0, double* h, double* tau, double* tau2,
+ double* res);
+
+static double masslessprofdiff(char const* terms, char const* hard, char const* shape,
+ char const* setup, char const* gap, char const* space, char const* cum, int orderAlpha,
+ int runAlpha, int order, int run, int nf, double j3, double s3, double G3, double mZ,
+ double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+ double muLambda, double Q, double mu0, double Rat0, double n0, double n1, double t2,
+ double tR, double ts, double slope, double cnt, double eH, double eS, double eJ,
+ double eR, int ns, double c[], long len, double lambda, double R0, double muR0,
+ double delta0, double h, double tau, double tau2){
+  double res;
+  int clen = len;
+
+f90masslessprofdiff_(terms, hard, shape, setup, gap, space, cum, &orderAlpha, &runAlpha,
+&order, &run, &nf, &j3, &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda,
+&Q, &mu0, &Rat0, &n0, &n1, &t2, &tR, &ts, &slope, &cnt, &eH, &eS, &eJ, &eR, &ns, c, &clen,
+&lambda, &R0, &muR0, &delta0, &h, &tau, &tau2, &res);
+
+return res;
+
+}
+
+extern double f90masslessmoment_(char const* terms, char const* hard, char const* shape,
+ char const* setup, char const* gap, char const* space, int* orderAlpha, int* runAlpha,
+ int* order, int* run, int* nf, double* j3, double* s3, double* G3, double* mZ,
+ double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+ double* muLambda, double* Q, double* mu0, double* Rat0, double* n0, double* n1,
+ double* t2, double* tR, double* ts, double* slope, double* cnt, double* eH, double* eS,
+ double* eJ, double* eR, int* ns, double* c, int* clen, double* lambda, double* R0,
+ double* muR0, double* delta0, double* h, double* tau, double* tau2, int* pow,
+ double* res);
+
+static double masslessmoment(char const* terms, char const* hard, char const* shape,
+ char const* setup, char const* gap, char const* space, int orderAlpha, int runAlpha,
+ int order, int run, int nf, double j3, double s3, double G3, double mZ, double aMz,
+ double mT, double muT, double mB, double muB, double mC, double muC, double muLambda,
+ double Q, double mu0, double Rat0, double n0, double n1, double t2, double tR, double ts,
+ double slope, double cnt, double eH, double eS, double eJ, double eR, int ns, double c[],
+ long len, double lambda, double R0, double muR0, double delta0, double h, double tau,
+ double tau2, int pow){
+  double res;
+  int clen = len;
+
+f90masslessmoment_(terms, hard, shape, setup, gap, space, &orderAlpha, &runAlpha,
+&order, &run, &nf, &j3, &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda,
+&Q, &mu0, &Rat0, &n0, &n1, &t2, &tR, &ts, &slope, &cnt, &eH, &eS, &eJ, &eR, &ns, c, &clen,
+&lambda, &R0, &muR0, &delta0, &h, &tau, &tau2, &pow, &res);
+
+return res;
+
+}
+
+extern double f90singular_(char const* hard, char const* shape, char const* setup, char const* gap,
+ char const* space, char const* cum, int* orderAlpha, int* runAlpha, int* order, int* run,
+ int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz, double* mT,
+ double* muT, double* mB, double* muB, double* mC, double* muC, double* muLambda,
+ double* Q, double* muH, double* muJ, double* muS, double* R, double* mu, double* c,
+ int* clen, double* lambda, double* R0, double* mu0, double* delta0, double* h,
+ double* tau, double* res);
+
+static double singular(char const* hard, char const* shape, char const* setup, char const* gap,
+char const* space, char const* cum, int orderAlpha, int runAlpha, int order, int run,
+int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
+double mB, double muB, double mC, double muC, double muLambda, double Q, double muH,
+double muJ, double muS, double R, double mu, double c[], long len, double lambda,
+double R0, double mu0, double delta0, double h, double tau){
+  double res;
+  int clen = len;
+
+f90singular_(hard, shape, setup, gap, space, cum, &orderAlpha, &runAlpha, &order, &run, &nf,
+&j3, &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda, &Q, &muH, &muJ, &muS,
+&R, &mu, c, &clen, &lambda, &R0, &mu0, &delta0, &h, &tau, &res);
+
+return res;
+
+}
+
+extern double f90singularlist_(char const* hard, char const* shape, char const* gap,
+ char const* space, char const* cum, int* orderAlpha, int* runAlpha, int* order, int* run,
+ int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz, double* mT,
+ double* muT, double* mB, double* muB, double* mC, double* muC, double* muLambda,
+ double* Q, double* muH, double* muJ, double* muS, double* R, double* mu,
+ int* clen, double* lambda, double* R0, double* mu0, double* delta0, double* h,
+ double* tau, double* res);
+
+static void singularlist(char const* hard, char const* shape, char const* gap,
+char const* space, char const* cum, int orderAlpha, int runAlpha, int order, int run,
+int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
+double mB, double muB, double mC, double muC, double muLambda, double Q, double muH,
+double muJ, double muS, double R, double mu, int clen, double lambda,
+double R0, double mu0, double delta0, double h, double tau){
+  double res[(clen + 1) * (clen + 2)/2];
+
+f90singularlist_(hard, shape, gap, space, cum, &orderAlpha, &runAlpha, &order, &run, &nf,
+&j3, &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda, &Q, &muH, &muJ, &muS,
+&R, &mu, &clen, &lambda, &R0, &mu0, &delta0, &h, &tau, res);
+
+   MLPutRealList(stdlink, res, (clen + 1) * (clen + 2)/2);
+
+   MLEndPacket(stdlink);
+
+}
+
+
+extern double f90singulardiff_(char const* hard, char const* shape, char const* setup, char const* gap,
+ char const* space, char const* cum, int* orderAlpha, int* runAlpha, int* order, int* run,
+ int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz, double* mT,
+ double* muT, double* mB, double* muB, double* mC, double* muC, double* muLambda,
+ double* Q, double* muH, double* muJ, double* muS, double* R, double* mu, double* c,
+ int* clen, double* lambda, double* R0, double* mu0, double* delta0, double* h,
+ double* tau1, double* tau2, double* res);
+
+static double singulardiff(char const* hard, char const* shape, char const* setup, char const* gap,
+char const* space, char const* cum, int orderAlpha, int runAlpha, int order, int run,
+int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
+double mB, double muB, double mC, double muC, double muLambda, double Q, double muH,
+double muJ, double muS, double R, double mu, double c[], long len, double lambda,
+double R0, double mu0, double delta0, double h, double tau1, double tau2){
+  double res;
+  int clen = len;
+
+f90singulardiff_(hard, shape, setup, gap, space, cum, &orderAlpha, &runAlpha, &order, &run, &nf,
+&j3, &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda, &Q, &muH, &muJ, &muS,
+&R, &mu, c, &clen, &lambda, &R0, &mu0, &delta0, &h, &tau1, &tau2, &res);
+
+return res;
+
+}
+
+extern double f90massiveprof_(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* setup, char const* gap, char const* space,
+ char const* cum, char const* scheme, char const* abs, char const* current, double* xi,
+ double* xiB, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order,
+ int* run, int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+ double* muLambda1, double* muLambda2, double* Q, double* beta, double* mu0,
+ double* deltaLambda, double* Rat0, double* n0, double* delta0, double* n1, double* delta1,
+ double* t2, double* ts, double* slope, double* cnt, double* eH, double* eS, double* eJ,
+ double* mass, double* muM, int* ns, double* width, double* c, int* clen, double* lambda,
+ double* R0, double* muR0, double* del0, double* h, double* gammaZ, double* sinW,
+ double* tau, double* res);
+
+static double massiveprof(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* setup, char const* gap, char const* space,
+ char const* cum, char const* scheme, char const* abs, char const* current, double xi,
+ double xiB, int orderAlpha, int runAlpha, int orderMass, int runMass, int order, int run,
+ int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
+ double mB, double muB, double mC, double muC, double muLambda1, double muLambda2,
+ double Q, double beta, double mu0, double deltaLambda, double Rat0, double n0,
+ double delta0, double n1, double delta1, double t2, double ts, double slope, double cnt,
+ double eH, double eS, double eJ, double mass, double muM, int ns, double width,
+ double c[], long len, double lambda, double R0, double muR0, double del0, double h,
+ double gammaZ, double sinW, double tau){
+  double res;
+  int clen = len;
+
+f90massiveprof_(terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,
+ &xi, &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3,
+ &G3,  &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &beta,
+ &mu0, &deltaLambda, &Rat0, &n0, &delta0, &n1, &delta1, &t2, &ts, &slope, &cnt, &eH, &eS,
+ &eJ, &mass, &muM, &ns, &width, c, &clen, &lambda, &R0, &muR0, &del0, &h, &gammaZ, &sinW,
+ &tau, &res);
+
+return res;
+
+}
+
+extern double f90massorigin_(char const* shape, char const* Eshape, char const* gap,
+ char const* scheme, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass,
+ int* order, int* run, int* nf, double* mZ, double* aMz, double* mT, double* muT,
+ double* mB, double* muB, double* mC, double* muC, double* muLambda1, double* muLambda2,
+ double* Q, double* beta, double* mu0, double* deltaLambda, double* Rat0, double* n0,
+ double* delta0, double* n1, double* delta1, double* t2, double* ts, double* slope,
+ double* cnt, double* eH, double* eS, double* eJ, double* mass, double* muM,
+ double* R0, double* muR0, double* del0, double* h, double* res);
+
+static double massorigin(char const* shape, char const* Eshape, char const* gap,
+ char const* scheme, int orderAlpha, int runAlpha, int orderMass, int runMass, int order,
+ int run, int nf, double mZ, double aMz, double mT, double muT, double mB, double muB,
+ double mC, double muC, double muLambda1, double muLambda2, double Q, double beta,
+ double mu0, double deltaLambda, double Rat0, double n0, double delta0, double n1,
+ double delta1, double t2, double ts, double slope, double cnt, double eH, double eS,
+ double eJ, double mass, double muM, double R0, double muR0, double del0, double h){
+  double res;
+
+f90massorigin_(shape, Eshape, gap, scheme, &orderAlpha, &runAlpha, &orderMass, &runMass,
+ &order, &run, &nf, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2,
+ &Q, &beta, &mu0, &deltaLambda, &Rat0, &n0, &delta0, &n1, &delta1, &t2, &ts, &slope, &cnt,
+ &eH, &eS, &eJ, &mass, &muM, &R0, &muR0, &del0, &h, &res);
+
+return res;
+
+}
+
+extern double f90massiveprofpiece_(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* gap, char const* space,
+ char const* cum, char const* scheme, char const* abs, char const* current, double* xi,
+ double* xiB, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order,
+ int* run, int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+ double* muLambda1, double* muLambda2, double* Q, double* beta, double* mu0,
+ double* deltaLambda, double* Rat0, double* n0, double* delta0, double* n1, double* delta1,
+ double* t2, double* ts, double* slope, double* cnt, double* eH, double* eS, double* eJ,
+ double* mass, double* muM, int* ns, double* width, int* clen, double* lambda,
+ double* R0, double* muR0, double* del0, double* h, double* gammaZ, double* sinW,
+ double* tau, double* res);
+
+static void massiveprofpiece(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* gap, char const* space, char const* cum,
+ char const* scheme, char const* abs, char const* current, double xi, double xiB,
+ int orderAlpha, int runAlpha, int orderMass, int runMass, int order, int run,
+ int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
+ double mB, double muB, double mC, double muC, double muLambda1, double muLambda2,
+ double Q, double beta, double mu0, double deltaLambda, double Rat0, double n0,
+ double delta0, double n1, double delta1, double t2, double ts, double slope, double cnt,
+ double eH, double eS, double eJ, double mass, double muM, int ns, double width,
+ int clen, double lambda, double R0, double muR0, double del0, double h,
+ double gammaZ, double sinW, double tau){
+  double res[(clen + 1) * (clen + 2)/2];
+
+f90massiveprofpiece_(terms, hard, shape, Eshape, gap, space, cum, scheme, abs, current,
+ &xi, &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3,
+ &G3,  &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &beta,
+ &mu0, &deltaLambda, &Rat0, &n0, &delta0, &n1, &delta1, &t2, &ts, &slope, &cnt, &eH, &eS,
+ &eJ, &mass, &muM, &ns, &width, &clen, &lambda, &R0, &muR0, &del0, &h, &gammaZ, &sinW,
+ &tau, res);
+
+   MLPutRealList(stdlink, res, (clen + 1) * (clen + 2)/2);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90massiveprofpiecelist_(char const* terms, char const* hard,
+ char const* shape, char const* Eshape, char const* gap, char const* space,
+ char const* cum, char const* scheme, char const* abs, char const* current, double* xi,
+ double* xiB, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order,
+ int* run, int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+ double* muLambda1, double* muLambda2, double* Q, double* beta, double* mu0,
+ double* deltaLambda, double* Rat0, double* n0, double* delta0, double* n1, double* delta1,
+ double* t2, double* ts, double* slope, double* cnt, double* eH, double* eS, double* eJ,
+ double* mass, double* muM, int* ns, double* width, int* clen, double* lambda,
+ double* R0, double* muR0, double* del0, double* h, double* gammaZ, double* sinW,
+ double* tau, int* taulen, double* res);
+
+static void massiveprofpiecelist(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* gap, char const* space, char const* cum,
+ char const* scheme, char const* abs, char const* current, double xi, double xiB,
+ int orderAlpha, int runAlpha, int orderMass, int runMass, int order, int run,
+ int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
+ double mB, double muB, double mC, double muC, double muLambda1, double muLambda2,
+ double Q, double beta, double mu0, double deltaLambda, double Rat0, double n0,
+ double delta0, double n1, double delta1, double t2, double ts, double slope, double cnt,
+ double eH, double eS, double eJ, double mass, double muM, int ns, double width,
+ int clen, double lambda, double R0, double muR0, double del0, double h,
+ double gammaZ, double sinW, double tau[], long tlen){
+  int taulen = tlen;
+  double res[tlen * (clen + 1) * (clen + 2)/2];
+
+f90massiveprofpiecelist_(terms, hard, shape, Eshape, gap, space, cum, scheme, abs, current,
+ &xi, &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3,
+ &G3,  &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &beta,
+ &mu0, &deltaLambda, &Rat0, &n0, &delta0, &n1, &delta1, &t2, &ts, &slope, &cnt, &eH, &eS,
+ &eJ, &mass, &muM, &ns, &width, &clen, &lambda, &R0, &muR0, &del0, &h, &gammaZ, &sinW,
+ tau, &taulen, res);
+
+   MLPutFunction(stdlink, "Partition", 2 );
+   MLPutRealList(stdlink, res, tlen * (clen + 1) * (clen + 2)/2);
+   MLPutInteger(stdlink, (clen + 1) * (clen + 2)/2);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90massivepiecebin_(char const* terms, char const* hard,
+ char const* shape, char const* Eshape, char const* gap, char const* space,
+ char const* cum, char const* scheme, char const* abs, char const* current, double* xi,
+ double* xiB, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order,
+ int* run, int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+ double* muLambda1, double* muLambda2, double* Q, double* beta, double* mu0,
+ double* deltaLambda, double* Rat0, double* n0, double* delta0, double* n1, double* delta1,
+ double* t2, double* ts, double* slope, double* cnt, double* eH, double* eS, double* eJ,
+ double* mass, double* muM, int* ns, double* width, int* clen, double* lambda,
+ double* R0, double* muR0, double* del0, double* h, double* gammaZ, double* sinW,
+ double* tau, int* taulen, double* res);
+
+static void massivepiecebin(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* gap, char const* space, char const* cum,
+ char const* scheme, char const* abs, char const* current, double xi, double xiB,
+ int orderAlpha, int runAlpha, int orderMass, int runMass, int order, int run,
+ int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
+ double mB, double muB, double mC, double muC, double muLambda1, double muLambda2,
+ double Q, double beta, double mu0, double deltaLambda, double Rat0, double n0,
+ double delta0, double n1, double delta1, double t2, double ts, double slope, double cnt,
+ double eH, double eS, double eJ, double mass, double muM, int ns, double width,
+ int clen, double lambda, double R0, double muR0, double del0, double h,
+ double gammaZ, double sinW, double tau[], long tlen, int taulen){
+  double res[taulen * (clen + 1) * (clen + 2)/2];
+
+f90massivepiecebin_(terms, hard, shape, Eshape, gap, space, cum, scheme, abs, current,
+ &xi, &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3,
+ &G3,  &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &beta,
+ &mu0, &deltaLambda, &Rat0, &n0, &delta0, &n1, &delta1, &t2, &ts, &slope, &cnt, &eH, &eS,
+ &eJ, &mass, &muM, &ns, &width, &clen, &lambda, &R0, &muR0, &del0, &h, &gammaZ, &sinW,
+ tau, &taulen, res);
+
+   MLPutFunction(stdlink, "Partition", 2 );
+   MLPutRealList(stdlink, res, taulen * (clen + 1) * (clen + 2)/2);
+   MLPutInteger(stdlink, (clen + 1) * (clen + 2)/2);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90massiveprofdiffpiece_(char const* terms, char const* hard,
+ char const* shape, char const* Eshape, char const* gap, char const* space,
+ char const* cum, char const* scheme, char const* abs, char const* current, double* xi,
+ double* xiB, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order,
+ int* run, int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+ double* muLambda1, double* muLambda2, double* Q, double* beta, double* mu0,
+ double* deltaLambda, double* Rat0, double* n0, double* delta0, double* n1, double* delta1,
+ double* t2, double* ts, double* slope, double* cnt, double* eH, double* eS, double* eJ,
+ double* mass, double* muM, int* ns, double* width, int* clen, double* lambda,
+ double* R0, double* muR0, double* del0, double* h, double* gammaZ, double* sinW,
+ double* tau, double* tau2, double* res);
+
+static void massiveprofdiffpiece(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* gap, char const* space, char const* cum,
+ char const* scheme, char const* abs, char const* current, double xi, double xiB,
+ int orderAlpha, int runAlpha, int orderMass, int runMass, int order, int run,
+ int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
+ double mB, double muB, double mC, double muC, double muLambda1, double muLambda2,
+ double Q, double beta, double mu0, double deltaLambda, double Rat0, double n0,
+ double delta0, double n1, double delta1, double t2, double ts, double slope, double cnt,
+ double eH, double eS, double eJ, double mass, double muM, int ns, double width,
+ int clen, double lambda, double R0, double muR0, double del0, double h,
+ double gammaZ, double sinW, double tau, double tau2){
+  double res[(clen + 1) * (clen + 2)/2];
+
+f90massiveprofdiffpiece_(terms, hard, shape, Eshape, gap, space, cum, scheme, abs, current,
+ &xi, &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3,
+ &G3,  &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &beta,
+ &mu0, &deltaLambda, &Rat0, &n0, &delta0, &n1, &delta1, &t2, &ts, &slope, &cnt, &eH, &eS,
+ &eJ, &mass, &muM, &ns, &width, &clen, &lambda, &R0, &muR0, &del0, &h, &gammaZ, &sinW,
+ &tau, &tau2, res);
+
+   MLPutRealList(stdlink, res, (clen + 1) * (clen + 2)/2);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90massiveprofdiff_(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* setup, char const* gap, char const* space,
+ char const* cum, char const* scheme, char const* abs, char const* current, double* xi,
+ double* xiB, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order,
+ int* run, int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+ double* muLambda1, double* muLambda2, double* Q, double* beta, double* mu0,
+ double* deltaLambda, double* Rat0, double* n0, double* delta0, double* n1, double* delta1,
+ double* t2, double* ts, double* slope, double* cnt, double* eH, double* eS, double* eJ,
+ double* mass, double* muM, int* ns, double* width, double* c, int* clen, double* lambda,
+ double* R0, double* muR0, double* del0, double* h, double* gammaZ, double* sinW,
+ double* tau, double* tau2, double* res);
+
+static double massiveprofdiff(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* setup, char const* gap, char const* space,
+ char const* cum, char const* scheme, char const* abs, char const* current, double xi,
+ double xiB, int orderAlpha, int runAlpha, int orderMass, int runMass, int order, int run,
+ int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
+ double mB, double muB, double mC, double muC, double muLambda1, double muLambda2,
+ double Q, double beta, double mu0, double deltaLambda, double Rat0, double n0,
+ double delta0, double n1, double delta1, double t2, double ts, double slope, double cnt,
+ double eH, double eS, double eJ, double mass, double muM, int ns, double width,
+ double c[], long len, double lambda, double R0, double muR0, double del0, double h,
+ double gammaZ, double sinW, double tau, double tau2){
+  double res;
+  int clen = len;
+
+f90massiveprofdiff_(terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,
+ &xi, &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3,
+ &G3,  &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &beta,
+ &mu0, &deltaLambda, &Rat0, &n0, &delta0, &n1, &delta1, &t2, &ts, &slope, &cnt, &eH, &eS,
+ &eJ, &mass, &muM, &ns, &width, c, &clen, &lambda, &R0, &muR0, &del0, &h, &gammaZ, &sinW,
+ &tau, &tau2, &res);
+
+return res;
+
+}
+
+extern double f90massiveproflist_(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* setup, char const* gap, char const* space,
+ char const* cum, char const* scheme, char const* abs, char const* current, double* xi,
+ double* xiB, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order,
+ int* run, int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+ double* muLambda1, double* muLambda2, double* Q, double* beta, double* mu0,
+ double* deltaLambda, double* Rat0, double* n0, double* delta0, double* n1, double* delta1,
+ double* t2, double* ts, double* slope, double* cnt, double* eH, double* eS, double* eJ,
+ double* mass, double* muM, int* ns, double* width, double* c, int* clen, double* lambda,
+ double* R0, double* muR0, double* del0, double* h, double* gammaZ, double* sinW,
+ double* tauList, int* taulen, double* res);
+
+static void massiveproflist(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* setup, char const* gap, char const* space,
+ char const* cum, char const* scheme, char const* abs, char const* current, double xi,
+ double xiB, int orderAlpha, int runAlpha, int orderMass, int runMass, int order, int run,
+ int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
+ double mB, double muB, double mC, double muC, double muLambda1, double muLambda2,
+ double Q, double beta, double mu0, double deltaLambda, double Rat0, double n0,
+ double delta0, double n1, double delta1, double t2, double ts, double slope, double cnt,
+ double eH, double eS, double eJ, double mass, double muM, int ns, double width,
+ double c[], long len, double lambda, double R0, double muR0, double del0, double h,
+ double gammaZ, double sinW, double tauList[], long ctau){
+  int clen = len;
+  int taulen = ctau;
+  double result[taulen];
+
+f90massiveproflist_(terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,
+ &xi, &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3,
+ &G3,  &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &beta,
+ &mu0, &deltaLambda, &Rat0, &n0, &delta0, &n1, &delta1, &t2, &ts, &slope, &cnt, &eH, &eS,
+ &eJ, &mass, &muM, &ns, &width, c, &clen, &lambda, &R0, &muR0, &del0, &h, &gammaZ, &sinW,
+ tauList, &taulen, result);
+
+   MLPutRealList(stdlink, result, taulen);
+
+   MLEndPacket(stdlink);
+
+}
+
+extern double f90massivebinlist_(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* setup, char const* gap, char const* space,
+ char const* cum, char const* scheme, char const* abs, char const* current, double* xi,
+ double* xiB, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order,
+ int* run, int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+ double* muLambda1, double* muLambda2, double* Q, double* beta, double* mu0,
+ double* deltaLambda, double* Rat0, double* n0, double* delta0, double* n1, double* delta1,
+ double* t2, double* ts, double* slope, double* cnt, double* eH, double* eS, double* eJ,
+ double* mass, double* muM, int* ns, double* width, double* c, int* clen, double* lambda,
+ double* R0, double* muR0, double* del0, double* h, double* gammaZ, double* sinW,
+ double* tauList, int* taulen, double* res);
+
+static void massivebinlist(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* setup, char const* gap, char const* space,
+ char const* cum, char const* scheme, char const* abs, char const* current, double xi,
+ double xiB, int orderAlpha, int runAlpha, int orderMass, int runMass, int order, int run,
+ int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
+ double mB, double muB, double mC, double muC, double muLambda1, double muLambda2,
+ double Q, double beta, double mu0, double deltaLambda, double Rat0, double n0,
+ double delta0, double n1, double delta1, double t2, double ts, double slope, double cnt,
+ double eH, double eS, double eJ, double mass, double muM, int ns, double width,
+ double c[], long len, double lambda, double R0, double muR0, double del0, double h,
+ double gammaZ, double sinW, double tauList[], long ctau, int taulen){
+  int clen = len;
+  double result[taulen];
+
+f90massivebinlist_(terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,
+ &xi, &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3,
+ &G3,  &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &beta,
+ &mu0, &deltaLambda, &Rat0, &n0, &delta0, &n1, &delta1, &t2, &ts, &slope, &cnt, &eH, &eS,
+ &eJ, &mass, &muM, &ns, &width, c, &clen, &lambda, &R0, &muR0, &del0, &h, &gammaZ, &sinW,
+ tauList, &taulen, result);
+
+   MLPutRealList(stdlink, result, taulen);
+
+   MLEndPacket(stdlink);
+
+}
+
+extern double f90massivediffprof_(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* setup, char const* gap, char const* space,
+ char const* cum, char const* scheme, char const* abs, char const* current, double* xi,
+ double* xiB, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order,
+ int* run, int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+ double* muLambda1, double* muLambda2, double* Q, double* beta, double* mu0,
+ double* deltaLambda, double* Rat0, double* n0, double* delta0, double* n1, double* delta1,
+ double* t2, double* ts, double* slope, double* cnt, double* eH, double* eS, double* eJ,
+ double* mass, double* muM, int* ns, double* width, double* c, int* clen, double* lambda,
+ double* R0, double* muR0, double* del0, double* h, double* gammaZ, double* sinW,
+ double* tau, double* tau2, double* res);
+
+static double massivediffprof(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* setup, char const* gap, char const* space,
+ char const* cum, char const* scheme, char const* abs, char const* current, double xi,
+ double xiB, int orderAlpha, int runAlpha, int orderMass, int runMass, int order, int run,
+ int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
+ double mB, double muB, double mC, double muC, double muLambda1, double muLambda2,
+ double Q, double beta, double mu0, double deltaLambda, double Rat0, double n0,
+ double delta0, double n1, double delta1, double t2, double ts, double slope, double cnt,
+ double eH, double eS, double eJ, double mass, double muM, int ns, double width,
+ double c[], long len, double lambda, double R0, double muR0, double del0, double h,
+ double gammaZ, double sinW, double tau, double tau2){
+  double res;
+  int clen = len;
+
+f90massivediffprof_(terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs,
+ current, &xi, &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3,
+ &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &beta,
+ &mu0, &deltaLambda, &Rat0, &n0, &delta0, &n1, &delta1, &t2, &ts, &slope, &cnt, &eH, &eS,
+ &eJ, &mass, &muM, &ns, &width, c, &clen, &lambda, &R0, &muR0, &del0, &h, &gammaZ, &sinW,
+ &tau, &tau2, &res);
+
+return res;
+
+}
+
+extern double f90massivemoment_(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* setup, char const* gap, char const* space,
+ char const* scheme, char const* abs, char const* current, double* xi,
+ double* xiB, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order,
+ int* run, int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+ double* muLambda1, double* muLambda2, double* Q, double* beta, double* mu0,
+ double* deltaLambda, double* Rat0, double* n0, double* delta0, double* n1, double* delta1,
+ double* t2, double* ts, double* slope, double* cnt, double* eH, double* eS, double* eJ,
+ double* mass, double* muM, int* ns, double* width, double* c, int* clen, double* lambda,
+ double* R0, double* muR0, double* del0, double* h, double* gammaZ, double* sinW,
+ double* tau, double* tau2, int* pow, double* res);
+
+static double massivemoment(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* setup, char const* gap, char const* space,
+ char const* scheme, char const* abs, char const* current, double xi,
+ double xiB, int orderAlpha, int runAlpha, int orderMass, int runMass, int order, int run,
+ int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
+ double mB, double muB, double mC, double muC, double muLambda1, double muLambda2,
+ double Q, double beta, double mu0, double deltaLambda, double Rat0, double n0,
+ double delta0, double n1, double delta1, double t2, double ts, double slope, double cnt,
+ double eH, double eS, double eJ, double mass, double muM, int ns, double width,
+ double c[], long len, double lambda, double R0, double muR0, double del0, double h,
+ double gammaZ, double sinW, double tau, double tau2, int pow){
+  double res;
+  int clen = len;
+
+f90massivemoment_(terms, hard, shape, Eshape, setup, gap, space, scheme, abs,
+ current, &xi, &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3,
+ &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &beta,
+ &mu0, &deltaLambda, &Rat0, &n0, &delta0, &n1, &delta1, &t2, &ts, &slope, &cnt, &eH, &eS,
+ &eJ, &mass, &muM, &ns, &width, c, &clen, &lambda, &R0, &muR0, &del0, &h, &gammaZ, &sinW,
+ &tau, &tau2, &pow, &res);
+
+return res;
+
+}
+
+extern double f90singularmass_(char const* hard, char const* shape, char const* Eshape,
+ char const* setup, char const* gap, char const* space, char const* cum,
+ char const* scheme, char const* abs, char const* current, double* xi, double* xiB,
+ int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order, int* run,
+ int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz, double* mT,
+ double* muT, double* mB, double* muB, double* mC, double* muC, double* muLambda1,
+ double* muLambda2, double* Q, double* muH, double* muJ, double* muS, double* R,
+ double* Rmass, double* muM, double* mu, double* width, double* c, int* clen,
+ double* lambda, double* R0, double* mu0, double* delta0, double* h, double* gammaZ,
+ double* sinW, double* tau, double* res);
+
+static double singularmass(char const* hard, char const* shape, char const* Eshape,
+char const* setup, char const* gap, char const* space, char const* cum, char const* scheme,
+char const* abs, char const* current, double xi, double xiB, int orderAlpha, int runAlpha,
+int orderMass, int runMass, int order, int run, int nf, double j3, double s3, double G3,
+double mZ, double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+double muLambda1, double muLambda2, double Q, double muH, double muJ, double muS, double R,
+double Rmass, double muM, double mu, double width, double c[], long len, double lambda,
+double R0, double mu0, double delta0, double h, double gammaZ, double sinW, double tau){
+  double res;
+  int clen = len;
+
+f90singularmass_(hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current, &xi,
+&xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3, &G3, &mZ,
+&aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &muH, &muJ, &muS, &R,
+&Rmass, &muM, &mu, &width, c, &clen, &lambda, &R0, &mu0, &delta0, &h, &gammaZ, &sinW,
+&tau, &res);
+
+return res;
+
+}
+
+extern double f90singularmassdiff_(char const* hard, char const* shape, char const* Eshape,
+ char const* setup, char const* gap, char const* space, char const* cum,
+ char const* scheme, char const* abs, char const* current, double* xi, double* xiB,
+ int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order, int* run,
+ int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz, double* mT,
+ double* muT, double* mB, double* muB, double* mC, double* muC, double* muLambda1,
+ double* muLambda2, double* Q, double* muH, double* muJ, double* muS, double* R,
+ double* Rmass, double* muM, double* mu, double* width, double* c, int* clen,
+ double* lambda, double* R0, double* mu0, double* delta0, double* h, double* gammaZ,
+ double* sinW, double* tau, double* tau2, double* res);
+
+static double singularmassdiff(char const* hard, char const* shape, char const* Eshape,
+char const* setup, char const* gap, char const* space, char const* cum, char const* scheme,
+char const* abs, char const* current, double xi, double xiB, int orderAlpha, int runAlpha,
+int orderMass, int runMass, int order, int run, int nf, double j3, double s3, double G3,
+double mZ, double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+double muLambda1, double muLambda2, double Q, double muH, double muJ, double muS, double R,
+double Rmass, double muM, double mu, double width, double c[], long len, double lambda,
+double R0, double mu0, double delta0, double h, double gammaZ, double sinW, double tau,
+double tau2){
+  double res;
+  int clen = len;
+
+f90singularmassdiff_(hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current, &xi,
+&xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3, &G3, &mZ,
+&aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &muH, &muJ, &muS, &R,
+&Rmass, &muM, &mu, &width, c, &clen, &lambda, &R0, &mu0, &delta0, &h, &gammaZ, &sinW,
+&tau, &tau2, &res);
+
+return res;
+
+}
+
+extern double f90massnondist_(char const* hard, char const* shape, char const* Eshape,
+ char const* setup, char const* gap, char const* space, char const* cum, char const* scheme,
+ int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order, int* run, int* nf,
+ double* G3, double* mZ, double* aMz, double* mT, double* muT, double* mB, double* muB,
+ double* mC, double* muC, double* muLambda1, double* muLambda2, double* Q, double* muH,
+ double* muJ, double* muS, double* R, double* Rmass, double* muM, double* mu, double* c,
+ int* clen, double* lambda, double* R0, double* mu0, double* delta0, double* h, double* tau,
+ double* res);
+
+static double massnondist(char const* hard, char const* shape, char const* Eshape,
+ char const* setup, char const* gap, char const* space, char const* cum, char const* scheme,
+ int orderAlpha, int runAlpha, int orderMass, int runMass, int order, int run, int nf,
+ double G3, double mZ, double aMz, double mT, double muT, double mB, double muB,
+ double mC, double muC, double muLambda1, double muLambda2, double Q, double muH, double muJ,
+ double muS, double R, double Rmass, double muM, double mu, double c[], long len,
+ double lambda, double R0, double mu0, double delta0, double h, double tau){
+  double res;
+  int clen = len;
+
+f90massnondist_(hard, shape, Eshape, setup, gap, space, cum, scheme, &orderAlpha,
+ &runAlpha, &orderMass, &runMass, &order, &run, &nf, &G3, &mZ, &aMz, &mT, &muT, &mB,
+ &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &muH, &muJ, &muS, &R, &Rmass, &muM, &mu,
+ c, &clen, &lambda, &R0, &mu0, &delta0, &h, &tau, &res);
+
+return res;
+
+}
+
+extern double f90massnondistdiff_(char const* hard, char const* shape, char const* Eshape,
+ char const* setup, char const* gap, char const* space, char const* cum, char const* scheme,
+ int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order, int* run, int* nf,
+ double* G3, double* mZ, double* aMz, double* mT, double* muT, double* mB, double* muB,
+ double* mC, double* muC, double* muLambda1, double* muLambda2, double* Q, double* muH,
+ double* muJ, double* muS, double* R, double* Rmass, double* muM, double* mu, double* c,
+ int* clen, double* lambda, double* R0, double* mu0, double* delta0, double* h, double* tau,
+ double* tau2, double* res);
+
+static double massnondistdiff(char const* hard, char const* shape, char const* Eshape,
+ char const* setup, char const* gap, char const* space, char const* cum, char const* scheme,
+ int orderAlpha, int runAlpha, int orderMass, int runMass, int order, int run, int nf,
+ double G3, double mZ, double aMz, double mT, double muT, double mB, double muB, double mC,
+ double muC, double muLambda1, double muLambda2, double Q, double muH, double muJ, double muS,
+ double R, double Rmass, double muM, double mu, double c[], long len, double lambda, double R0,
+ double mu0, double delta0, double h, double tau, double tau2){
+  double res;
+  int clen = len;
+
+f90massnondistdiff_(hard, shape, Eshape, setup, gap, space, cum, scheme, &orderAlpha,
+&runAlpha, &orderMass, &runMass, &order, &run, &nf, &G3, &mZ, &aMz, &mT, &muT, &mB,
+&muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &muH, &muJ, &muS, &R, &Rmass, &muM, &mu,
+c, &clen, &lambda, &R0, &mu0, &delta0, &h, &tau, &tau2, &res);
+
+return res;
+
+}
+
+extern double f90massnondistpiece_(char const* hard, char const* shape, char const* Eshape,
+ char const* gap, char const* space, char const* cum, char const* scheme, int* orderAlpha,
+ int* runAlpha, int* orderMass, int* runMass, int* order, int* run, int* nf, double* G3,
+ double* mZ, double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+ double* muC, double* muLambda1, double* muLambda2, double* Q, double* muH, double* muJ,
+ double* muS, double* R, double* Rmass, double* muM, double* mu, int* c, double* lambda,
+ double* R0, double* mu0, double* delta0, double* h, double* tau, double* res);
+
+static double massnondistpiece(char const* hard, char const* shape, char const* Eshape,
+ char const* gap, char const* space, char const* cum, char const* scheme, int orderAlpha,
+ int runAlpha, int orderMass, int runMass, int order, int run, int nf, double G3, double mZ,
+ double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+ double muLambda1, double muLambda2, double Q, double muH, double muJ, double muS, double R,
+ double Rmass, double muM, double mu, int c[], long len, double lambda, double R0,
+ double mu0, double delta0, double h, double tau){
+  double res;
+
+f90massnondistpiece_(hard, shape, Eshape, gap, space, cum, scheme, &orderAlpha, &runAlpha,
+ &orderMass, &runMass, &order, &run, &nf, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
+ &muLambda1, &muLambda2, &Q, &muH, &muJ, &muS, &R, &Rmass, &muM, &mu, c, &lambda, &R0,
+ &mu0, &delta0, &h, &tau, &res);
+
+return res;
+
+}
+
+extern double f90massnondistdiffpiece_(char const* hard, char const* shape, char const* Eshape,
+ char const* gap, char const* space, char const* cum, char const* scheme, int* orderAlpha,
+ int* runAlpha, int* orderMass, int* runMass, int* order, int* run, int* nf, double* G3,
+ double* mZ, double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+ double* muC, double* muLambda1, double* muLambda2, double* Q, double* muH, double* muJ,
+ double* muS, double* R, double* Rmass, double* muM, double* mu, int* c, double* lambda,
+ double* R0, double* mu0, double* delta0, double* h, double* tau, double* tau2,
+ double* res);
+
+static double massnondistdiffpiece(char const* hard, char const* shape, char const* Eshape,
+ char const* gap, char const* space, char const* cum, char const* scheme, int orderAlpha,
+ int runAlpha, int orderMass, int runMass, int order, int run, int nf, double G3, double mZ,
+ double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+ double muLambda1, double muLambda2, double Q, double muH, double muJ, double muS, double R,
+ double Rmass, double muM, double mu, int c[], long len, double lambda, double R0,
+ double mu0, double delta0, double h, double tau, double tau2){
+  double res;
+
+f90massnondistdiffpiece_(hard, shape, Eshape, gap, space, cum, scheme, &orderAlpha, &runAlpha,
+&orderMass, &runMass, &order, &run, &nf, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
+&muLambda1, &muLambda2, &Q, &muH, &muJ, &muS, &R, &Rmass, &muM, &mu, c, &lambda,
+&R0, &mu0, &delta0, &h, &tau, &tau2, &res);
+
+return res;
+
+}
+
+extern double f90singularmasspiece_(char const* hard, char const* shape,
+ char const* Eshape, char const* gap, char const* space, char const* cum,
+ char const* scheme, char const* abs, char const* current, double* xi, double* xiB,
+ int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order, int* run,
+ int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz, double* mT,
+ double* muT, double* mB, double* muB, double* mC, double* muC, double* muLambda1,
+ double* muLambda2, double* Q, double* muH, double* muJ, double* muS, double* R,
+ double* Rmass, double* muM, double* mu, double* width, int* c, double* lambda, double* R0,
+ double* mu0, double* delta0, double* h, double* gammaZ, double* sinW, double* tau,
+ double* res);
+
+static double singularmasspiece(char const* hard, char const* shape, char const* Eshape,
+char const* gap, char const* space, char const* cum, char const* scheme, char const* abs,
+char const* current, double xi, double xiB, int orderAlpha, int runAlpha, int orderMass,
+int runMass, int order, int run, int nf, double j3, double s3, double G3, double mZ,
+double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+double muLambda1, double muLambda2, double Q, double muH, double muJ, double muS, double R,
+double Rmass, double muM, double mu, double width, int c[], long len, double lambda,
+double R0, double mu0, double delta0, double h, double gammaZ, double sinW, double tau){
+  double res;
+
+f90singularmasspiece_(hard, shape, Eshape, gap, space, cum, scheme, abs, current, &xi,
+&xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3, &G3, &mZ,
+&aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &muH, &muJ, &muS, &R,
+&Rmass, &muM, &mu, &width, c, &lambda, &R0, &mu0, &delta0, &h, &gammaZ, &sinW, &tau, &res);
+
+return res;
+
+}
+
+extern double f90singularmassdiffpiece_(char const* hard, char const* shape,
+ char const* Eshape, char const* gap, char const* space, char const* cum,
+ char const* scheme, char const* abs, char const* current, double* xi, double* xiB,
+ int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order, int* run,
+ int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz, double* mT,
+ double* muT, double* mB, double* muB, double* mC, double* muC, double* muLambda1,
+ double* muLambda2, double* Q, double* muH, double* muJ, double* muS, double* R,
+ double* Rmass, double* muM, double* mu, double* width, int* c, double* lambda, double* R0,
+ double* mu0, double* delta0, double* h, double* gammaZ, double* sinW, double* tau,
+ double* tau2, double* res);
+
+static double singularmassdiffpiece(char const* hard, char const* shape, char const* Eshape,
+char const* gap, char const* space, char const* cum, char const* scheme, char const* abs,
+char const* current, double xi, double xiB, int orderAlpha, int runAlpha, int orderMass,
+int runMass, int order, int run, int nf, double j3, double s3, double G3, double mZ,
+double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+double muLambda1, double muLambda2, double Q, double muH, double muJ, double muS, double R,
+double Rmass, double muM, double mu, double width, int c[], long len, double lambda,
+double R0, double mu0, double delta0, double h, double gammaZ, double sinW, double tau,
+double tau2){
+  double res;
+
+f90singularmassdiffpiece_(hard, shape, Eshape, gap, space, cum, scheme, abs, current, &xi,
+&xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3, &G3, &mZ,
+&aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &muH, &muJ, &muS, &R,
+&Rmass, &muM, &mu, &width, c, &lambda, &R0, &mu0, &delta0, &h, &gammaZ, &sinW, &tau, &tau2,
+&res);
+
+return res;
+
+}
+
+extern double f90nsmass_(char const* shape, char const* setup, char const* gap,
+ char const* cum, char const* scheme, char const* abs, char const* current,
+ int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order, int* run,
+ int* nf, double* mZ, double* aMz, double* mT, double* muT, double* mB, double* muBottom,
+ double* mC, double* muC, double* muLambda1, double* muLambda2, double* Q, double* mu,
+ double* muM, double* muB, double* muS, double* R, double* Rmass, double* width,
+ double* c, int* clen, double* lambda, double* R0, double* mu0, double* delta0, double* h,
+ double* gammaZ, double* sinW, double* tau, double* res);
+
+static double nsmass(char const* shape, char const* setup, char const* gap,
+char const* cum, char const* scheme, char const* abs, char const* current, int orderAlpha,
+int runAlpha, int order, int run, int orderMass, int runMass, int nf, double mZ,
+double aMz, double mT, double muT, double mB, double muBottom, double mC, double muC,
+double muLambda1, double muLambda2, double Q, double mu, double muM, double muB,
+double muS, double R, double Rmass, double width, double c[], long len, double lambda,
+double R0, double mu0, double delta0, double h, double gammaZ, double sinW, double tau){
+  double res;
+  int clen = len;
+
+f90nsmass_(shape, setup, gap, cum, scheme, abs, current, &orderAlpha, &runAlpha, &order,
+&run, &orderMass, &runMass, &nf, &mZ, &aMz, &mT, &muT, &mB, &muBottom, &mC, &muC,
+&muLambda1, &muLambda2, &Q, &mu, &muM, &muB, &muS, &R, &Rmass, &width, c, &clen, &lambda,
+&R0, &mu0, &delta0, &h, &gammaZ, &sinW, &tau, &res);
+
+return res;
+
+}
+
+extern double f90nsmassdiff_(char const* shape, char const* setup, char const* gap,
+ char const* cum, char const* scheme, char const* abs, char const* current,
+ int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order, int* run,
+ int* nf, double* mZ, double* aMz, double* mT, double* muT, double* mB, double* muBottom,
+ double* mC, double* muC, double* muLambda1, double* muLambda2, double* Q, double* mu,
+ double* muM, double* muB, double* muS, double* R, double* Rmass, double* width,
+ double* c, int* clen, double* lambda, double* R0, double* mu0, double* delta0, double* h,
+ double* gammaZ, double* sinW, double* tau, double* tau2, double* res);
+
+static double nsmassdiff(char const* shape, char const* setup, char const* gap,
+char const* cum, char const* scheme, char const* abs, char const* current, int orderAlpha,
+int runAlpha, int order, int run, int orderMass, int runMass, int nf, double mZ,
+double aMz, double mT, double muT, double mB, double muBottom, double mC, double muC,
+double muLambda1, double muLambda2, double Q, double mu, double muM, double muB,
+double muS, double R, double Rmass, double width, double c[], long len, double lambda,
+double R0, double mu0, double delta0, double h, double gammaZ, double sinW, double tau,
+double tau2){
+  double res;
+  int clen = len;
+
+f90nsmassdiff_(shape, setup, gap, cum, scheme, abs, current, &orderAlpha, &runAlpha, &order,
+&run, &orderMass, &runMass, &nf, &mZ, &aMz, &mT, &muT, &mB, &muBottom, &mC, &muC,
+&muLambda1, &muLambda2, &Q, &mu, &muM, &muB, &muS, &R, &Rmass, &width, c, &clen, &lambda,
+&R0, &mu0, &delta0, &h, &gammaZ, &sinW, &tau, &tau2, &res);
+
+return res;
+
+}
+
+extern double f90hjmnsmass_(char const* setup, char const* gap, char const* cum,
+ char const* scheme, char const* abs, char const* current, int* orderAlpha, int* runAlpha,
+ int* orderMass, int* runMass, int* order, int* run, int* nf, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muBottom, double* mC, double* muC,
+ double* muLambda1, double* muLambda2, double* Q, double* mu, double* muM, double* muB,
+ double* muS, double* R, double* Rmass, double* width, double* c, int* clen,
+ double* lambda, double* R0, double* mu0, double* delta0, double* h, double* gammaZ,
+ double* sinW, double* tau, double* res);
+
+static double hjmnsmass(char const* setup, char const* gap, char const* cum,
+char const* scheme, char const* abs, char const* current, int orderAlpha, int runAlpha,
+int order, int run, int orderMass, int runMass, int nf, double mZ, double aMz, double mT,
+double muT, double mB, double muBottom, double mC, double muC, double muLambda1,
+double muLambda2, double Q, double mu, double muM, double muB, double muS, double R,
+double Rmass, double width, double c[], long len, int clen, double lambda, double R0,
+double mu0, double delta0, double h, double gammaZ, double sinW, double tau){
+  double res;
+
+f90hjmnsmass_(setup, gap, cum, scheme, abs, current, &orderAlpha, &runAlpha, &order,
+&run, &orderMass, &runMass, &nf, &mZ, &aMz, &mT, &muT, &mB, &muBottom, &mC, &muC,
+&muLambda1, &muLambda2, &Q, &mu, &muM, &muB, &muS, &R, &Rmass, &width, c, &clen, &lambda,
+&R0, &mu0, &delta0, &h, &gammaZ, &sinW, &tau, &res);
+
+return res;
+
+}
+
+extern double f90hjmnsmassdiff_(char const* setup, char const* gap, char const* cum,
+ char const* scheme, char const* abs, char const* current, int* orderAlpha, int* runAlpha,
+ int* orderMass, int* runMass, int* order, int* run, int* nf, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muBottom, double* mC, double* muC,
+ double* muLambda1, double* muLambda2, double* Q, double* mu, double* muM, double* muB,
+ double* muS, double* R, double* Rmass, double* width, double* c, int* clen,
+ double* lambda, double* R0, double* mu0, double* delta0, double* h, double* gammaZ,
+ double* sinW, double* tau, double* tau2, double* res);
+
+static double hjmnsmassdiff(char const* setup, char const* gap, char const* cum,
+char const* scheme, char const* abs, char const* current, int orderAlpha, int runAlpha,
+int order, int run, int orderMass, int runMass, int nf, double mZ, double aMz, double mT,
+double muT, double mB, double muBottom, double mC, double muC, double muLambda1,
+double muLambda2, double Q, double mu, double muM, double muB, double muS, double R,
+double Rmass, double width, double c[], long len, int clen, double lambda, double R0,
+double mu0, double delta0, double h, double gammaZ, double sinW, double tau, double tau2){
+  double res;
+
+f90hjmnsmassdiff_(setup, gap, cum, scheme, abs, current, &orderAlpha, &runAlpha, &order,
+&run, &orderMass, &runMass, &nf, &mZ, &aMz, &mT, &muT, &mB, &muBottom, &mC, &muC,
+&muLambda1, &muLambda2, &Q, &mu, &muM, &muB, &muS, &R, &Rmass, &width, c, &clen, &lambda,
+&R0, &mu0, &delta0, &h, &gammaZ, &sinW, &tau, &tau2, &res);
+
+return res;
+
+}
+
+extern double f90nsmasspiece_(char const* shape, char const* gap, char const* cum,
+ char const* scheme, char const* abs, char const* current, int* orderAlpha, int* runAlpha,
+ int* orderMass, int* runMass, int* order, int* run, int* nf, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muBottom, double* mC, double* muC,
+ double* muLambda1, double* muLambda2, double* Q, double* mu, double* muM, double* muB,
+ double* muS, double* R, double* Rmass, double* width, int* c, double* lambda, double* R0,
+ double* mu0, double* delta0, double* h, double* gammaZ, double* sinW, double* tau,
+ double* res);
+
+static double nsmasspiece(char const* shape, char const* gap, char const* cum,
+char const* scheme, char const* abs, char const* current, int orderAlpha, int runAlpha,
+int order, int run, int orderMass, int runMass, int nf, double mZ, double aMz, double mT,
+double muT, double mB, double muBottom, double mC, double muC, double muLambda1,
+double muLambda2, double Q, double mu, double muM, double muB, double muS, double R,
+double Rmass, double width, int c[], long len, double lambda, double R0, double mu0,
+double delta0, double h, double gammaZ, double sinW, double tau){
+  double res;
+
+f90nsmasspiece_(shape, gap, cum, scheme, abs, current, &orderAlpha, &runAlpha, &order,
+&run, &orderMass, &runMass, &nf, &mZ, &aMz, &mT, &muT, &mB, &muBottom, &mC, &muC,
+&muLambda1, &muLambda1, &Q, &mu, &muM, &muB, &muS, &R, &Rmass, &width, c, &lambda, &R0,
+&mu0, &delta0, &h, &gammaZ, &sinW, &tau, &res);
+
+return res;
+
+}
+
+extern double f90nsmassdiffpiece_(char const* shape, char const* gap, char const* cum,
+ char const* scheme, char const* abs, char const* current, int* orderAlpha, int* runAlpha,
+ int* orderMass, int* runMass, int* order, int* run, int* nf, double* mZ, double* aMz,
+ double* mT, double* muT, double* mB, double* muBottom, double* mC, double* muC,
+ double* muLambda1, double* muLambda2, double* Q, double* mu, double* muM, double* muB,
+ double* muS, double* R, double* Rmass, double* width, int* c, double* lambda, double* R0,
+ double* mu0, double* delta0, double* h, double* gammaZ, double* sinW, double* tau,
+ double* tau2, double* res);
+
+static double nsmassdiffpiece(char const* shape, char const* gap, char const* cum,
+char const* scheme, char const* abs, char const* current, int orderAlpha, int runAlpha,
+int order, int run, int orderMass, int runMass, int nf, double mZ, double aMz, double mT,
+double muT, double mB, double muBottom, double mC, double muC, double muLambda1,
+double muLambda2, double Q, double mu, double muM, double muB, double muS, double R,
+double Rmass, double width, int c[], long len, double lambda, double R0, double mu0,
+double delta0, double h, double gammaZ, double sinW, double tau, double tau2){
+  double res;
+
+f90nsmassdiffpiece_(shape, gap, cum, scheme, abs, current, &orderAlpha, &runAlpha, &order,
+&run, &orderMass, &runMass, &nf, &mZ, &aMz, &mT, &muT, &mB, &muBottom, &mC, &muC,
+&muLambda1, &muLambda1, &Q, &mu, &muM, &muB, &muS, &R, &Rmass, &width, c, &lambda, &R0,
+&mu0, &delta0, &h, &gammaZ, &sinW, &tau, &tau2, &res);
+
+return res;
+
+}
+
+extern double f90singularpiece_(char const* hard, char const* shape, char const* gap,
+ char const* space, char const* cum, int* orderAlpha, int* runAlpha, int* order, int* run,
+ int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz, double* mT,
+ double* muT, double* mB, double* muB, double* mC, double* muC, double* muLambda,
+ double* Q, double* muH, double* muJ, double* muS, double* R, double* mu, int* c,
+ double* lambda, double* R0, double* mu0, double* delta0, double* h, double* tau,
+ double* res);
+
+static double singularpiece(char const* hard, char const* shape, char const* gap, char const* space,
+ char const* cum, int orderAlpha, int runAlpha, int order, int run, int nf, double j3,
+ double s3, double G3, double mZ, double aMz, double mT, double muT, double mB, double muB,
+ double mC, double muC, double muLambda, double Q, double muH, double muJ, double muS,
+ double R, double mu, int c[], long len, double lambda, double R0, double mu0, double delta0,
+ double h, double tau){
+  double res;
+
+f90singularpiece_(hard, shape, gap, space, cum, &orderAlpha, &runAlpha, &order, &run, &nf, &j3,
+             &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda, &Q, &muH,
+             &muJ, &muS, &R, &mu, c, &lambda, &R0, &mu0, &delta0, &h, &tau, &res);
+
+return res;
+
+}
+
+extern double f90singulardiffpiece_(char const* hard, char const* shape, char const* gap,
+ char const* space, char const* cum, int* orderAlpha, int* runAlpha, int* order, int* run,
+ int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz, double* mT,
+ double* muT, double* mB, double* muB, double* mC, double* muC, double* muLambda,
+ double* Q, double* muH, double* muJ, double* muS, double* R, double* mu, int* c,
+ double* lambda, double* R0, double* mu0, double* delta0, double* h, double* tau,
+ double* tau2, double* res);
+
+static double singulardiffpiece(char const* hard, char const* shape, char const* gap, char const* space,
+ char const* cum, int orderAlpha, int runAlpha, int order, int run, int nf, double j3,
+ double s3, double G3, double mZ, double aMz, double mT, double muT, double mB, double muB,
+ double mC, double muC, double muLambda, double Q, double muH, double muJ, double muS,
+ double R, double mu, int c[], long len, double lambda, double R0, double mu0, double delta0,
+ double h, double tau, double tau2){
+  double res;
+
+f90singulardiffpiece_(hard, shape, gap, space, cum, &orderAlpha, &runAlpha, &order, &run, &nf,
+&j3, &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda, &Q, &muH, &muJ,
+&muS, &R, &mu, c, &lambda, &R0, &mu0, &delta0, &h, &tau, &tau2, &res);
+
+return res;
+
+}
+
+extern double f90anomdim_(char const* str, int* nf, double* G4, double* result);
+
+static void anomdim(char const* str, int nf, double G4){
+  double result[4];
+
+   f90anomdim_(str, &nf, &G4, result);
+
+   MLPutRealList(stdlink, result, 4);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90scoef_(char const* str, int* nf, double* result);
+
+static void scoef(char const* str, int nf){
+  double result[3];
+
+   f90scoef_(str, &nf, result);
+
+   MLPutRealList(stdlink, result, 3);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90fomass_(char const* shape, char const* current, double* m, double* Q,
+          double* Mz, double* gammaZ, double* sin2ThetaW, double* tau, double* result);
+
+static double fomass(char const* shape, char const* current, double m, double Q,
+                     double Mz, double gammaZ, double sin2ThetaW, double tau){
+  double result;
+
+  f90fomass_(shape, current, &m, &Q, &Mz, &gammaZ, &sin2ThetaW, &tau, &result);
+   return result;
+}
+
+extern double f90thrustns1loop_(double* tau, double* result);
+
+static void thrustns1loop(double tau){
+  double result[3];
+
+   f90thrustns1loop_(&tau, result);
+
+   MLPutRealList(stdlink, result, 3);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90thrustns2loop_(double *er, double* tau, double* result);
+
+static void thrustns2loop(double er, double tau){
+  double result[2];
+
+   f90thrustns2loop_(&er, &tau, result);
+
+   MLPutRealList(stdlink, result, 2);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90polylog_(int* nf, double* z, double* result);
+
+static double polylog(int n, double z){
+  double res;
+
+   f90polylog_(&n, &z, &res);
+
+   return res;
+}
+
+extern double f90dilog_(double* z, double* result);
+
+static double dilog(double z){
+  double res;
+
+   f90dilog_(&z, &res);
+
+   return res;
+}
+
+extern double f90pfq_(double* a, int* clena, double* b, int* clenb, double* z, double* res);
+
+static double pfq(double a[], long lena, double b[], long lenb, double z){
+  int clena = lena; int clenb = lenb;
+  double res;
+
+   f90pfq_(a, &clena, b, &clenb, &z, &res);
+
+   return res;
+}
+
+extern double f90elliptic3_(double* psi, double* k, double* c, double* result);
+
+static double elliptic3(double psi, double k, double c){
+  double res;
+
+   f90elliptic3_(&psi, &k, &c, &res);
+
+   return res;
+}
+
+extern double f90nglfunction_(int* nf, double* z, double* result);
+
+static double nglfunction(int n, double z){
+  double res;
+
+   f90nglfunction_(&n, &z, &res);
+
+   return res;
+}
+
+extern double f90complexpolylog_(int* nf, double* z1, double* z2, double* result);
+
+static void complexpolylog(int n, double z1, double z2){
+  double res[2];
+
+   f90complexpolylog_(&n, &z1, &z2, res);
+
+   MLPutFunction(stdlink, "Complex", 2);
+   MLPutReal(stdlink, res[0]);
+   MLPutReal(stdlink, res[1]);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90nglsoft_(int* nf, double* z1, double* z2, double* result);
+
+static void nglsoft(int n, double z1, double z2){
+  double res[2];
+
+   f90nglsoft_(&n, &z1, &z2, res);
+
+   MLPutFunction(stdlink, "Complex", 2);
+   MLPutReal(stdlink, res[0]);
+   MLPutReal(stdlink, res[1]);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90cli2_(double* z1, double* z2, double* result);
+
+static void cli2(double z1, double z2){
+  double res[2];
+
+   f90cli2_(&z1, &z2, res);
+
+   MLPutFunction(stdlink, "Complex", 2);
+   MLPutReal(stdlink, res[0]);
+   MLPutReal(stdlink, res[1]);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90cli3_(double* z1, double* z2, double* result);
+
+static void cli3(double z1, double z2){
+  double res[2];
+
+   f90cli3_(&z1, &z2, res);
+
+   MLPutFunction(stdlink, "Complex", 2);
+   MLPutReal(stdlink, res[0]);
+   MLPutReal(stdlink, res[1]);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90deltagap_(char const* str, int* orderAlpha, int* runAlpha, int* runMass,
+int* nf, double* mZ, double* aMz, double* mT, double* muT, double* mB, double* muB,
+double* mC, double* muC, double* mu, double* R, double* result);
+
+static void deltagap(char const* str, int orderAlpha, int runAlpha, int runMass, int nf,
+double mZ, double aMz, double mT, double muT, double mB, double muB, double mC,
+double muC, double mu, double R){
+  double result[3];
+
+   f90deltagap_(str, &orderAlpha, &runAlpha, &runMass, &nf, &mZ, &aMz, &mT, &muT, &mB,
+   &muB, &mC, &muC, &mu, &R, result);
+
+   MLPutRealList(stdlink, result, 3);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90delta_(char const* str, int* nf, double* mu, double* R, double* result);
+
+static void delta(char const* str, int nf, double mu, double R){
+  double result[3];
+
+   f90delta_(str, &nf, &mu, &R, result);
+
+   MLPutRealList(stdlink, result, 3);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90diffdeltagap_(char const* str, char const* scheme, int* order, double*R0,
+double* R1, double* mu0, double* mu1, double* muLambda, int* orderAlpha, int* runAlpha,
+int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB,
+double* mC, double* muC, double* result);
+
+static double diffdeltagap(char const* str, char const* scheme, int order, double R0,
+double R1, double mu0, double mu1, double muLambda, int orderAlpha, int runAlpha, int nf,
+double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
+double muC){
+
+  double result;
+
+  f90diffdeltagap_(str, scheme, &order, &R0, &R1, &mu0, &mu1, &muLambda, &orderAlpha,
+   &runAlpha, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &result);
+
+   return result;
+}
+
+extern double f90diffdeltagapmass_(char const* str, int* order, double* R0, double* R1,
+double* mu0, double* mu1, double* muM, double* muLambda1, double* muLambda2,
+int* orderAlpha, int* runAlpha, int* runMass, int* nf, double* Mz, double* aMz, double* mT,
+double* muT, double* mB, double* muB, double* mC, double* muC, double* result);
+
+static double diffdeltagapmass(char const* str, int order, double R0, double R1,
+double mu0, double mu1, double muM, double muLambda1, double muLambda2, int orderAlpha,
+int runAlpha, int runMass, int nf, double Mz, double aMz, double mT, double muT, double mB,
+double muB, double mC, double muC){
+
+  double result;
+
+  f90diffdeltagapmass_(str, &order, &R0, &R1, &mu0, &mu1, &muM, &muLambda1, &muLambda2,
+  &orderAlpha, &runAlpha, &runMass, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
+  &result);
+
+   return result;
+}
+
+extern double f90coefmat_(char const* str, int* nf, double* s3, double* result);
+
+static void coefmat(char const* str, int nf, double s3){
+  double result[15];
+
+   f90coefmat_(str, &nf, &s3, result);
+
+   MLPutFunction(stdlink, "Partition", 2);
+   MLPutRealList(stdlink, result, 15);
+   MLPutInteger(stdlink, 5);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90model_(double* c, int* clen, double* lambda, int* k, double* l, double* result);
+
+static double model(double c[], long clen, double lambda, int k, double l){
+  double res;
+  int len = clen;
+
+   f90model_(c, &len, &lambda, &k, &l, &res);
+
+   return res;
+}
+
+extern double f90modeldiff_(double* c, int* clen, double* lambda, int* k, double* l,
+double* l2, double* result);
+
+static double modeldiff(double c[], long clen, double lambda, int k, double l, double l2){
+  double res;
+  int len = clen;
+
+   f90modeldiff_(c, &len, &lambda, &k, &l, &l2, &res);
+
+   return res;
+}
+
+extern double f90breitmodel_(double* c, int* clen, double* lambda, double* width,
+int* k, double* l, double* result);
+
+static double breitmodel(double c[], long clen, double lambda, double width, int k, double l){
+  double res;
+  int len = clen;
+
+   f90breitmodel_(c, &len, &lambda, &width, &k, &l, &res);
+
+   return res;
+}
+
+extern double f90breitmodeldiff_(double* c, int* clen, double* lambda, double* width,
+int* k, double* l, double* l2, double* result);
+
+static double breitmodeldiff(double c[], long clen, double lambda, double width,
+int k, double l, double l2){
+  double res;
+  int len = clen;
+
+   f90breitmodeldiff_(c, &len, &lambda, &width, &k, &l, &l2, &res);
+
+   return res;
+}
+
+extern double f90taylor_(double* c, int* clen, double* lambda, int* k, double* result);
+
+static double taylor(double c[], long clen, double lambda, int k){
+  double res;
+  int len = clen;
+
+   f90taylor_(c, &len, &lambda, &k, &res);
+
+   return res;
+}
+
+extern double f90momentmodel_(double* c, int* clen, double* lambda, int* k,
+                              double* result);
+
+static double momentmodel(double c[], long clen, double lambda, int k){
+  double res;
+  int len = clen;
+
+   f90momentmodel_(c, &len, &lambda, &k, &res);
+
+   return res;
+}
+
+extern double f90modelpiece_(int* c, double* lambda, int* k, double* l, double* result);
+
+static double modelpiece(int c[], long clen, double lambda, int k, double l){
+  double res;
+
+   f90modelpiece_(c, &lambda, &k, &l, &res);
+
+   return res;
+}
+
+extern double f90taylorpiece_(int* c, double* lambda, int* k, double* result);
+
+static double taylorpiece(int c[], long clen, double lambda, int k){
+  double res;
+
+   f90taylorpiece_(c, &lambda, &k, &res);
+
+   return res;
+}
+
+extern double f90wtilde_(int* order, int* nf, double* gamma, double* a0, double* a1,
+                         double* res);
+
+static double wtilde(int order, int nf, double gamma[], long ngamma, double a0, double a1){
+  double res;
+
+   f90wtilde_(&order, &nf, gamma, &a0, &a1, &res);
+
+   return res;
+}
+
+extern double f90ktilde_(int* order, int* nf, double* gamma, double* a0, double* a1,
+                         double* res);
+
+static double ktilde(int order, int nf, double gamma[], long ngamma, double a0,
+double a1){
+  double res;
+
+   f90ktilde_(&order, &nf, gamma, &a0, &a1, &res);
+
+   return res;
+}
+
+extern double f90alphaqcd_(char const* str, int* order, int* run, int* nf, double* Mz,
+double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+double* mu, double* res);
+
+static double alphaqcd(char const* str, int order, int run, int nf, double Mz, double
+aMz, double mT, double muT, double mB, double muB, double mC, double muC, double mu){
+
+   double res;
+
+   f90alphaqcd_(str, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
+   &mu, &res);
+
+  return res;
+}
+
+extern double f90lambdaqcd_(char const* str, int* order, int* runAlpha, int* run, int* nf,
+double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+double* muC, double* mu, double* res);
+
+static double lambdaqcd(char const* str, int order, int runAlpha, int run, int nf,
+double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
+double muC, double mu){
+
+   double res;
+
+   f90lambdaqcd_(str, &order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC,
+   &muC, &mu, &res);
+
+  return res;
+}
+
+extern double f90msbarmass_(int* order, int* runAlpha, int* run, int* nf, double* Mz,
+double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+double* mu, double* res);
+
+static double msbarmass(int order, int runAlpha, int run, int nf, double Mz, double aMz,
+double mT, double muT, double mB, double muB, double mC, double muC, double mu){
+
+   double res;
+
+   f90msbarmass_(&order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC,
+                 &muC, &mu, &res);
+
+  return res;
+}
+
+extern double f90polemass_(int* orderAlpha, int* runAlpha, int*order, int* run, int* nf,
+double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+double* muC, double* mu, double* res);
+
+static double polemass(int orderAlpha, int runAlpha, int order, int run, int nf, double Mz,
+double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+double mu){
+
+   double res;
+
+   f90polemass_(&orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB,
+                 &muB, &mC, &muC, &mu, &res);
+
+  return res;
+}
+
+extern double f90msbarmasslow_(int* order, int* runAlpha, int* run, int* nf, double* Mz,
+double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+double* mu, double* res);
+
+static double msbarmasslow(int order, int runAlpha, int run, int nf, double Mz, double aMz,
+double mT, double muT, double mB, double muB, double mC, double muC, double mu){
+
+   double res;
+
+   f90msbarmasslow_(&order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC,
+                 &muC, &mu, &res);
+
+  return res;
+}
+
+extern double f90msrmass_(int* order, int* runAlpha, int* run, int* nf, double* Mz,
+double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+double* mu, double* R, double* res);
+
+static double msrmass(int order, int runAlpha, int run, int nf, double Mz, double aMz,
+double mT, double muT, double mB, double muB, double mC, double muC, double mu, double R){
+
+   double res;
+
+   f90msrmass_(&order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
+               &mu, &R, &res);
+
+  return res;
+}
+
+extern double f90mmfrommsr_(int* order, int* runAlpha, int* run, int* nf, double* Mz,
+double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+double* mu, double* R, double* res);
+
+static double mmfrommsr(int order, int runAlpha, int run, int nf, double Mz, double aMz,
+double mT, double muT, double mB, double muB, double mC, double muC, double mu, double R){
+
+   double res;
+
+   f90mmfrommsr_(&order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
+               &mu, &R, &res);
+
+  return res;
+}
+
+extern double f90mmfrommsrnatural_(int* orderAlpha, int* runAlpha, int* order, int* run,
+int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB,
+double* mC, double* muC, double* mu, double* R, double* res);
+
+static double mmfrommsrnatural(int orderAlpha, int runAlpha, int order, int run, int nf,
+double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
+double muC, double mu, double R){
+
+   double res;
+
+   f90mmfrommsrnatural_(&orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT,
+   &mB, &muB, &mC, &muC, &mu, &R, &res);
+
+  return res;
+}
+
+extern double f90msrnaturalmass_(int* orderAlpha, int* runAlpha, int* order, int* run,
+int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB,
+double* mC, double* muC, double* mu, double* R, double* res);
+
+static double msrnaturalmass(int orderAlpha, int runAlpha, int order, int run, int nf,
+double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
+double muC, double mu, double R){
+
+   double res;
+
+   f90msrnaturalmass_(&orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT,
+   &mB, &muB, &mC, &muC, &mu, &R, &res);
+
+  return res;
+}
+
+extern double f90jetmass_(int* orderAlpha, int* runAlpha, int* order, int* run, int* nf,
+double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+double* muC, double* muLambda, double* R, double* mu, double* res);
+
+static double jetmass(int orderAlpha, int runAlpha, int order, int run, int nf,
+double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
+double muC, double muLambda, double R, double mu){
+
+   double res;
+
+   f90jetmass_(&orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB,
+               &muB, &mC, &muC, &muLambda, &R, &mu, &res);
+
+  return res;
+}
+
+extern double f90mmfromjetmass_(int* orderAlpha, int* runAlpha, int* order, int* run,
+int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB,
+double* mC, double* muC, double* muLambda, double* R, double* mu, double* res);
+
+static double mmfromjetmass(int orderAlpha, int runAlpha, int order, int run, int nf,
+double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
+double muC, double muLambda, double R, double mu){
+
+   double res;
+
+   f90mmfromjetmass_(&orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB,
+               &muB, &mC, &muC, &muLambda, &R, &mu, &res);
+
+  return res;
+}
+
+extern double f90deltamsbar_(int* order, int* runAlpha, int* run, int* nf, double* Mz,
+double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+double* mu, double* res);
+
+static void deltamsbar(int order, int runAlpha, int run, int nf, double Mz, double aMz,
+double mT, double muT, double mB, double muB, double mC, double muC, double mu){
+
+   double res[3];
+
+   f90deltamsbar_(&order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC,
+   &muC, &mu, res);
+
+   MLPutRealList(stdlink, res, 3);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90rhad_(char const* str, int* orderAlpha, int* runAlpha, int* order,
+int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB,
+double* mC, double* muC, double* mu, double * Q, double* res);
+
+static double rhad(char const* str, int orderAlpha, int runAlpha, int order, int nf,
+double Mz, double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+double mu, double Q){
+
+   double res;
+
+   f90rhad_(str, &orderAlpha, &runAlpha, &order, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB,
+   &mC, &muC, &mu, &Q, &res);
+
+  return res;
+}
+
+extern double f90rhadmass_(char const* str, char const* curr, int* orderAlpha,
+int* runAlpha, int* runMass, int* order, int* nf, double* Mz, double* gammaZ,
+double* sinW, double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+double* muC, double* mu, double * Q, double* res);
+
+static double rhadmass(char const* str, char const* curr, int orderAlpha, int runAlpha,
+int runMass, int order, int nf, double Mz, double gammaZ, double sinW, double aMz,
+double mT, double muT, double mB, double muB, double mC, double muC, double mu, double Q){
+
+   double res;
+
+   f90rhadmass_(str, curr, &orderAlpha, &runAlpha, &runMass, &order, &nf, &Mz, &gammaZ,
+                &sinW, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &mu, &Q, &res);
+
+  return res;
+}
+
+extern double f90hyper2f1_(double *a, double *b, double *c, double *x, double *res);
+
+static double hyper2f1( double a, double b, double c, double x){
+  double res;
+
+   f90hyper2f1_(&a, &b, &c, &x, &res);
+
+   return res;
+}
+
+extern double f90intecorre_(double *b, double *x0, double *x1, double *res);
+
+static double intecorre( double b, double x0, double x1){
+  double res;
+
+   f90intecorre_(&b, &x0, &x1, &res);
+
+   return res;
+}
+
+extern double f90hyperf32exact_(double *w, double *x, double *res);
+
+static double hyperf32exact(double w, double x){
+  double res;
+
+   f90hyperf32exact_(&w, &x, &res);
+
+   return res;
+}
+
+int main(int argc, char *argv[]){
+    return MLMain(argc, argv);
+}

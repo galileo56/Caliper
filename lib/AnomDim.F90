@@ -1,0 +1,728 @@
+
+module AnomDimClass
+  use Constants, only: dp, d1mach, Pi, Pi2, ExpEuler, prec;  use QuadPack, only: qags
+  use adapt, only: dGauss; implicit none ;  private
+
+  real (dp), parameter :: al = 0.634_dp, bet = 1.035_dp, gam = - 23.6_dp, &
+                          ep = 1.19_dp, del = - 0.481_dp
+  public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta, &
+                          MSbarDeltaPiece, PowList
+  interface PowList
+    module procedure   :: PowListDP, PowListInt, PowListComp
+  end interface PowList
+
+!ccccccccccccccc
+
+  type, public :: AnomDim
+    private
+    integer                       :: nf
+    character (len = 5)           :: str
+    real (dp)                     :: G4
+    real (dp), dimension(0:3,0:3) :: gammaHm
+    real (dp), dimension(3)       :: sCoefMSR, sCoefMSRNatural, bHat, betaList, gammaR,  &
+                                     gammaRNatural
+    real (dp), dimension(0:3)     :: beta, cusp, gammaMass, gammaHard, gammaB, gammaJet, &
+                                     gammaSoft
+    contains
+
+    procedure, pass(self), public :: expandAlpha, wTildeExpand, kTildeExpand, MSRDelta,  &
+               sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
+               bHQETgamma, alphaMatching, alphaMatchingInverse, wTildeHm, GammaRComputer,&
+               sCoefHadron, scheme
+
+   procedure, pass(self), public ::  wTildeReal, wTildeComplex, kTildeReal, kTildeComplex
+
+   generic, public   :: wTilde => wTildeReal, wTildeComplex
+   generic, public   :: kTilde => kTildeReal, kTildeComplex
+
+  end type AnomDim
+
+!ccccccccccccccc
+
+  interface AnomDim
+    module procedure InAdim
+  end interface AnomDim
+
+  contains
+
+!ccccccccccccccc
+
+   type(AnomDim) function InAdim(str, nf, G4)
+    character (len = *), intent(in) :: str
+    integer            , intent(in) :: nf         ! number of active flavors
+    real (dp)          , intent(in) :: G4         ! cusp anomalous dimension
+    real (dp), dimension(3)         :: betaList
+    real (dp), dimension(0:3)       :: beta
+
+
+    beta = [ 11 - 2 * nf/3._dp, 102 - 38._dp * nf/3, 1428.5 - 5033 * nf/18._dp            + &
+                    325 * nf**2/54._dp, 29242.964136194132_dp - 6946.289617003555_dp * nf + &
+                    405.08904045986293_dp * nf**2 + 1.4993141289437586_dp * nf**3 ]
+
+    InAdim%str = str ; InAdim%nf      = nf ;    InAdim%beta = beta
+    InAdim%G4  = G4  ; InAdim%gammaHm = 0
+
+    InAdim%cusp = [ 16._dp/3, 66.47322097196788_dp - 5.925925925925926_dp * nf, &
+    1174.8982718294073_dp - 183.18743044213898_dp * nf - 0.7901234567901234_dp * nf**2, G4 ]
+
+    InAdim%GammaMass = [ - 4._dp, - 16 * (101._dp/24 - 5._dp * nf/36), &
+     - 64 * (1249._dp/64 - 2.284121493373736_dp * nf - 35._dp/1296 * nf**2 ), &
+     - 256 * (98.9434142552029_dp - 19.1074619186354_dp * nf +  &
+       0.005793222354358382_dp * nf**3 + 0.27616255142989465_dp * nf**2 ) ]
+
+    InAdim%gammaJet = [ 8._dp, 11.643665868860921_dp - 17.79927174385542_dp * nf, &
+    407.55606459953486_dp - 170.69272520622684_dp * nf + 1.4510585125043_dp * nf**2, 0._dp ]
+
+    InAdim%gammaB = [ 16._dp/3, 9.7609731286894_dp - 8.532462893504388_dp * nf, &
+    154.56312636466896_dp - 108.96471855555455_dp * nf - 1.1952605707205706_dp * nf**2, 0._dp ]
+
+    InAdim%gammaHard = [ - 8._dp, - 74.8217346132464_dp + 15.19273477627696_dp * nf, &
+    - 1499.402316365377_dp + 259.2839279841602_dp * nf - 1.8561956264347472_dp * nf**2, 0._dp ]
+
+    InAdim%gammaSoft    = - InAdim%gammaHard - InAdim%gammaJet
+    InAdim%gammaHm(:,0) = - InAdim%gammaSoft - InAdim%gammaB
+
+    if (str(:5) == 'MSbar') then
+
+      InAdim%gammaHm(:1,1) = [ 512._dp/9, 2142.6359241459822_dp - 177.726619506625_dp * nf ]
+      InAdim%gammaHm(0,2)  =  709.0476903676573_dp -  63.20987654320987_dp * nf
+
+    end if
+
+    InAdim%bHat = [ beta(1)/beta(0)**2, ( beta(1)**2 - beta(0) * beta(2) )/beta(0)**4/2,&
+     ( beta(1)**3 - 2 * beta(0) * beta(1) * beta(2) + beta(0)**2 * beta(3) )/beta(0)**6/4 ]/2
+
+    betaList = PowList( 1/beta(0)/2, 3 ); InAdim%betaList = betaList
+
+    InAdim%gammaR        = InAdim%GammaRComputer( InAdim%MSRDelta() )
+    InAdim%gammaRNatural = InAdim%GammaRComputer( MSbarDelta(nf, 0) )
+
+    InAdim%sCoefMSR        = InAdim%sCoef(  betaList * InAdim%GammaRComputer( InAdim%MSRDelta() )  )
+    InAdim%sCoefMSRNatural = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf, 0) )  )
+
+   end function InAdim
+
+!ccccccccccccccc
+
+   pure character (len = 5) function scheme(self)
+    class (AnomDim), intent(in) :: self
+    scheme = self%str
+   end function scheme
+
+!ccccccccccccccc
+
+   pure real (dp) function Gfun(self, order, t)
+     class (AnomDim), intent(in) :: self
+     real (dp)      , intent(in) :: t
+     integer        , intent(in) :: order
+
+     if (order >= 0) Gfun = t
+     if (order >= 2) Gfun = Gfun - self%bHat(2)/t
+     if (order >= 3) Gfun = Gfun - self%bHat(3)/2/t**2
+
+     Gfun = exp(Gfun);     if (order > 0) Gfun = (-t)**self%bHat(1) * Gfun
+
+   end function Gfun
+
+!ccccccccccccccc
+
+   pure real (dp) function gamma4(self)
+    class (AnomDim), intent(in) :: self
+    gamma4 = self%G4
+   end
+
+!ccccccccccccccc
+
+   pure integer function numFlav(self)
+    class (AnomDim), intent(in) :: self
+    numFlav = self%nf
+   end
+
+!ccccccccccccccc
+
+   pure real (dp) function wTildeReal(self, order, gamma, a0, a1)
+    class(AnomDim)           , intent(in) :: self
+    integer                  , intent(in) :: order
+    real (dp)                , intent(in) :: a0, a1
+    real (dp), dimension(0:3), intent(in) :: gamma
+    real (dp)                             :: lg
+
+    lg = log(a1/a0); wTildeReal = 0
+
+    if (order > -1) wTildeReal = wTildeReal - gamma(0) * lg/self%beta(0)
+
+    if (order > 0) wTildeReal = wTildeReal + (a1 - a0)/self%beta(0)/4/Pi * &
+                          ( self%beta(1) * gamma(0)/self%beta(0) - gamma(1) )
+
+    if (order > 1) wTildeReal = wTildeReal - (a1**2 - a0**2)/32/Pi2/self%beta(0) * &
+   ( ( self%beta(1)/self%beta(0) )**2 * gamma(0) - self%beta(2) * &
+   gamma(0)/self%beta(0) - self%beta(1) * gamma(1)/self%beta(0) + gamma(2) )
+
+    if (order > 2) wTildeReal = wTildeReal + (a1**3 - a0**3)/192/Pi/Pi2/self%beta(0) * &
+     (  ( self%beta(1)/self%beta(0) )**3 * gamma(0) - 2 * self%beta(1) * self%beta(2) * &
+     gamma(0)/self%beta(0)**2 + self%beta(3) * gamma(0)/self%beta(0) - &
+    ( self%beta(1)/self%beta(0) )**2 * gamma(1) + self%beta(2) * gamma(1)/self%beta(0) + &
+                          self%beta(1) * gamma(2)/self%beta(0) - gamma(3)  )
+
+   end function wTildeReal
+
+!ccccccccccccccc
+
+   pure real (dp) function wTildeComplex(self, order, gamma, a0, a1)
+    class(AnomDim)           , intent(in) :: self
+    integer                  , intent(in) :: order
+    real (dp)                , intent(in) :: a1
+    complex (dp)             , intent(in) :: a0
+    real (dp), dimension(0:3), intent(in) :: gamma
+    complex (dp)                          :: lg, wTilde
+
+    lg = log(a1/a0); wTilde = 0
+
+    if (order > -1) wTilde = wTilde - gamma(0) * lg/self%beta(0)
+
+    if (order > 0) wTilde = wTilde + (a1 - a0)/self%beta(0)/4/Pi * &
+                          ( self%beta(1) * gamma(0)/self%beta(0) - gamma(1) )
+
+    if (order > 1) wTilde = wTilde - (a1**2 - a0**2)/32/Pi2/self%beta(0) * &
+   ( ( self%beta(1)/self%beta(0) )**2 * gamma(0) - self%beta(2) * &
+   gamma(0)/self%beta(0) - self%beta(1) * gamma(1)/self%beta(0) + gamma(2) )
+
+    if (order > 2) wTilde = wTilde + (a1**3 - a0**3)/192/Pi/Pi2/self%beta(0) * &
+     (  ( self%beta(1)/self%beta(0) )**3 * gamma(0) - 2 * self%beta(1) * self%beta(2) * &
+     gamma(0)/self%beta(0)**2 + self%beta(3) * gamma(0)/self%beta(0) - &
+    ( self%beta(1)/self%beta(0) )**2 * gamma(1) + self%beta(2) * gamma(1)/self%beta(0) + &
+                          self%beta(1) * gamma(2)/self%beta(0) - gamma(3)  )
+
+    wTildeComplex = real(wTilde)
+
+   end function wTildeComplex
+
+!ccccccccccccccc
+
+   pure real (dp) function wTildeHm(self, order, gamma, a0, a1)
+    class (AnomDim)              , intent(in) :: self
+    integer                      , intent(in) :: order
+    real (dp)                    , intent(in) :: a0, a1
+    real (dp), dimension(0:3,0:3), intent(in) :: gamma
+    real (dp), dimension(0:3)                 :: gammaAux
+
+    gammaAux = gamma(:,0)
+
+    if (order > 0) gammaAux(0) = gammaAux(0) + gamma(0,1)
+
+    if (order > 1) then
+     gammaAux(0) = gammaAux(0) + gamma(0,2); gammaAux(1) = gammaAux(1) + gamma(1,1)
+   end if
+
+    if (order > 2) then
+      gammaAux(0) = gammaAux(0) + gamma(0,3); gammaAux(1) = gammaAux(1) + gamma(1,2)
+      gammaAux(2) = gammaAux(2) + gamma(2,1)
+    end if
+
+   wTildeHm = self%wTilde(order, gammaAux, a0, a1)
+
+   end function wTildeHm
+
+!ccccccccccccccc
+
+   pure real (dp) function kTildeReal(self, order, gamma, a0, a1)
+    class(AnomDim)           , intent(in) :: self
+    integer                  , intent(in) :: order
+    real (dp)                , intent(in) :: a0, a1
+    real (dp), dimension(0:3), intent(in) :: gamma
+    real (dp)                             :: lg
+
+    lg = log(a1/a0); kTildeReal = 0
+
+   if (order > -1) kTildeReal = 2 * Pi * gamma(0)/self%beta(0)**2 * (1/a1 - 1/a0 + lg/a0)
+
+   if (order > 0) kTildeReal = kTildeReal + ( self%beta(1) * gamma(0)/self%beta(0) * &
+   (1 + lg - a1/a0 - lg**2/2) - gamma(1) * (1 - a1/a0 + lg) )/self%beta(0)**2/2
+
+   if (order > 1) kTildeReal = kTildeReal + ( self%beta(1)**2 * gamma(0) * (a0 - 2 * a1 + a1**2/a0&
+   - 2 * a0 * lg + 2 * a1 * lg) + self%beta(0) * self%beta(2) * gamma(0) * (a0 - a1**2/a0 &
+   + 2 * a0 * lg) + self%beta(0) * self%beta(1) * gamma(1) * (4 * a1 - 3 * a0 - a1**2/a0  &
+   - 2 * a1 * lg) + self%beta(0)**2 * gamma(2) * (a0 - 2 * a1 + a1**2/a0) )/16/Pi/self%beta(0)**4
+
+   if (order > 2) kTildeReal = kTildeReal + ( self%beta(1)**3 * gamma(0) * (12 * a0 * a1 -        &
+   8 * a0**2 - 4 * a1**3/a0 + 6 * a0**2 * lg - 6 * a1**2 * lg) + self%beta(0) *           &
+   self%beta(1) * self%beta(2) * gamma(0) * (7 * a0**2 - 12 * a0 * a1 - 3 * a1**2 +       &
+   8 * a1**3/a0 - 12 * a0**2 * lg + 6 * a1**2 * lg) + self%beta(0)**2 * self%beta(3) *    &
+   gamma(0) * (a0**2 + 3 * a1**2 - 4 * a1**3/a0 + 6 * a0**2 * lg) + self%beta(0) *        &
+   self%beta(1)**2 * gamma(1) * (11 * a0**2 - 12 * a0 * a1 - 3 * a1**2 + 4 * a1**3/a0 +   &
+   6 * a1**2 * lg) + self%beta(0)**2 * self%beta(2) * gamma(1) * (12 * a0 * a1 -          &
+   8 * a0**2 - 4 * a1**3/a0) + self%beta(0)**2 * self%beta(1) * gamma(2) * (9 * a1**2 -   &
+   5 * a0**2 - 4 * a1**3/a0 - 6 * a1**2 * lg) + self%beta(0)**3 * gamma(3) * (2 * a0**2 - &
+   6 * a1**2 + 4 * a1**3/a0) )/Pi2/self%beta(0)**5/384
+
+   end function kTildeReal
+
+!ccccccccccccccc
+
+   pure real (dp) function kTildeComplex(self, order, gamma, a0, a1)
+    class(AnomDim)           , intent(in) :: self
+    integer                  , intent(in) :: order
+    real (dp)                , intent(in) :: a1
+    complex (dp)             , intent(in) :: a0
+    real (dp), dimension(0:3), intent(in) :: gamma
+    complex (dp)                          :: lg, kTilde
+
+    lg = log(a1/a0); kTilde = 0
+
+   if (order > -1) kTilde = 2 * Pi * gamma(0)/self%beta(0)**2 * (1/a1 - 1/a0 + lg/a0)
+
+   if (order > 0) kTilde = kTilde + ( self%beta(1) * gamma(0)/self%beta(0) * &
+   (1 + lg - a1/a0 - lg**2/2) - gamma(1) * (1 - a1/a0 + lg) )/self%beta(0)**2/2
+
+   if (order > 1) kTilde = kTilde + ( self%beta(1)**2 * gamma(0) * (a0 - 2 * a1 + a1**2/a0&
+   - 2 * a0 * lg + 2 * a1 * lg) + self%beta(0) * self%beta(2) * gamma(0) * (a0 - a1**2/a0 &
+   + 2 * a0 * lg) + self%beta(0) * self%beta(1) * gamma(1) * (4 * a1 - 3 * a0 - a1**2/a0  &
+   - 2 * a1 * lg) + self%beta(0)**2 * gamma(2) * (a0 - 2 * a1 + a1**2/a0) )/16/Pi/self%beta(0)**4
+
+   if (order > 2) kTilde = kTilde + ( self%beta(1)**3 * gamma(0) * (12 * a0 * a1 -        &
+   8 * a0**2 - 4 * a1**3/a0 + 6 * a0**2 * lg - 6 * a1**2 * lg) + self%beta(0) *           &
+   self%beta(1) * self%beta(2) * gamma(0) * (7 * a0**2 - 12 * a0 * a1 - 3 * a1**2 +       &
+   8 * a1**3/a0 - 12 * a0**2 * lg + 6 * a1**2 * lg) + self%beta(0)**2 * self%beta(3) *    &
+   gamma(0) * (a0**2 + 3 * a1**2 - 4 * a1**3/a0 + 6 * a0**2 * lg) + self%beta(0) *        &
+   self%beta(1)**2 * gamma(1) * (11 * a0**2 - 12 * a0 * a1 - 3 * a1**2 + 4 * a1**3/a0 +   &
+   6 * a1**2 * lg) + self%beta(0)**2 * self%beta(2) * gamma(1) * (12 * a0 * a1 -          &
+   8 * a0**2 - 4 * a1**3/a0) + self%beta(0)**2 * self%beta(1) * gamma(2) * (9 * a1**2 -   &
+   5 * a0**2 - 4 * a1**3/a0 - 6 * a1**2 * lg) + self%beta(0)**3 * gamma(3) * (2 * a0**2 - &
+   6 * a1**2 + 4 * a1**3/a0) )/Pi2/self%beta(0)**5/384
+
+    kTildeComplex = real(kTilde)
+
+   end function kTildeComplex
+
+!ccccccccccccccc
+
+   pure subroutine expandAlpha(self, coef)
+    class (AnomDim)            , intent(in   ) :: self
+    real (dp), dimension(0:4,3), intent(inout) :: coef
+
+    coef(1:,:) = 0;  coef(1,2) = coef(0,1) * self%beta(0)/2
+    coef(1,3) = coef(0,2) * self%beta(0) + coef(0,1) * self%beta(1)/8
+    coef(2,3) = coef(0,1) * self%beta(0)**2/4
+
+   end subroutine expandAlpha
+
+!ccccccccccccccc
+
+   pure subroutine wTildeExpand(self, gamma, coef)
+    class (AnomDim), intent(in )             :: self
+    real (dp), intent(in ), dimension(0:3)   :: gamma
+    real (dp), intent(out), dimension(0:4,3) :: coef
+
+    coef = 0;  coef(1,1) = gamma(0)/2;  coef(1,2) = gamma(1)/8
+    coef(1,3) = gamma(2)/32;            coef(2,2) = self%beta(0) * gamma(0)/8
+    coef(2,3) = self%beta(1) * gamma(0)/32 + self%beta(0) * gamma(1)/16
+    coef(3,3) = self%beta(0)**2 * gamma(0)/24
+
+   end subroutine wTildeExpand
+
+!ccccccccccccccc
+
+   pure subroutine kTildeExpand(self, gamma, coef)
+    class (AnomDim)            , intent(in   ) :: self
+    real (dp),  dimension(0:3) , intent(in   ) :: gamma
+    real (dp), dimension(0:4,3), intent(inout) :: coef
+
+    coef = 0;  coef(2,1) = gamma(0)/4;  coef(2,2) = gamma(1)/16
+    coef(2,3) = gamma(2)/64;            coef(3,2) = self%beta(0) * gamma(0)/24
+    coef(3,3) = ( self%beta(1) * gamma(0) + 2 * self%beta(0) * gamma(1) )/96
+    coef(4,3) = self%beta(0) * self%beta(0) * gamma(0)/96
+
+   end subroutine kTildeExpand
+
+!ccccccccccccccc
+
+   real (dp) function DeltaMu(self, order, R, alpha0, alpha1)
+     class (AnomDim), intent(in) :: self
+     integer        , intent(in) :: order
+     real (dp)      , intent(in) :: R, alpha0, alpha1
+
+     DeltaMu = 2 * ExpEuler * R * self%wTilde(order - 1, self%cusp, alpha0, alpha1)
+
+   end
+
+!ccccccccccccccc
+
+  pure function betaQCD(self, str) result(bet)
+    class (AnomDim)    , intent(in) :: self
+    character (len = *), intent(in) :: str
+    real (dp)      , dimension(0:3) :: bet
+
+    bet = 0
+
+    if ( str( :4) == 'beta'            ) bet      = self%beta
+    if ( str( :4) == 'cusp'            ) bet      = self%cusp
+    if ( str( :4) == 'mass'            ) bet      = self%gammaMass
+    if ( str( :4) == 'hard'            ) bet      = self%gammaHard
+    if ( str( :3) == 'jet'             ) bet      = self%gammaJet
+    if ( str( :4) == 'soft'            ) bet      = self%gammaSoft
+    if ( str( :4) == 'bJet'            ) bet      = self%gammaB
+    if ( str( :2) == 'Hm'              ) bet      = self%gammaHm(:,0)
+    if ( str( :4) == 'bHat'            ) bet(1:3) = self%bHat
+    if ( str( :8) == 'MSRdelta'        ) bet(1:3) = self%MSRDelta()
+    if ( str( :8) == 'sCoefMSR'        ) bet(1:3) = self%sCoefMSR
+    if ( str(:15) == 'sCoefMSRNatural' ) bet(1:3) = self%sCoefMSRNatural
+    if ( str( :8) == 'betaList'        ) bet(1:3) = self%betaList
+    if ( str( :9) == 'gammaRMSR'       ) bet(1:3) = self%betaList
+    if ( str(:13) == 'gammaRNatural'   ) bet(1:3) = self%betaList
+
+  end function betaQCD
+
+!ccccccccccccccc
+
+  pure function sCoef(self, gamma) result(s)
+    class (AnomDim)        , intent(in) :: self
+    real (dp), dimension(3), intent(in) :: gamma
+    real (dp), dimension(3)             :: s
+
+    s(1) = gamma(1);  s(2:3) = gamma(2:3) - sum( self%bHat(:2) ) * gamma(:2)
+
+    s(3) = s(3) + (  ( 1 + self%bHat(1) ) * self%bHat(2) + &
+           ( self%bHat(2)**2 + self%bHat(3) )/2  ) * gamma(1)
+
+  end function sCoef
+
+!ccccccccccccccc
+
+  pure function sCoefHadron(self, gamma, r) result(s)
+    class (AnomDim), intent(in)         :: self
+    real (dp), intent(in)               :: r
+    real (dp), intent(in), dimension(3) :: gamma
+    real (dp)            , dimension(3) :: s
+    real (dp)                           :: gammaHadron
+
+    gammaHadron = 6 * log(1 - r**2)/self%beta(0);  s = self%sCoef(gamma)
+
+    s(2:3) = s(2:3) + gammaHadron * gamma(:2)   ;  s(3) = s(3) + gammaHadron * gamma(1)
+
+  end function sCoefHadron
+
+!ccccccccccccccc
+
+  real (dp) function DeltaR(self, sCoef, order, a0, a1)
+    integer                , intent(in) :: order
+    real (dp)              , intent(in) :: a0, a1
+    class (AnomDim)        , intent(in) :: self
+    real (dp), dimension(3), intent(in) :: sCoef
+    integer                             :: i
+    real (dp)                           :: t0, t1, Gcorre
+
+    t0 = - 2 * pi/self%beta(0);  t1 = t0/a1;  t0 = t0/a0;  DeltaR = 0
+
+    do i = 1, order
+      if (  abs( sCoef(i) ) < d1mach(1)  ) cycle
+      Gcorre = inteCorre( - self%bhat(1) - i, t0, t1 )
+      DeltaR = DeltaR + sCoef(i) * Gcorre
+    end do
+
+  end function DeltaR
+
+!ccccccccccccccc
+
+  real (dp) function DeltaRMass(self, order, lambda, mass, a0, a1)
+    integer        , intent(in) :: order
+    real (dp)      , intent(in) :: a0, a1, mass, lambda
+    class (AnomDim), intent(in) :: self
+    integer                     :: neval, ier
+    real (dp)                   :: a, t0, t1, abserr
+
+    t0 = - 2 * pi/self%beta(0);  t1 = t0/a1;  t0 = t0/a0;   DeltaRMass = 0
+    a  = - self%bhat(1) - 2
+
+    call qags( correMass, t0, t1, prec, prec, DeltaRMass, abserr, neval, ier )
+
+    DeltaRMass = DeltaRMass * self%betaList(2)
+
+    contains
+
+!ccccccccccccccc
+ 
+    pure real (dp) function correMass(t)
+      real (dp), intent(in) :: t
+      real (dp)             :: x
+
+      x = lambda/self%Gfun(order, t)/mass
+      correMass = Exp(-t) * (-t)**a * GammaRMass(x)
+
+    end function correMass
+
+  end function DeltaRMass
+
+!ccccccccccccccc
+
+  real (dp) function DeltaRHadron(self, sCoef, r, order, a0, a1)
+    integer                , intent(in) :: order
+    real (dp)              , intent(in) :: a0, a1, r
+    class (AnomDim)        , intent(in) :: self
+    real (dp), dimension(3), intent(in) :: sCoef
+    integer                             :: i
+    real (dp)                           :: t0, t1, gammaHadron, Gcorre
+
+    gammaHadron = 6 * log(1 - r**2)/self%beta(0)
+
+    t0 = - 2 * pi/self%beta(0)/a0;  t1 = - 2 * pi/self%beta(0)/a1
+
+    DeltaRHadron = 0
+
+    do i = 2, order
+
+      Gcorre = inteCorre( - self%bhat(1) + gammaHadron - i, t0, t1 )
+      DeltaRHadron = DeltaRHadron + sCoef(i) * Gcorre
+
+    end do
+
+  end function DeltaRHadron
+
+!ccccccccccccccc
+
+  pure function bHQETgamma(self) result(tab)
+    class (AnomDim), intent(in)   :: self
+    real (dp), dimension(0:3,0:3) :: tab
+
+    tab = self%gammaHm
+
+  end function bHQETgamma
+
+!ccccccccccccccc
+
+  pure function alphaMatching(self, nf) result(tab)
+    class (AnomDim), intent(in)   :: self
+    integer        , intent(in)   :: nf
+    real (dp), dimension(0:3,0:3) :: tab
+    
+    tab = 0
+    
+    if ( self%str(:5) == 'MSbar' ) then
+
+      tab(0,0)  = 1;  tab(1,1) = - 1._dp/6; tab(2,:2) = [ 11._dp/72, - 19._dp/24, 1._dp/36 ] 
+      tab(3,1:) = - [ ( 7074 - 281 * nf )/1728._dp, 131._dp/576, 1._dp/216 ]
+      tab(3,0)  = 1.0567081783962546_dp - 0.08465149176954734_dp * nf
+
+    else if ( self%str(:4) == 'pole' ) then
+
+      tab(0,0)  = 1;  tab(1,1) = - 1._dp/6;  tab(2,:2) = [ - 7._dp/24, - 11._dp/24, 1._dp/36 ]
+      tab(3,1:) = - [ ( 8930 - 409._dp * nf )/1728, 131._dp/576, 1._dp/216 ]
+      tab(3,0)  = - 5.586361025786356_dp + 0.26247081195432964_dp * nf
+
+    end if
+
+  end function alphaMatching
+
+!ccccccccccccccc
+
+  pure function alphaMatchingInverse(self, nf) result(tab)
+    class (AnomDim), intent(in)   :: self
+    integer        , intent(in)   :: nf
+    real (dp), dimension(0:3,0:3) :: tab
+    
+    tab = 0
+
+    if ( self%str(:5) == 'MSbar' ) then
+
+      tab(0,0)  = 1;  tab(1,1) = 1._dp/6;  tab(2,:2) = [ - 11._dp/72, 19._dp/24, 1._dp/36 ]
+      tab(3,1:) = [ 3427._dp/864 - 281._dp * nf/1728, 511._dp/576, 1._dp/216 ]
+      tab(3,0)  = - 1.0567081783962546_dp + 0.08465149176954732_dp * nf
+
+    else if ( self%str(:4) == 'pole' ) then
+
+      tab(0,0)  = 1;  tab(1,1) = 1._dp/6;  tab(2,:2) = [ 7._dp/24, 19._dp/24, 1._dp/36 ]
+      tab(3,1:) = [ ( 9350 - 409._dp * nf )/1728, 511._dp/576, 1._dp/216 ]
+      tab(3,0)  = 5.586361025786356_dp - 0.26247081195432964_dp * nf 
+
+    end if
+
+  end function alphaMatchingInverse
+
+!ccccccccccccccc pole - MSR mass with mu = R
+
+ pure function MSRDelta(self) result(coef)
+    class (AnomDim), intent(in)   :: self
+    real (dp), dimension(3)       :: coef, b
+    real (dp), dimension(0:3,0:3) :: tab
+
+    coef = MSbarDelta(self%nf, 1);  tab = self%alphaMatchingInverse(self%nf)
+    b = tab(:2,0); call alphaReExpand(coef, b)
+
+  end function MSRDelta
+
+!ccccccccccccccc
+
+  pure function GammaRComputer(self, gamma) result(gammaMSR)
+    class (AnomDim)        , intent(in) :: self
+    real (dp), dimension(3), intent(in) :: gamma
+    real (dp), dimension(3)             :: gammaMSR
+    integer                             :: i, j
+    integer, dimension(3)  ,  parameter :: List4 = [ (4**j,j = 1, 3) ]
+
+    gammaMSR = List4 * gamma
+
+    do i = 1, 3
+      do j = 1, i - 1
+
+        gammaMSR(i) = gammaMSR(i) - 2 * List4(j) * j * gamma(j) * self%beta(i - 1 - j)
+
+      enddo
+    end do
+
+  end function GammaRComputer
+
+!ccccccccccccccc ! missing documentation
+
+  pure subroutine alphaReExpand(a, b)
+    real (dp), dimension(3), intent(inout) :: a(3)
+    real (dp), dimension(3), intent(in)    :: b(3)
+
+    a(2) = a(2) + a(1) * b(2);   a(3) = a(3) + 2 * a(2) * b(2) + a(1) * b(3)
+
+  end
+
+!ccccccccccccccc
+
+  real (dp) function inteCorre(a, x0, x1)
+   real (dp), intent(in) :: x0, x1, a
+   integer               :: i
+   real (dp)             :: den, fac, corr
+
+     den = a + 1; fac = 1; inteCorre = ( (-x0)**den - (-x1)**den )/den; i = 0
+
+     do
+       i = i + 1; den = den + 1; fac = fac * i
+       corr = ( (-x0)**den - (-x1)**den )/den/fac
+       if ( i .gt. 5 .and. abs(corr) > abs(inteCorre) ) exit
+       inteCorre = inteCorre + corr; if ( abs(corr) <= prec ) return
+     end do
+
+     inteCorre = dGauss(corre, x0, x1, prec)
+
+   contains
+
+     pure real (dp) function corre(x)
+       real (dp), intent(in) :: x
+       corre = Exp(-x) * (-x)**a
+     end function corre
+
+  end function inteCorre
+
+
+!ccccccccccccccc
+
+  pure real (dp) function GammaRMass(x)
+    real (dp), intent(in) :: x
+    real (dp)             :: lx
+
+    lx = Log(x)
+
+    GammaRMass = 27 * gam * ( ep * (2 * x**bet + al * bet) + x * (del * x**bet + del *   &
+    al * bet + x * al * bet) ) + 8 * x * (   ep * (9 * (12 - 12 * lx + 12 * lx**2 + Pi2) &
+    * x**bet + (56 - 60 * lx + 36 * lx**2 + 3 * Pi2) * al * bet) + x * (  x * ( (12 * lx &
+    + 36 * lx**2 + 3 * Pi2 - 4) * x**bet + (56 - 60 * lx + 36 * lx**2 + 3 * Pi2) * al *  &
+    bet) + del * ( (52 - 48 * lx + 72 * lx**2 + 6 * Pi2) * x**bet + (56 - 60 * lx + 36 * &
+    lx**2 + 3 * Pi2) * al * bet )  )   )
+
+    GammaRMass = 4 * exp(-x**(-bet) * al) * x**(1 - bet) * GammaRMass/81/( ep + x * (del + x) )**2
+
+    GammaRMass = ExpEuler * ( GammaRMass + 1024._dp/81 - 128 * lx/27 - 128 * lx**2/9 )
+
+  end function GammaRMass
+
+!ccccccccccccccc
+
+  pure real(dp) function DeltaMass(L, x)
+    real (dp), intent(in) :: L, x
+    real (dp)             :: lx
+
+    lx = log(x); lx = 160 * lx/9 - 448._dp/27 - 32 * lx**2/3
+
+    deltaMass = (  32 * L**2/3 + 160 * L/9 + 224._dp/27 + lx + ( exp(-x**(-bet) * al) * &
+                (  8 * Pi2/9 - lx + gam/x) )/(1 + ep/x**2 + del/x)  )/12
+
+  end function DeltaMass
+
+!ccccccccccccccc
+
+  pure function PowListDP(alpha, n) result(list)
+    real (dp)  , intent(in) :: alpha
+    integer    , intent(in) :: n
+    integer                 :: i
+    real (dp), dimension(n) :: list
+    real (dp)               :: a
+
+    a = 1
+
+    do i = 1, n
+      a = a * alpha; list(i) = a
+    end do
+  
+  end function PowListDP
+
+!ccccccccccccccc
+
+  pure function PowListComp(alpha, n) result(list)
+    complex (dp)  , intent(in) :: alpha
+    integer       , intent(in) :: n
+    integer                    :: i
+    complex (dp), dimension(n) :: list
+    complex (dp)               :: a
+
+    a = 1
+
+    do i = 1, n
+      a = a * alpha; list(i) = a
+    end do
+  
+  end function PowListComp
+
+!ccccccccccccccc
+
+  pure function PowListInt(alpha, n) result(list)
+    integer    , intent(in) :: alpha, n
+    integer               :: i, a
+    integer, dimension(n) :: list
+
+    a = 1
+
+    do i = 1, n
+      a = a * alpha; list(i) = a
+    end do
+  
+  end function PowListInt
+
+!ccccccccccccccc pole - MSbar mass with mu = m(m)
+
+  pure function MSbarDelta(nl, nh) result(coef)
+    integer    , intent(in) :: nh, nl
+    real (dp), dimension(3) :: coef
+
+    coef = [4._dp/3, 13.33982910125516_dp + 0.10356715567659536_dp * nh           - &
+    1.041366911171631_dp * nl, 188.67172035165487_dp + 1.8591544419385237_dp * nh + &
+    0.06408045019609998_dp * nh**2 - 26.677375174269212_dp * nl                  + &
+    0.022243482163948114_dp * nh * nl + 0.6526907490815437_dp * nl**2 ]
+
+  end function MSbarDelta
+
+!ccccccccccccccc pole - MSbar mass with m(mu)
+
+  pure function MSbarDeltaPiece(nl, nh) result(coef)
+    integer,        intent(in)  :: nh, nl
+    real (dp), dimension(0:3,3) :: coef
+    integer                     :: nf, nf2
+
+    coef = 0; nf = nl + nh; coef(0,:) = MSbarDelta(nl, nh); coef(1,1) = 2; nf2 = nf**2
+
+    coef(1:2,2) = [ ( 2076 - 104 * nf )/144._dp, 7.5 - nf/3._dp ]
+
+    coef(1,3) = 195.00458387187263_dp - 12.596570845269987_dp * nh - &
+    0.12305711613007586 * nh**2 - 27.480713714296932_dp * nl + &
+    0.5171751456386657_dp * nh * nl + 0.6402322617687417 * nl**2
+
+    coef(2:,3) = [ 2696.625_dp - 288.75 * nf + 6.5 * nf2, 877.5_dp - 84 * nf + 2 * nf2 ]/27
+
+  end function MSbarDeltaPiece
+
+!ccccccccccccccc
+
+end module AnomDimClass
