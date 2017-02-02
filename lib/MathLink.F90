@@ -32,6 +32,7 @@ subroutine f90MassiveProfList(terms, hard, shape, EShape, setup, gap, space, cum
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, &
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, c,   &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tauList, n, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: ProfilesPythia  ; use ElectroWeakClass
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
@@ -86,6 +87,7 @@ subroutine f90MassiveProfPieceList(terms, hard, shape, EShape, gap, space, cum, 
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda,&
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width,     &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tauList, n, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: ProfilesPythia  ; use ElectroWeakClass
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
@@ -147,6 +149,7 @@ subroutine f90MassivePieceBin(terms, hard, shape, EShape, gap, space, cum, schem
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda,&
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width,     &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tauList, n, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: ProfilesPythia  ; use ElectroWeakClass
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
@@ -208,6 +211,7 @@ subroutine f90MassiveBinList(terms, hard, shape, EShape, setup, gap, space, cum,
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, &
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, c,   &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tauList, n, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: ProfilesPythia  ; use ElectroWeakClass
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
@@ -262,6 +266,7 @@ subroutine f90MassiveProf(terms, hard, shape, EShape, setup, gap, space, cum, sc
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, &
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, c,   &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: ProfilesPythia  ; use ElectroWeakClass
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
@@ -313,6 +318,7 @@ subroutine f90MassOrigin(shape, EShape, gap, scheme, orderAlpha, runAlpha, order
  runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, &
  beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, &
  mass, muM, R0, muR0, del0, h, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ElectroWeakClass
   use constants, only: dp; use ProfilesClass, only: ProfilesPythia
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
@@ -358,6 +364,7 @@ subroutine f90MassiveProfPiece(terms, hard, shape, EShape, gap, space, cum, sche
  mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda,    &
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width,     &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: ProfilesPythia  ; use ElectroWeakClass
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
@@ -418,6 +425,7 @@ subroutine f90MassiveProfDiffPiece(terms, hard, shape, EShape, gap, space, cum, 
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda,&
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width,     &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau, tau2, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: ProfilesPythia  ; use ElectroWeakClass
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
@@ -478,6 +486,7 @@ subroutine f90MassiveProfDiff(terms, hard, shape, EShape, setup, gap, space, cum
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, &
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, c,   &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau, tau2, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: ProfilesPythia  ; use ElectroWeakClass
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
@@ -530,6 +539,7 @@ subroutine f90MassiveMoment(terms, hard, shape, EShape, setup, gap, space, schem
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, &
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, c,   &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau, tau2, pow, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: ProfilesPythia  ; use ElectroWeakClass
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
@@ -581,6 +591,7 @@ subroutine f90MasslessProfList(terms, hard, shape, setup, gap, space, cum, order
  runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda,   &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, clen, lambda,    &
  R0, muR0, delta0, h, tauList, n, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: profilesmassless
   use CumulantClass, only: CumulantMassless; implicit none
@@ -620,6 +631,7 @@ subroutine f90MasslessProfPieceList(terms, hard, shape, gap, space, cum, orderAl
  runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen, lambda,     &
  R0, muR0, delta0, h, tauList, n, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: profilesmassless
   use CumulantClass, only: CumulantMassless; implicit none
@@ -666,6 +678,7 @@ subroutine f90MasslessPieceBin(terms, hard, shape, gap, space, cum, orderAlpha, 
  runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda,   &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen, lambda,    &
  R0, muR0, delta0, h, tauList, n, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: profilesmassless
   use CumulantClass, only: CumulantMassless; implicit none
@@ -712,6 +725,7 @@ subroutine f90MasslessBinList(terms, hard, shape, setup, gap, space, cum, orderA
  runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda,  &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, clen, lambda,   &
  R0, muR0, delta0, h, tauList, n, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: profilesmassless
   use CumulantClass, only: CumulantMassless; implicit none
@@ -750,6 +764,7 @@ subroutine f90MasslessProf(terms, hard, shape, setup, gap, space, cum, orderAlph
  runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, clen, lambda,  &
  R0, muR0, delta0, h, tau, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: profilesmassless
   use CumulantClass, only: CumulantMassless; implicit none
@@ -788,6 +803,7 @@ subroutine f90MasslessProfPiece(terms, hard, shape, gap, space, cum, orderAlpha,
  runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen, lambda,  &
  R0, muR0, delta0, h, tau, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: profilesmassless
   use CumulantClass, only: CumulantMassless; implicit none
@@ -834,6 +850,7 @@ subroutine f90MasslessProfDiffPiece(terms, hard, shape, gap, space, cum, orderAl
  runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen, lambda, R0, &
  muR0, delta0, h, tau, tau2, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: profilesmassless
   use CumulantClass, only: CumulantMassless; implicit none
@@ -880,6 +897,7 @@ subroutine f90MasslessProfDiff(terms, hard, shape, setup, gap, space, cum, order
  runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, &
  mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, clen, lambda, R0,    &
  muR0, delta0, h, tau, tau2, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: profilesmassless
   use CumulantClass, only: CumulantMassless; implicit none
@@ -918,6 +936,7 @@ subroutine f90MasslessMoment(terms, hard, shape, setup, gap, space, orderAlpha, 
  order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, &
  n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, clen, lambda, R0, muR0, delta0,  &
  h, tau, tau2, pow, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
   use constants, only: dp; use ProfilesClass, only: profilesmassless
   use CumulantClass, only: CumulantMassless; implicit none
@@ -955,6 +974,7 @@ end subroutine f90MasslessMoment
 subroutine f90FindOrigin(shape, gap, orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, &
  muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, &
  eR, R0, muR0, delta0, h, res)
+
   use AlphaClass;  use MatrixElementsClass;  use SingularClass
   use constants, only: dp; use ProfilesClass, only: profilesmassless
   use CumulantClass, only: CumulantMassless; implicit none
@@ -1005,9 +1025,11 @@ end subroutine f90Profiles
 
 !ccccccccccccccc
 
-subroutine f90ProfilesMass(Q, beta, mu0, deltaLambda, R0, n0, delta0, n1, delta1, t2, ts,&
-                           slope, cnt, eH, eS, eJ, mass, muM, ns, def, EShape, tau, res)
+subroutine f90ProfilesMass(Q, beta, mu0, deltaLambda, R0, n0, delta0, n1, delta1, &
+  t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, def, EShape, tau, res)
+
   use constants, only: dp; use ProfilesClass, only: profilesPythia; implicit none
+
   character (len = *)    , intent(in ) :: EShape, def
   integer                , intent(in ) :: ns
   real (dp)              , intent(in ) :: Q, mu0, R0, n0, delta0, n1, t2, cnt, ts, slope, &
@@ -1032,6 +1054,7 @@ subroutine f90SingularMass(hard, shape, Eshape, setup, gap, space, cum, scheme, 
   current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, &
   mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,   &
   muM, mu, width, c, clen, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, res)
+
   use AlphaClass     ; use MatrixElementsClass ;  use SingularClass ;  use ModelClass
   use MassiveNSClass ; use ElectroWeakClass    ;  use constants, only: dp, d1mach
   implicit none
@@ -1100,6 +1123,7 @@ subroutine f90SingularMassDiff(hard, shape, Eshape, setup, gap, space, cum, sche
   current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3,&
   mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,  &
   muM, mu, width, c, clen, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, tau2, res)
+
   use AlphaClass     ;  use MatrixElementsClass ;  use SingularClass ;  use ModelClass
   use MassiveNSClass ;  use ElectroWeakClass    ;  use constants, only: dp, d1mach
   implicit none
@@ -1167,6 +1191,7 @@ subroutine f90SingularMassPiece(hard, shape, Eshape, gap, space, cum, scheme, ab
   current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, &
   mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,   &
   muM, mu, width, piece, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, res)
+
   use AlphaClass     ;  use MatrixElementsClass ;  use SingularClass ;  use ModelClass
   use MassiveNSClass ; use ElectroWeakClass     ;  use constants, only: dp, d1mach
   implicit none
@@ -1222,6 +1247,7 @@ subroutine f90SingularMassList(hard, shape, Eshape, gap, space, cum, scheme, abs
   xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, &
   mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu,   &
   width, clen, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, res)
+
   use AlphaClass     ;  use MatrixElementsClass ;  use SingularClass ;  use ModelClass
   use MassiveNSClass ; use ElectroWeakClass     ;  use constants, only: dp, d1mach
   implicit none
@@ -1285,6 +1311,7 @@ subroutine f90SingularMassDiffList(hard, shape, Eshape, gap, space, cum, scheme,
   current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, &
   mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,   &
   muM, mu, width, clen, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, tau2, res)
+
   use AlphaClass     ;  use MatrixElementsClass ;  use SingularClass ;  use ModelClass
   use MassiveNSClass ; use ElectroWeakClass     ;  use constants, only: dp, d1mach
   implicit none
@@ -1347,6 +1374,7 @@ subroutine f90SingularMassDiffPiece(hard, shape, Eshape, gap, space, cum, scheme
   current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3,&
   mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,  &
   muM, mu, width, piece, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, tau2, res)
+
   use AlphaClass     ;  use MatrixElementsClass ;  use SingularClass ;  use ModelClass
   use MassiveNSClass ; use ElectroWeakClass     ;  use constants, only: dp, d1mach
   implicit none
@@ -1402,6 +1430,7 @@ subroutine f90MassNonDist(hard, shape, Eshape, setup, gap, space, cum, scheme,  
   orderAlpha, runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT, &
   mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu, c, &
   clen, lambda, R0, mu0, delta0, h, tau, res)
+
   use AlphaClass     ; use MatrixElementsClass ;  use SingularClass ;  use ModelClass
   use MassiveNSClass ; use ElectroWeakClass    ;  use constants, only: dp, d1mach
   implicit none
@@ -1456,6 +1485,7 @@ subroutine f90MassNonDistDiff(hard, shape, Eshape, setup, gap, space, cum, schem
   orderAlpha, runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT,  &
   mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu, c,  &
   clen, lambda, R0, mu0, delta0, h, tau, tau2, res)
+
   use AlphaClass     ;  use MatrixElementsClass ;  use SingularClass ;  use ModelClass
   use MassiveNSClass ;  use ElectroWeakClass    ;  use constants, only: dp; implicit none
 
@@ -1510,6 +1540,7 @@ subroutine f90MassNonDistPiece(hard, shape, Eshape, gap, space, cum, scheme, &
   orderAlpha, runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, &
   muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, &
   mu, c, lambda, R0, mu0, delta0, h, tau, res)
+
   use AlphaClass     ;  use MatrixElementsClass ;  use SingularClass ;  use ModelClass
   use MassiveNSClass ;  use ElectroWeakClass    ;  use constants, only: dp; implicit none
 
@@ -1553,6 +1584,7 @@ subroutine f90MassNonDistList(hard, shape, Eshape, gap, space, cum, scheme, &
   orderAlpha, runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, &
   muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, &
   mu, clen, lambda, R0, mu0, delta0, h, tau, res)
+
   use AlphaClass     ;  use MatrixElementsClass ;  use SingularClass ;  use ModelClass
   use MassiveNSClass ;  use ElectroWeakClass    ;  use constants, only: dp; implicit none
 
@@ -1603,6 +1635,7 @@ subroutine f90MassNonDistDiffList(hard, shape, Eshape, gap, space, cum, scheme, 
   orderAlpha, runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT,&
   mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu,   &
   clen, lambda, R0, mu0, delta0, h, tau, tau2, res)
+
   use AlphaClass     ;  use MatrixElementsClass ;  use SingularClass ;  use ModelClass
   use MassiveNSClass ;  use ElectroWeakClass    ;  use constants, only: dp; implicit none
 
@@ -1652,6 +1685,7 @@ subroutine f90MassNonDistDiffPiece(hard, shape, Eshape, gap, space, cum, scheme,
   orderAlpha, runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT,&
   mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu, c,&
   lambda, R0, mu0, delta0, h, tau, tau2, res)
+
   use AlphaClass     ;  use MatrixElementsClass ;  use SingularClass ;  use ModelClass
   use MassiveNSClass ;  use ElectroWeakClass    ;  use constants, only: dp; implicit none
 
@@ -1695,6 +1729,7 @@ subroutine f90NSMass(shape, setup, gap, cum, scheme, abs, current, orderAlpha, r
   orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1,&
   muLambda2, Q, mu, muM, muJ, muS, R, Rmass, width, c, clen, lambda, R0, mu0, delta0, h, &
   gammaZ, sin2ThetaW, t, res)
+
   use MassiveNSClass     ; use ElectroWeakClass; use AlphaClass
   use MatrixElementsClass; use ModelClass
   use constants, only: dp; implicit none
@@ -1738,6 +1773,7 @@ subroutine f90NSMassDiff(shape, setup, gap, cum, scheme, abs, current, orderAlph
   orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1,&
   muLambda2, Q, mu, muM, muJ, muS, R, Rmass, width, c, clen, lambda, R0, mu0, delta0, h, &
   gammaZ, sin2ThetaW, t, t2, res)
+
   use MassiveNSClass     ; use ElectroWeakClass; use AlphaClass
   use MatrixElementsClass; use ModelClass
   use constants, only: dp; implicit none
@@ -1781,6 +1817,7 @@ subroutine f90NSMassPiece(shape, gap, cum, scheme, abs, current, orderAlpha, run
   orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1,&
   muLambda2, Q, mu, muM, muJ, muS, R, Rmass, piece, width, lambda, R0, mu0, delta0, h,   &
   gammaZ, sin2ThetaW, t, res)
+
   use MassiveNSClass     ; use ElectroWeakClass; use AlphaClass
   use MatrixElementsClass; use ModelClass
   use constants, only: dp; implicit none
@@ -1825,6 +1862,7 @@ subroutine f90NSMassList(shape, gap, cum, scheme, abs, current, orderAlpha, runA
   orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1,&
   muLambda2, Q, mu, muM, muJ, muS, R, Rmass, clen, width, lambda, R0, mu0, delta0, h,   &
   gammaZ, sin2ThetaW, t, res)
+
   use MassiveNSClass     ; use ElectroWeakClass; use AlphaClass
   use MatrixElementsClass; use ModelClass
   use constants, only: dp; implicit none
@@ -1876,6 +1914,7 @@ subroutine f90NSMassDiffList(shape, gap, cum, scheme, abs, current, orderAlpha, 
   orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1,&
   muLambda2, Q, mu, muM, muJ, muS, R, Rmass, clen, width, lambda, R0, mu0, delta0, h,   &
   gammaZ, sin2ThetaW, t, t2, res)
+
   use MassiveNSClass     ; use ElectroWeakClass; use AlphaClass
   use MatrixElementsClass; use ModelClass
   use constants, only: dp; implicit none
@@ -1927,6 +1966,7 @@ subroutine f90NSMassDiffPiece(shape, gap, cum, scheme, abs, current, orderAlpha,
   orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1,&
   muLambda2, Q, mu, muM, muJ, muS, R, Rmass, piece, width, lambda, R0, mu0, delta0, h,   &
   gammaZ, sin2ThetaW, t, t2, res)
+
   use MassiveNSClass     ; use ElectroWeakClass; use AlphaClass
   use MatrixElementsClass; use ModelClass
   use constants, only: dp; implicit none
@@ -1971,6 +2011,7 @@ subroutine f90HJMNSMass(setup, gap, cum, scheme, abs, current, orderAlpha, runAl
  orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, &
  muLambda2, Q, mu, muM, muJ, muS, R, Rmass, width, c, clen, lambda, R0, mu0, delta0, h,  &
  gammaZ, sin2ThetaW, t, res)
+
   use MassiveNSClass     ; use ElectroWeakClass; use AlphaClass; use MatrixElementsClass
   use ModelClass         ; use constants, only: dp             ; implicit none
 
@@ -2022,9 +2063,10 @@ end subroutine f90HJMNSMass
 !ccccccccccccccc
 
 subroutine f90HJMNSMassDiff(setup, gap, cum, scheme, abs, current, orderAlpha, runAlpha, &
-orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1,     &
-muLambda2, Q, mu, muM, muJ, muS, R, Rmass, width, c, clen, lambda, R0, mu0, delta0, h, &
-gammaZ, sin2ThetaW, t, t2, res)
+ orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1,     &
+ muLambda2, Q, mu, muM, muJ, muS, R, Rmass, width, c, clen, lambda, R0, mu0, delta0, h, &
+ gammaZ, sin2ThetaW, t, t2, res)
+
   use MassiveNSClass     ; use ElectroWeakClass; use AlphaClass
   use MatrixElementsClass; use ModelClass
   use constants, only: dp; implicit none
@@ -2077,8 +2119,10 @@ end subroutine f90HJMNSMassDiff
 !ccccccccccccccc
 
 subroutine f90FOMass(shape, current, m, Q, mZ, gammaZ, sin2ThetaW, t, res)
+
   use MassiveNSClass     ;  use ElectroWeakClass; use MatrixElementsClass
   use AlphaClass         ;  use constants, only: dp; implicit none
+
   real (dp)          , intent(in ) :: t, m, Q, mZ, gammaZ, sin2ThetaW
   character (len = *), intent(in ) :: shape, current
   real (dp)          , intent(out) :: res
@@ -2103,6 +2147,7 @@ end subroutine f90FOMass
 
 subroutine f90DiffDeltaGapMass(gap, order, R0, R, mu0, mu, muM, muLambda1, muLambda2,    &
   orderAlpha, runAlpha, runMass, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, res)
+
   use MatrixElementsClass; use AlphaClass; use GapMassClass
   use constants, only: dp; implicit none
 
@@ -2506,8 +2551,8 @@ end subroutine f90MSbarMassLow
 
 !ccccccccccccccc
 
-subroutine f90MSRMass(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, &
-                      mu, R, res)
+subroutine f90MSRMass(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, muB, &
+                      mC, muC, mu, R, res)
  use RunningClass;  use AlphaClass;  use constants, only: dp; implicit none
 
  integer  , intent(in ) :: orderAlpha, runAlpha, run, nf
@@ -2526,8 +2571,8 @@ end subroutine f90MSRMass
 
 !ccccccccccccccc
 
-subroutine f90mmfromMSR(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, muB, mC, &
-                        muC, mu, R, res)
+subroutine f90mmfromMSR(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, &
+                        muB, mC, muC, mu, R, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp; implicit none
 
   integer  , intent(in ) :: orderAlpha, runAlpha, run, nf
@@ -2663,42 +2708,6 @@ end subroutine f90mmFromJetMass
 
 !ccccccccccccccc
 
-subroutine f90Singular2(hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order, run, &
- nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, &
- c, clen, lambda, R0, mu0, delta0, h, tau, res)
-  use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
-  use constants, only: dp; implicit none
-
-  real (dp), dimension (clen), intent(in) :: c
-  character (len = *), intent(in)    :: shape, cum, setup, space, gap, hard
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen
-  real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, muC, j3, &
-                                        mu,  Q, G3, lambda, tau, R0, mu0, delta0, h, s3
-  real (dp)          , intent(inout) :: muH, muJ, muS, R
-  real (dp)          , intent(out)   :: res
-
-  type (Alpha)                       :: alphaAll
-  type (MatrixElements)              :: MatEl
-  type (SingularMassless)            :: Sing
-  type (Model)                       :: Mod
-
-  if ( setup(:2) == 'FO' ) then
-    muS = mu; muJ = mu; muH = mu; R = mu
-  end if
-
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
-  MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
-  Sing      = SingularMassless( MatEl, run, mu, shape(:6), hard(:6) )
-  Mod       = Model(lambda, c, [0,0], 'sum')
-
-  res       = Sing%SingleSing(Mod, setup(:7), gap(:12), space(:6), cum(:4), order, R0, &
-                              mu0, delta0, h, tau)
-
-end subroutine f90Singular2
-
-!ccccccccccccccc
-
 subroutine f90Singular(hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order, &
  run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, &
  mu, c, clen, lambda, R0, mu0, delta0, h, tau, res)
@@ -2712,7 +2721,6 @@ subroutine f90Singular(hard, shape, setup, gap, space, cum, orderAlpha, runAlpha
                                         mu,  Q, G3, lambda, tau, R0, mu0, delta0, h, s3
   real (dp)          , intent(inout) :: muH, muJ, muS, R
   real (dp)          , intent(out)   :: res
-
   type (Alpha)                       :: alphaAll
   type (MatricesElements)            :: MatEl
   type (SingularScales)              :: Sing
@@ -2752,10 +2760,9 @@ subroutine f90SingularDiff(hard, shape, setup, gap, space, cum, orderAlpha, runA
                                         h, s3, j3
   real (dp)          , intent(inout) :: muH, muJ, muS, R
   real (dp)          , intent(out)   :: res
-
   type (Alpha)                       :: alphaAll
-  type (MatrixElements)              :: MatEl
-  type (SingularMassless)            :: Sing
+  type (MatricesElements)            :: MatEl
+  type (SingularScales)              :: Sing
   type (Model)                       :: Mod
 
   if ( setup(:2) == 'FO' ) then
@@ -2764,9 +2771,12 @@ subroutine f90SingularDiff(hard, shape, setup, gap, space, cum, orderAlpha, runA
 
   alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
-  MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
-  Sing      = SingularMassless( MatEl, run, mu, shape(:6), hard(:6) )
+  MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
+  Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Mod       = Model(lambda, c, [0,0], 'sum')
+
+    call Sing%setHard(Q, muH); call sing%SetMat(muJ, muS)
+    call Sing%SetRunning(muJ, muS, R, mu)
 
   res       = Sing%SingleSing(Mod, setup(:7), gap(:12), space(:6), cum(:4), order, R0, &
                               mu0, delta0, h, tau1, tau2)
@@ -2828,7 +2838,6 @@ end subroutine f90SingularHJM
 subroutine f90SingularHJM1D(hard, gap, cum, orderAlpha, runAlpha, order, run, isoft, nf, &
  j3, s3, s31, s32, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, &
  muS, R, mu, c, clen, lambda, R0, mu0, delta0, h, tau, res)
-
   use AlphaClass;  use MatrixElementsClass; use SingularClass; use ModelClass
   use constants, only: dp; implicit none
 
@@ -2895,6 +2904,7 @@ end subroutine f90SingularHJM1DPiece
 subroutine f90SingularDouble(hard, setup, gap, space, cum1, cum2, orderAlpha, runAlpha, order, &
 run, isoft, nf, j3, s3, s31, s32, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q,   &
  muH, muJ, muS, R, mu, c, clen, lambda, R0, mu0, delta0, h, rho1, rho2, res)
+
   use AlphaClass;  use MatrixElementsClass; use SingularClass; use ModelClass
   use constants, only: dp; implicit none
 
@@ -2944,6 +2954,7 @@ end subroutine f90SingularDouble
 subroutine f90SingularHJMPiece(hard, gap, space, cum, orderAlpha, runAlpha, order, run , &
  isoft, nf, j3, s3, s31, s32, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, &
  muH, muJ, muS, R, mu, c, lambda, R0, mu0, delta0, h, tau, res)
+
  use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
  use constants, only: dp; implicit none
 
@@ -2980,6 +2991,7 @@ end subroutine f90SingularHJMPiece
 subroutine f90SingularDoublePiece(hard, gap, space, cum1, cum2, orderAlpha, runAlpha, order , &
  run, isoft, nf, j3, s3, s31, s32, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, &
  muH, muJ, muS, R, mu, c, lambda, R0, mu0, delta0, h, rho1, rho2, res)
+
  use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
  use constants, only: dp; implicit none
 
@@ -3016,27 +3028,30 @@ end subroutine f90SingularDoublePiece
 subroutine f90SingularPiece(hard, shape, gap, space, cum, orderAlpha, runAlpha, order, run, nf, &
 j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, piece, &
 lambda, R0, mu0, delta0, h, tau, res)
- use AlphaClass;  use MatrixElementsClass; use SingularClass; use ModelClass
- use constants, only: dp; implicit none
 
- character (len = *)  , intent(in) :: shape, cum, space, hard, gap
- integer              , intent(in) :: orderAlpha, order, runAlpha, run, nf
- integer, dimension(2), intent(in) :: piece
- real (dp)            , intent(in) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, muC, &
+  use AlphaClass;  use MatrixElementsClass; use SingularClass; use ModelClass
+  use constants, only: dp; implicit none
+
+  character (len = *)  , intent(in) :: shape, cum, space, hard, gap
+  integer              , intent(in) :: orderAlpha, order, runAlpha, run, nf
+  integer, dimension(2), intent(in) :: piece
+  real (dp)            , intent(in) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, muC, &
                                       Q, muJ, muS, R, G3, lambda, tau, R0, mu0, delta0, &
                                       j3, s3, muH, h
- real (dp)           , intent(out) :: res
-
-  type (Alpha)                     :: alphaAll
-  type (MatrixElements)            :: MatEl
-  type (SingularMassless)          :: Sing
-  type (Model)                     :: Mod
+  real (dp)           , intent(out) :: res
+  type (Alpha)                      :: alphaAll
+  type (MatricesElements)           :: MatEl
+  type (SingularScales)             :: Sing
+  type (Model)                      :: Mod
 
   Mod       = Model(lambda, [1._dp], piece, 'piece')
   alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
-  MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
-  Sing      = SingularMassless( MatEl, run, mu, shape(:6), hard(:6) )
+  MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
+  Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
+
+  call Sing%setHard(Q, muH); call sing%SetMat(muJ, muS)
+  call Sing%SetRunning(muJ, muS, R, mu)
 
   res = Sing%SingleSing(Mod, 'Model', gap(:12), space(:3), cum(:4), order, R0, mu0, &
                         delta0, h, tau)
@@ -3048,6 +3063,7 @@ end subroutine f90SingularPiece
 subroutine f90SingularList(hard, shape, gap, space, cum, orderAlpha, runAlpha, order  , &
 run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, &
 mu, clen, lambda, R0, mu0, delta0, h, tau, res)
+
  use AlphaClass;  use MatrixElementsClass; use SingularClass; use ModelClass
  use constants, only: dp; implicit none
 
@@ -3086,6 +3102,7 @@ end subroutine f90SingularList
 subroutine f90SingularDiffPiece(hard, shape, gap, space, cum, orderAlpha, runAlpha, order, run,&
 nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu,   &
 piece, lambda, R0, mu0, delta0, h, tau, tau2, res)
+
  use AlphaClass;  use MatrixElementsClass; use SingularClass; use ModelClass
  use constants, only: dp; implicit none
 
@@ -3096,20 +3113,22 @@ piece, lambda, R0, mu0, delta0, h, tau, tau2, res)
                                       Q, muJ, muS, R, G3, lambda, tau, R0, mu0, delta0, &
                                       j3, s3, muH, h, tau2
  real (dp)           , intent(out) :: res
+ type (Alpha)                      :: alphaAll
+ type (MatricesElements)           :: MatEl
+ type (SingularScales)             :: Sing
+ type (Model)                      :: Mod
 
-  type (Alpha)                     :: alphaAll
-  type (MatrixElements)            :: MatEl
-  type (SingularMassless)          :: Sing
-  type (Model)                     :: Mod
+ Mod       = Model(lambda, [1._dp], piece, 'piece')
+ alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+                   mB, muB, mC, muC)
+ MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
+ Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
 
-  Mod       = Model(lambda, [1._dp], piece, 'piece')
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
-  MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
-  Sing      = SingularMassless( MatEl, run, mu, shape(:6), hard(:6) )
+ call Sing%setHard(Q, muH); call sing%SetMat(muJ, muS)
+ call Sing%SetRunning(muJ, muS, R, mu)
 
-  res = Sing%SingleSing(Mod, 'Model', gap(:12), space(:3), cum(:4), order, R0, mu0, &
-                        delta0, h, tau, tau2)
+ res = Sing%SingleSing(Mod, 'Model', gap(:12), space(:3), cum(:4), order, R0, mu0, &
+                       delta0, h, tau, tau2)
 
 end subroutine f90SingularDiffPiece
 
@@ -3118,21 +3137,21 @@ end subroutine f90SingularDiffPiece
 subroutine f90SingularDiffList(hard, shape, gap, space, cum, orderAlpha, runAlpha, order,&
  run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, &
  mu, clen, lambda, R0, mu0, delta0, h, tau, tau2, res)
- use AlphaClass;  use MatrixElementsClass; use SingularClass; use ModelClass
- use constants, only: dp; implicit none
 
-  character (len = *)  , intent(in) :: shape, cum, space, hard, gap
-  integer              , intent(in) :: orderAlpha, order, runAlpha, run, nf, clen
-  real (dp)            , intent(in) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, muC, &
-                                       Q, muJ, muS, R, G3, lambda, tau, R0, mu0, delta0, &
-                                       j3, s3, muH, h, tau2
-  real (dp), dimension( (clen + 2) * (clen + 1)/2 ) , intent(out) :: res
+  use AlphaClass;  use MatrixElementsClass; use SingularClass; use ModelClass
+  use constants, only: dp; implicit none
 
-  integer                           :: i, j, k
-  type (Alpha)                      :: alphaAll
-  type (MatrixElements)             :: MatEl
-  type (SingularMassless)           :: Sing
-  type (Model), dimension( (clen + 2) * (clen + 1)/2 ) :: Mod
+  character (len = *), intent(in) :: shape, cum, space, hard, gap
+  integer            , intent(in) :: orderAlpha, order, runAlpha, run, nf, clen
+  real (dp)          , intent(in) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, &
+                                     Q, muJ, muS, R, G3, lambda, tau, R0, delta0, &
+                                     j3, s3, muH, h, tau2, mu0, muC
+  integer                         :: i, j, k
+  type (Alpha)                    :: alphaAll
+  type (MatricesElements)         :: MatEl
+  type (SingularScales)           :: Sing
+  real (dp)   , dimension( (clen + 2) * (clen + 1)/2 ) , intent(out) :: res
+  type (Model), dimension( (clen + 2) * (clen + 1)/2 )               :: Mod
 
   k = 1
 
@@ -3146,8 +3165,11 @@ subroutine f90SingularDiffList(hard, shape, gap, space, cum, orderAlpha, runAlph
 
   alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
-  MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
-  Sing      = SingularMassless( MatEl, run, mu, shape(:6), hard(:6) )
+  MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
+  Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
+
+   call Sing%setHard(Q, muH); call sing%SetMat(muJ, muS)
+   call Sing%SetRunning(muJ, muS, R, mu)
 
   res = Sing%SingleSing(Mod, gap(:12), space(:3), cum(:4), order, R0, mu0, &
                         delta0, h, tau, tau2)
@@ -3156,22 +3178,23 @@ end subroutine f90SingularDiffList
 
 !ccccccccccccccc
 
-subroutine f90Rhad(str, orderAlpha, runAlpha, order, nf, mZ, amZ, mT, muT, mB, muB, mC, &
-                   muC, mu, Q, res)
+subroutine f90Rhad(str, orderAlpha, runAlpha, order, nf, mZ, amZ, mT, muT, mB, &
+                   muB, mC, muC, mu, Q, res)
+
   use RunningClass; use AlphaClass; use SigmaClass;  use ElectroWeakClass
   use constants, only: dp; implicit none
+
   character (len = *), intent(in ) :: str
   integer            , intent(in ) :: order, runAlpha, orderAlpha, nf
-  real (dp)    , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, Q
-  real (dp)    , intent(out) :: res
-
+  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, Q
+  real (dp)          , intent(out) :: res
   type (Running)                   :: alphaMass
   type (Alpha)                     :: alphaAll
   type (Sigma)                     :: MatEl
   type (ElectroWeak)               :: EW
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
+                     mT, muT, mB, muB, mC, muC)
   alphaMass = Running(nf, runAlpha, alphaAll, muC)
   EW = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
 
@@ -3183,15 +3206,15 @@ end subroutine f90Rhad
 
 subroutine f90RhadMass(str, curr, orderAlpha, runAlpha, runMass, order, nf, mZ, gammaZ, &
                        sin2ThetaW, amZ, mT, muT, mB, muB, mC, muC, mu, Q, res)
+
   use RunningClass; use AlphaClass; use SigmaClass; use ElectroWeakClass
   use constants, only: dp; implicit none
 
   character (len = *), intent(in ) :: str, curr
   integer            , intent(in ) :: order, runAlpha, orderAlpha, nf, runMass
-  real (dp)    , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, gammaZ, &
+  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, gammaZ, &
                                       sin2ThetaW, Q
-  real (dp)    , intent(out) :: res
-
+  real (dp)          , intent(out) :: res
   type (Running)                   :: alphaMass
   type (Alpha)                     :: alphaAll
   type (Sigma)                     :: MatEl
@@ -3209,15 +3232,15 @@ end subroutine f90RhadMass
 
 !ccccccccccccccc
 
-subroutine f90lambdaQCD(str, order, runAlpha, run, nf, mZ, amZ, mT, muT, mB, muB, mC, &
-                        muC, mu, res)
+subroutine f90lambdaQCD(str, order, runAlpha, run, nf, mZ, amZ, mT, muT, mB, &
+                        muB, mC, muC, mu, res)
+
   use RunningClass;  use AlphaClass;  use constants, only: dp; implicit none
 
   character (len = *), intent(in ) :: str
   integer            , intent(in ) :: order, runAlpha, run, nf
-  real (dp)    , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC
-  real (dp)    , intent(out) :: res
-
+  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC
+  real (dp)          , intent(out) :: res
   type (Running)                   :: alphaMass
   type (Alpha)                     :: alphaAll
 
@@ -3232,12 +3255,10 @@ end subroutine f90lambdaQCD
 
 subroutine f90delta(str, nf, mu, R, res)
   use AlphaClass; use MatrixElementsClass;  use constants, only: dp; implicit none
-
   character (len = *)    , intent(in ) :: str
   integer                , intent(in ) :: nf
   real (dp)              , intent(in ) :: mu, R
   real (dp), dimension(3), intent(out) :: res
-
   type (Alpha)                         :: alphaAll
   type (MatrixElementsMass)            :: MatEl
 
@@ -3255,12 +3276,10 @@ end subroutine f90delta
 subroutine f90deltaGap(str, orderAlpha, runAlpha, runMass, nf, mZ, amZ, mT, muT, mB, muB, &
                        mC, muC, mu, R, res)
   use AlphaClass;  use MatrixElementsClass;  use constants, only: dp; implicit none
-
   character (len = *)    , intent(in ) :: str
   integer                , intent(in ) :: nf, orderAlpha, runAlpha, runMass
   real (dp)              , intent(in ) :: mu, R, mZ, amZ, mT, muT, mB, muB, mC, muC
   real (dp), dimension(3), intent(out) :: res
-
   type (Alpha)                         :: alphaAll
   type (MatrixElementsMass)            :: MatEl
 
@@ -3280,11 +3299,9 @@ subroutine f90deltaMSbar(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, mu
                          muC, mu, res)
   use RunningClass; use AlphaClass;  use MatrixElementsClass
   use constants, only: dp; implicit none
-
   integer                , intent(in ) :: orderAlpha, runAlpha, run, nf
   real (dp)              , intent(in ) :: mZ, amZ, mu, mT, muT, muB, mB, mC, muC
   real (dp), dimension(3), intent(out) :: res
-
   type (Alpha)                         :: alphaAll
   type (MatrixElementsMass)            :: MatEl
 
@@ -3301,14 +3318,11 @@ end subroutine f90deltaMSbar
 
 subroutine f90CoefMat(str, nf, s3, res)
   use AlphaClass; use MatrixElementsClass;  use constants, only: dp; implicit none
-
   character (len = *)        , intent(in ) :: str
   integer                    , intent(in ) :: nf
   real (dp)                  , intent(in ) :: s3
   real (dp), dimension(0:4,3), intent(out) :: res
-
   real (dp)                                :: mu = 20._dp
-
   type (Alpha)                             :: alphaAll
   type (MatrixElementsMass)                :: MatEl
 
@@ -3316,7 +3330,6 @@ subroutine f90CoefMat(str, nf, s3, res)
                      0._dp, 0._dp, 0._dp)
   MatEl     = MatrixElementsMass(alphaAll, 5, 0, s3, s3, s3, s3, mu, mu, mu, tiny(1._dp),&
                              mu, mu, mu, 0._dp, 0._dp)
-
   res = MatEl%CoefMat(str)
 
 end subroutine f90CoefMat
@@ -3325,7 +3338,6 @@ end subroutine f90CoefMat
 
 subroutine f90NGLintegral(nf, pow, w1, w2, res)
   use AlphaClass; use MatrixElementsClass;  use constants, only: dp; implicit none
-
   integer     , intent(in ) :: nf, pow
   real (dp)   , intent(in ) :: w1, w2
   real (dp)   , intent(out) :: res
@@ -3348,7 +3360,6 @@ end subroutine f90NGLintegral
 
 subroutine f90NGLDoubleintegral(nf, pow, w1, w2, ratio, res)
   use MatrixElementsClass;  use constants, only: dp; implicit none
-
   integer        , intent(in ) :: nf, pow
   real (dp)      , intent(in ) :: w1, w2, ratio
   real (dp)      , intent(out) :: res
@@ -3361,13 +3372,10 @@ end subroutine f90NGLDoubleintegral
 
 subroutine f90NGLfunction(nf, x, res)
   use AlphaClass;  use MatrixElementsClass;  use constants, only: dp; implicit none
-
   integer     , intent(in ) :: nf
   real (dp)   , intent(in ) :: x
   real (dp)   , intent(out) :: res
-
   real (dp)                 :: mu = 20._dp
-
   type (Alpha)              :: alphaAll
   type (MatrixElementsMass) :: MatEl
 
@@ -3384,13 +3392,11 @@ end subroutine f90NGLfunction
 subroutine f90DiffDeltaGap(str, scheme, order, R0, R, mu0, mu, muLambda, orderAlpha, &
                            runAlpha, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, res)
   use MatrixElementsClass; use AlphaClass;  use constants, only: dp; implicit none
-
   character (len = *), intent(in ) :: str, scheme
   integer            , intent(in ) :: order, nf, orderAlpha, runAlpha
   real (dp)          , intent(in ) :: R0, R, mu0, mu, muLambda, mZ, amZ, mT, muT, mB, &
                                       muB, mC, muC
   real (dp)          , intent(out) :: res
-
   type (Alpha)                     :: alphaAll
   type (MatrixElementsMass)        :: MatEl
 
@@ -3407,12 +3413,10 @@ end subroutine f90DiffDeltaGap
 
 subroutine f90kernels(n, width, w, mu, p, res)
   use KernelsClass;  use constants, only: dp; implicit none
-
-  integer        , intent(in ) :: n
+  integer  , intent(in ) :: n
   real (dp), intent(in ) :: width, w, mu, p
   real (dp), intent(out) :: res(0:n)
-
-  type (Kernels)               :: ker
+  type (Kernels)         :: ker
 
   ker = Kernels(n, width, w, mu, p);  res = ker%KernelList()
 
@@ -3436,12 +3440,10 @@ end subroutine f90GammaDerList
 
 subroutine f90NGLkernels(n, n1, n2, width, w, mu, p, res)
   use KernelsClass;  use constants, only: dp; implicit none
-
   integer                , intent(in ) :: n, n1, n2
   real (dp), dimension(2), intent(in ) :: w, p
   real (dp)              , intent(in ) :: mu, width
   real (dp)              , intent(out) :: res(n)
-
   type (Kernels)                       :: ker1, ker2
   real (dp), dimension(0:2*n+n1)       :: kerList1
   real (dp), dimension(0:2*n+n2)       :: kerList2
@@ -3480,15 +3482,11 @@ end subroutine f90hyperf32exact
 !ccccccccccccccc
 
 subroutine f90GammaR(str, nf, beta)
-  use MatrixElementsClass;  use AlphaClass; use constants
-
-  implicit none
+  use MatrixElementsClass;  use AlphaClass; use constants; implicit none
   character (len = *)    , intent(in ) :: str
   integer                , intent(in ) :: nf
   real (dp), dimension(3), intent(out) :: beta
-
   real (dp)                            :: mu = 20._dp
-
   type (Alpha)                         :: alphaAll
   type (MatrixElementsMass)            :: MatEl
 
