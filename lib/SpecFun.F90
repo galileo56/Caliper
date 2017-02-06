@@ -13,11 +13,11 @@ module Constants
     !  Machine constants (replaces the old SLATEC [D1MACH](http://www.netlib.org/slatec/src/d1mach.f) function)
     !
     !  The traditional D1MACH constants are:
-    !  * `D1MACH( 1) = B**(EMIN-1)`,           the smallest positive magnitude.
-    !  * `D1MACH( 2) = B**EMAX*(1 - B**(-T))`, the largest magnitude.
-    !  * `D1MACH( 3) = B**(-T)`,               the smallest relative spacing.
-    !  * `D1MACH( 4) = B**(1-T)`,              the largest relative spacing.
-    !  * `D1MACH( 5) = LOG10(B)`
+    !  * _dpD1MACH( 1) = B**(EMIN-1)_dp,           the smallest positive magnitude.
+    !  * _dpD1MACH( 2) = B**EMAX*(1 - B**(-T))_dp, the largest magnitude.
+    !  * _dpD1MACH( 3) = B**(-T)_dp,               the smallest relative spacing.
+    !  * _dpD1MACH( 4) = B**(1-T)_dp,              the largest relative spacing.
+    !  * _dpD1MACH( 5) = LOG10(B)_dp
 
     !**************************************************************
 
@@ -26,552 +26,6 @@ module Constants
            log10(real(radix(1.0_dp),dp)) ]
 
 end module Constants
-
-!ccccccccccccccc
-
-module hyper
-use adapt, only: dGauss; use constants, only: dp, Euler, Pi, prec; implicit none
-
- contains
-
-!ccccccccccccccc
-
-real (dp) function pFq(a, b, x)
-  real (dp), dimension(:), intent(in) :: a, b
-  real (dp)              , intent(in) :: x
-  integer                             :: i
-  real (dp)                           :: fac
-  real (dp), dimension( size(a) )     :: tabA
-  real (dp), dimension( size(b) )     :: tabB
-
-  pFq = 1; tabA = a; tabB = b; fac = 1
-
-  do i = 1, 100
-    fac = fac * x/i * product(tabA) / product(tabB)
-    pFq = pFq + fac; if ( abs(fac) <= prec ) return
-    if (i > 3 .and. abs(fac) >= pFQ ) exit
-    tabA = tabA + 1;  tabB = tabB + 1
-  end do
-
-  pFq = 0
-
-end function pFq
-
-!ccccccccccccccc
-
-real (dp) function F32(w, x)
-  real (dp), intent(in) :: w, x
-  integer               :: i
-  real (dp)             :: fac, fac1, fac2
-
-  F32 = 1; fac = 1; fac1 = 1; fac2 = 1 - w
-
-  do i = 1, 100
-    fac = fac * (-x)/i * fac1**3 / fac2;  fac1 = fac1 + 1;  fac = fac / fac1
-    if (i > 2 .and. abs(fac) >= F32 ) exit; F32 = F32 + fac
-    if ( abs(fac) <= prec ) return        ; fac2 = fac2 + 1
-  end do
-
-  F32 = 0
-
-end function F32
-
-!ccccccccccccccc
-
-real (dp) function H3F2Exact(w, x)
- real (dp), intent(in) :: w, x
-
-   if ( abs(w) <= tiny(1._dp) ) then
-     H3F2Exact = log(1 + x)/x; return
-   else
-     H3F2Exact = F32(w,x)
-     if ( abs(H3F2Exact) > 0 ) return
-   end if
-
-   H3F2Exact = dGauss(HyperInt, 0._dp, 1._dp, prec)
-
-   contains
-
-!ccccccccccccccc
-
-real (dp) function HyperInt(y)
-  real (dp), intent(in) :: y
-  HyperInt = Hyper2F1(1._dp, 1._dp, 1 - w, - x * y)
-end function HyperInt
-
-end function H3F2Exact
-
-!ccccccccccccccc
-
-real (dp) function hyper2f1(a, b, c, x)
-implicit none
-
-real (dp), intent(in) :: a, b, c, x
-
-call f90hiper2f1 (a, b, c, x, hyper2f1)
-
-end function hyper2f1
-
-!ccccccccccccccc
-
-subroutine f90hiper2f1 ( ain, bin, cin, xin, hf )
-!*****************************************************************************80
-!
-!! HYGFX evaluates the hypergeometric function F(A,B,C,X).
-!
-!  Licensing:
-!
-!    The original FORTRAN77 version of this routine is copyrighted by
-!    Shanjie Zhang and Jianming Jin.  However, they give permission to
-!    incorporate this routine into a user program that the copyright
-!    is acknowledged.
-!
-!  Modified:
-!
-!    08 September 2007
-!    Modified by Vicent Mateu 19 September 2016
-!
-!  Author:
-!
-!    Original FORTRAN77 version by Shanjie Zhang, Jianming Jin.
-!    FORTRAN90 version by John Burkardt.
-!
-!  Reference:
-!
-!    Shanjie Zhang, Jianming Jin,
-!    Computation of Special Functions,
-!    Wiley, 1996,
-!    ISBN: 0-471-11963-6,
-!    LC: QA351.C45
-!
-!  Parameters:
-!
-!    Input, real (dp) A, B, C, X, the arguments of the function.
-!    C must not be equal to a nonpositive integer.
-!    X < 1.
-!
-!    Output, real HF, the value of the function.
-!
-  implicit none
-
-  real (dp), intent(in)  :: ain, bin, cin, xin
-  real (dp), intent(out) :: hf
-
-  real (dp) :: a, a0, aa, b, bb, c, c0, c1, eps, f0, f1, g0, g1, g2, g3, ga, gabc, x, x1, &
-               gam, gb, gbm, gc, gca, gcab, gcb, gm, hw, pa, pb, r, r0, r1, rm, rp, sm,&
-               sp0, sp
-
-  integer  :: j, k, m, nm
-  logical  :: l0, l1, l2, l3, l4, l5
-
-  a = ain;  b = bin;  c = cin;  x = xin
-
-  l0 = ( c == aint(c) ) .and. ( c < 0 )
-  l1 = ( 1 - x < 1.e-15_dp ) .and. (c - a - b <= 0)
-  l2 = ( a == aint(a) ) .and. ( a < 0 )
-  l3 = ( b == aint(b) ) .and. ( b < 0 )
-  l4 = ( c - a == aint(c - a) ) .and. ( c - a <= 0 )
-  l5 = ( c - b == aint(c - b) ) .and. ( c - b <= 0 )
-
-  if ( l0 .or. l1 ) then
-    write ( *, '(a)' ) ' '
-    write ( *, '(a)' ) 'HYGFX - Fatal error!'
-    write ( *, '(a)' ) '  The hypergeometric series is divergent.'
-    return
-  end if
-
-  if ( 0.95 < x ) then
-    eps = 1e-8_dp
-  else
-    eps = 1e-15_dp
-  end if
-
-  if ( x == 0 .or. a == 0 .or. b == 0 ) then
-
-    hf = 1
-    return
-
-  else if ( 1 - x == eps .and. 0 < c - a - b ) then
-
- gc = gamma(c)
- gcab = gamma(c - a - b)
- gca = gamma(c - a)
- gcb = gamma(c - b)
-    hf = gc * gcab /( gca *gcb )
-    return
-
-  else if ( 1 + x <= eps .and. abs ( c - a + b - 1 ) <= eps ) then
-
-    g0 = sqrt (pi) * 2._dp**( - a )
-    g1 = gamma(c)
-    g2 = gamma(1 + a / 2 - b)
-    g3 = gamma(0.5 + a/2)
-    hf = g0 * g1 / ( g2 * g3 )
-    return
-
-  else if ( l2 .or. l3 ) then
-
-    if ( l2 ) then
-      nm = int ( abs ( a ) )
-    end if
-
-    if ( l3 ) then
-      nm = int ( abs ( b ) )
-    end if
-
-    hf = 1;  r = 1
-
-    do k = 1, nm
-      r = r * ( a + k - 1 ) * ( b + k - 1 ) / ( k * ( c + k - 1 ) ) * x
-      hf = hf + r
-    end do
-
-    return
-
-  else if ( l4 .or. l5 ) then
-
-    if ( l4 ) then
-      nm = int ( abs ( c - a ) )
-    end if
-
-    if ( l5 ) then
-      nm = int ( abs ( c - b ) )
-    end if
-
-    hf = 1;  r  = 1
-    do k = 1, nm
-      r = r * ( c - a + k - 1 ) * ( c - b + k - 1 ) / ( k * ( c + k - 1 ) ) * x
-      hf = hf + r
-    end do
-    hf = ( 1 - x )**( c - a - b ) * hf
-    return
-
-  end if
-
-  aa = a;  bb = b;  x1 = x
-!
-!  WARNING: ALTERATION OF INPUT ARGUMENTS A AND B, WHICH MIGHT BE CONSTANTS.
-!
-  if ( x < 0 ) then
-    x = x / ( x - 1 )
-    if ( a < c .and. b < a .and. 0 < b ) then
-      a = bb; b = aa
-    end if
-    b = c - b
-  end if
-
-  if ( 0.75 <= x ) then
-
-    gm = 0
-
-    if ( abs ( c - a - b - aint ( c - a - b ) ) < 1e-15_dp ) then
-
-      m = int ( c - a - b )
- ga = gamma(a)
-
-gb = gamma(b)
-
-gc = gamma(c)
-gam = gamma(a + m)
-gbm = gamma(b + m)
-      call psi ( a, pa )
-      call psi ( b, pb )
-
-      if ( m /= 0 ) then
-        gm = 1
-      end if
-
-      do j = 1, abs ( m ) - 1
-        gm = gm * j
-      end do
-
-      rm = 1
-      do j = 1, abs ( m )
-        rm = rm * j
-      end do
-
-      f0 = 1;  r0 = 1; r1 = 1; sp0 = 0; sp = 0
-
-      if ( 0 <= m ) then
-
-        c0 = gm * gc / ( gam * gbm )
-        c1 = - gc * ( x - 1 )**m / ( ga * gb * rm )
-
-        do k = 1, m - 1
-          r0 = r0 * ( a + k - 1 ) * ( b + k - 1 ) / ( k * ( k - m ) ) * ( 1 - x )
-          f0 = f0 + r0
-        end do
-
-        do k = 1, m
-          sp0 = sp0 + 1 / ( a + k - 1 ) &
-            + 1 / ( b + k - 1 ) - 1 / real ( k, dp )
-        end do
-
-        f1 = pa + pb + sp0 + 2 * Euler + log ( 1 - x )
-        hw = f1
-
-        do k = 1, 250
-
-          sp = sp + ( 1 - a ) / ( k * ( a + k - 1 ) ) + ( 1 - b ) / ( k * ( b + k - 1 ) )
-
-          sm = 0
-          do j = 1, m
-            sm = sm + ( 1 - a ) / ( ( j + k ) * ( a + j + k - 1 ) ) + 1 / (b + j + k - 1)
-          end do
-
-          rp = pa + pb + 2 * Euler + sp + sm + log ( 1 - x )
-
-          r1 = r1 * ( a + m + k - 1 ) * ( b + m + k - 1 ) &
-            / ( k * ( m + k ) ) * ( 1 - x )
-
-          f1 = f1 + r1 * rp
-
-          if ( abs ( f1 - hw ) < abs ( f1 ) * eps ) then
-            exit
-          end if
-
-          hw = f1
-
-        end do
-
-        hf = f0 * c0 + f1 * c1
-
-      else if ( m < 0 ) then
-
-        m = - m
-        c0 = gm * gc / ( ga * gb * ( 1 - x )**m )
-        c1 = - ( - 1 )**m * gc / ( gam * gbm * rm )
-
-        do k = 1, m - 1
-          r0 = r0 * ( a - m + k - 1 ) * ( b - m + k - 1 ) / ( k * ( k - m ) ) * (1 - x)
-          f0 = f0 + r0
-        end do
-
-        do k = 1, m
-          sp0 = sp0 + 1 / real ( k, dp )
-        end do
-
-        f1 = pa + pb - sp0 + 2 * Euler + log ( 1 - x )
-
-        do k = 1, 250
-
-          sp = sp + ( 1 - a ) / ( k * ( a + k - 1 ) ) + ( 1 - b ) / ( k * ( b + k - 1 ) )
-
-          sm = 0
-          do j = 1, m
-            sm = sm + 1 / real ( j + k, dp )
-          end do
-
-          rp = pa + pb + 2 * Euler + sp - sm + log ( 1 - x )
-
-          r1 = r1 * ( a + k - 1 ) * ( b + k - 1 ) / ( k * ( m + k ) ) * ( 1 - x )
-
-          f1 = f1 + r1 * rp
-
-          if ( abs ( f1 - hw ) < abs ( f1 ) * eps ) then
-            exit
-          end if
-
-          hw = f1
-
-        end do
-
-        hf = f0 * c0 + f1 * c1
-
-      end if
-
-    else
-
-ga = gamma(a)
-gb = gamma(b)
-gc = gamma(c)
-gca = gamma(c - a)
-gcb = gamma(c - b)
-gcab = gamma(c - a - b)
-gabc = gamma(a + b - c)
-      c0 = gc * gcab / ( gca * gcb )
-      c1 = gc * gabc / ( ga * gb ) * ( 1 - x )**( c - a - b )
-      hf = 0;  r0 = c0;  r1 = c1
-
-      do k = 1, 250
-
-        r0 = r0 * ( a + k - 1 ) * ( b + k - 1 ) / ( k * ( a + b - c + k ) ) * ( 1 - x )
-
-        r1 = r1 * ( c - a + k - 1 ) * ( c - b + k - 1 ) &
-          / ( k * ( c - a - b + k ) ) * ( 1 - x )
-
-        hf = hf + r0 + r1
-
-        if ( abs ( hf - hw ) < abs ( hf ) * eps ) then
-          exit
-        end if
-
-        hw = hf
-
-      end do
-
-      hf = hf + c0 + c1
-
-    end if
-
-  else
-
-    a0 = 1
-
-    if ( a < c .and. c < 2 * a .and. b < c .and. c < 2 * b ) then
-
-      a0 = ( 1 - x )**( c - a - b );  a = c - a;  b = c - b
-
-    end if
-
-    hf = 1;  r = 1
-
-    do k = 1, 250
-
-      r = r * ( a + k - 1 ) * ( b + k - 1 ) / ( k * ( c + k - 1 ) ) * x
-
-      hf = hf + r
-
-      if ( abs ( hf - hw ) <= abs ( hf ) * eps ) then
-        exit
-      end if
-
-      hw = hf
-
-    end do
-
-    hf = a0 * hf
-
-  end if
-
-  if ( x1 < 0 ) then
-
-    x = x1;  c0 = 1 / ( 1 - x )**aa;  hf = c0 * hf
-
-  end if
-
-  a = aa; b = bb
-
-  if ( 120 < k ) then
-    write ( *, '(a)' ) ' '
-    write ( *, '(a)' ) 'HYGFX - Warning!'
-    write ( *, '(a)' ) '  A large number of iterations were needed.'
-    write ( *, '(a)' ) '  The accuracy of the results should be checked.'
-  end if
-
-end subroutine f90hiper2f1
-
-!ccccccccccccccc
-
-pure subroutine psi (x, ps)
-  use constants
-
-!*****************************************************************************80
-!
-!! PSI computes the PSI function.
-!
-!  Licensing:
-!
-!    The original FORTRAN77 version of this routine is copyrighted by
-!    Shanjie Zhang and Jianming Jin.  However, they give permission to
-!    incorporate this routine into a user program that the copyright
-!    is acknowledged.
-!
-!  Modified:
-!
-!    08 September 2007
-!
-!  Author:
-!
-!    Original FORTRAN77 by Shanjie Zhang, Jianming Jin.
-!    FORTRAN90 version by John Burkardt.
-!    Modified by Vicent Mateu 19 September 2016
-!
-!  Reference:
-!
-!    Shanjie Zhang, Jianming Jin,
-!    Computation of Special Functions,
-!    Wiley, 1996,
-!    ISBN: 0-471-11963-6,
-!    LC: QA351.C45
-!
-!  Parameters:
-!
-!    Input, real (dp) X, the argument.
-!
-!    Output, real (dp) PS, the value of the PSI function.
-!
-  implicit none
-
-  real (dp), intent(in ) :: x
-  real (dp), intent(out) :: ps
-
-  real (dp), parameter   :: a1 = -0.83333333333333333e-1_dp
-  real (dp), parameter   :: a2 =  0.83333333333333333e-2_dp
-  real (dp), parameter   :: a3 = -0.39682539682539683e-2_dp
-  real (dp), parameter   :: a4 =  0.41666666666666667e-2_dp
-  real (dp), parameter   :: a5 = -0.75757575757575758e-2_dp
-  real (dp), parameter   :: a6 =  0.21092796092796093e-1_dp
-  real (dp), parameter   :: a7 = -0.83333333333333333e-1_dp
-  real (dp), parameter   :: a8 =  0.4432598039215686_dp
-
-  integer (kind = 4)           :: k, n
-  real (dp)              :: x2, xa, s
-
-  xa = abs(x); s = 0
-
-  if ( x == aint(x) .and. x <= 0 ) then
-
-    ps = 1.d+300;    return
-
-  else if ( xa == aint(xa) ) then
-
-    n = int(xa)
-    do k = 1, n - 1
-      s = s + 1/real( k, dp )
-    end do
-
-    ps = s - Euler
-
-  else if ( xa + 0.5 == aint ( xa + 0.5 ) ) then
-
-    n = int ( xa - 0.5 )
-
-    do k = 1, n
-      s = s + 1._dp / real ( 2 * k - 1, dp )
-    end do
-
-    ps = 2 * s - Euler - 1.386294361119891_dp
-
-  else
-
-    if ( xa < 10 ) then
-
-      n = 10 - int ( xa )
-      do k = 0, n - 1
-        s = s + 1/( xa + real ( k, dp ) )
-      end do
-
-      xa = xa + real ( n, dp )
-
-    end if
-
-    x2 = 1._dp / ( xa * xa )
-
-    ps = log ( xa ) - 0.5 / xa + x2 * ((((((( a8 * x2 + a7 ) * x2 + a6 ) &
-      * x2 + a5 ) * x2 + a4 ) * x2 + a3 ) * x2 + a2 ) * x2 + a1 )
-
-    ps = ps - s
-
-  end if
-
-  if ( x < 0 ) then
-    ps = ps - pi * cos (pi * x) / sin (pi * x) - 1 / x
-  end if
-
-end subroutine psi
-
-end module hyper
 
 !ccccccccccccccc
 
@@ -906,13 +360,13 @@ module carlson_elliptic_module
     real(dp), intent(in ) :: x    !! nonnegative variable
     real(dp), intent(in ) :: y    !! positive variable
     integer , intent(out) :: ier  !! indicates normal or abnormal termination:
-                                !! `IER = 0`: Normal and reliable termination of the
+                                !! _dpIER = 0_dp: Normal and reliable termination of the
                                 !!  routine. It is assumed that the requested
                                 !!  accuracy has been achieved.
-                                !! `IER > 0`: Abnormal termination of the routine:
-                                !! `IER = 1`: `x<0 or y<=0`
-                                !! `IER = 2`: `x+y<LOLIM`
-                                !! `IER = 3`: `max(x,y) > UPLIM`
+                                !! _dpIER > 0_dp: Abnormal termination of the routine:
+                                !! _dpIER = 1_dp: _dpx<0 or y<=0_dp
+                                !! _dpIER = 2_dp: _dpx+y<LOLIM_dp
+                                !! _dpIER = 3_dp: _dpmax(x,y) > UPLIM_dp
 
     character(len=16) :: xern3 , xern4 , xern5
     real (dp) :: lamda, mu , s , sn , xn , yn
@@ -925,7 +379,7 @@ module carlson_elliptic_module
         !! machine precision.
         !!
         !! Relative error due to truncation is less than
-        !! `16 * ERRTOL ** 6 / (1 - 2 * ERRTOL)`.
+        !! _dp16 * ERRTOL ** 6 / (1 - 2 * ERRTOL)_dp.
         !!
         !! Sample choices:
         !! (ERRTOL, Relative truncation error less than):
@@ -1128,13 +582,13 @@ module carlson_elliptic_module
     real(dp), intent(in) :: y    !! nonnegative variable (\(x+y>0\))
     real(dp), intent(in) :: z    !! positive variable
     integer, intent(out) :: ier  !! indicates normal or abnormal termination:
-                                !! `IER = 0`: Normal and reliable termination of the
+                                !! _dpIER = 0_dp: Normal and reliable termination of the
                                 !!  routine. It is assumed that the requested
                                 !!  accuracy has been achieved.
-                                !! `IER > 0`: Abnormal termination of the routine:
-                                !! `IER = 1`: `min(x,y) < 0`
-                                !! `IER = 2`: `min(x + y, z ) < LOLIM`
-                                !! `IER = 3`: `max(x,y,z) > UPLIM`
+                                !! _dpIER > 0_dp: Abnormal termination of the routine:
+                                !! _dpIER = 1_dp: _dpmin(x,y) < 0_dp
+                                !! _dpIER = 2_dp: _dpmin(x + y, z ) < LOLIM_dp
+                                !! _dpIER = 3_dp: _dpmax(x,y,z) > UPLIM_dp
 
     character(len=16) :: xern3 , xern4 , xern5 , xern6
     real(dp) :: epslon, ea , eb , ec , ed , ef , lamda
@@ -1148,7 +602,7 @@ module carlson_elliptic_module
         !! machine precision.
         !!
         !! Relative error due to truncation is less than
-        !! `3 * ERRTOL ** 6 / (1-ERRTOL) ** 3/2`.
+        !! _dp3 * ERRTOL ** 6 / (1-ERRTOL) ** 3/2_dp.
         !!
         !! The accuracy of the computed approximation to the integral
         !! can be controlled by choosing the value of ERRTOL.
@@ -1333,13 +787,13 @@ module carlson_elliptic_module
     real(dp), intent(in) :: y    !! nonnegative variable
     real(dp), intent(in) :: z    !! nonnegative variable
     integer, intent(out) :: ier  !! indicates normal or abnormal termination:
-                                !! `IER = 0`: Normal and reliable termination of the
+                                !! _dpIER = 0_dp: Normal and reliable termination of the
                                 !!  routine. It is assumed that the requested
                                 !!  accuracy has been achieved.
-                                !! `IER > 0`: Abnormal termination of the routine:
-                                !! `IER = 1`: `min(x,y,z) < 0`
-                                !! `IER = 2`:` min(x+y,x+z,y+z) < LOLIM`
-                                !! `IER = 3`: `max(x,y,z) > UPLIM`
+                                !! _dpIER > 0_dp: Abnormal termination of the routine:
+                                !! _dpIER = 1_dp: _dpmin(x,y,z) < 0_dp
+                                !! _dpIER = 2_dp:_dp min(x+y,x+z,y+z) < LOLIM_dp
+                                !! _dpIER = 3_dp: _dpmax(x,y,z) > UPLIM_dp
 
     character(len=16) :: xern3 , xern4 , xern5 , xern6
     real(dp) :: epslon, e2 , e3 , lamda, mu , s , xn , xndev, &
@@ -1352,7 +806,7 @@ module carlson_elliptic_module
         !! machine precision.
         !!
         !! Relative error due to truncation is less than
-        !! `ERRTOL ** 6 / (4 * (1-ERRTOL)`.
+        !! _dpERRTOL ** 6 / (4 * (1-ERRTOL)_dp.
         !!
         !! The accuracy of the computed approximation to the integral
         !! can be controlled by choosing the value of ERRTOL.
@@ -1573,12 +1027,12 @@ module carlson_elliptic_module
     real(dp), intent(in) :: z    !! nonnegative variable
     real(dp), intent(in) :: p    !! positive variable
     integer, intent(out) :: ier  !! indicates normal or abnormal termination:
-                                !! `IER = 0`: Normal and reliable termination of the
+                                !! _dpIER = 0_dp: Normal and reliable termination of the
                                 !!  routine. It is assumed that the requested
                                 !!  accuracy has been achieved.
-                                !! `IER = 1`: `min(x,y,z) < 0.0_dp`
-                                !! `IER = 2`: `min(x+y,x+z,y+z,p) < LOLIM`
-                                !! `IER = 3`: `max(x,y,z,p) > UPLIM`
+                                !! _dpIER = 1_dp: _dpmin(x,y,z) < 0.0_dp_dp
+                                !! _dpIER = 2_dp: _dpmin(x+y,x+z,y+z,p) < LOLIM_dp
+                                !! _dpIER = 3_dp: _dpmax(x,y,z,p) > UPLIM_dp
 
     character(len=16) xern3 , xern4 , xern5 , xern6 , xern7
     real(dp) :: alfa, beta, ea, eb, ec, e2, e3, epslon, lamda, mu, pn, pndev, power4, &
@@ -1592,7 +1046,7 @@ module carlson_elliptic_module
         !! "machine precision".
         !!
         !! Relative error due to truncation of the series for DRJ
-        !! is less than `3 * ERRTOL ** 6 / (1 - ERRTOL) ** 3/2`.
+        !! is less than _dp3 * ERRTOL ** 6 / (1 - ERRTOL) ** 3/2_dp.
         !!
         !! The accuracy of the computed approximation to the integral
         !! can be controlled by choosing the value of ERRTOL.
@@ -3830,5 +3284,594 @@ subroutine f90Elliptic2(phi, k, res)
                                                     1._dp, 1._dp, ier )
 
 end subroutine f90Elliptic2
+
+
+!ccccccccccccccc
+
+module hyper
+ use adapt, only: dGauss; use constants, only: dp, Euler, Pi, Pi2, prec
+ use DeriGamma; implicit none
+
+ real (dp), parameter, dimension(39) :: ContList = [2._dp, 2._dp, 2.1666666666666665_dp, &
+ 2.3333333333333335_dp, 2.4833333333333334_dp, 2.6166666666666667_dp, 2.7357142857142858_dp, &
+ 2.842857142857143_dp, 2.9400793650793653_dp, 3.028968253968254_dp, 3.110786435786436_dp, &
+ 3.1865440115440116_dp, 3.2570568320568323_dp, 3.322990897990898_dp, 3.38489565989566_dp, &
+ 3.4432289932289932_dp, 3.4983760520525227_dp, 3.550663633751869_dp, 3.6003712360910503_dp,&
+ 3.6477396571436818_dp, 3.6929777523817773_dp, 3.7362677956718207_dp, 3.7777697719564056_dp,&
+ 3.8176248444201737_dp, 3.855958177753507_dp, 3.892881254676584_dp, 3.9284937902891195_dp, &
+ 3.962885324680654_dp, 3.9961365562077473_dp, 4.028320464253724_dp, 4.059503259952649_dp, &
+ 4.08974519543652_dp, 4.119101256042581_dp, 4.147621755151315_dp, 4.1753528475882895_dp, &
+ 4.202336974572417_dp, 4.228613250848693_dp, 4.254217802769035_dp, 4.279184064577402_dp]
+
+ contains
+
+!ccccccccccccccc
+
+real (dp) function pFq(a, b, x)
+  real (dp), dimension(:), intent(in) :: a, b
+  real (dp)              , intent(in) :: x
+  integer                             :: i
+  real (dp)                           :: fac
+  real (dp), dimension( size(a) )     :: tabA
+  real (dp), dimension( size(b) )     :: tabB
+
+  pFq = 1; tabA = a; tabB = b; fac = 1
+
+  do i = 1, 100
+    fac = fac * x/i * product(tabA) / product(tabB)
+    pFq = pFq + fac; if ( abs(fac/pFq) <= prec ) return
+    if (i > 3 .and. abs(fac) >= pFQ ) exit
+    tabA = tabA + 1;  tabB = tabB + 1
+  end do
+
+  pFq = 0
+
+end function pFq
+
+!ccccccccccccccc
+
+real (dp) function F32(w, x)
+  real (dp), intent(in) :: w, x
+  integer               :: i
+  real (dp)             :: fac, fac1, fac2
+
+  F32 = 1; fac = 1; fac1 = 1; fac2 = 1 - w
+
+  do i = 1, 100
+    fac = fac * (-x)/i * fac1**3 / fac2;  fac1 = fac1 + 1;  fac = fac / fac1
+    if (i > 2 .and. abs(fac) >= F32 ) exit; F32 = F32 + fac
+    if ( abs(fac) <= prec ) return        ; fac2 = fac2 + 1
+  end do
+
+  F32 = 0
+
+end function F32
+
+!ccccccccccccccc
+
+real (dp) function F32Inf(w, x)
+  real (dp)  , intent(in) :: w, x
+  real (dp), dimension(2) :: PG
+  real (dp)               :: fact, fact2, lg, corr
+  integer                 :: i, NZ, IERR
+
+  call DPSIFN(-w, 0, 1, 2, PG, NZ, IERR)
+
+  fact = w/x; lg = log(x) - Euler
+
+  F32Inf = - fact * ( Pi2 + 2 * lg**2 + 2 * PG(1) * ( Pg(1) + 2 * Lg ) - 2 * PG(2) )/4
+
+  PG(1) = PG(1) + lg; fact2 = 1
+
+  do i = 1, 39
+    fact = - fact * (w + i)/x; PG(1) = PG(1) - 1/(i + w); fact2 = fact2 * max(i - 1,1)
+    corr = fact * ( ContList(i) + PG(1) )/fact2/i**2
+    if (i > 3 .and. abs(corr) >= F32Inf ) exit
+    F32Inf = F32Inf + corr; if ( abs(corr/F32Inf) <= prec ) return
+  end do
+
+  F32Inf = 0
+
+end function F32Inf
+
+!ccccccccccccccc
+
+real (dp) function H3F2Exact(w, x)
+ real (dp), intent(in) :: w, x
+
+   if ( abs(w) <= tiny(1._dp) ) then
+     H3F2Exact = log(1 + x)/x; return
+   end if
+
+   H3F2Exact = F32(w,x)
+   if ( abs(H3F2Exact) > 0 ) return
+
+   H3F2Exact = F32Inf(w, x)
+   if ( abs(H3F2Exact) > 0 ) return
+
+   H3F2Exact = dGauss(HyperInt, 0._dp, 1._dp, prec)
+
+   contains
+
+!ccccccccccccccc
+
+  real (dp) function HyperInt(y)
+    real (dp), intent(in) :: y
+    HyperInt = Hyper2F1(1._dp, 1._dp, 1 - w, - x * y)
+  end function HyperInt
+
+end function H3F2Exact
+
+!ccccccccccccccc
+
+real (dp) function hyper2f1(a, b, c, x)
+ implicit none
+
+ real (dp), intent(in) :: a, b, c, x
+
+ call f90hiper2f1 (a, b, c, x, hyper2f1)
+
+end function hyper2f1
+
+!ccccccccccccccc
+
+subroutine f90hiper2f1 ( ain, bin, cin, xin, hf )
+!*****************************************************************************80
+!
+!! HYGFX evaluates the hypergeometric function F(A,B,C,X).
+!
+!  Licensing:
+!
+!    The original FORTRAN77 version of this routine is copyrighted by
+!    Shanjie Zhang and Jianming Jin.  However, they give permission to
+!    incorporate this routine into a user program that the copyright
+!    is acknowledged.
+!
+!  Modified:
+!
+!    08 September 2007
+!    Modified by Vicent Mateu 19 September 2016
+!
+!  Author:
+!
+!    Original FORTRAN77 version by Shanjie Zhang, Jianming Jin.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45
+!
+!  Parameters:
+!
+!    Input, real (dp) A, B, C, X, the arguments of the function.
+!    C must not be equal to a nonpositive integer.
+!    X < 1.
+!
+!    Output, real HF, the value of the function.
+!
+  implicit none
+
+  real (dp), intent(in)  :: ain, bin, cin, xin
+  real (dp), intent(out) :: hf
+
+  real (dp) :: a, a0, aa, b, bb, c, c0, c1, eps, f0, f1, g0, g1, g2, g3, ga, gabc, x, x1, &
+               gam, gb, gbm, gc, gca, gcab, gcb, gm, hw, pa, pb, r, r0, r1, rm, rp, sm,&
+               sp0, sp
+
+  integer  :: j, k, m, nm
+  logical  :: l0, l1, l2, l3, l4, l5
+
+  a = ain;  b = bin;  c = cin;  x = xin
+
+  l0 = ( c == aint(c) ) .and. ( c < 0 )
+  l1 = ( 1 - x < 1.e-15_dp ) .and. (c - a - b <= 0)
+  l2 = ( a == aint(a) ) .and. ( a < 0 )
+  l3 = ( b == aint(b) ) .and. ( b < 0 )
+  l4 = ( c - a == aint(c - a) ) .and. ( c - a <= 0 )
+  l5 = ( c - b == aint(c - b) ) .and. ( c - b <= 0 )
+
+  if ( l0 .or. l1 ) then
+    write ( *, '(a)' ) ' '
+    write ( *, '(a)' ) 'HYGFX - Fatal error!'
+    write ( *, '(a)' ) '  The hypergeometric series is divergent.'
+    return
+  end if
+
+  if ( 0.95 < x ) then
+    eps = 1e-8_dp
+  else
+    eps = 1e-15_dp
+  end if
+
+  if ( x == 0 .or. a == 0 .or. b == 0 ) then
+
+    hf = 1
+    return
+
+  else if ( 1 - x == eps .and. 0 < c - a - b ) then
+
+ gc = gamma(c)
+ gcab = gamma(c - a - b)
+ gca = gamma(c - a)
+ gcb = gamma(c - b)
+    hf = gc * gcab /( gca *gcb )
+    return
+
+  else if ( 1 + x <= eps .and. abs ( c - a + b - 1 ) <= eps ) then
+
+    g0 = sqrt (pi) * 2._dp**( - a )
+    g1 = gamma(c)
+    g2 = gamma(1 + a / 2 - b)
+    g3 = gamma(0.5 + a/2)
+    hf = g0 * g1 / ( g2 * g3 )
+    return
+
+  else if ( l2 .or. l3 ) then
+
+    if ( l2 ) then
+      nm = int ( abs ( a ) )
+    end if
+
+    if ( l3 ) then
+      nm = int ( abs ( b ) )
+    end if
+
+    hf = 1;  r = 1
+
+    do k = 1, nm
+      r = r * ( a + k - 1 ) * ( b + k - 1 ) / ( k * ( c + k - 1 ) ) * x
+      hf = hf + r
+    end do
+
+    return
+
+  else if ( l4 .or. l5 ) then
+
+    if ( l4 ) then
+      nm = int ( abs ( c - a ) )
+    end if
+
+    if ( l5 ) then
+      nm = int ( abs ( c - b ) )
+    end if
+
+    hf = 1;  r  = 1
+    do k = 1, nm
+      r = r * ( c - a + k - 1 ) * ( c - b + k - 1 ) / ( k * ( c + k - 1 ) ) * x
+      hf = hf + r
+    end do
+    hf = ( 1 - x )**( c - a - b ) * hf
+    return
+
+  end if
+
+  aa = a;  bb = b;  x1 = x
+!
+!  WARNING: ALTERATION OF INPUT ARGUMENTS A AND B, WHICH MIGHT BE CONSTANTS.
+!
+  if ( x < 0 ) then
+    x = x / ( x - 1 )
+    if ( a < c .and. b < a .and. 0 < b ) then
+      a = bb; b = aa
+    end if
+    b = c - b
+  end if
+
+  if ( 0.75 <= x ) then
+
+    gm = 0
+
+    if ( abs ( c - a - b - aint ( c - a - b ) ) < 1e-15_dp ) then
+
+      m = int ( c - a - b )
+ ga = gamma(a)
+
+gb = gamma(b)
+
+gc = gamma(c)
+gam = gamma(a + m)
+gbm = gamma(b + m)
+      call psi ( a, pa )
+      call psi ( b, pb )
+
+      if ( m /= 0 ) then
+        gm = 1
+      end if
+
+      do j = 1, abs ( m ) - 1
+        gm = gm * j
+      end do
+
+      rm = 1
+      do j = 1, abs ( m )
+        rm = rm * j
+      end do
+
+      f0 = 1;  r0 = 1; r1 = 1; sp0 = 0; sp = 0
+
+      if ( 0 <= m ) then
+
+        c0 = gm * gc / ( gam * gbm )
+        c1 = - gc * ( x - 1 )**m / ( ga * gb * rm )
+
+        do k = 1, m - 1
+          r0 = r0 * ( a + k - 1 ) * ( b + k - 1 ) / ( k * ( k - m ) ) * ( 1 - x )
+          f0 = f0 + r0
+        end do
+
+        do k = 1, m
+          sp0 = sp0 + 1 / ( a + k - 1 ) &
+            + 1 / ( b + k - 1 ) - 1 / real ( k, dp )
+        end do
+
+        f1 = pa + pb + sp0 + 2 * Euler + log ( 1 - x )
+        hw = f1
+
+        do k = 1, 250
+
+          sp = sp + ( 1 - a ) / ( k * ( a + k - 1 ) ) + ( 1 - b ) / ( k * ( b + k - 1 ) )
+
+          sm = 0
+          do j = 1, m
+            sm = sm + ( 1 - a ) / ( ( j + k ) * ( a + j + k - 1 ) ) + 1 / (b + j + k - 1)
+          end do
+
+          rp = pa + pb + 2 * Euler + sp + sm + log ( 1 - x )
+
+          r1 = r1 * ( a + m + k - 1 ) * ( b + m + k - 1 ) &
+            / ( k * ( m + k ) ) * ( 1 - x )
+
+          f1 = f1 + r1 * rp
+
+          if ( abs ( f1 - hw ) < abs ( f1 ) * eps ) then
+            exit
+          end if
+
+          hw = f1
+
+        end do
+
+        hf = f0 * c0 + f1 * c1
+
+      else if ( m < 0 ) then
+
+        m = - m
+        c0 = gm * gc / ( ga * gb * ( 1 - x )**m )
+        c1 = - ( - 1 )**m * gc / ( gam * gbm * rm )
+
+        do k = 1, m - 1
+          r0 = r0 * ( a - m + k - 1 ) * ( b - m + k - 1 ) / ( k * ( k - m ) ) * (1 - x)
+          f0 = f0 + r0
+        end do
+
+        do k = 1, m
+          sp0 = sp0 + 1 / real ( k, dp )
+        end do
+
+        f1 = pa + pb - sp0 + 2 * Euler + log ( 1 - x )
+
+        do k = 1, 250
+
+          sp = sp + ( 1 - a ) / ( k * ( a + k - 1 ) ) + ( 1 - b ) / ( k * ( b + k - 1 ) )
+
+          sm = 0
+          do j = 1, m
+            sm = sm + 1 / real ( j + k, dp )
+          end do
+
+          rp = pa + pb + 2 * Euler + sp - sm + log ( 1 - x )
+
+          r1 = r1 * ( a + k - 1 ) * ( b + k - 1 ) / ( k * ( m + k ) ) * ( 1 - x )
+
+          f1 = f1 + r1 * rp
+
+          if ( abs ( f1 - hw ) < abs ( f1 ) * eps ) then
+            exit
+          end if
+
+          hw = f1
+
+        end do
+
+        hf = f0 * c0 + f1 * c1
+
+      end if
+
+    else
+
+ga = gamma(a)
+gb = gamma(b)
+gc = gamma(c)
+gca = gamma(c - a)
+gcb = gamma(c - b)
+gcab = gamma(c - a - b)
+gabc = gamma(a + b - c)
+      c0 = gc * gcab / ( gca * gcb )
+      c1 = gc * gabc / ( ga * gb ) * ( 1 - x )**( c - a - b )
+      hf = 0;  r0 = c0;  r1 = c1
+
+      do k = 1, 250
+
+        r0 = r0 * ( a + k - 1 ) * ( b + k - 1 ) / ( k * ( a + b - c + k ) ) * ( 1 - x )
+
+        r1 = r1 * ( c - a + k - 1 ) * ( c - b + k - 1 ) &
+          / ( k * ( c - a - b + k ) ) * ( 1 - x )
+
+        hf = hf + r0 + r1
+
+        if ( abs ( hf - hw ) < abs ( hf ) * eps ) then
+          exit
+        end if
+
+        hw = hf
+
+      end do
+
+      hf = hf + c0 + c1
+
+    end if
+
+  else
+
+    a0 = 1
+
+    if ( a < c .and. c < 2 * a .and. b < c .and. c < 2 * b ) then
+
+      a0 = ( 1 - x )**( c - a - b );  a = c - a;  b = c - b
+
+    end if
+
+    hf = 1;  r = 1
+
+    do k = 1, 250
+
+      r = r * ( a + k - 1 ) * ( b + k - 1 ) / ( k * ( c + k - 1 ) ) * x
+
+      hf = hf + r
+
+      if ( abs ( hf - hw ) <= abs ( hf ) * eps ) then
+        exit
+      end if
+
+      hw = hf
+
+    end do
+
+    hf = a0 * hf
+
+  end if
+
+  if ( x1 < 0 ) then
+
+    x = x1;  c0 = 1 / ( 1 - x )**aa;  hf = c0 * hf
+
+  end if
+
+  a = aa; b = bb
+
+  if ( 120 < k ) then
+    write ( *, '(a)' ) ' '
+    write ( *, '(a)' ) 'HYGFX - Warning!'
+    write ( *, '(a)' ) '  A large number of iterations were needed.'
+    write ( *, '(a)' ) '  The accuracy of the results should be checked.'
+  end if
+
+end subroutine f90hiper2f1
+
+!ccccccccccccccc
+
+pure subroutine psi (x, ps)
+  use constants
+
+!*****************************************************************************80
+!
+!! PSI computes the PSI function.
+!
+!  Licensing:
+!
+!    The original FORTRAN77 version of this routine is copyrighted by
+!    Shanjie Zhang and Jianming Jin.  However, they give permission to
+!    incorporate this routine into a user program that the copyright
+!    is acknowledged.
+!
+!  Modified:
+!
+!    08 September 2007
+!
+!  Author:
+!
+!    Original FORTRAN77 by Shanjie Zhang, Jianming Jin.
+!    FORTRAN90 version by John Burkardt.
+!    Modified by Vicent Mateu 19 September 2016
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45
+!
+!  Parameters:
+!
+!    Input, real (dp) X, the argument.
+!
+!    Output, real (dp) PS, the value of the PSI function.
+!
+  implicit none
+
+  real (dp), intent(in ) :: x
+  real (dp), intent(out) :: ps
+
+  real (dp), parameter   :: a1 = -0.83333333333333333e-1_dp
+  real (dp), parameter   :: a2 =  0.83333333333333333e-2_dp
+  real (dp), parameter   :: a3 = -0.39682539682539683e-2_dp
+  real (dp), parameter   :: a4 =  0.41666666666666667e-2_dp
+  real (dp), parameter   :: a5 = -0.75757575757575758e-2_dp
+  real (dp), parameter   :: a6 =  0.21092796092796093e-1_dp
+  real (dp), parameter   :: a7 = -0.83333333333333333e-1_dp
+  real (dp), parameter   :: a8 =  0.4432598039215686_dp
+
+  integer (kind = 4)           :: k, n
+  real (dp)              :: x2, xa, s
+
+  xa = abs(x); s = 0
+
+  if ( x == aint(x) .and. x <= 0 ) then
+
+    ps = 1.d+300;    return
+
+  else if ( xa == aint(xa) ) then
+
+    n = int(xa)
+    do k = 1, n - 1
+      s = s + 1/real( k, dp )
+    end do
+
+    ps = s - Euler
+
+  else if ( xa + 0.5 == aint ( xa + 0.5 ) ) then
+
+    n = int ( xa - 0.5 )
+
+    do k = 1, n
+      s = s + 1._dp / real ( 2 * k - 1, dp )
+    end do
+
+    ps = 2 * s - Euler - 1.386294361119891_dp
+
+  else
+
+    if ( xa < 10 ) then
+
+      n = 10 - int ( xa )
+      do k = 0, n - 1
+        s = s + 1/( xa + real ( k, dp ) )
+      end do
+
+      xa = xa + real ( n, dp )
+
+    end if
+
+    x2 = 1._dp / ( xa * xa )
+
+    ps = log ( xa ) - 0.5 / xa + x2 * ((((((( a8 * x2 + a7 ) * x2 + a6 ) &
+      * x2 + a5 ) * x2 + a4 ) * x2 + a3 ) * x2 + a2 ) * x2 + a1 )
+
+    ps = ps - s
+
+  end if
+
+  if ( x < 0 ) then
+    ps = ps - pi * cos (pi * x) / sin (pi * x) - 1 / x
+  end if
+
+end subroutine psi
+
+end module hyper
 
 !ccccccccccccccc
