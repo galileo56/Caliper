@@ -31,8 +31,8 @@ contains
     real (dp)             :: moQ, moQ2
     real (dp), optional   :: Cmin
 
-    moQ = mt/Q; moQ2 = moQ**2;  InMCtop%coefs = LagCoef(moQ)
-    InMCtop%Cmax = 12 * moQ2 * (1 - 3 * moQ2)
+    moQ = mt/Q; moQ2 = moQ**2;  InMCtop%Cmax = 12 * moQ2 * (1 - 3 * moQ2)
+    InMCtop%coefs = LagCoef(moQ)/InMCtop%Cmax
 
     InMCtop%Cmin = 0; if ( present(Cmin) ) InMCtop%Cmin = Cmin
 
@@ -46,10 +46,12 @@ contains
     integer                , intent(in) :: n
     integer                             :: m
 
-    m = min(39,n)
+    m = min(39,n); Distribution = 0; if (x <= self%Cmin .or. x >= self%Cmax) return
 
     Distribution = dot_product(self%coefs(0:m), &
     LegendreList(m, 2 * (x - self%Cmin)/(self%Cmax - self%Cmin) - 1 ) )
+
+    if ( Distribution < 0 .and. x > 0.8*self%Cmax ) Distribution = 0
 
    end function Distribution
 
@@ -58,6 +60,8 @@ contains
   function LagCoef(m) result(res)
     real (dp)     , intent(in) :: m
     real (dp), dimension(0:39) :: res
+
+    res = 0; if ( m < 0.07_dp .and. m > 0.3_dp) return
 
     res = [1._dp, 3.0246456232675523_dp - 2.101563195974475_dp * m - 13.429530904866745_dp * m**2 &
     - 244.72141333301047_dp * m**3 &
