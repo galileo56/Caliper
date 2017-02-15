@@ -29,6 +29,27 @@ end module Constants
 
 !ccccccccccccccc
 
+module Legendre
+  use Constants, only: dp
+contains
+  function LegendreList(n,x) result(list)
+    integer      , intent(in) :: n
+    real (dp)    , intent(in) :: x
+    real (dp), dimension(0:n) :: list
+    integer                   :: i
+
+    list (:1) = [ 1._dp, x ]
+
+    do i = 2, n
+      list(i) = ( (2 * i - 1) * x * list(i - 1) - (i - 1) * list(i - 2) )/i
+    end do
+
+  end function LegendreList
+
+end module Legendre
+
+!ccccccccccccccc
+
 subroutine dfZero(F, B, C, R, RE, AE, IFLAG)
   use constants, only: dp, d1mach
 !! DFZERO finds a zero of a function in a given interval.

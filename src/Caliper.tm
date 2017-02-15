@@ -12,6 +12,7 @@
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
 
+:Evaluate:  MCtop::usage = "MCtop[mt, Q, n, x] computes the generalized hypergeometric function"
 :Evaluate:  pFq::usage = "pFq[a,b,z] computes the generalized hypergeometric function"
 :Evaluate:  FindOrigin::usage = "FindOrigin[shape, gap, orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eR, R0, muR0, delta0, h], finds the origin for massless Event Shapes"
 :Evaluate:  MassOrigin::usage = "MassOrigin[shape, EShape, gap, scheme, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, R0, muR0, del0, h], finds the origin of Massive Event Shapes"
@@ -326,6 +327,14 @@
 :ArgumentTypes: {Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
                  Real, Real, Real, Real, Real, Real, Integer, String, String, Real}
 :ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      mctop
+:Pattern:       MCtop[mt_, Q_, n_, x_]
+:Arguments:     {mt, Q, n, x}
+:ArgumentTypes: {Real, Real, Integer, Real}
+:ReturnType:    Real
 :End:
 
 :Begin:
@@ -3130,6 +3139,16 @@ static double nglfunction(int n, double z){
   double res;
 
    f90nglfunction_(&n, &z, &res);
+
+   return res;
+}
+
+extern double f90mctop_(double* mt, double* Q, int* n, double* x, double* result);
+
+static double mctop(double mt, double Q, int n, double x){
+  double res;
+
+   f90mctop_(&mt, &Q, &n, &x, &res);
 
    return res;
 }

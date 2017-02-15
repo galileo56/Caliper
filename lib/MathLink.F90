@@ -1,10 +1,24 @@
 
 !ccccccccccccccc
 
+subroutine f90MCtop(mt, Q, n, x, res)
+  use constants, only: dp; use hyper; use MCtopClass; implicit none
+  real (dp), intent(in)  :: mt, Q, x
+  integer  , intent(in)  :: n
+  real (dp), intent(out) :: res
+  type (MCtop)           :: MC
+
+  MC = MCtop(mt, Q);  res = MC%Distribution(n,x)
+
+end subroutine f90MCtop
+
+!ccccccccccccccc
+
 subroutine f90pfq(A, IP, B, IQ, Z, res)
-  use constants, only: dp; use hyper
+  use constants, only: dp; use hyper; implicit none
   real (dp), dimension(IP), intent(in) :: A
   real (dp), dimension(IQ), intent(in) :: B
+  integer                 , intent(in) :: IP, IQ
   real (dp)               , intent(in) :: Z
   real (dp)              , intent(out) :: res
 
