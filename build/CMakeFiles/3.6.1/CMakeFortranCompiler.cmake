@@ -55,5 +55,5 @@ if(CMAKE_Fortran_LIBRARY_ARCHITECTURE)
 endif()
 
 set(CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES "gfortran;quadmath;m")
-set(CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES "/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0;/usr/local/lib;/usr/lib")
-set(CMAKE_Fortran_IMPLICIT_LINK_FRAMEWORK_DIRECTORIES "/Library/Frameworks;/System/Library/Frameworks")
+set(CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES "/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0;/usr/local/lib;/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/lib")
+set(CMAKE_Fortran_IMPLICIT_LINK_FRAMEWORK_DIRECTORIES "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks")

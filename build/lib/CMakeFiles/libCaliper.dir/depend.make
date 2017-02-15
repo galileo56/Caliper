@@ -86,6 +86,8 @@ lib/CMakeFiles/libCaliper.dir/build: lib/CMakeFiles/libCaliper.dir/Kernels.F90.o
 
 lib/CMakeFiles/libCaliper.dir/MCtop.F90.o.requires: lib/CMakeFiles/libCaliper.dir/constants.mod.proxy
 lib/CMakeFiles/libCaliper.dir/MCtop.F90.o: lib/CMakeFiles/libCaliper.dir/constants.mod.stamp
+lib/CMakeFiles/libCaliper.dir/MCtop.F90.o.requires: lib/CMakeFiles/libCaliper.dir/legendre.mod.proxy
+lib/CMakeFiles/libCaliper.dir/MCtop.F90.o: lib/CMakeFiles/libCaliper.dir/legendre.mod.stamp
 lib/CMakeFiles/libCaliper.dir/mctopclass.mod.proxy: lib/CMakeFiles/libCaliper.dir/MCtop.F90.o.provides
 lib/CMakeFiles/libCaliper.dir/MCtop.F90.o.provides.build:
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod lib/mctopclass lib/CMakeFiles/libCaliper.dir/mctopclass.mod.stamp GNU

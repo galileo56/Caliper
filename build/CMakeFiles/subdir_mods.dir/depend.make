@@ -86,6 +86,8 @@ CMakeFiles/subdir_mods.dir/build: CMakeFiles/subdir_mods.dir/lib/Kernels.F90.o.p
 
 CMakeFiles/subdir_mods.dir/lib/MCtop.F90.o.requires: CMakeFiles/subdir_mods.dir/constants.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/MCtop.F90.o: CMakeFiles/subdir_mods.dir/constants.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/MCtop.F90.o.requires: CMakeFiles/subdir_mods.dir/legendre.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/MCtop.F90.o: CMakeFiles/subdir_mods.dir/legendre.mod.stamp
 CMakeFiles/subdir_mods.dir/mctopclass.mod.proxy: CMakeFiles/subdir_mods.dir/lib/MCtop.F90.o.provides
 CMakeFiles/subdir_mods.dir/lib/MCtop.F90.o.provides.build:
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod mctopclass CMakeFiles/subdir_mods.dir/mctopclass.mod.stamp GNU
