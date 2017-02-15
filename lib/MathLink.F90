@@ -1140,7 +1140,6 @@ subroutine f90SingularMassDiff(hard, shape, Eshape, setup, gap, space, cum, sche
   real (dp)          , intent(inout) :: muH, muJ, muS, R, muM
   character (len = *), intent(inout) :: scheme
   real (dp)          , intent(out  ) :: res
-
   type (ElectroWeak)                 :: EW
   type (Alpha)                       :: alphaAll
   type (MatricesElementsMass)        :: MatEl
@@ -1209,9 +1208,9 @@ subroutine f90SingularMassPiece(hard, shape, Eshape, gap, space, cum, scheme, ab
 
   type (ElectroWeak)                 :: EW
   type (Alpha)                       :: alphaAll
-  type (MatrixElementsMass)          :: MatEl
-  type (SingularMass)                :: Sing
-  type (MassiveNS)                   :: nonSing
+  type (MatricesElementsMass)        :: MatEl
+  type (SingularMassScales)          :: Sing
+  type (MassiveScales)               :: nonSing
   type (Model)                       :: Mod
   character (len = 5)                :: alphaScheme
 
@@ -1220,12 +1219,17 @@ subroutine f90SingularMassPiece(hard, shape, Eshape, gap, space, cum, scheme, ab
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,  &
                      muT, mB, muB, mC, muC )
-  MatEl     = MatrixElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3, Q, muH, muJ, &
-                                  muM, muS, R, Rmass, muLambda1, muLambda2 )
-  nonSing   = MassiveNS( shape(:6), Eshape(:1), scheme(:7), abs(:3), current(:6),     &
-                         orderMass, matEl, EW,  width, mu )
-  Sing      = SingularMass(nonSing, run, xi, xiB, mu, hard(:6))
+  MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
+                                    muLambda1, muLambda2 )
+
+  nonSing   = MassiveScales( shape(:6), Eshape(:1), scheme(:10), abs(:3), current(:6), &
+                              orderMass, matEl, EW )
+  Sing      = SingularMassScales( nonSing, run, hard(:6) )
   Mod       = Model(lambda, [1._dp], piece, 'piece')
+
+  call Sing%SetEverything(muH, Q, muH, muJ, muS, R, Rmass, muM, width)
+  call Sing%setHard(Q, muH);  call Sing%setHardMass(muM)
+  call Sing%SetRunning(muJ, muS, R, mu); call Sing%SetMat(muJ, muS, xi, xiB)
 
   if ( width <= d1mach(1) ) then
 
@@ -1266,9 +1270,9 @@ subroutine f90SingularMassList(hard, shape, Eshape, gap, space, cum, scheme, abs
   integer                                              :: i, j, k
   type (ElectroWeak)                                   :: EW
   type (Alpha)                                         :: alphaAll
-  type (MatrixElementsMass)                            :: MatEl
-  type (SingularMass)                                  :: Sing
-  type (MassiveNS)                                     :: nonSing
+  type (MatricesElementsMass)                          :: MatEl
+  type (SingularMassScales)                            :: Sing
+  type (MassiveScales)                                 :: nonSing
   type (Model), dimension( (clen + 2) * (clen + 1)/2 ) :: Mod
   character (len = 5)                                  :: alphaScheme
 
@@ -1285,11 +1289,15 @@ subroutine f90SingularMassList(hard, shape, Eshape, gap, space, cum, scheme, abs
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,  &
                      muT, mB, muB, mC, muC )
-  MatEl     = MatrixElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3, Q, muH, muJ, &
-                                  muM, muS, R, Rmass, muLambda1, muLambda2 )
-  nonSing   = MassiveNS( shape(:6), Eshape(:1), scheme(:7), abs(:3), current(:6),     &
-                         orderMass, matEl, EW,  width, mu )
-  Sing      = SingularMass(nonSing, run, xi, xiB, mu, hard(:6) )
+  MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
+                                    muLambda1, muLambda2 )
+  nonSing   = MassiveScales( shape(:6), Eshape(:1), scheme(:10), abs(:3), current(:6), &
+                              orderMass, matEl, EW )
+  Sing      = SingularMassScales( nonSing, run, hard(:6) )
+
+    call Sing%SetEverything(muH, Q, muH, muJ, muS, R, Rmass, muM, width)
+    call Sing%setHard(Q, muH);  call Sing%setHardMass(muM)
+    call Sing%SetRunning(muJ, muS, R, mu); call Sing%SetMat(muJ, muS, xi, xiB)
 
   if ( width <= d1mach(1) ) then
 
@@ -1330,9 +1338,9 @@ subroutine f90SingularMassDiffList(hard, shape, Eshape, gap, space, cum, scheme,
   integer                                              :: i, j, k
   type (ElectroWeak)                                   :: EW
   type (Alpha)                                         :: alphaAll
-  type (MatrixElementsMass)                            :: MatEl
-  type (SingularMass)                                  :: Sing
-  type (MassiveNS)                                     :: nonSing
+  type (MatricesElementsMass)                          :: MatEl
+  type (SingularMassScales)                            :: Sing
+  type (MassiveScales)                                 :: nonSing
   type (Model), dimension( (clen + 2) * (clen + 1)/2 ) :: Mod
   character (len = 5)                                  :: alphaScheme
 
@@ -1349,11 +1357,15 @@ subroutine f90SingularMassDiffList(hard, shape, Eshape, gap, space, cum, scheme,
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,  &
                      muT, mB, muB, mC, muC )
-  MatEl     = MatrixElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3, Q, muH, muJ, &
-                                  muM, muS, R, Rmass, muLambda1, muLambda2 )
-  nonSing   = MassiveNS( shape(:6), Eshape(:1), scheme(:7), abs(:3), current(:6),     &
-                         orderMass, matEl, EW,  width, mu )
-  Sing      = SingularMass(nonSing, run, xi, xiB, mu, hard(:6) )
+  MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
+                                    muLambda1, muLambda2 )
+  nonSing   = MassiveScales( shape(:6), Eshape(:1), scheme(:10), abs(:3), current(:6), &
+                              orderMass, matEl, EW )
+  Sing      = SingularMassScales( nonSing, run, hard(:6) )
+
+    call Sing%SetEverything(muH, Q, muH, muJ, muS, R, Rmass, muM, width)
+    call Sing%setHard(Q, muH);  call Sing%setHardMass(muM)
+    call Sing%SetRunning(muJ, muS, R, mu); call Sing%SetMat(muJ, muS, xi, xiB)
 
   if ( width <= d1mach(1) ) then
 
@@ -1392,9 +1404,9 @@ subroutine f90SingularMassDiffPiece(hard, shape, Eshape, gap, space, cum, scheme
 
   type (ElectroWeak)                 :: EW
   type (Alpha)                       :: alphaAll
-  type (MatrixElementsMass)          :: MatEl
-  type (SingularMass)                :: Sing
-  type (MassiveNS)                   :: nonSing
+  type (MatricesElementsMass)        :: MatEl
+  type (SingularMassScales)          :: Sing
+  type (MassiveScales)               :: nonSing
   type (Model)                       :: Mod
   character (len = 5)                :: alphaScheme
 
@@ -1403,12 +1415,16 @@ subroutine f90SingularMassDiffPiece(hard, shape, Eshape, gap, space, cum, scheme
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,    &
                      muT, mB, muB, mC, muC )
-  MatEl     = MatrixElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3, Q, muH, muJ,   &
-                                  muM, muS, R, Rmass, muLambda1, muLambda2 )
-  nonSing   = MassiveNS( shape(:6), Eshape(:1), scheme(:7), abs(:3), current(:6),       &
-                         orderMass, matEl, EW,  width, mu )
-  Sing      = SingularMass(nonSing, run, xi, xiB, mu, hard(:6) )
+  MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
+                                    muLambda1, muLambda2 )
+  nonSing   = MassiveScales( shape(:6), Eshape(:1), scheme(:10), abs(:3), current(:6), &
+                              orderMass, matEl, EW )
+  Sing      = SingularMassScales( nonSing, run, hard(:6) )
   Mod       = Model(lambda, [1._dp], piece, 'piece')
+
+    call Sing%SetEverything(muH, Q, muH, muJ, muS, R, Rmass, muM, width)
+    call Sing%setHard(Q, muH);  call Sing%setHardMass(muM)
+    call Sing%SetRunning(muJ, muS, R, mu); call Sing%SetMat(muJ, muS, xi, xiB)
 
   if ( width <= d1mach(1) ) then
 
@@ -1519,7 +1535,6 @@ subroutine f90MassNonDistDiff(hard, shape, Eshape, setup, gap, space, cum, schem
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
                                     muLambda1, muLambda2 )
-
   nonSing   = MassiveScales( shape(:6), Eshape(:1), scheme(:10), 'noAbs', 'vector', &
                               orderMass, matEl, EW )
   Sing      = SingularMassScales( nonSing, run, hard(:6) )
@@ -1552,12 +1567,11 @@ subroutine f90MassNonDistPiece(hard, shape, Eshape, gap, space, cum, scheme, &
                                         mu, Q, G3, lambda, tau, R0, mu0, delta0, h, &
                                         mC, muC, muT, muH, muS, R, muM, muJ, Rmass
   real (dp)          , intent(out  ) :: res
-
   type (ElectroWeak)                 :: EW
   type (Alpha)                       :: alphaAll
-  type (MatrixElementsMass)          :: MatEl
-  type (SingularMass)                :: Sing
-  type (MassiveNS)                   :: nonSing
+  type (MatricesElementsMass)        :: MatEl
+  type (SingularMassScales)          :: Sing
+  type (MassiveScales)               :: nonSing
   type (Model)                       :: Mod
   character (len = 5)                :: alphaScheme
 
@@ -1566,15 +1580,19 @@ subroutine f90MassNonDistPiece(hard, shape, Eshape, gap, space, cum, scheme, &
   EW        = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
   alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,     &
                      muT, mB, muB, mC, muC )
-  MatEl     = MatrixElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, Q, muH, &
-                                  muJ, muM, muS, R, Rmass, muLambda1, muLambda2 )
-  nonSing   = MassiveNS( shape(:6), Eshape(:1), scheme(:7), 'noAbs', 'vector', orderMass,&
-                         matEl, EW,  0._dp, mu )
-  Sing      = SingularMass(nonSing, run, 0._dp, 0._dp, mu, hard(:6) )
+  MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
+               muLambda1, muLambda2 )
+  nonSing   = MassiveScales( shape(:6), Eshape(:1), scheme(:10), 'noAbs', 'vector', &
+                             orderMass, matEl, EW )
+  Sing      = SingularMassScales( nonSing, run, hard(:6) )
   Mod       = Model(lambda, [1._dp], c, 'piece')
 
-  res       = Sing%NonDist( Mod, 'Model', gap(:12), space(:3), cum(:4), order, R0, mu0, delta0, h, &
-                            tau )
+  call Sing%SetEverything(muH, Q, muH, muJ, muS, R, Rmass, muM, 0._dp)
+  call Sing%setHard(Q, muH);  call Sing%setHardMass(muM)
+  call Sing%SetRunning(muJ, muS, R, mu); call Sing%SetMat(muJ, muS, 0._dp, 0._dp)
+
+  res       = Sing%NonDist( Mod, 'Model', gap(:12), space(:3), cum(:4), order, &
+                            R0, mu0, delta0, h, tau )
 
 end subroutine f90MassNonDistPiece
 
@@ -1598,9 +1616,9 @@ subroutine f90MassNonDistList(hard, shape, Eshape, gap, space, cum, scheme, &
 
   type (ElectroWeak)                 :: EW
   type (Alpha)                       :: alphaAll
-  type (MatrixElementsMass)          :: MatEl
-  type (SingularMass)                :: Sing
-  type (MassiveNS)                   :: nonSing
+  type (MatricesElementsMass)        :: MatEl
+  type (SingularMassScales)          :: Sing
+  type (MassiveScales)               :: nonSing
   type (Model), dimension( (clen + 2) * (clen + 1)/2 ) :: Mod
   character (len = 5)                :: alphaScheme
   integer                            :: i, j, k
@@ -1618,11 +1636,15 @@ subroutine f90MassNonDistList(hard, shape, Eshape, gap, space, cum, scheme, &
   EW        = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
   alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, &
                      muT, mB, muB, mC, muC )
-  MatEl     = MatrixElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
-                                Q, muH, muJ, muM, muS, R, Rmass, muLambda1, muLambda2 )
-  nonSing   = MassiveNS( shape(:6), Eshape(:1), scheme(:7), 'noAbs', 'vector', &
-                         orderMass, matEl, EW,  0._dp, mu )
-  Sing      = SingularMass(nonSing, run, 0._dp, 0._dp, mu, hard(:6) )
+  MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
+               muLambda1, muLambda2 )
+  nonSing   = MassiveScales( shape(:6), Eshape(:1), scheme(:10), 'noAbs', 'vector', &
+                             orderMass, matEl, EW )
+  Sing      = SingularMassScales( nonSing, run, hard(:6) )
+
+  call Sing%SetEverything(muH, Q, muH, muJ, muS, R, Rmass, muM, 0._dp)
+  call Sing%setHard(Q, muH);  call Sing%setHardMass(muM)
+  call Sing%SetRunning(muJ, muS, R, mu); call Sing%SetMat(muJ, muS, 0._dp, 0._dp)
 
   res       = Sing%NonDist( Mod, gap(:12), space(:3), cum(:4), order, R0, mu0, &
                             delta0, h, tau )
@@ -1649,9 +1671,9 @@ subroutine f90MassNonDistDiffList(hard, shape, Eshape, gap, space, cum, scheme, 
 
   type (ElectroWeak)                 :: EW
   type (Alpha)                       :: alphaAll
-  type (MatrixElementsMass)          :: MatEl
-  type (SingularMass)                :: Sing
-  type (MassiveNS)                   :: nonSing
+  type (MatricesElementsMass)        :: MatEl
+  type (SingularMassScales)          :: Sing
+  type (MassiveScales)               :: nonSing
   type (Model), dimension( (clen + 2) * (clen + 1)/2 ) :: Mod
   character (len = 5)                :: alphaScheme
   integer                            :: i, j, k
@@ -1669,11 +1691,15 @@ subroutine f90MassNonDistDiffList(hard, shape, Eshape, gap, space, cum, scheme, 
   EW        = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
   alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,     &
                      muT, mB, muB, mC, muC )
-  MatEl     = MatrixElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, Q, muH, &
-                                  muJ, muM, muS, R, Rmass, muLambda1, muLambda2 )
-  nonSing   = MassiveNS( shape(:6), Eshape(:1), scheme(:7), 'noAbs', 'vector', orderMass,&
-                         matEl, EW,  0._dp, mu )
-  Sing      = SingularMass(nonSing, run, 0._dp, 0._dp, mu, hard(:6) )
+  MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
+               muLambda1, muLambda2 )
+  nonSing   = MassiveScales( shape(:6), Eshape(:1), scheme(:10), 'noAbs', 'vector', &
+                             orderMass, matEl, EW )
+  Sing      = SingularMassScales( nonSing, run, hard(:6) )
+
+  call Sing%SetEverything(muH, Q, muH, muJ, muS, R, Rmass, muM, 0._dp)
+  call Sing%setHard(Q, muH);  call Sing%setHardMass(muM)
+  call Sing%SetRunning(muJ, muS, R, mu); call Sing%SetMat(muJ, muS, 0._dp, 0._dp)
 
   res       = Sing%NonDist( Mod, gap(:12), space(:3), cum(:4), order, R0, mu0, delta0, h, tau, tau2 )
 
@@ -1697,12 +1723,11 @@ subroutine f90MassNonDistDiffPiece(hard, shape, Eshape, gap, space, cum, scheme,
                                         mu, Q, G3, lambda, tau, R0, mu0, delta0, h, tau2,&
                                         mC, muC, muT, muH, muS, R, muM, muB, Rmass
   real (dp)          , intent(out  ) :: res
-
   type (ElectroWeak)                 :: EW
   type (Alpha)                       :: alphaAll
-  type (MatrixElementsMass)          :: MatEl
-  type (SingularMass)                :: Sing
-  type (MassiveNS)                   :: nonSing
+  type (MatricesElementsMass)        :: MatEl
+  type (SingularMassScales)          :: Sing
+  type (MassiveScales)               :: nonSing
   type (Model)                       :: Mod
   character (len = 5)                :: alphaScheme
 
@@ -1711,12 +1736,16 @@ subroutine f90MassNonDistDiffPiece(hard, shape, Eshape, gap, space, cum, scheme,
   EW        = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
   alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,     &
                      muT, mB, muB, mC, muC )
-  MatEl     = MatrixElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, Q,  &
-                                  muH, muJ, muM, muS, R, Rmass, muLambda1, muLambda2 )
-  nonSing   = MassiveNS( shape(:6), Eshape(:1), scheme(:7), 'noAbs', 'vector', orderMass,&
-                         matEl, EW,  0._dp, mu )
-  Sing      = SingularMass( nonSing, run, 0._dp, 0._dp, mu, hard(:6) )
+  MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
+               muLambda1, muLambda2 )
+  nonSing   = MassiveScales( shape(:6), Eshape(:1), scheme(:10), 'noAbs', 'vector', &
+                             orderMass, matEl, EW )
+  Sing      = SingularMassScales( nonSing, run, hard(:6) )
   Mod       = Model(lambda, [1._dp], c, 'piece')
+
+  call Sing%SetEverything(muH, Q, muH, muJ, muS, R, Rmass, muM, 0._dp)
+  call Sing%setHard(Q, muH);  call Sing%setHardMass(muM)
+  call Sing%SetRunning(muJ, muS, R, mu); call Sing%SetMat(muJ, muS, 0._dp, 0._dp)
 
   res       = Sing%NonDist( Mod, 'Model', gap(:12), space(:3), cum(:4), order, R0, mu0, delta0, h, &
                             tau, tau2 )
@@ -1830,12 +1859,10 @@ subroutine f90NSMassPiece(shape, gap, cum, scheme, abs, current, orderAlpha, run
                                         muS, Rmass, R0, mu0, muLambda1, mu, amZ, lambda ,&
                                         muJ, delta0, R, h, mT, mB, width, muM,      &
                                         muLambda2
-
   real (dp)           , intent(out) :: res
-
-  type (MassiveNS)                  :: nonSing
+  type (MassiveScales)              :: nonSing
   type (ElectroWeak)                :: EW
-  type (MatrixElementsMass)         :: MatEl
+  type (MatricesElementsMass)       :: MatEl
   type (Alpha)                      :: alphaAll
   type (Model)                      :: Mod
   character (len = 5)               :: alphaScheme
@@ -1846,10 +1873,12 @@ subroutine f90NSMassPiece(shape, gap, cum, scheme, abs, current, orderAlpha, run
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT,  &
                     muT, mB, muB, mC, muC )
-  MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, Q, mu,&
-                             muJ, muM, muS, R, Rmass, muLambda1, muLambda2)
-  nonSing   = MassiveNS( shape(:6), 'Q', scheme(:7), abs(:3), current(:6), orderMass,  &
-                         matEl, EW,  width, mu )
+  MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
+                                    muLambda1, muLambda2)
+  nonSing   = MassiveScales( shape(:6), 'Q', scheme(:7), abs(:3), current(:6), orderMass, &
+                             matEl, EW)
+
+  call nonSing%SetEverything(mu, Q, mu, muJ, muS, R, Rmass, muM, width)
 
   res = nonSing%NSMass(Mod, 'Model', gap(:12), cum(:4), order, &
                        run, R0, mu0, delta0, h, t)
@@ -1877,16 +1906,15 @@ subroutine f90NSMassList(shape, gap, cum, scheme, abs, current, orderAlpha, runA
 
   real (dp), dimension( (clen + 2) * (clen + 1)/2 ), intent(out) :: res
 
-  type (MassiveNS)                  :: nonSing
+  type (MassiveScales)              :: nonSing
   type (ElectroWeak)                :: EW
-  type (MatrixElementsMass)         :: MatEl
+  type (MatricesElementsMass)       :: MatEl
   type (Alpha)                      :: alphaAll
   type (Model), dimension( (clen + 2) * (clen + 1)/2 ) :: Mod
   character (len = 5)               :: alphaScheme
   integer                           :: i, j, k
 
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
-
 
   k = 1
 
@@ -1899,10 +1927,12 @@ subroutine f90NSMassList(shape, gap, cum, scheme, abs, current, orderAlpha, runA
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT,  &
                     muT, mB, muB, mC, muC )
-  MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, Q, mu, &
-                             muJ, muM, muS, R, Rmass, muLambda1, muLambda2)
-  nonSing   = MassiveNS( shape(:6), 'Q', scheme(:7), abs(:3), current(:6), orderMass,  &
-                         matEl, EW,  width, mu )
+  MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
+                                    muLambda1, muLambda2)
+  nonSing   = MassiveScales( shape(:6), 'Q', scheme(:7), abs(:3), current(:6), orderMass, &
+                             matEl, EW)
+
+  call nonSing%SetEverything(mu, Q, mu, muJ, muS, R, Rmass, muM, width)
 
   res = nonSing%NSMass(Mod, gap(:12), cum(:4), order, run, R0, mu0, delta0, h, t)
 
@@ -1920,25 +1950,24 @@ subroutine f90NSMassDiffList(shape, gap, cum, scheme, abs, current, orderAlpha, 
   use constants, only: dp; implicit none
 
   character (len = *)  , intent(in ) :: shape, current, cum, gap, abs, scheme
-  integer              , intent(in ) :: orderAlpha, runAlpha, order, run, nf, runMass,   &
-                                        orderMass, clen
+  integer              , intent(in ) :: orderAlpha, runAlpha, order, run, nf, &
+                                        orderMass, runMass, clen
   real (dp)            , intent(in ) :: t, muT, mC, muC, Q, mZ, gammaZ, sin2ThetaW, muB, &
-                                        muS, Rmass, R0, mu0, muLambda1, mu, amZ, lambda , &
+                                        muS, Rmass, R0, mu0, muLambda1, mu, amZ, lambda, &
                                         muJ, delta0, R, h, mT, mB, width, muM, t2, &
                                         muLambda2
 
   real (dp), dimension( (clen + 2) * (clen + 1)/2 ), intent(out) :: res
 
-  type (MassiveNS)                  :: nonSing
+  type (MassiveScales)              :: nonSing
   type (ElectroWeak)                :: EW
-  type (MatrixElementsMass)         :: MatEl
+  type (MatricesElementsMass)       :: MatEl
   type (Alpha)                      :: alphaAll
   type (Model), dimension( (clen + 2) * (clen + 1)/2 ) :: Mod
   character (len = 5)               :: alphaScheme
   integer                           :: i, j, k
 
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
-
 
   k = 1
 
@@ -1951,10 +1980,12 @@ subroutine f90NSMassDiffList(shape, gap, cum, scheme, abs, current, orderAlpha, 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT,  &
                     muT, mB, muB, mC, muC )
-  MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, Q, mu, &
-                             muJ, muM, muS, R, Rmass, muLambda1, muLambda2)
-  nonSing   = MassiveNS( shape(:6), 'Q', scheme(:7), abs(:3), current(:6), orderMass,  &
-                         matEl, EW,  width, mu )
+  MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
+                                    muLambda1, muLambda2)
+  nonSing   = MassiveScales( shape(:6), 'Q', scheme(:7), abs(:3), current(:6), orderMass, &
+                             matEl, EW)
+
+  call nonSing%SetEverything(mu, Q, mu, muJ, muS, R, Rmass, muM, width)
 
   res = nonSing%NSMass(Mod, gap(:12), cum(:4), order, run, R0, mu0, delta0, h, t, t2)
 
@@ -1979,12 +2010,10 @@ subroutine f90NSMassDiffPiece(shape, gap, cum, scheme, abs, current, orderAlpha,
                                         muS, Rmass, R0, mu0, muLambda1, mu, amZ, lambda, &
                                         muJ, delta0, R, h, mT, mB, width, muM, t2,  &
                                         muLambda2
-
-  real (dp)     , intent(out) :: res
-
-  type (MassiveNS)                  :: nonSing
+  real (dp)           , intent(out) :: res
+  type (MassiveScales)              :: nonSing
   type (ElectroWeak)                :: EW
-  type (MatrixElementsMass)         :: MatEl
+  type (MatricesElementsMass)       :: MatEl
   type (Alpha)                      :: alphaAll
   type (Model)                      :: Mod
   character (len = 5)               :: alphaScheme
@@ -1995,10 +2024,12 @@ subroutine f90NSMassDiffPiece(shape, gap, cum, scheme, abs, current, orderAlpha,
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT,  &
                     muT, mB, muB, mC, muC )
-  MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, Q, mu, &
-                             muJ, muM, muS, R, Rmass, muLambda1, muLambda2)
-  nonSing   = MassiveNS( shape(:6), 'Q', scheme(:7), abs(:3), current(:6), orderMass,  &
-                         matEl, EW,  width, mu )
+  MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
+                                    muLambda1, muLambda2)
+  nonSing   = MassiveScales( shape(:6), 'Q', scheme(:7), abs(:3), current(:6), orderMass, &
+                             matEl, EW)
+
+  call nonSing%SetEverything(mu, Q, mu, muJ, muS, R, Rmass, muM, width)
 
   res = nonSing%NSMass(Mod, 'Model', gap(:12), cum(:4), order, &
                        run, R0, mu0, delta0, h, t, t2)
@@ -2639,28 +2670,6 @@ end subroutine f90MSRNaturalMass
 
 !ccccccccccccccc
 
-subroutine f90JetMass2(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, mB, muB, &
-                      mC, muC, muLambda, R, mu, res)
- use AlphaClass;  use MatrixElementsClass;  use constants, only: dp; implicit none
-
- integer  , intent(in )     :: orderAlpha, order, runAlpha, run, nf
- real (dp), intent(in )     :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, muC, R
- real (dp), intent(out)     :: res
-
-  type (Alpha)              :: alphaAll
-  type (MatrixElementsMass) :: MatEl
-
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
-                     mB, muB, mC, muC)
-  MatEl     = MatrixElementsMass(alphaAll, nf, run, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu,  &
-                                  mu, 2 * mu, mu, R, R, muLambda, muLambda)
-
-  res       = MatEl%JetMass(order, run, R, mu)
-
-end subroutine f90JetMass2
-
-!ccccccccccccccc
-
 subroutine f90JetMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, mB, &
                              muB, mC, muC, muLambda, R, mu, res)
  use AlphaClass;  use MatrixElementsClass;  use constants, only: dp; implicit none
@@ -2880,7 +2889,6 @@ subroutine f90SingularHJM1DPiece(hard, gap, cum, orderAlpha, runAlpha, order, ru
   real (dp)            , intent(in ) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC , &
                                        s3, muH, Q, muJ, muS, R, G3, lambda, tau, mu0, &
                                        delta0, h, s31, s32, j3, muC, R0
-
   real (dp)           , intent(out) :: res
 
   type (Alpha)                      :: alphaAll
