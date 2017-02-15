@@ -272,6 +272,7 @@ CMakeFiles/subdir_mods.dir/chaplin.mod.proxy: CMakeFiles/subdir_mods.dir/lib/Spe
 CMakeFiles/subdir_mods.dir/constants.mod.proxy: CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides
 CMakeFiles/subdir_mods.dir/derigamma.mod.proxy: CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides
 CMakeFiles/subdir_mods.dir/hyper.mod.proxy: CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides
+CMakeFiles/subdir_mods.dir/legendre.mod.proxy: CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides
 CMakeFiles/subdir_mods.dir/poly.mod.proxy: CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides
 CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides.build:
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod carlson_elliptic_module CMakeFiles/subdir_mods.dir/carlson_elliptic_module.mod.stamp GNU
@@ -279,6 +280,7 @@ CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides.build:
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod constants CMakeFiles/subdir_mods.dir/constants.mod.stamp GNU
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod derigamma CMakeFiles/subdir_mods.dir/derigamma.mod.stamp GNU
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod hyper CMakeFiles/subdir_mods.dir/hyper.mod.stamp GNU
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod legendre CMakeFiles/subdir_mods.dir/legendre.mod.stamp GNU
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod poly CMakeFiles/subdir_mods.dir/poly.mod.stamp GNU
 	$(CMAKE_COMMAND) -E touch CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides.build
 CMakeFiles/subdir_mods.dir/build: CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides.build

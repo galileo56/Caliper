@@ -48,6 +48,10 @@ FILE(REMOVE
   "KERNELSCLASS.mod"
   "CMakeFiles/libCaliper.dir/kernelsclass.mod.stamp"
 
+  "legendre.mod"
+  "LEGENDRE.mod"
+  "CMakeFiles/libCaliper.dir/legendre.mod.stamp"
+
   "massivensclass.mod"
   "MASSIVENSCLASS.mod"
   "CMakeFiles/libCaliper.dir/massivensclass.mod.stamp"

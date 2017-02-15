@@ -272,6 +272,7 @@ lib/CMakeFiles/libCaliper.dir/chaplin.mod.proxy: lib/CMakeFiles/libCaliper.dir/S
 lib/CMakeFiles/libCaliper.dir/constants.mod.proxy: lib/CMakeFiles/libCaliper.dir/SpecFun.F90.o.provides
 lib/CMakeFiles/libCaliper.dir/derigamma.mod.proxy: lib/CMakeFiles/libCaliper.dir/SpecFun.F90.o.provides
 lib/CMakeFiles/libCaliper.dir/hyper.mod.proxy: lib/CMakeFiles/libCaliper.dir/SpecFun.F90.o.provides
+lib/CMakeFiles/libCaliper.dir/legendre.mod.proxy: lib/CMakeFiles/libCaliper.dir/SpecFun.F90.o.provides
 lib/CMakeFiles/libCaliper.dir/poly.mod.proxy: lib/CMakeFiles/libCaliper.dir/SpecFun.F90.o.provides
 lib/CMakeFiles/libCaliper.dir/SpecFun.F90.o.provides.build:
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod lib/carlson_elliptic_module lib/CMakeFiles/libCaliper.dir/carlson_elliptic_module.mod.stamp GNU
@@ -279,6 +280,7 @@ lib/CMakeFiles/libCaliper.dir/SpecFun.F90.o.provides.build:
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod lib/constants lib/CMakeFiles/libCaliper.dir/constants.mod.stamp GNU
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod lib/derigamma lib/CMakeFiles/libCaliper.dir/derigamma.mod.stamp GNU
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod lib/hyper lib/CMakeFiles/libCaliper.dir/hyper.mod.stamp GNU
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod lib/legendre lib/CMakeFiles/libCaliper.dir/legendre.mod.stamp GNU
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod lib/poly lib/CMakeFiles/libCaliper.dir/poly.mod.stamp GNU
 	$(CMAKE_COMMAND) -E touch lib/CMakeFiles/libCaliper.dir/SpecFun.F90.o.provides.build
 lib/CMakeFiles/libCaliper.dir/build: lib/CMakeFiles/libCaliper.dir/SpecFun.F90.o.provides.build

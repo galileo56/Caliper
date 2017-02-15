@@ -12,6 +12,7 @@ provides
  gapmassclass
  hyper
  kernelsclass
+ legendre
  massivensclass
  matrixelementsclass
  mctopclass

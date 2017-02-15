@@ -48,6 +48,10 @@ FILE(REMOVE
   "KERNELSCLASS.mod"
   "CMakeFiles/subdir_mods.dir/kernelsclass.mod.stamp"
 
+  "legendre.mod"
+  "LEGENDRE.mod"
+  "CMakeFiles/subdir_mods.dir/legendre.mod.stamp"
+
   "massivensclass.mod"
   "MASSIVENSCLASS.mod"
   "CMakeFiles/subdir_mods.dir/massivensclass.mod.stamp"
