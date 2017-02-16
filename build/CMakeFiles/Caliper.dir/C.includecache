@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/Applications/Mathematica.app/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mathlink.framework/Headers/mathlink.h
+/Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mathlink.framework/Headers/mathlink.h
 windows.h
 -
 windows.h
@@ -20,23 +20,23 @@ sys/types.h
 sys/types.h
 -
 
-/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c
+/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm.c
 Carbon/Carbon.h
 -
 mathlink/mathlink.h
 -
 mathlink.h
-/Users/vmateu/GitHub/Caliper/src/mathlink.h
+/Users/vicent/GitHubProjects/Caliper/src/mathlink.h
 mathlink.h
-/Users/vmateu/GitHub/Caliper/src/mathlink.h
+/Users/vicent/GitHubProjects/Caliper/src/mathlink.h
 ftypes.h
-/Users/vmateu/GitHub/Caliper/src/ftypes.h
+/Users/vicent/GitHubProjects/Caliper/src/ftypes.h
 stdio.h
 -
 unistd.h
 -
 
-/Users/vmateu/GitHub/Caliper/src/ftypes.h
+/Users/vicent/GitHubProjects/Caliper/src/ftypes.h
 complex
 -
 
