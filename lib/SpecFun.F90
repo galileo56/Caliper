@@ -46,6 +46,23 @@ contains
 
   end function LegendreList
 
+!ccccccccccccccc
+
+  function QLegendreList(n,x) result(list)
+    integer      , intent(in) :: n
+    real (dp)    , intent(in) :: x
+    real (dp), dimension(0:n) :: list
+    integer                   :: i
+
+    list (:1) = [ 0._dp, 1._dp ]
+
+    do i = 2, n
+      list(i) = (  (2 * i - 1) * ( x * list(i - 1) - (-1)**n ) - &
+                   (i - 1) * list(i - 2)  )/i
+    end do
+
+  end function QLegendreList
+
 end module Legendre
 
 !ccccccccccccccc
