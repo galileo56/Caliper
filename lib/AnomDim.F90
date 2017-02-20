@@ -25,10 +25,10 @@ module AnomDimClass
                                      gammaJet, gammaSoft
     contains
 
-    procedure, pass(self), public :: expandAlpha, wTildeExpand, kTildeExpand, MSRDelta,  &
-               sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
-               bHQETgamma, alphaMatching, alphaMatchingInverse, wTildeHm, GammaRComputer,&
-               sCoefHadron, scheme
+    procedure, pass(self), public :: expandAlpha, wTildeExpand, kTildeExpand, &
+    sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
+    bHQETgamma, alphaMatching, alphaMatchingInverse, wTildeHm, GammaRComputer,&
+    sCoefHadron, scheme, MSRDelta
 
    procedure, pass(self), public ::  wTildeReal, wTildeComplex, kTildeReal, kTildeComplex
 
