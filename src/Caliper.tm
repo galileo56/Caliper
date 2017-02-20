@@ -12,6 +12,8 @@
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
 
+:Evaluate:  LegendreList::usage = "LegendreList[n, x] computes the of the first n + 1 Legendre Polynomial"
+:Evaluate:  QLegendreList::usage = "QLegendreList[n, x] computes the of the first n + 1 Legendre Polynomial"
 :Evaluate:  MCtop::usage = "MCtop[mt, Q, n, x] computes the generalized hypergeometric function"
 :Evaluate:  pFq::usage = "pFq[a,b,z] computes the generalized hypergeometric function"
 :Evaluate:  FindOrigin::usage = "FindOrigin[shape, gap, orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eR, R0, muR0, delta0, h], finds the origin for massless Event Shapes"
@@ -110,6 +112,22 @@
 :Pattern:       EWFactors[nf_, Q_, Mz_, GammaZ_, sin2ThetaW_]
 :Arguments:     {nf, Q, Mz, GammaZ, sin2ThetaW}
 :ArgumentTypes: {Integer, Real, Real, Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      legendrelist
+:Pattern:       LegendreList[n_, x_]
+:Arguments:     {n, x}
+:ArgumentTypes: {Integer, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      qlegendrelist
+:Pattern:       QLegendreList[n_, x_]
+:Arguments:     {n, x}
+:ArgumentTypes: {Integer, Real}
 :ReturnType:    Manual
 :End:
 
@@ -1626,6 +1644,30 @@ f90singulardoublepiece_(hard, gap, space, cum1, cum2, &orderAlpha, &runAlpha, &o
  &rho2, &res);
 
 return res;
+
+}
+
+extern double f90legendrelist_(int* n, double* x, double* res);
+
+static void legendrelist(int n, double x){
+  double res[n + 1];
+
+   f90legendrelist_(&n, &x, res);
+
+   MLPutRealList(stdlink, res, n + 1);
+   MLEndPacket(stdlink);
+
+}
+
+extern double f90qlegendrelist_(int* n, double* x, double* res);
+
+static void qlegendrelist(int n, double x){
+  double res[n + 1];
+
+   f90qlegendrelist_(&n, &x, res);
+
+   MLPutRealList(stdlink, res, n + 1);
+   MLEndPacket(stdlink);
 
 }
 

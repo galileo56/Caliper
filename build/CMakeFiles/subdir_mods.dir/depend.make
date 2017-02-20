@@ -138,6 +138,8 @@ CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.d
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/hyper.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/kernelsclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/kernelsclass.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/legendre.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/legendre.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/massivensclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/massivensclass.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/matrixelementsclass.mod.proxy
