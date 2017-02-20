@@ -19,10 +19,10 @@ module AnomDimClass
     character (len = 5)           :: str
     real (dp)                     :: G4
     real (dp), dimension(0:3,0:3) :: gammaHm
-    real (dp), dimension(3)       :: sCoefMSR, sCoefMSRNatural, bHat, betaList, gammaR,  &
-                                     gammaRNatural
-    real (dp), dimension(0:3)     :: beta, cusp, gammaMass, gammaHard, gammaB, gammaJet, &
-                                     gammaSoft
+    real (dp), dimension(3)       :: sCoefMSR, sCoefMSRNatural, bHat, betaList,&
+                                      gammaR,  gammaRNatural
+    real (dp), dimension(0:3)     :: beta, cusp, gammaMass, gammaHard, gammaB, &
+                                     gammaJet, gammaSoft
     contains
 
     procedure, pass(self), public :: expandAlpha, wTildeExpand, kTildeExpand, MSRDelta,  &
@@ -440,7 +440,7 @@ module AnomDimClass
     contains
 
 !ccccccccccccccc
- 
+
     pure real (dp) function correMass(t)
       real (dp), intent(in) :: t
       real (dp)             :: x
@@ -493,12 +493,12 @@ module AnomDimClass
     class (AnomDim), intent(in)   :: self
     integer        , intent(in)   :: nf
     real (dp), dimension(0:3,0:3) :: tab
-    
+
     tab = 0
-    
+
     if ( self%str(:5) == 'MSbar' ) then
 
-      tab(0,0)  = 1;  tab(1,1) = - 1._dp/6; tab(2,:2) = [ 11._dp/72, - 19._dp/24, 1._dp/36 ] 
+      tab(0,0)  = 1;  tab(1,1) = - 1._dp/6; tab(2,:2) = [ 11._dp/72, - 19._dp/24, 1._dp/36 ]
       tab(3,1:) = - [ ( 7074 - 281 * nf )/1728._dp, 131._dp/576, 1._dp/216 ]
       tab(3,0)  = 1.0567081783962546_dp - 0.08465149176954734_dp * nf
 
@@ -518,7 +518,7 @@ module AnomDimClass
     class (AnomDim), intent(in)   :: self
     integer        , intent(in)   :: nf
     real (dp), dimension(0:3,0:3) :: tab
-    
+
     tab = 0
 
     if ( self%str(:5) == 'MSbar' ) then
@@ -531,7 +531,7 @@ module AnomDimClass
 
       tab(0,0)  = 1;  tab(1,1) = 1._dp/6;  tab(2,:2) = [ 7._dp/24, 19._dp/24, 1._dp/36 ]
       tab(3,1:) = [ ( 9350 - 409._dp * nf )/1728, 511._dp/576, 1._dp/216 ]
-      tab(3,0)  = 5.586361025786356_dp - 0.26247081195432964_dp * nf 
+      tab(3,0)  = 5.586361025786356_dp - 0.26247081195432964_dp * nf
 
     end if
 
@@ -656,7 +656,7 @@ module AnomDimClass
     do i = 1, n
       a = a * alpha; list(i) = a
     end do
-  
+
   end function PowListDP
 
 !ccccccccccccccc
@@ -673,7 +673,7 @@ module AnomDimClass
     do i = 1, n
       a = a * alpha; list(i) = a
     end do
-  
+
   end function PowListComp
 
 !ccccccccccccccc
@@ -688,7 +688,7 @@ module AnomDimClass
     do i = 1, n
       a = a * alpha; list(i) = a
     end do
-  
+
   end function PowListInt
 
 !ccccccccccccccc pole - MSbar mass with mu = m(m)
