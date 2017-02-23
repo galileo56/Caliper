@@ -39,6 +39,19 @@ end subroutine f90MCtop
 
 !ccccccccccccccc
 
+subroutine f90DeltaMCtop(shape, mt, Q, res)
+  use constants, only: dp; use hyper; use MCtopClass; implicit none
+  character (len = *), intent(in)  :: shape
+  real (dp)          , intent(in)  :: mt, Q
+  real (dp)          , intent(out) :: res
+  type (MCtop)                     :: MC
+
+  MC = MCtop( shape(:6), mt, Q );  res = MC%delta()
+
+end subroutine f90DeltaMCtop
+
+!ccccccccccccccc
+
 subroutine f90pfq(A, IP, B, IQ, Z, res)
   use constants, only: dp; use hyper; implicit none
   real (dp), dimension(IP), intent(in)  :: A
