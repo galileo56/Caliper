@@ -130,7 +130,6 @@ contains
 
   end function ThrustCoefs
 
-
 !ccccccccccccccc
 
   function LagCoef(m) result(res)

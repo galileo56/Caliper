@@ -2,7 +2,7 @@
 module SingularClass
   use MatrixElementsClass; use AnomDimClass ; use RunningClass; use KernelsClass
   use ModelClass         ; use GapMassClass ; use MassiveNSClass
-  use Hyper              ; use QuadPack, only: qagi, qags
+  use Hyper              ; use MCtopClass   ; use QuadPack, only: qagi, qags
   use constants, only: dp, Pi, Pi2, Zeta3, ExpEuler, d1mach, prec ; implicit none
   private
 
@@ -1748,8 +1748,9 @@ module SingularClass
 !ccccccccccccccc
 
   real (dp) function SingleSingWidthMod(self, Mod, setup, gap, space, cum, order, &
-                                        R0, mu0, delta0, h, tau, tau2)
+                                        R0, mu0, delta0, h, tau, tau2, Unstable)
     class (SingularMass), intent(in)                 :: self
+    class (MCtop), intent(in), optional              :: Unstable
     type (Model)        , intent(in)                 :: Mod
     character (len = *) , intent(in)                 :: setup, gap, cum, space
     real (dp)           , intent(in)                 :: R0, mu0, delta0, tau, h
@@ -1780,10 +1781,10 @@ module SingularClass
     if ( setup(:5) == 'Model' ) then
       if ( present(tau2) ) then
         res = self%SingleSingWidthList([Mod], gap, space, cum, order, R0, mu0, &
-                                        delta0, h, tau, tau2)
+                                        delta0, h, tau, tau2, Unstable)
       else
         res = self%SingleSingWidthList([Mod], gap, space, cum, order, R0, mu0, &
-                                     delta0, h, tau)
+                                     delta0, h, tau, Unstable = Unstable)
       end if
       SingleSingWidthMod = res(1); return
     end if
@@ -1884,8 +1885,9 @@ module SingularClass
 !ccccccccccccccc
 
   function SingleSingWidthList(self, ModList, gap, space, cum, order, R0, mu0, &
-                                     delta0, h, tau, tau2) result(resList)
+                                     delta0, h, tau, tau2, Unstable) result(resList)
     class (SingularMass), intent(in)                 :: self
+    class (MCtop), intent(in), optional              :: Unstable
     type (Model)        , intent(in), dimension(:)   :: ModList
     character (len = *) , intent(in)                 :: space, gap, cum
     real (dp)           , intent(in)                 :: R0, mu0, delta0, tau, h

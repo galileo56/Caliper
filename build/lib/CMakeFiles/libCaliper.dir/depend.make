@@ -257,6 +257,8 @@ lib/CMakeFiles/libCaliper.dir/Singular.F90.o.requires: lib/CMakeFiles/libCaliper
 lib/CMakeFiles/libCaliper.dir/Singular.F90.o: lib/CMakeFiles/libCaliper.dir/massivensclass.mod.stamp
 lib/CMakeFiles/libCaliper.dir/Singular.F90.o.requires: lib/CMakeFiles/libCaliper.dir/matrixelementsclass.mod.proxy
 lib/CMakeFiles/libCaliper.dir/Singular.F90.o: lib/CMakeFiles/libCaliper.dir/matrixelementsclass.mod.stamp
+lib/CMakeFiles/libCaliper.dir/Singular.F90.o.requires: lib/CMakeFiles/libCaliper.dir/mctopclass.mod.proxy
+lib/CMakeFiles/libCaliper.dir/Singular.F90.o: lib/CMakeFiles/libCaliper.dir/mctopclass.mod.stamp
 lib/CMakeFiles/libCaliper.dir/Singular.F90.o.requires: lib/CMakeFiles/libCaliper.dir/modelclass.mod.proxy
 lib/CMakeFiles/libCaliper.dir/Singular.F90.o: lib/CMakeFiles/libCaliper.dir/modelclass.mod.stamp
 lib/CMakeFiles/libCaliper.dir/Singular.F90.o.requires: lib/CMakeFiles/libCaliper.dir/poly.mod.proxy
