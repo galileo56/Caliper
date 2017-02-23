@@ -81,7 +81,7 @@ contains
     else if ( self%shape(:6) == 'thrust' ) then
 
       if ( 2 * y <= 1 ) then
-        Distribution = 8 * self%coefs(1) * y**3
+        Distribution = self%coefs(1) * y**3
       else if ( y <= 0.61_dp ) then
         Distribution = dot_product( self%coefs(8:9), [y, 1._dp] )
       else if ( y <= 0.89_dp ) then
@@ -109,15 +109,15 @@ contains
     real (dp)   , intent(in) :: m
     real (dp), dimension(11) :: res
 
-    res(:6) = [ 0.05796008516601898_dp + 5.376570171678456_dp * m**2 + 45.47883097494923_dp * m**4, &
-             1.2237383047335457_dp + 8.20239498575777_dp * m**2 + 52.545258951809956_dp * m**4, &
+    res(:6) = [ 0.3310188452495506_dp + 29.408029059401223_dp * m**2 + 420.78161872939825_dp * m**4, &
+             10.582416684643045_dp + 59.168098208694204_dp * m**2 - 86.0283647010381_dp * m**4, &
              0.5661957300078854_dp + 24.96314852772734_dp * m - 199.1120591815817_dp * m**2, &
              9.343012917211_dp - 16.997770889484364_dp * m + 141.4278848881199_dp * m**2, &
              42.85501883992358_dp + 50.26811493972574_dp * m - 540.819475023059_dp * m**2, &
              -43.27240470704688_dp - 52.90240803297828_dp * m + 655.761339938332_dp * m**2 ]
 
     res(7)   = res(4) + 0.89_dp * ( res(3) - res(6) ) - res(5) * 0.89_dp**2
-    res(8:9) = Line( [   0.5_dp, res(1) ] , [  0.61_dp, res(2) ] )
+    res(8:9) = [ res(2), res(1) * 0.5_dp**3 - res(2) * 0.5_dp ]
 
 
   end function ThrustCoefs
