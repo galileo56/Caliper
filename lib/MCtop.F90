@@ -122,6 +122,8 @@ contains
     res(7)   = res(4) + 0.89_dp * ( res(3) - res(6) ) - res(5) * 0.89_dp**2
     res(8:9) = [ res(2), res(1) * 0.5_dp**3 - res(2) * 0.5_dp ]
 
+    ! norm computation
+
     res(10) = res(1) * 0.5_dp**4/4 + res(9) * 0.11_dp + res(8) * ( 0.61_dp**2 - 0.5_dp**2)/2 &
     + res(7) * 0.28_dp + res(6) * ( 0.89_dp**2 - 0.61_dp**2)/2 + res(5) * ( 0.89_dp**3 - 0.61_dp**3)/3 &
     + res(4) * 0.11_dp + res(3) * ( 1 - 0.89_dp**2)/2
