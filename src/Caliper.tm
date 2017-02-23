@@ -350,7 +350,7 @@
 
 :Begin:
 :Function:      mctop
-:Pattern:       MCtop[shape, mt_, Q_, n_, x_]
+:Pattern:       MCtop[shape_, mt_, Q_, n_, x_]
 :Arguments:     {shape, mt, Q, n, x}
 :ArgumentTypes: {String, Real, Real, Integer, Real}
 :ReturnType:    Real
@@ -358,7 +358,7 @@
 
 :Begin:
 :Function:      deltamctop
-:Pattern:       DeltaMCtop[shape, mt_, Q_]
+:Pattern:       DeltaMCtop[shape_, mt_, Q_]
 :Arguments:     {shape, mt, Q}
 :ArgumentTypes: {String, Real, Real}
 :ReturnType:    Real
