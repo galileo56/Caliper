@@ -7,12 +7,14 @@ module MCtopClass
 !ccccccccccccccc
 
   type, public                   :: MCtop
+    character (len = 6)          :: shape
     real (dp)                    :: ESmin, ESmax, Dirac
     integer                      :: n
-    real (dp)  , dimension(0:39) :: coefs
+    real (dp), dimension(:), allocatable :: coefs
 
   contains
 
+   final                         :: delete_object
    procedure, pass(self), public :: Distribution, Delta
 
   end type MCtop
@@ -27,6 +29,13 @@ contains
 
 !ccccccccccccccc
 
+  subroutine delete_object(self)
+    type (MCtop) :: self
+    if ( allocated(self%coefs) ) deallocate(self%coefs)
+  end subroutine delete_object
+
+!ccccccccccccccc
+
   type (MCtop) function InMCtop(Eshape, mt, Q, n, ESmin)
     real (dp), optional, intent(in) :: ESmin
     integer  , optional, intent(in) :: n
@@ -34,20 +43,21 @@ contains
     real (dp)          , intent(in) :: mt, Q
     real (dp)                       :: moQ, moQ2
 
-    moQ = mt/Q; moQ2 = moQ**2
+    InMCtop%ESmin = 0; moQ = mt/Q; moQ2 = moQ**2; InMCtop%shape = Eshape
 
     if ( Eshape(:6) == 'thrust' ) then
 
       InMCtop%ESmax = 1 - sqrt(1 - 4 * moQ2); InMCtop%n = 0
       InMCtop%Dirac = 1 - 5.996687441937819_dp * moQ2 - 4.418930183289158_dp * &
       moQ2**2 + 11.76452036058563_dp * moQ2**3
+      allocate( InMCtop%coefs(11) ); InMCtop%coefs = ThrustCoefs(moQ2)
 
     else if ( EShape(:6) == 'Cparam') then
       InMCtop%ESmax = 12 * moQ2 * (1 - 3 * moQ2); InMCtop%Dirac = 0
-      InMCtop%coefs = LagCoef(moQ)/InMCtop%ESmax; InMCtop%n = min(39,n)
+      allocate( InMCtop%coefs(0:39) ); InMCtop%n = min(39,n)
+      InMCtop%coefs = LagCoef(moQ)/InMCtop%ESmax
+      if ( present(ESmin) ) InMCtop%ESmin = ESmin
     end if
-
-    InMCtop%ESmin = 0; if ( present(ESmin) ) InMCtop%ESmin = ESmin
 
   end function InMCtop
 
@@ -56,24 +66,61 @@ contains
   real (dp) function Distribution(self, x)
     class (MCtop)          , intent(in) :: self
     real (dp)              , intent(in) :: x
+    real (dp)                           :: y
 
     Distribution = 0; if (x <= self%ESmin .or. x >= self%ESmax) return
 
-    Distribution = dot_product(self%coefs(0:self%n), &
-    LegendreList(self%n, 2 * (x - self%ESmin)/(self%ESmax - self%ESmin) - 1 ) )
+    y = (x - self%ESmin)/(self%ESmax - self%ESmin)
 
-    if ( Distribution < 0 .and. x > 0.8*self%ESmax ) Distribution = 0
+    if ( self%shape(:6) == 'Cparam' ) then
+
+      Distribution = dot_product(self%coefs(0:self%n), &
+      LegendreList(self%n, 2 * y - 1 ) )
+      if ( Distribution < 0 .and. x > 0.8*self%ESmax ) Distribution = 0
+
+    else if ( self%shape(:6) == 'thrust' ) then
+
+      if ( 2 * y <= 1 ) then
+        Distribution = 8 * self%coefs(1) * y**3
+      else if ( y <= 0.61_dp ) then
+        Distribution = dot_product( self%coefs(6:7), [y, 1._dp] )
+      else if ( y <= 0.885_dp ) then
+        Distribution = dot_product( self%coefs(8:9), [y, 1._dp] )
+      else
+        Distribution = dot_product( self%coefs(10:), [y, 1._dp] )
+      end if
+
+    end if
 
    end function Distribution
 
 !ccccccccccccccc
 
   real (dp) function Delta(self)
-    class (MCtop)          , intent(in) :: self
+    class (MCtop), intent(in) :: self
 
     delta = self%Dirac
 
    end function Delta
+
+!ccccccccccccccc
+
+  function ThrustCoefs(m) result(res)
+    real (dp)   , intent(in) :: m
+    real (dp), dimension(11) :: res
+
+    res(:5) = [ 0.04933290148517331_dp +  5.553075520468492_dp * m +  43.79602537989945_dp * m**2, &
+             1.2075982725563466_dp +  8.870486545894227_dp * m +  46.15991456496873_dp * m**2, &
+             3.7227744444959296_dp +  4.903780285790073_dp * m + 15.802604499394254_dp * m**2, &
+             10.431875042978294_dp - 19.319249068371196_dp * m -  73.81636720457186_dp * m**2, &
+             10.249586551339457_dp - 19.72683653300232_dp  * m -  171.4891355458256_dp * m**2 ]
+
+    res(6:7) = Line( [   0.5_dp, res(1) ] , [  0.61_dp, res(2) ] )
+    res(8:9) = Line( [  0.61_dp, res(3) ] , [ 0.885_dp, res(4) ] )
+    res(10:) = Line( [ 0.885_dp, res(4) ] , [    1._dp, res(5) ] )
+
+  end function ThrustCoefs
+
 
 !ccccccccccccccc
 
@@ -203,6 +250,16 @@ contains
  + 1.8486109981118639e9_dp * m**7 - 2.463766069494559e9_dp * m**8 + 1.4270264140040352e9_dp * m**9 ]
 
   end function LagCoef
+
+!ccccccccccccccc
+
+  function Line(a,b) result(res)
+    real (dp), dimension(2), intent(in) :: a,b
+    real (dp), dimension(2)             :: res
+
+    res = [ b(2) - a(2), b(1) * a(2) - b(2) * a(1) ]/( b(1) - a(1) )
+
+  end function Line
 
 !ccccccccccccccc
 
