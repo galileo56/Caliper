@@ -50,7 +50,8 @@ contains
       InMCtop%ESmax = 1 - sqrt(1 - 4 * moQ2); InMCtop%n = 0
       InMCtop%Dirac = 1 - 5.996687441937819_dp * moQ2 - 4.418930183289158_dp * &
       moQ2**2 + 11.76452036058563_dp * moQ2**3
-      allocate( InMCtop%coefs(9) ); InMCtop%coefs = ThrustCoefs(moQ)
+      allocate( InMCtop%coefs(10) ); InMCtop%coefs = ThrustCoefs(moQ)
+      InMCtop%coefs(10) = InMCtop%coefs(10) * InMCtop%ESmax/(1 - InMCtop%Dirac)
 
     else if ( EShape(:6) == 'Cparam') then
       InMCtop%ESmax = 12 * moQ2 * (1 - 3 * moQ2); InMCtop%Dirac = 0
@@ -90,6 +91,8 @@ contains
         Distribution = dot_product( self%coefs(3:4), [y, 1._dp] )
       end if
 
+      Distribution = Distribution/self%coefs(10)
+
     end if
 
    end function Distribution
@@ -119,6 +122,11 @@ contains
     res(7)   = res(4) + 0.89_dp * ( res(3) - res(6) ) - res(5) * 0.89_dp**2
     res(8:9) = [ res(2), res(1) * 0.5_dp**3 - res(2) * 0.5_dp ]
 
+    ! norm computation
+
+    res(10) = res(1) * 0.5_dp**4/4 + res(9) * 0.11_dp + res(8) * ( 0.61_dp**2 - 0.5_dp**2)/2 &
+    + res(7) * 0.28_dp + res(6) * ( 0.89_dp**2 - 0.61_dp**2)/2 + res(5) * ( 0.89_dp**3 - 0.61_dp**3)/3 &
+    + res(4) * 0.11_dp + res(3) * ( 1 - 0.89_dp**2)/2
 
   end function ThrustCoefs
 
@@ -251,16 +259,6 @@ contains
  + 1.8486109981118639e9_dp * m**7 - 2.463766069494559e9_dp * m**8 + 1.4270264140040352e9_dp * m**9 ]
 
   end function LagCoef
-
-!ccccccccccccccc
-
-  function Line(a,b) result(res)
-    real (dp), dimension(2), intent(in) :: a,b
-    real (dp), dimension(2)             :: res
-
-    res = [ b(2) - a(2), b(1) * a(2) - b(2) * a(1) ]/( b(1) - a(1) )
-
-  end function Line
 
 !ccccccccccccccc
 
