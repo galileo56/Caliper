@@ -38,13 +38,30 @@ contains
     real (dp), dimension(0:n) :: list
     integer                   :: i
 
-    list (:1) = [ 1._dp, x ]
+    list(:1) = [ 1._dp, x ]
 
     do i = 2, n
       list(i) = ( (2 * i - 1) * x * list(i - 1) - (i - 1) * list(i - 2) )/i
     end do
 
   end function LegendreList
+
+!ccccccccccccccc
+
+  function QLegendreList(n,x) result(list)
+    integer      , intent(in) :: n
+    real (dp)    , intent(in) :: x
+    real (dp), dimension(0:n) :: list
+    integer                   :: i
+
+    list(:1) = [ 0._dp, 1._dp ]; list(2:) = 0
+
+    do i = 2, n
+      list(i) = (  (2 * i - 1) * ( x * list(i - 1) - (-1)**i ) - &
+                   (i - 1) * list(i - 2)  )/i
+    end do
+
+  end function QLegendreList
 
 end module Legendre
 

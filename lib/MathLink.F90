@@ -1,6 +1,30 @@
 
 !ccccccccccccccc
 
+subroutine f90LegendreList(n, x, res)
+  use constants, only: dp; use Legendre
+  integer                  , intent(in)  :: n
+  real (dp)                , intent(in)  :: x
+  real (dp), dimension(0:n), intent(out) :: res
+
+  res = LegendreList(n,x)
+
+end subroutine f90LegendreList
+
+!ccccccccccccccc
+
+subroutine f90QLegendreList(n, x, res)
+  use constants, only: dp; use Legendre
+  integer                  , intent(in)  :: n
+  real (dp)                , intent(in)  :: x
+  real (dp), dimension(0:n), intent(out) :: res
+
+  res = QLegendreList(n,x)
+
+end subroutine f90QLegendreList
+
+!ccccccccccccccc
+
 subroutine f90MCtop(mt, Q, n, x, res)
   use constants, only: dp; use hyper; use MCtopClass; implicit none
   real (dp), intent(in)  :: mt, Q, x
