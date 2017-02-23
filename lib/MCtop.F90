@@ -7,6 +7,7 @@ module MCtopClass
 !ccccccccccccccc
 
   type, public                   :: MCtop
+    character (len = 6)          :: shape
     real (dp)                    :: ESmin, ESmax, Dirac
     integer                      :: n
     real (dp)  , dimension(0:39) :: coefs
@@ -34,7 +35,7 @@ contains
     real (dp)          , intent(in) :: mt, Q
     real (dp)                       :: moQ, moQ2
 
-    moQ = mt/Q; moQ2 = moQ**2
+    moQ = mt/Q; moQ2 = moQ**2; InMCtop%shape = Eshape
 
     if ( Eshape(:6) == 'thrust' ) then
 
@@ -59,10 +60,15 @@ contains
 
     Distribution = 0; if (x <= self%ESmin .or. x >= self%ESmax) return
 
-    Distribution = dot_product(self%coefs(0:self%n), &
-    LegendreList(self%n, 2 * (x - self%ESmin)/(self%ESmax - self%ESmin) - 1 ) )
+    if ( self%shape(:6) == 'Cparam' ) then
 
-    if ( Distribution < 0 .and. x > 0.8*self%ESmax ) Distribution = 0
+      Distribution = dot_product(self%coefs(0:self%n), &
+      LegendreList(self%n, 2 * (x - self%ESmin)/(self%ESmax - self%ESmin) - 1 ) )
+      if ( Distribution < 0 .and. x > 0.8*self%ESmax ) Distribution = 0
+
+    else if ( self%shape(:6) == 'thrust' ) then
+
+    end if
 
    end function Distribution
 
