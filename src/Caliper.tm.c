@@ -1958,12 +1958,13 @@ static double nglfunction(int n, double z){
    return res;
 }
 
-extern double f90mctop_(double* mt, double* Q, int* n, double* x, double* result);
+extern double f90mctop_(char const* str, double* mt, double* Q, int* n, double* x,
+  double* result);
 
-static double mctop(double mt, double Q, int n, double x){
+static double mctop(char const* str, double mt, double Q, int n, double x){
   double res;
 
-   f90mctop_(&mt, &Q, &n, &x, &res);
+   f90mctop_(str, &mt, &Q, &n, &x, &res);
 
    return res;
 }
@@ -2472,7 +2473,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 2476 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm.c"
+# line 2477 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm.c"
 
 
 void ewfactors P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5));
@@ -3862,7 +3863,7 @@ L0:	return res;
 } /* _tr15 */
 
 
-double mctop P(( double _tp1, double _tp2, int _tp3, double _tp4));
+double mctop P(( const char * _tp1, double _tp2, double _tp3, int _tp4, double _tp5));
 
 #if MLPROTOTYPES
 static int _tr16( MLINK mlp)
@@ -3871,22 +3872,25 @@ static int _tr16(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	double _tp1;
+	const char * _tp1;
 	double _tp2;
-	int _tp3;
-	double _tp4;
+	double _tp3;
+	int _tp4;
+	double _tp5;
 	double _rp0;
-	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
-	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
-	if ( ! MLGetReal( mlp, &_tp4) ) goto L3;
-	if ( ! MLNewPacket(mlp) ) goto L4;
+	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
+	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
+	if ( ! MLGetReal( mlp, &_tp5) ) goto L4;
+	if ( ! MLNewPacket(mlp) ) goto L5;
 
-	_rp0 = mctop(_tp1, _tp2, _tp3, _tp4);
+	_rp0 = mctop(_tp1, _tp2, _tp3, _tp4, _tp5);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L4: L3: L2: L1: 
+L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
+
 L0:	return res;
 } /* _tr16 */
 
@@ -10119,7 +10123,7 @@ static struct func {
 		{47, 0, _tr13, "masslessmoment" },
 		{16, 0, _tr14, "profiles" },
 		{22, 0, _tr15, "profilesmass" },
-		{ 4, 0, _tr16, "mctop" },
+		{ 5, 0, _tr16, "mctop" },
 		{19, 0, _tr17, "massintersection" },
 		{40, 0, _tr18, "nsmasspiece" },
 		{41, 0, _tr19, "nsmassdiffpiece" },
@@ -10217,17 +10221,17 @@ static const char* evalstrs[] = {
 	(const char*)0,
 	"Print[\"     Author:            Vicent Mateu               \"]",
 	(const char*)0,
-	"Print[\"     Last modification: 21 - 12 - 2016             \"]",
+	"Print[\"     Last modification: 23 - 02 - 2017             \"]",
 	(const char*)0,
 	"Print[\"     Version:           test 1                     \"]",
 	(const char*)0,
-	"mZdef         = 91.187",
+	"mZdef            = 91.187",
 	(const char*)0,
-	"Gammadef      = 1553.0647546066",
+	"Gammadef         = 1553.0647546066",
 	(const char*)0,
-	"gammaZdef     = 2.4952",
+	"gammaZdef        = 2.4952",
 	(const char*)0,
-	"sin2ThetaWdef = 0.23119",
+	"sin2ThetaWdef    = 0.23119",
 	(const char*)0,
 	"gammaZPythia     = 2.5042",
 	(const char*)0,
@@ -10239,8 +10243,8 @@ static const char* evalstrs[] = {
 	"QLegendreList::usage = \"QLegendreList[n, x] computes the of the ",
 	"first n + 1 Legendre Polynomial\"",
 	(const char*)0,
-	"MCtop::usage = \"MCtop[mt, Q, n, x] computes the generalized hype",
-	"rgeometric function\"",
+	"MCtop::usage = \"MCtop[shape, mt, Q, n, x] computes the LO distri",
+	"bution for unstable tops\"",
 	(const char*)0,
 	"pFq::usage = \"pFq[a,b,z] computes the generalized hypergeometric",
 	" function\"",
@@ -10811,7 +10815,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"MasslessMoment[terms_, hard_, shape_, setup_, gap_, space_, orderAlpha_,                 runAlpha_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,                 muB_, mC_, muC_, muLambda_, Q_, mu0_, Rat0_, n0_, n1_, t2_, tR_, ts_,                 slope_, cnt_, eH_, eS_, eJ_, eR_, ns_, c_, lambda_, R0_, muR0_, delta0_,                 h_, tau_, tau2_, pow_]", (char *)"{terms, hard, shape, setup, gap, space, orderAlpha, runAlpha, order, run,                  nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0,                  Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, lambda, R0,                  muR0, delta0, h, tau, tau2, pow}", 13);
 	if (_res) _res = _definepattern(mlp, (char *)"Profiles[Q_, mu0_, R0_, n0_, n1_, t2_, tR_, ts_, slope_, cnt_, eH_, eS_,                 eJ_, eR_, ns_, tau_]", (char *)"{Q, mu0, R0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, tau}", 14);
 	if (_res) _res = _definepattern(mlp, (char *)"ProfilesMass[Q_, beta_, mu0_, delLamb_, R0_, n0_, delta0_, n1_,                 delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_, mass_, muM_, ns_,                 def_, EShape_, tau_]", (char *)"{Q, beta, mu0, delLamb, R0, n0, delta0, n1, delta1, t2, ts, slope,                  cnt, eH, eS, eJ, mass, muM, ns, def, EShape, tau}", 15);
-	if (_res) _res = _definepattern(mlp, (char *)"MCtop[mt_, Q_, n_, x_]", (char *)"{mt, Q, n, x}", 16);
+	if (_res) _res = _definepattern(mlp, (char *)"MCtop[shape, mt_, Q_, n_, x_]", (char *)"{shape, mt, Q, n, x}", 16);
 	if (_res) _res = _definepattern(mlp, (char *)"MassIntersection[Q_, beta_, mu0_, delLamb_, n0_, delta0_, n1_,delta1_,                 t2_, ts_, slope_, cnt_, eH_, eS_, eJ_, mass_, muM_, def_, EShape_]", (char *)"{Q, beta, mu0, delLamb, n0, delta0, n1, delta1, t2, ts, slope,                  cnt, eH, eS, eJ, mass, muM, def, EShape}", 17);
 	if (_res) _res = _definepattern(mlp, (char *)"NSMassPiece[shape_, gap_, cum_, scheme_, abs_, current_, orderAlpha_,                 runAlpha_, order_, run_, orderMass_ runMass_, nf_, mZ_, aMz_, mT_, muT_,                 mB_, muBottom_, mC_, muC_, muLambda1_, muLambda2_, Q_, mu_, muM_, muB_,                 muS_, R_, Rmass_, width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_,                 sin2ThetaW_, tau_]", (char *)"{shape, gap, cum, scheme, abs, current, orderAlpha, runAlpha, order, run,                 orderMass, runMass, nf, mZ, aMz, mT, muT, mB, muBottom, mC, muC, muLambda1,                 muLambda2, Q, mu, muM, muB, muS, R, Rmass, width, c, lambda, R0, mu0,                 delta0, h, gammaZ, sin2ThetaW, tau}", 18);
 	if (_res) _res = _definepattern(mlp, (char *)"NSMassPiece[shape_, gap_, cum_, scheme_, abs_, current_, orderAlpha_,                 runAlpha_, order_, run_, orderMass_ runMass_, nf_, mZ_, aMz_, mT_, muT_,                 mB_, muBottom_, mC_, muC_, muLambda1_, muLambda2_, Q_, mu_, muM_, muB_,                 muS_, R_, Rmass_, width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_,                 sin2ThetaW_, tau_, tau2_]", (char *)"{shape, gap, cum, scheme, abs, current, orderAlpha, runAlpha, order, run,                 orderMass, runMass, nf, mZ, aMz, mT, muT, mB, muBottom, mC, muC, muLambda1,                 muLambda2, Q, mu, muM, muB, muS, R, Rmass, width, c, lambda, R0, mu0,                 delta0, h, gammaZ, sin2ThetaW, tau, tau2}", 19);

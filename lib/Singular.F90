@@ -179,7 +179,7 @@ module SingularClass
     InSing%alphaJ = MatEl%alphaScale('jet') ; InSing%andim = andim; InSing%MatExp = 0
     InSing%alphaR = MatEl%alphaScale('R')   ; InSing%beta  = andim%betaQCD('beta')
 
-    muS = MatEl%scales('muS'); muJ = MatEl%scales('muJ'); InSing%R   = MatEl%scales('R')
+    muS = MatEl%scales('muS'); muJ = MatEl%scales('muJ'); InSing%R = MatEl%scales('R')
     Q   = MatEl%scales('Q')  ; muH = abs( MatEl%scales('muH') ); InSing%run = run
     QoMuH = Q/muH; soft = andim%betaQCD('soft'); jet = andim%betaQCD('jet')
     InSing%run1 = run - 1
@@ -1257,8 +1257,8 @@ module SingularClass
 
 !ccccccccccccccc
 
-  real (dp) function SingleSingMod(self, Mod, setup, gap, space, cum, order, R0, mu0, &
-                                      delta0, h, tau, tau2)
+  real (dp) function SingleSingMod(self, Mod, setup, gap, space, cum, order, R0, &
+                                    mu0, delta0, h, tau, tau2)
     class (SingularMassless) , intent(in)            :: self
     type (Model)       , intent(in)                  :: Mod
     character (len = *), intent(in)                  :: setup, space, gap, cum

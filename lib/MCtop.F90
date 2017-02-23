@@ -7,12 +7,13 @@ module MCtopClass
 !ccccccccccccccc
 
   type, public                   :: MCtop
-    real (dp)                    :: Cmin, Cmax
+    real (dp)                    :: ESmin, ESmax, Dirac
+    integer                      :: n
     real (dp)  , dimension(0:39) :: coefs
 
   contains
 
-   procedure, pass(self), public :: Distribution
+   procedure, pass(self), public :: Distribution, Delta
 
   end type MCtop
 
@@ -26,34 +27,53 @@ contains
 
 !ccccccccccccccc
 
-  type (MCtop) function InMCtop(mt, Q, Cmin)
-    real (dp), intent(in) :: mt, Q
-    real (dp)             :: moQ, moQ2
-    real (dp), optional   :: Cmin
+  type (MCtop) function InMCtop(Eshape, mt, Q, n, ESmin)
+    real (dp), optional, intent(in) :: ESmin
+    integer  , optional, intent(in) :: n
+    character (len = *), intent(in) :: Eshape
+    real (dp)          , intent(in) :: mt, Q
+    real (dp)                       :: moQ, moQ2
 
-    moQ = mt/Q; moQ2 = moQ**2;  InMCtop%Cmax = 12 * moQ2 * (1 - 3 * moQ2)
-    InMCtop%coefs = LagCoef(moQ)/InMCtop%Cmax
+    moQ = mt/Q; moQ2 = moQ**2
 
-    InMCtop%Cmin = 0; if ( present(Cmin) ) InMCtop%Cmin = Cmin
+    if ( Eshape(:6) == 'thrust' ) then
+
+      InMCtop%ESmax = 1 - sqrt(1 - 4 * moQ2); InMCtop%n = 0
+      InMCtop%Dirac = 1 - 5.996687441937819_dp * moQ2 - 4.418930183289158_dp * &
+      moQ2**2 + 11.76452036058563_dp * moQ2**3
+
+    else if ( EShape(:6) == 'Cparam') then
+      InMCtop%ESmax = 12 * moQ2 * (1 - 3 * moQ2); InMCtop%Dirac = 0
+      InMCtop%coefs = LagCoef(moQ)/InMCtop%ESmax; InMCtop%n = min(39,n)
+    end if
+
+    InMCtop%ESmin = 0; if ( present(ESmin) ) InMCtop%ESmin = ESmin
 
   end function InMCtop
 
 !ccccccccccccccc
 
-  real (dp) function Distribution(self, n, x)
+  real (dp) function Distribution(self, x)
     class (MCtop)          , intent(in) :: self
     real (dp)              , intent(in) :: x
-    integer                , intent(in) :: n
-    integer                             :: m
 
-    m = min(39,n); Distribution = 0; if (x <= self%Cmin .or. x >= self%Cmax) return
+    Distribution = 0; if (x <= self%ESmin .or. x >= self%ESmax) return
 
-    Distribution = dot_product(self%coefs(0:m), &
-    LegendreList(m, 2 * (x - self%Cmin)/(self%Cmax - self%Cmin) - 1 ) )
+    Distribution = dot_product(self%coefs(0:self%n), &
+    LegendreList(self%n, 2 * (x - self%ESmin)/(self%ESmax - self%ESmin) - 1 ) )
 
-    if ( Distribution < 0 .and. x > 0.8*self%Cmax ) Distribution = 0
+    if ( Distribution < 0 .and. x > 0.8*self%ESmax ) Distribution = 0
 
    end function Distribution
+
+!ccccccccccccccc
+
+  real (dp) function Delta(self)
+    class (MCtop)          , intent(in) :: self
+
+    delta = self%Dirac
+
+   end function Delta
 
 !ccccccccccccccc
 

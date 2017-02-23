@@ -2,19 +2,19 @@
 
 :Evaluate:   Print["     Package for Massive and Massless Event Shapes "]
 :Evaluate:   Print["     Author:            Vicent Mateu               "]
-:Evaluate:   Print["     Last modification: 21 - 12 - 2016             "]
+:Evaluate:   Print["     Last modification: 23 - 02 - 2017             "]
 :Evaluate:   Print["     Version:           test 1                     "]
 
-:Evaluate:  mZdef         = 91.187
-:Evaluate:  Gammadef      = 1553.0647546066
-:Evaluate:  gammaZdef     = 2.4952
-:Evaluate:  sin2ThetaWdef = 0.23119
+:Evaluate:  mZdef            = 91.187
+:Evaluate:  Gammadef         = 1553.0647546066
+:Evaluate:  gammaZdef        = 2.4952
+:Evaluate:  sin2ThetaWdef    = 0.23119
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
 
 :Evaluate:  LegendreList::usage = "LegendreList[n, x] computes the of the first n + 1 Legendre Polynomial"
 :Evaluate:  QLegendreList::usage = "QLegendreList[n, x] computes the of the first n + 1 Legendre Polynomial"
-:Evaluate:  MCtop::usage = "MCtop[mt, Q, n, x] computes the generalized hypergeometric function"
+:Evaluate:  MCtop::usage = "MCtop[shape, mt, Q, n, x] computes the LO distribution for unstable tops"
 :Evaluate:  pFq::usage = "pFq[a,b,z] computes the generalized hypergeometric function"
 :Evaluate:  FindOrigin::usage = "FindOrigin[shape, gap, orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eR, R0, muR0, delta0, h], finds the origin for massless Event Shapes"
 :Evaluate:  MassOrigin::usage = "MassOrigin[shape, EShape, gap, scheme, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, R0, muR0, del0, h], finds the origin of Massive Event Shapes"
@@ -349,9 +349,9 @@
 
 :Begin:
 :Function:      mctop
-:Pattern:       MCtop[mt_, Q_, n_, x_]
-:Arguments:     {mt, Q, n, x}
-:ArgumentTypes: {Real, Real, Integer, Real}
+:Pattern:       MCtop[shape, mt_, Q_, n_, x_]
+:Arguments:     {shape, mt, Q, n, x}
+:ArgumentTypes: {String, Real, Real, Integer, Real}
 :ReturnType:    Real
 :End:
 
@@ -3185,12 +3185,13 @@ static double nglfunction(int n, double z){
    return res;
 }
 
-extern double f90mctop_(double* mt, double* Q, int* n, double* x, double* result);
+extern double f90mctop_(char const* str, double* mt, double* Q, int* n, double* x,
+  double* result);
 
-static double mctop(double mt, double Q, int n, double x){
+static double mctop(char const* str, double mt, double Q, int n, double x){
   double res;
 
-   f90mctop_(&mt, &Q, &n, &x, &res);
+   f90mctop_(str, &mt, &Q, &n, &x, &res);
 
    return res;
 }
