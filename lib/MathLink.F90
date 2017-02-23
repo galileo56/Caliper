@@ -25,26 +25,40 @@ end subroutine f90QLegendreList
 
 !ccccccccccccccc
 
-subroutine f90MCtop(mt, Q, n, x, res)
+subroutine f90MCtop(shape, mt, Q, n, x, res)
   use constants, only: dp; use hyper; use MCtopClass; implicit none
-  real (dp), intent(in)  :: mt, Q, x
-  integer  , intent(in)  :: n
-  real (dp), intent(out) :: res
-  type (MCtop)           :: MC
+  character (len = *), intent(in)  :: shape
+  real (dp)          , intent(in)  :: mt, Q, x
+  integer            , intent(in)  :: n
+  real (dp)          , intent(out) :: res
+  type (MCtop)                     :: MC
 
-  MC = MCtop(mt, Q);  res = MC%Distribution(n,x)
+  MC = MCtop( shape(:6), mt, Q, n );  res = MC%Distribution(x)
 
 end subroutine f90MCtop
 
 !ccccccccccccccc
 
+subroutine f90DeltaMCtop(shape, mt, Q, res)
+  use constants, only: dp; use hyper; use MCtopClass; implicit none
+  character (len = *), intent(in)  :: shape
+  real (dp)          , intent(in)  :: mt, Q
+  real (dp)          , intent(out) :: res
+  type (MCtop)                     :: MC
+
+  MC = MCtop( shape(:6), mt, Q );  res = MC%delta()
+
+end subroutine f90DeltaMCtop
+
+!ccccccccccccccc
+
 subroutine f90pfq(A, IP, B, IQ, Z, res)
   use constants, only: dp; use hyper; implicit none
-  real (dp), dimension(IP), intent(in) :: A
-  real (dp), dimension(IQ), intent(in) :: B
-  integer                 , intent(in) :: IP, IQ
-  real (dp)               , intent(in) :: Z
-  real (dp)              , intent(out) :: res
+  real (dp), dimension(IP), intent(in)  :: A
+  real (dp), dimension(IQ), intent(in)  :: B
+  integer                 , intent(in)  :: IP, IQ
+  real (dp)               , intent(in)  :: Z
+  real (dp)               , intent(out) :: res
 
   res = pFq(a, b, z)
 
