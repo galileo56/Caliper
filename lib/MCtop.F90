@@ -14,8 +14,9 @@ module MCtopClass
 
   contains
 
-   final                         :: delete_object
-   procedure, pass(self), public :: Distribution, Delta
+   final                          :: delete_object
+   procedure, pass(self), public  :: Distribution, Delta, maxES
+   procedure, pass(self), private :: setMass
 
   end type MCtop
 
@@ -41,26 +42,55 @@ contains
     integer  , optional, intent(in) :: n
     character (len = *), intent(in) :: Eshape
     real (dp)          , intent(in) :: mt, Q
-    real (dp)                       :: moQ, moQ2
 
-    InMCtop%ESmin = 0; moQ = mt/Q; moQ2 = moQ**2; InMCtop%shape = Eshape
+    InMCtop%ESmin = 0; InMCtop%shape = Eshape
 
     if ( Eshape(:6) == 'thrust' ) then
-
-      InMCtop%ESmax = 1 - sqrt(1 - 4 * moQ2); InMCtop%n = 0
-      InMCtop%Dirac = 1 - 5.996687441937819_dp * moQ2 - 4.418930183289158_dp * &
-      moQ2**2 + 11.76452036058563_dp * moQ2**3
-      allocate( InMCtop%coefs(10) ); InMCtop%coefs = ThrustCoefs(moQ)
-      InMCtop%coefs(10) = InMCtop%coefs(10) * InMCtop%ESmax/(1 - InMCtop%Dirac)
+      allocate( InMCtop%coefs(10) ); InMCtop%n = 0
 
     else if ( EShape(:6) == 'Cparam') then
-      InMCtop%ESmax = 12 * moQ2 * (1 - 3 * moQ2); InMCtop%Dirac = 0
-      allocate( InMCtop%coefs(0:39) ); InMCtop%n = min(39,n)
-      InMCtop%coefs = LagCoef(moQ)/InMCtop%ESmax
+      allocate( InMCtop%coefs(0:39) )
+
+      if ( present(n) ) then
+        InMCtop%n = min(39,n)
+      else
+        InMCtop%n = 39
+      end if
+
       if ( present(ESmin) ) InMCtop%ESmin = ESmin
+
     end if
 
+    call InMCtop%setMass(mt, Q)
+
   end function InMCtop
+
+!ccccccccccccccc
+
+  subroutine setMass(self, mt, Q)
+    class (MCtop), intent(inout) :: self
+    real (dp)    , intent(in)    :: mt, Q
+    real (dp)                    :: moQ, moQ2
+
+    moQ = mt/Q; moQ2 = moQ**2;
+
+    if ( self%shape(:6) == 'thrust' ) then
+
+      self%ESmax = 1 - sqrt(1 - 4 * moQ2)
+      self%Dirac = 1 - 5.996687441937819_dp * moQ2 - 4.418930183289158_dp * &
+      moQ2**2 + 11.76452036058563_dp * moQ2**3
+      self%coefs = ThrustCoefs(moQ)
+      self%coefs(10) = self%coefs(10) * self%ESmax/(1 - self%Dirac)
+
+    else if ( self%Shape(:6) == 'Cparam') then
+      self%ESmax = 12 * moQ2 * (1 - 3 * moQ2); self%Dirac = 0
+      allocate( self%coefs(0:39) )
+
+      self%coefs = LagCoef(moQ)/self%ESmax
+
+    end if
+
+  end subroutine setMass
 
 !ccccccccccccccc
 
@@ -105,6 +135,15 @@ contains
     delta = self%Dirac
 
    end function Delta
+
+!ccccccccccccccc
+
+  real (dp) function maxES(self)
+    class (MCtop), intent(in) :: self
+
+    maxES = self%ESMax
+
+   end function maxES
 
 !ccccccccccccccc
 

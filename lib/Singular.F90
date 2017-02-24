@@ -52,6 +52,7 @@ module SingularClass
     real (dp), dimension(3)        :: deltaM
     real (dp)                      :: width, lm, LQ, alphaM, mass, muM, muJ, m2, m
     class (MassiveNS), allocatable :: MassNS
+    type (MCtop)                   :: Unstable
 
     contains
 
@@ -280,6 +281,8 @@ module SingularClass
     InSingMass%MatExp = 0      ; mass    = MassNS%MassVar('mass')     ; QoMu = Q/muH
     JetArg = muJ**2/Q/muS      ; alphaM  = matEl%alphaScale('massNf') ; QoM  = Q/mPole
     InSingMass%alphaM = alphaM ; InSingMass%muJ = muJ; InSingMass%run1 = run1
+
+    InSingMass%Unstable = MCtop( shape, mass, Q)
 
     if (muJ < muM) then
       InSingMass%MatExp = MatEl%CoefMat('bJet')
@@ -1760,8 +1763,8 @@ module SingularClass
     real (dp), dimension(order,order)                :: delta
     real (dp), dimension( order, 0:2 * (order - 1) ) :: deltaAdd
     real (dp), dimension( 0:order, 3, 0:2*order )    :: derInvList
-    integer                                          :: i, j
-    real (dp)                                        :: w, p, shift, p2
+    integer                                          :: i, j, neval, ier
+    real (dp)                                        :: w, p, shift, p2, result, abserr
     real (dp), dimension(1)                          :: res
 
     deltaAdd = 0; SingleSingWidthMod = 0; derInvList = 0
@@ -1802,7 +1805,6 @@ module SingularClass
 
           deltaAdd(i,j) = sum(   self%MatAdded( j, order - i: ceiling(j/2.): -1 ) * &
                                  delta( i,i:order - ceiling(j/2.) )   )
-
         end do
       end do
     end if
@@ -1818,6 +1820,14 @@ module SingularClass
 
     SingleSingWidthMod = NoMod(p)
     if ( present(tau2) ) SingleSingWidthMod = NoMod(p2) - SingleSingWidthMod
+
+    if ( present(Unstable) ) then
+      SingleSingWidthMod = Unstable%Delta() * SingleSingWidthMod
+
+      call qags( UnstableInt, 0._dp, min(p, self%Q * Unstable%maxES() ), prec, &
+                 prec, result, abserr, neval, ier )
+
+    end if
 
     SingleSingWidthMod = SingleSingWidthMod * self%Prefact * self%compFact**cumConst(cum) * &
                         Sum( self%HardExp(:order) ) * Sum( self%HardMassExp(:order) ) * &
@@ -1841,6 +1851,16 @@ module SingularClass
     end select
 
   contains
+
+!ccccccccccccccc
+
+  real (dp) function UnstableInt(x)
+    real (dp), intent(in) :: x
+
+    UnstableInt = NoMod(p + self%Q * self%tmin/self%ESFac - x) * &
+                  Unstable%Distribution(x/self%ESFac)/self%ESFac
+
+  end function UnstableInt
 
 !ccccccccccccccc
 

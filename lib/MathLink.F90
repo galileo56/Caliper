@@ -2279,8 +2279,8 @@ subroutine f90ThrustNS2loop(er, t, res)
   type (Running)                       :: alphaMass
   type (NonSingular)                   :: nonSing
 
-  alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, &
-                    0._dp, 0._dp, 0._dp)
+  alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, 0._dp, &
+                     0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = Running(5, 0, alphaAll, 0._dp)
   nonSing   = NonSingular('thrust', alphaMass, 0._dp, 0._dp, 0)
 
