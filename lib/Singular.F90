@@ -972,6 +972,8 @@ module SingularClass
     self%width = self%MassNS%MassVar('width')
     self%tmin  = self%MassNS%MassVar('tmin') ; self%deltaM = self%MassNS%MassDeltaShift()
 
+    self%Unstable = MCtop( self%shape, self%MassNS%MassVar('mass'), self%Q)
+
     if (muJ > self%muM) then  ! SCET scenarios, III and IV
 
      ! Jet and Hard Running, same for both scenarios III and IV
@@ -1150,10 +1152,9 @@ module SingularClass
     class (SingularMassless), intent(inout) :: self
     real (dp)               , intent(in)    :: muJ, muS
     real (dp), optional     , intent(in)    :: xiJ, xiB
-
-    real (dp), dimension(0:4,3)           :: MatJet, MatSoft
-    real (dp)                             :: lJet, XJ, xB
-    integer                               :: i, j
+    real (dp), dimension(0:4,3)             :: MatJet, MatSoft
+    real (dp)                               :: lJet, XJ, xB
+    integer                                 :: i, j
 
     self%MatExp = 0; xJ = 0; xB = 0
     if ( present(xiJ) ) XJ = xiJ; if ( present(xiB) ) XB = xiB
@@ -1751,9 +1752,8 @@ module SingularClass
 !ccccccccccccccc
 
   real (dp) function SingleSingWidthMod(self, Mod, setup, gap, space, cum, order, &
-                                        R0, mu0, delta0, h, tau, tau2, Unstable)
+                                        R0, mu0, delta0, h, tau, tau2)
     class (SingularMass), intent(in)                 :: self
-    class (MCtop), intent(in), optional              :: Unstable
     type (Model)        , intent(in)                 :: Mod
     character (len = *) , intent(in)                 :: setup, gap, cum, space
     real (dp)           , intent(in)                 :: R0, mu0, delta0, tau, h
@@ -1764,7 +1764,7 @@ module SingularClass
     real (dp), dimension( order, 0:2 * (order - 1) ) :: deltaAdd
     real (dp), dimension( 0:order, 3, 0:2*order )    :: derInvList
     integer                                          :: i, j, neval, ier
-    real (dp)                                        :: w, p, shift, p2, result, abserr
+    real (dp)                                        :: w, p, shift, p2, tshift, result, abserr
     real (dp), dimension(1)                          :: res
 
     deltaAdd = 0; SingleSingWidthMod = 0; derInvList = 0
@@ -1784,10 +1784,10 @@ module SingularClass
     if ( setup(:5) == 'Model' ) then
       if ( present(tau2) ) then
         res = self%SingleSingWidthList([Mod], gap, space, cum, order, R0, mu0, &
-                                        delta0, h, tau, tau2, Unstable)
+                                        delta0, h, tau, tau2)
       else
         res = self%SingleSingWidthList([Mod], gap, space, cum, order, R0, mu0, &
-                                     delta0, h, tau, Unstable = Unstable)
+                                     delta0, h, tau)
       end if
       SingleSingWidthMod = res(1); return
     end if
@@ -1795,6 +1795,7 @@ module SingularClass
     call self%setGammaShift( order, gap, delta0, R0, mu0, h, shift, delta )
 
     p = (self%Q * tau - self%Q * self%tmin)/self%ESFac - shift; p2 = p
+    tshift = tau - shift/self%Q
     if ( present(tau2) ) p2 = (self%Q * tau2 - self%Q * self%tmin)/self%ESFac - shift
 
     w = self%w + cumConst(cum)
@@ -1821,11 +1822,14 @@ module SingularClass
     SingleSingWidthMod = NoMod(p)
     if ( present(tau2) ) SingleSingWidthMod = NoMod(p2) - SingleSingWidthMod
 
-    if ( present(Unstable) ) then
-      SingleSingWidthMod = Unstable%Delta() * SingleSingWidthMod
+    if ( setup(:8) == 'unstable' ) then
+      SingleSingWidthMod = NoMod(  self%Q * ( tshift - self%Unstable%maxES() )  ) &
+                           * self%Unstable%Delta()
 
-      call qags( UnstableInt, 0._dp, min(p, self%Q * Unstable%maxES() ), prec, &
+      call qags( UnstableInt, 0._dp, min(tshift, self%Unstable%maxES() ), prec, &
                  prec, result, abserr, neval, ier )
+
+      SingleSingWidthMod = result + SingleSingWidthMod
 
     end if
 
@@ -1857,8 +1861,7 @@ module SingularClass
   real (dp) function UnstableInt(x)
     real (dp), intent(in) :: x
 
-    UnstableInt = NoMod(p + self%Q * self%tmin/self%ESFac - x) * &
-                  Unstable%Distribution(x/self%ESFac)/self%ESFac
+    UnstableInt = NoMod( self%Q * (tshift - x) ) * self%Unstable%Distribution(x/self%ESFac)/self%ESFac
 
   end function UnstableInt
 
