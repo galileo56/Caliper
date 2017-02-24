@@ -6,10 +6,17 @@ module MCtopClass
 
 !ccccccccccccccc
 
+<<<<<<< HEAD
   type, public                   :: MCtop
     character (len = 6)          :: shape
     real (dp)                    :: ESmin, ESmax, Dirac
     integer                      :: n
+=======
+  type, public                           :: MCtop
+    character (len = 6)                  :: shape
+    real (dp)                            :: ESmin, ESmax, Dirac
+    integer                              :: n
+>>>>>>> origin/master
     real (dp), dimension(:), allocatable :: coefs
 
   contains
@@ -50,7 +57,11 @@ contains
       InMCtop%ESmax = 1 - sqrt(1 - 4 * moQ2); InMCtop%n = 0
       InMCtop%Dirac = 1 - 5.996687441937819_dp * moQ2 - 4.418930183289158_dp * &
       moQ2**2 + 11.76452036058563_dp * moQ2**3
+<<<<<<< HEAD
       allocate( InMCtop%coefs(11) ); InMCtop%coefs = ThrustCoefs(moQ2)
+=======
+      allocate( InMCtop%coefs(9) ); InMCtop%coefs = ThrustCoefs(moQ)
+>>>>>>> origin/master
 
     else if ( EShape(:6) == 'Cparam') then
       InMCtop%ESmax = 12 * moQ2 * (1 - 3 * moQ2); InMCtop%Dirac = 0
@@ -64,9 +75,15 @@ contains
 !ccccccccccccccc
 
   real (dp) function Distribution(self, x)
+<<<<<<< HEAD
     class (MCtop)          , intent(in) :: self
     real (dp)              , intent(in) :: x
     real (dp)                           :: y
+=======
+    class (MCtop), intent(in) :: self
+    real (dp)    , intent(in) :: x
+    real (dp)                 :: y
+>>>>>>> origin/master
 
     Distribution = 0; if (x <= self%ESmin .or. x >= self%ESmax) return
 
@@ -83,11 +100,19 @@ contains
       if ( 2 * y <= 1 ) then
         Distribution = 8 * self%coefs(1) * y**3
       else if ( y <= 0.61_dp ) then
+<<<<<<< HEAD
         Distribution = dot_product( self%coefs(6:7), [y, 1._dp] )
       else if ( y <= 0.885_dp ) then
         Distribution = dot_product( self%coefs(8:9), [y, 1._dp] )
       else
         Distribution = dot_product( self%coefs(10:), [y, 1._dp] )
+=======
+        Distribution = dot_product( self%coefs(8:9), [y, 1._dp] )
+      else if ( y <= 0.89_dp ) then
+        Distribution = dot_product( self%coefs(5:7), [y**2, y, 1._dp] )
+      else
+        Distribution = dot_product( self%coefs(3:4), [y, 1._dp] )
+>>>>>>> origin/master
       end if
 
     end if
@@ -109,6 +134,7 @@ contains
     real (dp)   , intent(in) :: m
     real (dp), dimension(11) :: res
 
+<<<<<<< HEAD
     res(:5) = [ 0.04933290148517331_dp +  5.553075520468492_dp * m +  43.79602537989945_dp * m**2, &
              1.2075982725563466_dp +  8.870486545894227_dp * m +  46.15991456496873_dp * m**2, &
              3.7227744444959296_dp +  4.903780285790073_dp * m + 15.802604499394254_dp * m**2, &
@@ -118,6 +144,18 @@ contains
     res(6:7) = Line( [   0.5_dp, res(1) ] , [  0.61_dp, res(2) ] )
     res(8:9) = Line( [  0.61_dp, res(3) ] , [ 0.885_dp, res(4) ] )
     res(10:) = Line( [ 0.885_dp, res(4) ] , [    1._dp, res(5) ] )
+=======
+    res(:6) = [ 0.05796008516601898_dp + 5.376570171678456_dp * m**2 + 45.47883097494923_dp * m**4, &
+             1.2237383047335457_dp + 8.20239498575777_dp * m**2 + 52.545258951809956_dp * m**4, &
+             0.5661957300078854_dp + 24.96314852772734_dp * m - 199.1120591815817_dp * m**2, &
+             9.343012917211_dp - 16.997770889484364_dp * m + 141.4278848881199_dp * m**2, &
+             42.85501883992358_dp + 50.26811493972574_dp * m - 540.819475023059_dp * m**2, &
+             -43.27240470704688_dp - 52.90240803297828_dp * m + 655.761339938332_dp * m**2 ]
+
+    res(7)   = res(4) + 0.89_dp * ( res(3) - res(6) ) - res(5) * 0.89_dp**2
+    res(8:9) = Line( [   0.5_dp, res(1) ] , [  0.61_dp, res(2) ] )
+
+>>>>>>> origin/master
 
   end function ThrustCoefs
 
