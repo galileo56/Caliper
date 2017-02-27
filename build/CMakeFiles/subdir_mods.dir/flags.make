@@ -6,5 +6,5 @@ Fortran_FLAGS = -Waliasing -Wampersand -Wconversion -Wc-binding-type -Wintrinsic
 
 Fortran_DEFINES = 
 
-Fortran_INCLUDES = -I/Users/vicent/GitHubProjects/Caliper -I/Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mathlink.framework/Headers 
+Fortran_INCLUDES = -I/Users/vmateu/GitHub/Caliper -I/Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mathlink.framework/Headers 
 

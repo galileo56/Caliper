@@ -134,7 +134,7 @@ end subroutine f90MassiveProfList
 
 !ccccccccccccccc
 
-subroutine f90MassiveProfPieceList(terms, hard, shape, EShape, gap, space, cum, scheme,  &
+subroutine f90MassiveProfPieceList(terms, hard, shape, EShape, setup, gap, space, cum, scheme,  &
  abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3,&
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda,&
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width,     &
@@ -145,7 +145,7 @@ subroutine f90MassiveProfPieceList(terms, hard, shape, EShape, gap, space, cum, 
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
 
   character (len = *), intent(in)    :: shape, scheme, space, gap, hard, terms, Eshape, &
-                                        cum, abs, current
+                                        cum, abs, current, setup
   integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns, &
                                         runMass, orderMass, n
   real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC, muC, Q,&
@@ -189,14 +189,14 @@ subroutine f90MassiveProfPieceList(terms, hard, shape, EShape, gap, space, cum, 
   Sing      = SingularMassScales( nonSing, run, hard(:6) )
   Cumul     = CumulantMass(Prof, Sing, xi, xiB, width)
 
-  res = Cumul%ListDistPiece(terms(:7), cum(:4), Mod, gap(:12), space(:6), order, R0, &
+  res = Cumul%ListDistPiece(terms(:7), cum(:4), Mod, setup, gap(:12), space(:6), order, R0, &
                   muR0, del0, h, tauList)
 
 end subroutine f90MassiveProfPieceList
 
 !ccccccccccccccc
 
-subroutine f90MassivePieceBin(terms, hard, shape, EShape, gap, space, cum, scheme,  &
+subroutine f90MassivePieceBin(terms, hard, shape, EShape, setup, gap, space, cum, scheme,  &
  abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3,&
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda,&
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width,     &
@@ -207,7 +207,7 @@ subroutine f90MassivePieceBin(terms, hard, shape, EShape, gap, space, cum, schem
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
 
   character (len = *), intent(in)    :: shape, scheme, space, gap, hard, terms, Eshape, &
-                                        cum, abs, current
+                                        cum, abs, current, setup
   integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns, &
                                         runMass, orderMass, n
   real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC, muC, Q,&
@@ -251,7 +251,7 @@ subroutine f90MassivePieceBin(terms, hard, shape, EShape, gap, space, cum, schem
   Sing      = SingularMassScales( nonSing, run, hard(:6) )
   Cumul     = CumulantMass(Prof, Sing, xi, xiB, width)
 
-  res = Cumul%ListBinPiece(terms(:7), cum(:4), Mod, gap(:12), space(:6), order, R0, &
+  res = Cumul%ListBinPiece(terms(:7), cum(:4), Mod, setup, gap(:12), space(:6), order, R0, &
                   muR0, del0, h, tauList)
 
 end subroutine f90MassivePieceBin
@@ -411,7 +411,7 @@ end subroutine f90MassOrigin
 
 !ccccccccccccccc
 
-subroutine f90MassiveProfPiece(terms, hard, shape, EShape, gap, space, cum, scheme, abs, &
+subroutine f90MassiveProfPiece(terms, hard, shape, EShape, setup, gap, space, cum, scheme, abs, &
  current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, &
  mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda,    &
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width,     &
@@ -422,7 +422,7 @@ subroutine f90MassiveProfPiece(terms, hard, shape, EShape, gap, space, cum, sche
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
 
   character (len = *), intent(in)    :: shape, scheme, space, gap, hard, terms, &
-                                        cum, abs, current, Eshape
+                                        cum, abs, current, Eshape, setup
   integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns, &
                                         runMass, orderMass
   real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC, muC, Q, &
@@ -465,14 +465,14 @@ subroutine f90MassiveProfPiece(terms, hard, shape, EShape, gap, space, cum, sche
   Sing      = SingularMassScales( nonSing, run, hard(:6) )
   Cumul     = CumulantMass(Prof, Sing, xi, xiB, width)
 
-  res = Cumul%BinPiece(terms(:7), cum(:4), Mod, gap(:12), space(:6), order, R0, &
+  res = Cumul%BinPiece(terms(:7), cum(:4), Mod, setup, gap(:12), space(:6), order, R0, &
                   muR0, del0, h, 0, tau)
 
 end subroutine f90MassiveProfPiece
 
 !ccccccccccccccc
 
-subroutine f90MassiveProfDiffPiece(terms, hard, shape, EShape, gap, space, cum, scheme,  &
+subroutine f90MassiveProfDiffPiece(terms, hard, shape, EShape, setup, gap, space, cum, scheme,  &
  abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3,&
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda,&
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width,     &
@@ -483,7 +483,7 @@ subroutine f90MassiveProfDiffPiece(terms, hard, shape, EShape, gap, space, cum, 
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
 
   character (len = *), intent(in)    :: shape, scheme, space, gap, hard, terms, &
-                                        cum, abs, current, Eshape
+                                        cum, abs, current, Eshape, setup
   integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns, &
                                         runMass, orderMass
   real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC, muC, Q, &
@@ -526,7 +526,7 @@ subroutine f90MassiveProfDiffPiece(terms, hard, shape, EShape, gap, space, cum, 
   Sing      = SingularMassScales( nonSing, run, hard(:6) )
   Cumul     = CumulantMass(Prof, Sing, xi, xiB, width)
 
-  res = Cumul%BinPiece(terms(:7), cum(:4), Mod, gap(:12), space(:6), order, R0, &
+  res = Cumul%BinPiece(terms(:7), cum(:4), Mod, setup, gap(:12), space(:6), order, R0, &
                   muR0, del0, h, 0, tau, tau2)
 
 end subroutine f90MassiveProfDiffPiece
@@ -679,7 +679,7 @@ end subroutine f90MasslessProfList
 
 !ccccccccccccccc
 
-subroutine f90MasslessProfPieceList(terms, hard, shape, gap, space, cum, orderAlpha, &
+subroutine f90MasslessProfPieceList(terms, hard, shape, setup, gap, space, cum, orderAlpha, &
  runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen, lambda,     &
  R0, muR0, delta0, h, tauList, n, res)
@@ -688,7 +688,7 @@ subroutine f90MasslessProfPieceList(terms, hard, shape, gap, space, cum, orderAl
   use constants, only: dp; use ProfilesClass, only: profilesmassless
   use CumulantClass, only: CumulantMassless; implicit none
 
-  character (len = *), intent(in)    :: shape, cum, space, gap, hard, terms
+  character (len = *), intent(in)    :: shape, cum, space, gap, hard, terms, setup
   integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, n, ns
   real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, muC, j3, &
                                         Q, G3, lambda, ts, R0, mu0, delta0, h, s3, muR0, &
@@ -719,14 +719,14 @@ subroutine f90MasslessProfPieceList(terms, hard, shape, gap, space, cum, orderAl
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Cumul    = CumulantMassless(Prof, Sing)
 
-  res = Cumul%ListDistPiece( terms(:7), cum(:4), Mod, gap(:12), space(:6), order, R0, &
+  res = Cumul%ListDistPiece( terms(:7), cum(:4), Mod, setup, gap(:12), space(:6), order, R0, &
                   muR0, delta0, h, tauList )
 
 end subroutine f90MasslessProfPieceList
 
 !ccccccccccccccc
 
-subroutine f90MasslessPieceBin(terms, hard, shape, gap, space, cum, orderAlpha, &
+subroutine f90MasslessPieceBin(terms, hard, shape, setup, gap, space, cum, orderAlpha, &
  runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda,   &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen, lambda,    &
  R0, muR0, delta0, h, tauList, n, res)
@@ -735,7 +735,7 @@ subroutine f90MasslessPieceBin(terms, hard, shape, gap, space, cum, orderAlpha, 
   use constants, only: dp; use ProfilesClass, only: profilesmassless
   use CumulantClass, only: CumulantMassless; implicit none
 
-  character (len = *), intent(in)    :: shape, cum, space, gap, hard, terms
+  character (len = *), intent(in)    :: shape, cum, space, gap, hard, terms, setup
   integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, n, ns
   real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, muC, j3, &
                                         Q, G3, lambda, ts, R0, mu0, delta0, h, s3, muR0, &
@@ -766,7 +766,7 @@ subroutine f90MasslessPieceBin(terms, hard, shape, gap, space, cum, orderAlpha, 
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Cumul    = CumulantMassless(Prof, Sing)
 
-  res = Cumul%ListBinPiece( terms(:7), cum(:4), Mod, gap(:12), space(:6), order, R0, &
+  res = Cumul%ListBinPiece( terms(:7), cum(:4), Mod, setup, gap(:12), space(:6), order, R0, &
                   muR0, delta0, h, tauList )
 
 end subroutine f90MasslessPieceBin
@@ -851,7 +851,7 @@ end subroutine f90MasslessProf
 
 !ccccccccccccccc
 
-subroutine f90MasslessProfPiece(terms, hard, shape, gap, space, cum, orderAlpha,   &
+subroutine f90MasslessProfPiece(terms, hard, shape, setup, gap, space, cum, orderAlpha,   &
  runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen, lambda,  &
  R0, muR0, delta0, h, tau, res)
@@ -860,7 +860,7 @@ subroutine f90MasslessProfPiece(terms, hard, shape, gap, space, cum, orderAlpha,
   use constants, only: dp; use ProfilesClass, only: profilesmassless
   use CumulantClass, only: CumulantMassless; implicit none
 
-  character (len = *), intent(in)    :: shape, cum, space, gap, hard, terms
+  character (len = *), intent(in)    :: shape, cum, space, gap, hard, terms, setup
   integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns
   real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, muC, j3, &
                                         Q, G3, lambda, tau, R0, mu0, delta0, h, s3, muR0, &
@@ -891,14 +891,14 @@ subroutine f90MasslessProfPiece(terms, hard, shape, gap, space, cum, orderAlpha,
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Cumul    = CumulantMassless(Prof, Sing)
 
-  res = Cumul%BinPiece( terms(:7), cum(:4), Mod, gap(:12), space(:6), order, R0, &
+  res = Cumul%BinPiece( terms(:7), cum(:4), Mod, setup, gap(:12), space(:6), order, R0, &
                   muR0, delta0, h, 0, tau )
 
 end subroutine f90MasslessProfPiece
 
 !ccccccccccccccc
 
-subroutine f90MasslessProfDiffPiece(terms, hard, shape, gap, space, cum, orderAlpha, &
+subroutine f90MasslessProfDiffPiece(terms, hard, shape, setup, gap, space, cum, orderAlpha, &
  runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen, lambda, R0, &
  muR0, delta0, h, tau, tau2, res)
@@ -907,7 +907,7 @@ subroutine f90MasslessProfDiffPiece(terms, hard, shape, gap, space, cum, orderAl
   use constants, only: dp; use ProfilesClass, only: profilesmassless
   use CumulantClass, only: CumulantMassless; implicit none
 
-  character (len = *), intent(in)    :: shape, cum, space, gap, hard, terms
+  character (len = *), intent(in)    :: shape, cum, space, gap, hard, terms, setup
   integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns
   real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, muC, j3, &
                                         Q, G3, lambda, tau, R0, mu0, delta0, h, s3, muR0, &
@@ -938,7 +938,7 @@ subroutine f90MasslessProfDiffPiece(terms, hard, shape, gap, space, cum, orderAl
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Cumul    = CumulantMassless(Prof, Sing)
 
-  res = Cumul%BinPiece( terms(:7), cum(:4), Mod, gap(:12), space(:6), order, R0, &
+  res = Cumul%BinPiece( terms(:7), cum(:4), Mod, setup, gap(:12), space(:6), order, R0, &
                   muR0, delta0, h, 0, tau, tau2 )
 
 end subroutine f90MasslessProfDiffPiece
@@ -1299,7 +1299,7 @@ end subroutine f90SingularMassPiece
 
 !ccccccccccccccc
 
-subroutine f90SingularMassList(hard, shape, Eshape, gap, space, cum, scheme, abs, current,&
+subroutine f90SingularMassList(hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,&
   xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, &
   mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu,   &
   width, clen, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, res)
@@ -1309,7 +1309,7 @@ subroutine f90SingularMassList(hard, shape, Eshape, gap, space, cum, scheme, abs
   implicit none
 
   character (len = *)  , intent(in ) :: shape, cum, space, gap, Eshape, abs, current,  &
-                                        hard, scheme
+                                        hard, scheme, setup
   integer              , intent(in ) :: orderAlpha, order, runAlpha, run, nf, runMass, &
                                         orderMass, clen
   real (dp)            , intent(in ) :: mZ, amZ, muLambda1, muLambda2, mT, muT, mB, muB, &
@@ -1357,7 +1357,7 @@ subroutine f90SingularMassList(hard, shape, Eshape, gap, space, cum, scheme, abs
                                 mu0, delta0, h, tau )
   else
 
-    res = Sing%SingleSingWidth( Mod, gap(:12), space(:6), cum(:4), order, R0,   &
+    res = Sing%SingleSingWidth( Mod, setup, gap(:12), space(:6), cum(:4), order, R0,   &
                                 mu0, delta0, h, tau )
   end if
 
@@ -1367,7 +1367,7 @@ end subroutine f90SingularMassList
 
 !ccccccccccccccc
 
-subroutine f90SingularMassDiffList(hard, shape, Eshape, gap, space, cum, scheme, abs,     &
+subroutine f90SingularMassDiffList(hard, shape, Eshape, setup, gap, space, cum, scheme, abs,     &
   current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, &
   mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,   &
   muM, mu, width, clen, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, tau2, res)
@@ -1377,7 +1377,7 @@ subroutine f90SingularMassDiffList(hard, shape, Eshape, gap, space, cum, scheme,
   implicit none
 
   character (len = *)  , intent(in ) :: shape, cum, space, gap, Eshape, abs, current,  &
-                                        hard, scheme
+                                        hard, scheme, setup
   integer              , intent(in ) :: orderAlpha, order, runAlpha, run, nf, runMass, &
                                         orderMass, clen
   real (dp)            , intent(in ) :: mZ, amZ, muLambda1, muLambda2, mT, muT, mB, muB, &
@@ -1425,7 +1425,7 @@ subroutine f90SingularMassDiffList(hard, shape, Eshape, gap, space, cum, scheme,
                                 mu0, delta0, h, tau, tau2 )
   else
 
-    res = Sing%SingleSingWidth( Mod, gap(:12), space(:6), cum(:4), order, R0,   &
+    res = Sing%SingleSingWidth( Mod, setup, gap(:12), space(:6), cum(:4), order, R0,   &
                                 mu0, delta0, h, tau, tau2 )
   end if
   if (muJ >= muM) res = res + Sing%NonDist(Mod, gap(:12), space(:6), cum(:4), order, &

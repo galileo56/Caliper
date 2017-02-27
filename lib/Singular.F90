@@ -1784,10 +1784,10 @@ module SingularClass
 
     if ( setup(:5) == 'Model' ) then
       if ( present(tau2) ) then
-        res = self%SingleSingWidthList([Mod], gap, space, cum, order, R0, mu0, &
+        res = self%SingleSingWidthList([Mod], setup, gap, space, cum, order, R0, mu0, &
                                         delta0, h, tau, tau2)
       else
-        res = self%SingleSingWidthList([Mod], gap, space, cum, order, R0, mu0, &
+        res = self%SingleSingWidthList([Mod], setup, gap, space, cum, order, R0, mu0, &
                                      delta0, h, tau)
       end if
       SingleSingWidthMod = res(1); return
@@ -1919,12 +1919,12 @@ module SingularClass
 
 !ccccccccccccccc
 
-  function SingleSingWidthList(self, ModList, gap, space, cum, order, R0, mu0, &
+  function SingleSingWidthList(self, ModList, setup, gap, space, cum, order, R0, mu0, &
                                      delta0, h, tau, tau2, Unstable) result(resList)
     class (SingularMass), intent(in)                 :: self
     class (MCtop), intent(in), optional              :: Unstable
     type (Model)        , intent(in), dimension(:)   :: ModList
-    character (len = *) , intent(in)                 :: space, gap, cum
+    character (len = *) , intent(in)                 :: space, gap, cum, setup
     real (dp)           , intent(in)                 :: R0, mu0, delta0, tau, h
     real (dp)           , intent(in), optional       :: tau2
     integer             , intent(in)                 :: order
@@ -2048,6 +2048,12 @@ module SingularClass
     end select
 
   contains
+
+!ccccccccccccccc
+
+  ! real (dp) function WithModel(p)
+
+  ! end function WithModel
 
 !ccccccccccccccc
 

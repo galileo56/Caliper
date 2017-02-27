@@ -171,12 +171,12 @@ module CumulantClass
 
 !ccccccccccccccc
 
-  function ListDistPiece(self, terms, cum, ModList, gap, space, order, R0, mu0, &
+  function ListDistPiece(self, terms, cum, ModList, setup, gap, space, order, R0, mu0, &
                          delta0, h, tauList) result(crossList)
     class (CumulantMassless)  , intent(inout) :: self
     real (dp), dimension(:)   , intent(in   ) :: tauList
     type (Model), dimension(:), intent(in   ) :: ModList
-    character (len = *)       , intent(in   ) :: space, gap, cum, terms
+    character (len = *)       , intent(in   ) :: space, gap, cum, terms, setup
     real (dp)                 , intent(in   ) :: R0, mu0, delta0, h
     integer                   , intent(in   ) :: order
 
@@ -184,7 +184,7 @@ module CumulantClass
     integer                                              :: i
 
     do i = 1, size(tauList)
-      crossList(:,i) = self%BinPiece( terms, cum, ModList, gap, space, order, R0, &
+      crossList(:,i) = self%BinPiece( terms, cum, ModList, setup, gap, space, order, R0, &
                                       mu0, delta0, h, 0, tauList(i) )
     end do
 
@@ -192,12 +192,12 @@ module CumulantClass
 
 !ccccccccccccccc
 
-  function ListBinPiece(self, terms, cum, ModList, gap, space, order, R0, mu0, &
+  function ListBinPiece(self, terms, cum, ModList, setup, gap, space, order, R0, mu0, &
                          delta0, h, tauList) result(crossList)
     class (CumulantMassless)  , intent(inout) :: self
     real (dp), dimension(:,:) , intent(in   ) :: tauList
     type (Model), dimension(:), intent(in   ) :: ModList
-    character (len = *)       , intent(in   ) :: space, gap, cum, terms
+    character (len = *)       , intent(in   ) :: space, gap, cum, terms, setup
     real (dp)                 , intent(in   ) :: R0, mu0, delta0, h
     integer                   , intent(in   ) :: order
     integer                                   :: i
@@ -205,7 +205,7 @@ module CumulantClass
     real (dp), dimension( size(ModList), size(tauList,2) ) :: crossList
 
     do i = 1, size(tauList,2)
-      crossList(:,i) = self%BinPiece( terms, cum, ModList, gap, space, order, R0, &
+      crossList(:,i) = self%BinPiece( terms, cum, ModList, setup, gap, space, order, R0, &
                                      mu0, delta0, h, 0, tauList(1,i), tauList(2,i) )
     end do
 
@@ -213,13 +213,13 @@ module CumulantClass
 
 !ccccccccccccccc
 
-  recursive function BinPiece(self, terms, cum, ModList, gap, space, order, &
+  recursive function BinPiece(self, terms, cum, ModList, setup, gap, space, order, &
                               R0, mu0, delta0, h, pow, t0, t1) result(resList)
     class (CumulantMassless)  , intent(inout) :: self
     real (dp)                 , intent(in   ) :: t0
     real (dp)       , optional, intent(in   ) :: t1
     type (Model), dimension(:), intent(in   ) :: ModList
-    character (len = *)       , intent(in   ) :: space, gap, cum, terms
+    character (len = *)       , intent(in   ) :: space, gap, cum, terms, setup
     real (dp)                 , intent(in   ) :: R0, mu0, delta0, h
     integer                   , intent(in   ) :: order
     integer, optional         , intent(in   ) :: pow
@@ -238,21 +238,21 @@ module CumulantClass
 
     if ( self%width < d1mach(1) .and. t0 < tmin  .and. cum(:3) /= 'cum') then
 
-      resList = self%BinPiece(terms, cum, ModList, gap, space, order, &
+      resList = self%BinPiece(terms, cum, ModList, setup, gap, space, order, &
                           R0, mu0, delta0, h, pow, tmin, t1);  return
 
     else if ( t0 < self%tScen(1) .and. t1 > self%tScen(1)) then
 
-      resList = self%BinPiece( terms, cum, ModList, gap, space, order, R0, mu0, delta0, &
-      h, pow, t0, self%tScen(1) - prec ) + self%BinPiece( terms, cum, ModList, gap, &
+      resList = self%BinPiece( terms, cum, ModList, setup, gap, space, order, R0, mu0, delta0, &
+      h, pow, t0, self%tScen(1) - prec ) + self%BinPiece( terms, cum, ModList, setup, gap, &
       space, order, R0, mu0, delta0, h, pow, self%tScen(1) + prec , t1)
 
       return
 
     else if ( t0 < self%tScen(2) .and. t1 > self%tScen(2) ) then
 
-      resList = self%BinPiece( terms, cum, ModList, gap, space, order, R0, mu0, delta0, &
-      h, pow, t0, self%tScen(2) - prec ) + self%BinPiece( terms, cum, ModList, gap, &
+      resList = self%BinPiece( terms, cum, ModList, setup, gap, space, order, R0, mu0, delta0, &
+      h, pow, t0, self%tScen(2) - prec ) + self%BinPiece( terms, cum, ModList, setup, gap, &
       space, order, R0, mu0, delta0, h, pow, self%tScen(2) + prec , t1)
 
       return
@@ -305,10 +305,10 @@ module CumulantClass
           type is (SingularMassScales)
 
             if ( present(tau2) ) then
-              list = Sing%SingleSingWidth(ModList, gap, space, 'cum', order, &
+              list = Sing%SingleSingWidth(ModList, setup, gap, space, 'cum', order, &
                                               R0, mu0, delta0, h, tau, tau2)
             else
-              list = Sing%SingleSingWidth(ModList, gap, space, cumul, order, &
+              list = Sing%SingleSingWidth(ModList, setup, gap, space, cumul, order, &
                                               R0, mu0, delta0, h, tau)
             end if
           end select
