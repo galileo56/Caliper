@@ -84,7 +84,6 @@ contains
 
     else if ( self%Shape(:6) == 'Cparam') then
       self%ESmax = 12 * moQ2 * (1 - 3 * moQ2); self%Dirac = 0
-      allocate( self%coefs(0:39) )
 
       self%coefs = LagCoef(moQ)/self%ESmax
 
@@ -99,7 +98,7 @@ contains
     real (dp)    , intent(in) :: x
     real (dp)                 :: y
 
-    Distribution = 0; if (x <= self%ESmin .or. x >= self%ESmax) return
+    Distribution = 0;   if (x <= self%ESmin .or. x >= self%ESmax) return
 
     y = (x - self%ESmin)/(self%ESmax - self%ESmin)
 

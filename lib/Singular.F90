@@ -1275,10 +1275,11 @@ module SingularClass
     real (dp), dimension(0:order,0:2 * order)        :: kerMatrix
     real (dp), dimension(2 * order)                  :: logList
     logical                                          :: dobsing
-    integer                                          :: i, j, k
+    integer                                          :: i, j, k, neval, ier
     type (Kernels)                                   :: ker
-    real (dp)                                        :: w, p, shift, p2, pmid
     real (dp), dimension(1)                          :: res
+    real (dp)                                        :: w, p, shift, p2, pmid, &
+    tshift, tshift2, abserr, result
 
     SingleSingMod = 0
 
@@ -1301,8 +1302,13 @@ module SingularClass
 
     call self%setGammaShift( order, gap, delta0, R0, mu0, h, shift, delta )
 
-    p = (self%Q * tau - self%Q * self%tmin)/self%ESFac - shift; p2 = p
-    if ( present(tau2) ) p2 = (self%Q * tau2 - self%Q * self%tmin)/self%ESFac - shift
+    p = (self%Q * tau - self%Q * self%tmin)/self%ESFac - shift
+    p2 = p;  tshift = tau - shift/self%Q
+
+    if ( present(tau2) ) then
+      p2 = (self%Q * tau2 - self%Q * self%tmin)/self%ESFac - shift
+      tshift2 = tau2 - shift/self%Q
+    end if
 
     if ( p <= 0 .and. present(tau2) ) p = p2
 
@@ -1369,6 +1375,26 @@ module SingularClass
     SingleSingMod = NoMod(p)
     if ( present(tau2) .and. p2 > p ) SingleSingMod = NoMod(p2) - SingleSingMod
 
+    select type (self)
+    class is (SingularMass)
+
+      if ( setup(:8) == 'unstable' ) then
+
+        SingleSingMod = NoMod(  self%Q * ( tshift - self%Unstable%maxES() )  ) &
+        * self%Unstable%Delta()
+
+        if ( present(tau2) ) SingleSingMod = self%Unstable%Delta() * &
+        NoMod(  self%Q * ( tshift - self%Unstable%maxES() )  ) - SingleSingMod
+
+        call qags( UnstableInt, 0._dp, self%Unstable%maxES(), prec, &
+                   prec, result, abserr, neval, ier )
+
+        SingleSingMod = result + SingleSingMod
+
+      end if
+
+    end select
+
     SingleSingMod = SingleSingMod * self%Prefact * self%compFact**cumConst(cum) * &
            (self%Q/self%ESFac)**( 1 + cumConst(cum) )  * &
             Sum( self%HardMassExp(:order) ) * Sum( self%HardExp(:order) )
@@ -1392,6 +1418,23 @@ module SingularClass
     end select
 
   contains
+
+!ccccccccccccccc
+
+  real (dp) function UnstableInt(x)
+    real (dp), intent(in) :: x
+
+    select type (self)
+    class is (SingularMass)
+
+      if (.not. present(tau2) ) then
+        UnstableInt = NoMod( self%Q * (tshift - x) ) * self%Unstable%Distribution(x/self%ESFac)/self%ESFac
+      else
+        UnstableInt = NoMod( self%Q * (tshift - x) ) * self%Unstable%Distribution(x/self%ESFac)/self%ESFac
+      end if
+    end select
+
+  end function UnstableInt
 
 !ccccccccccccccc
 
