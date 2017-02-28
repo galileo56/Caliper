@@ -2,7 +2,7 @@
 module ModelClass
   use QuadPack, only: qagi; use Constants, only: dp, Pi, ExpEuler, d1mach, prec
   use AnomDimClass, only: powList; use MatrixElementsClass, only: factList
-  use MCtopClass; use adapt; implicit none
+  use MCtopClass; use adapt; use QuadPack; implicit none
   private
 
   public    :: Model2D, BreitWigner, BreitModel2D
@@ -140,7 +140,8 @@ module ModelClass
     real(dp)          , intent(in) :: p
     real(dp), optional, intent(in) :: p2
     integer           , intent(in) :: k
-    real (dp)                      :: plim
+    real (dp)                      :: plim, err
+    ! integer                        :: neval, ier
 
     ModelUnstable = 0; plim = p
 
@@ -148,8 +149,15 @@ module ModelClass
       if (p2 <= p) return; plim = p2
     end if
 
-    ModelUnstable = dGauss( InteUns, 0._dp, min( MC%maxES(), plim/MC%Qval() ), prec )
-    ! ModelUnstable = dGauss( InteUns, 0._dp, MC%maxES(), prec )
+    if ( MC%shape(:6) == 'Cparam' ) then
+      ModelUnstable = dGauss( InteUns, 0._dp, min( MC%maxES(), plim/MC%Qval() ), prec )
+    else
+      call DAdapt(InteUns, 0._dp, min( MC%maxES(), plim/MC%Qval() ), 1, prec, &
+      prec, ModelUnstable, ERR)
+    end if
+
+    ! call qags( InteUns, 0._dp, min( MC%maxES(), plim/MC%Qval() ), prec, &
+    ! prec, ModelUnstable, err, neval, ier )
 
   contains
 
@@ -159,8 +167,12 @@ module ModelClass
       if ( .not. present(p2) ) then
         InteUns = self%ShapeFun( k, p - x * MC%Qval() ) * MC%Distribution(x)
       else
-        InteUns = self%ShapeFun( k, p - x * MC%Qval(), p2 - x * MC%Qval() ) * &
-        MC%Distribution(x)
+        if ( p - x * MC%Qval() <= 0 ) then
+          InteUns = self%ShapeFun( k, p2 - x * MC%Qval() ) * MC%Distribution(x)
+        else
+          InteUns = self%ShapeFun( k, p - x * MC%Qval(), p2 - x * MC%Qval() ) * &
+          MC%Distribution(x)
+        end if
       end if
 
     end function InteUns
@@ -263,7 +275,8 @@ module ModelClass
     real (dp)          , intent(in) :: x
     real (dp), optional, intent(in) :: x2
     integer                         :: i, j, l
-    real (dp)                       :: CumSoft2, CumSoft2B, CumSoft3, CumSoft3B, a, b, c
+    real (dp)                       :: CumSoft2, CumSoft2B, CumSoft3, CumSoft3B, &
+    a, b, c
 
     CumSoft = 0
     if (  ( .not. present(x2) ) .and. x <= 0 ) return

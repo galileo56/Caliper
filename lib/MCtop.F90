@@ -8,14 +8,14 @@ module MCtopClass
 
   type, public                           :: MCtop
     character (len = 6)                  :: shape
-    real (dp)                            :: ESmin, ESmax, Dirac, Q
+    real (dp)                            :: ESmin, ESmax, pmax, Dirac, Q
     integer                              :: n
     real (dp), dimension(:), allocatable :: coefs
 
   contains
 
    final                          :: delete_object
-   procedure, pass(self), public  :: Distribution, Delta, maxES, Qval
+   procedure, pass(self), public  :: Distribution, QDist, Delta, maxES, Qval, maxP
    procedure, pass(self), private :: setMass
 
   end type MCtop
@@ -89,6 +89,8 @@ contains
 
     end if
 
+    self%pmax = Q * self%ESmax
+
   end subroutine setMass
 
 !ccccccccccccccc
@@ -97,6 +99,22 @@ contains
     class (MCtop), intent(in) :: self
     Qval = self%Q
   end function Qval
+
+!ccccccccccccccc
+
+  real (dp) function QDist(self, p, p2)
+    class (MCtop)      , intent(in) :: self
+    real (dp)          , intent(in) :: p
+    real (dp), optional, intent(in) :: p2
+
+    if ( .not. present(p2) ) then
+      QDist = self%Distribution(p/self%Q)/self%Q
+    else
+      QDist = self%Distribution(p/self%Q, p2/self%Q)/self%Q
+    end if
+
+  end function QDist
+
 
 !ccccccccccccccc
 
@@ -157,6 +175,15 @@ contains
     maxES = self%ESMax
 
    end function maxES
+
+!ccccccccccccccc
+
+  real (dp) function maxp(self)
+    class (MCtop), intent(in) :: self
+
+    maxp = self%pMax
+
+  end function maxp
 
 !ccccccccccccccc
 
