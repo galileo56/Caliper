@@ -198,7 +198,7 @@ contains
         end if
       end if
 
-      res = res/self%coefs(10)**k
+      res = res/self%coefs(10)
 
     end if
 
