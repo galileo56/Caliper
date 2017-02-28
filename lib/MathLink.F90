@@ -1156,15 +1156,15 @@ subroutine f90SingularMass(hard, shape, Eshape, setup, gap, space, cum, scheme, 
 
   if ( width <= d1mach(1) ) then
 
-    res = Sing%SingleSing( Mod, setup(:7), gap(:12), space(:6), cum(:4), order, R0,   &
+    res = Sing%SingleSing( Mod, setup(:15), gap(:12), space(:6), cum(:4), order, R0,   &
                                mu0, delta0, h, tau )
   else
 
-    res = Sing%SingleSingWidth( Mod, setup(:7), gap(:12), space(:6), cum(:4), order, R0,   &
+    res = Sing%SingleSingWidth( Mod, setup(:15), gap(:12), space(:6), cum(:4), order, R0,   &
                                 mu0, delta0, h, tau )
   end if
 
-  if (muJ >= muM) res = res + Sing%NonDist(Mod, setup(:7), gap(:12), space(:6), cum(:4), &
+  if (muJ >= muM) res = res + Sing%NonDist(Mod, setup(:15), gap(:12), space(:6), cum(:4), &
                                            order, R0, mu0, delta0, h, tau)
 
 end subroutine f90SingularMass

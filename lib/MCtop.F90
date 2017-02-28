@@ -93,34 +93,42 @@ contains
 
 !ccccccccccccccc
 
-  real (dp) function Distribution(self, x)
-    class (MCtop), intent(in) :: self
-    real (dp)    , intent(in) :: x
-    real (dp)                 :: y
+  recursive real (dp) function Distribution(self, x, x2) result(res)
+    class (MCtop)      , intent(in) :: self
+    real (dp)          , intent(in) :: x
+    real (dp), optional, intent(in) :: x2
+    real (dp)                       :: y
 
-    Distribution = 0;   if (x <= self%ESmin .or. x >= self%ESmax) return
+    res = 0
+
+    if ( present(x2) ) then
+      if (x2 <= x) return
+      res = self%Distribution(x2) - self%Distribution(x); return
+    end if
+
+    if (x <= self%ESmin .or. x >= self%ESmax) return
 
     y = (x - self%ESmin)/(self%ESmax - self%ESmin)
 
     if ( self%shape(:6) == 'Cparam' ) then
 
-      Distribution = dot_product(self%coefs(0:self%n), &
+      res = dot_product(self%coefs(0:self%n), &
       LegendreList(self%n, 2 * y - 1 ) )
-      if ( Distribution < 0 .and. x > 0.8*self%ESmax ) Distribution = 0
+      if ( res < 0 .and. x > 0.8*self%ESmax ) res = 0
 
     else if ( self%shape(:6) == 'thrust' ) then
 
       if ( 2 * y <= 1 ) then
-        Distribution = self%coefs(1) * y**3
+        res = self%coefs(1) * y**3
       else if ( y <= 0.61_dp ) then
-        Distribution = dot_product( self%coefs(8:9), [y, 1._dp] )
+        res = dot_product( self%coefs(8:9), [y, 1._dp] )
       else if ( y <= 0.89_dp ) then
-        Distribution = dot_product( self%coefs(5:7), [y**2, y, 1._dp] )
+        res = dot_product( self%coefs(5:7), [y**2, y, 1._dp] )
       else
-        Distribution = dot_product( self%coefs(3:4), [y, 1._dp] )
+        res = dot_product( self%coefs(3:4), [y, 1._dp] )
       end if
 
-      Distribution = Distribution/self%coefs(10)
+      res = res/self%coefs(10)
 
     end if
 

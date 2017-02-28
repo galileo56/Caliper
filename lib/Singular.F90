@@ -1303,7 +1303,7 @@ module SingularClass
     call self%setGammaShift( order, gap, delta0, R0, mu0, h, shift, delta )
 
     p = (self%Q * tau - self%Q * self%tmin)/self%ESFac - shift
-    p2 = p;  tshift = tau - shift/self%Q
+    p2 = p;  tshift = tau - shift/self%Q; tshift2 = tshift
 
     if ( present(tau2) ) then
       p2 = (self%Q * tau2 - self%Q * self%tmin)/self%ESFac - shift
@@ -1316,7 +1316,7 @@ module SingularClass
 
 ! Result = 0 if p is negative
 
-    if ( p2 <= 0 ) return
+    if ( p2 <= 0 .and. setup(8:15) /= 'unstable') return
 
     dobsing = .not. present(tau2) .or. ( present(tau2) .and. abs(p2 - p) <= d1mach(1) )
 
@@ -1378,7 +1378,7 @@ module SingularClass
     select type (self)
     class is (SingularMass)
 
-      if ( setup(:8) == 'unstable' ) then
+      if ( setup(8:15) == 'unstable' ) then
 
         SingleSingMod = NoMod(  self%Q * ( tshift - self%Unstable%maxES() )  ) &
         * self%Unstable%Delta()
@@ -1386,8 +1386,8 @@ module SingularClass
         if ( present(tau2) ) SingleSingMod = self%Unstable%Delta() * &
         NoMod(  self%Q * ( tshift - self%Unstable%maxES() )  ) - SingleSingMod
 
-        call qags( UnstableInt, 0._dp, self%Unstable%maxES(), prec, &
-                   prec, result, abserr, neval, ier )
+        call qags( UnstableInt, tshift - self%Unstable%maxES(), tshift2, prec, &
+        prec, result, abserr, neval, ier )
 
         SingleSingMod = result + SingleSingMod
 
@@ -1428,10 +1428,13 @@ module SingularClass
     class is (SingularMass)
 
       if (.not. present(tau2) ) then
-        UnstableInt = NoMod( self%Q * (tshift - x) ) * self%Unstable%Distribution(x/self%ESFac)/self%ESFac
+        UnstableInt = NoMod( self%Q * x )/self%ESFac * &
+        self%Unstable%Distribution( (tshift - x)/self%ESFac )
       else
-        UnstableInt = NoMod( self%Q * (tshift - x) ) * self%Unstable%Distribution(x/self%ESFac)/self%ESFac
+        UnstableInt = NoMod( self%Q * x )/self%ESFac * &
+        self%Unstable%Distribution( (tshift - x)/self%ESFac, (tshift2 - x)/self%ESFac )
       end if
+
     end select
 
   end function UnstableInt
@@ -1446,6 +1449,8 @@ module SingularClass
 
     if ( present(x2) ) then
       if (x2 > x) res = NoMod(x2) - NoMod(x); return
+    else
+      if (x < 0) return
     end if
 
     res = LogMatrixSum( kerMatrix(0,:), w, self%muS, x )
@@ -1839,7 +1844,7 @@ module SingularClass
     call self%setGammaShift( order, gap, delta0, R0, mu0, h, shift, delta )
 
     p = (self%Q * tau - self%Q * self%tmin)/self%ESFac - shift; p2 = p
-    tshift = tau - shift/self%Q
+    tshift = tau - shift/self%Q; tshift2 = tshift
     if ( present(tau2) ) then
       p2 = (self%Q * tau2 - self%Q * self%tmin)/self%ESFac - shift
       tshift2 = tau2 - shift/self%Q
@@ -1869,16 +1874,16 @@ module SingularClass
     SingleSingWidthMod = NoMod(p)
     if ( present(tau2) ) SingleSingWidthMod = NoMod(p2) - SingleSingWidthMod
 
-    if ( setup(:8) == 'unstable' ) then
+    if ( setup(8:15) == 'unstable' ) then
 
       SingleSingWidthMod = NoMod(  self%Q * ( tshift - self%Unstable%maxES() )  ) &
       * self%Unstable%Delta()
 
       if ( present(tau2) ) SingleSingWidthMod = self%Unstable%Delta() * &
-      NoMod(  self%Q * ( tshift - self%Unstable%maxES() )  ) - SingleSingWidthMod
+      NoMod(  self%Q * ( tshift2 - self%Unstable%maxES() )  ) - SingleSingWidthMod
 
-      call qags( UnstableInt, 0._dp, self%Unstable%maxES(), prec, &
-                 prec, result, abserr, neval, ier )
+      call qags( UnstableInt, tshift - self%Unstable%maxES(), tshift2, prec, &
+      prec, result, abserr, neval, ier )
 
       SingleSingWidthMod = result + SingleSingWidthMod
 
@@ -1913,9 +1918,11 @@ module SingularClass
     real (dp), intent(in) :: x
 
     if (.not. present(tau2) ) then
-      UnstableInt = NoMod( self%Q * (tshift - x) ) * self%Unstable%Distribution(x/self%ESFac)/self%ESFac
+      UnstableInt = NoMod( self%Q * x )/self%ESFac * &
+      self%Unstable%Distribution( (tshift - x)/self%ESFac )
     else
-      UnstableInt = NoMod( self%Q * (tshift - x) ) * self%Unstable%Distribution(x/self%ESFac)/self%ESFac
+      UnstableInt = NoMod( self%Q * x )/self%ESFac * &
+      self%Unstable%Distribution( (tshift - x)/self%ESFac, (tshift2 - x)/self%ESFac )
     end if
 
   end function UnstableInt
