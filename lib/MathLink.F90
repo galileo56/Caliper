@@ -39,6 +39,20 @@ end subroutine f90MCtop
 
 !ccccccccccccccc
 
+subroutine f90BreitUnstable(shape, mt, Q, gamma, n, k, x, res)
+  use constants, only: dp; use hyper; use MCtopClass; implicit none
+  character (len = *), intent(in)  :: shape
+  real (dp)          , intent(in)  :: mt, Q, x, gamma
+  integer            , intent(in)  :: n, k
+  real (dp)          , intent(out) :: res
+  type (MCtop)                     :: MC
+
+  MC = MCtop( shape(:6), mt, Q, n );  res = MC%BreitUnstable(gamma, k,x)
+
+end subroutine f90BreitUnstable
+
+!ccccccccccccccc
+
 subroutine f90ModelUnstable(shape, mt, Q, c, clen, lambda, n, k, p, res)
   use constants, only: dp; use hyper; use MCtopClass; use ModelClass; implicit none
   character (len = *)       , intent(in)  :: shape

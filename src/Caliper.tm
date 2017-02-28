@@ -14,6 +14,7 @@
 
 :Evaluate:  LegendreList::usage = "LegendreList[n, x] computes the of the first n + 1 Legendre Polynomial"
 :Evaluate:  QLegendreList::usage = "QLegendreList[n, x] computes the of the first n + 1 Legendre Polynomial"
+:Evaluate:  BreitUnstable::usage = "BreitUnstable[shape, mt, Q, gamma, n, k, x] computes the LO distribution for unstable tops convoluted with a BreitWigner"
 :Evaluate:  MCtop::usage = "MCtop[shape, mt, Q, n, k, x] computes the LO distribution for unstable tops"
 :Evaluate:  DeltaMCtop::usage = "DeltaMCtop[shape, mt, Q] computes the LO distribution for unstable tops"
 :Evaluate:  pFq::usage = "pFq[a,b,z] computes the generalized hypergeometric function"
@@ -354,6 +355,14 @@
 :Pattern:       MCtop[shape_, mt_, Q_, n_, k_, x_]
 :Arguments:     {shape, mt, Q, n, k, x}
 :ArgumentTypes: {String, Real, Real, Integer, Integer, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      breitunstable
+:Pattern:       BreitUnstable[shape_, mt_, Q_, gamma_, n_, k_, x_]
+:Arguments:     {shape, mt, Q, gamma, n, k, x}
+:ArgumentTypes: {String, Real, Real, Real, Integer, Integer, Real}
 :ReturnType:    Real
 :End:
 
@@ -3218,6 +3227,19 @@ static double mctop(char const* str, double mt, double Q, int n, int k, double x
   double res;
 
    f90mctop_(str, &mt, &Q, &n, &k, &x, &res);
+
+   return res;
+}
+
+
+extern double f90breitunstable_(char const* str, double* mt, double* Q,
+  double * gamma, int* n, int* k, double* x, double* result);
+
+static double breitunstable(char const* str, double mt, double Q, double gamma,
+  int n, int k, double x){
+  double res;
+
+   f90breitunstable_(str, &mt, &Q, &gamma, &n, &k, &x, &res);
 
    return res;
 }

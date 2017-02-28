@@ -5,7 +5,7 @@ module ModelClass
   use MCtopClass; use adapt; use QuadPack; implicit none
   private
 
-  public    :: Model2D, BreitWigner, BreitModel2D
+  public    :: Model2D, BreitModel2D
 
 !ccccccccccccccc
 
@@ -297,7 +297,7 @@ module ModelClass
         end do
 
         b = self%EmodCoef(i,l) * self%Listfact(l + 3); c = ( 4._dp * (i + 1) )**(- 4 - l)
-        if (x > 0) CumSoft2 = CumSoft2 + b * (  c - exp( - 4 * (i + 1) * x ) * CumSoft3 )
+        if (x > 0) CumSoft2 = CumSoft2 + b * (  c - exp( - 4 * (i + 1) * x ) * CumSoft3  )
         if ( present(x2) ) CumSoft2B = CumSoft2B + b * (  c - exp( - 4 * (i + 1) * x2 ) * CumSoft3B )
 
       enddo
@@ -780,9 +780,9 @@ module ModelClass
 
    real (dp) function CModCoef(self, n, i, m)
      class (Model), intent(in) :: self
-     integer, intent(in) :: n, i, m
-     integer             :: j, k
-     real (dp)           :: CModCoef2
+     integer      , intent(in) :: n, i, m
+     integer                   :: j, k
+     real (dp)                 :: CModCoef2
 
      CModCoef = 0; if ( i < 0 .or. i > n .or. m < 0 .or. m > 3 * i ) return
 
@@ -893,36 +893,6 @@ module ModelClass
     end do
 
   end  function SemiBreitModel2D
-
-!ccccccccccccccc
-
-  recursive pure real (dp) function BreitWigner(Gamma, i, l, l2) result(res)
-    real (dp)          , intent(in)  :: Gamma, l
-    real (dp), optional, intent(in)  :: l2
-    integer            , intent(in)  :: i
-    real (dp)                        :: Gammal
-
-    res = 0
-
-    if ( present(l2) ) then
-      if (l2 > l) res = BreitWigner(Gamma, i, l2) - BreitWigner(Gamma, i, l)
-      return
-    end if
-
-    Gammal = Gamma**2 + l**2
-
-    select case(i)
-    case default; res = 0
-    case(0);  res = Gamma/Gammal/Pi
-    case(1);  res = - 2 * Gamma * l/Gammal**2/Pi
-    case(2);  res = - 2 * Gamma * (Gamma**2 - 3 * l**2)/Gammal**3/Pi
-    case(3);  res = - 24 * Gamma * l * (Gamma**2 - l**2)/Gammal**4/Pi
-    case(-1); res = 0.5_dp + ATan(l/Gamma)/Pi
-    case(-2); res = ( l/2 + Gamma * log(Gammal)/Pi/2 + l/Pi * ATan(l/Gamma) )/Gammal
-    case(-3); res = log(Gammal) * ( 0.5_dp + ATan(l/Gamma)/Pi )/2
-    end select
-
-  end function BreitWigner
 
 !ccccccccccccccc
 

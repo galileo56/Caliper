@@ -88,6 +88,8 @@ CMakeFiles/subdir_mods.dir/lib/MCtop.F90.o.requires: CMakeFiles/subdir_mods.dir/
 CMakeFiles/subdir_mods.dir/lib/MCtop.F90.o: CMakeFiles/subdir_mods.dir/constants.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/MCtop.F90.o.requires: CMakeFiles/subdir_mods.dir/legendre.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/MCtop.F90.o: CMakeFiles/subdir_mods.dir/legendre.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/MCtop.F90.o.requires: CMakeFiles/subdir_mods.dir/quadpack.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/MCtop.F90.o: CMakeFiles/subdir_mods.dir/quadpack.mod.stamp
 CMakeFiles/subdir_mods.dir/mctopclass.mod.proxy: CMakeFiles/subdir_mods.dir/lib/MCtop.F90.o.provides
 CMakeFiles/subdir_mods.dir/lib/MCtop.F90.o.provides.build:
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod mctopclass CMakeFiles/subdir_mods.dir/mctopclass.mod.stamp GNU
@@ -106,6 +108,8 @@ CMakeFiles/subdir_mods.dir/lib/MassiveNS.F90.o.requires: CMakeFiles/subdir_mods.
 CMakeFiles/subdir_mods.dir/lib/MassiveNS.F90.o: CMakeFiles/subdir_mods.dir/gapmassclass.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/MassiveNS.F90.o.requires: CMakeFiles/subdir_mods.dir/matrixelementsclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/MassiveNS.F90.o: CMakeFiles/subdir_mods.dir/matrixelementsclass.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/MassiveNS.F90.o.requires: CMakeFiles/subdir_mods.dir/mctopclass.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/MassiveNS.F90.o: CMakeFiles/subdir_mods.dir/mctopclass.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/MassiveNS.F90.o.requires: CMakeFiles/subdir_mods.dir/modelclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/MassiveNS.F90.o: CMakeFiles/subdir_mods.dir/modelclass.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/MassiveNS.F90.o.requires: CMakeFiles/subdir_mods.dir/quadpack.mod.proxy

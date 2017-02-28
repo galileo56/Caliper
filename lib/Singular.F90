@@ -1872,13 +1872,13 @@ module SingularClass
 
     if ( setup(8:15) == 'Unstable' ) then
 
-      SingleSingWidthMod = NoMod( pshift - self%Unstable%maxp() ) &
+      SingleSingWidthMod = NoMod( pshift - self%Unstable%maxP() ) &
       * self%Unstable%Delta()
 
       if ( present(tau2) ) SingleSingWidthMod = self%Unstable%Delta() * &
-      NoMod( pshift2 - self%Unstable%maxp() ) - SingleSingWidthMod
+      NoMod( pshift2 - self%Unstable%maxP() ) - SingleSingWidthMod
 
-      call qags( UnstableInt, pshift - self%Unstable%maxp(), pshift2, prec, &
+      call qags( UnstableInt, pshift - self%Unstable%maxP(), pshift2, prec, &
       prec, result, abserr, neval, ier )
 
       SingleSingWidthMod = result + SingleSingWidthMod

@@ -2,8 +2,8 @@
 module MassiveNSClass
   use MatrixElementsClass; use RunningClass; use ElectroWeakClass; use AnomDimClass
   use ModelClass         ; use carlson_elliptic_module;            use GapMassClass
-  use Constants, only: dp, Pi, Pi2, Pio2, d1mach, sr2, l2, prec  ; use QuadPack, only: qags
-  implicit none          ; private
+  use Constants, only: dp, Pi, Pi2, Pio2, d1mach, sr2, l2, prec  ; use MCtopClass
+  use QuadPack, only: qags; implicit none          ; private
 
   real (dp), parameter :: mth = 0.39307568887871164_dp, mcrit = 0.29913473867076185_dp
 

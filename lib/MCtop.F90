@@ -1,8 +1,9 @@
 
 module MCtopClass
-  use Constants, only: dp; use Legendre; implicit none;  private
+  use Constants, only: dp, prec, Pi; use QuadPack, only: qags; use Legendre
+  implicit none; private
 
-  public                         :: MCtop
+  public                                 :: MCtop, BreitWigner
 
 !ccccccccccccccc
 
@@ -15,8 +16,9 @@ module MCtopClass
   contains
 
    final                          :: delete_object
-   procedure, pass(self), public  :: Distribution, QDist, Delta, maxES, Qval, maxP
    procedure, pass(self), private :: setMass
+   procedure, pass(self), public  :: Distribution, QDist, Delta, maxES, Qval, &
+   maxP, BreitUnstable
 
   end type MCtop
 
@@ -116,6 +118,39 @@ contains
 
   end function QDist
 
+!ccccccccccccccc
+
+  real (dp) function BreitUnstable(self, Gamma, k, l, l2)
+    class (MCtop)      , intent(in) :: self
+    real (dp)          , intent(in) :: l, Gamma
+    real (dp), optional, intent(in) :: l2
+    integer            , intent(in) :: k
+    real (dp)                       :: lint, abserr
+    integer                         :: ier, neval
+
+    BreitUnstable = 0; lint = l
+
+    if ( present (l2) ) then
+      if (l >= l2) return; lint = l
+    end if
+
+    call qags( integrand, l - self%pmax, lint, prec, &
+    prec, BreitUnstable, abserr, neval, ier )
+
+  contains
+
+    real (dp) function integrand(x)
+      real (dp), intent(in) :: x
+
+      if (.not. present(l2) ) then
+        integrand = BreitWigner(Gamma, k, x) * self%QDist( l - x )
+      else
+        integrand = BreitWigner(Gamma, k, x) * self%QDist( l - x, l2 - x )
+      end if
+
+    end function integrand
+
+  end function BreitUnstable
 
 !ccccccccccccccc
 
@@ -132,7 +167,8 @@ contains
       if (x2 > x) res = self%Distribution(k, x2) - self%Distribution(k, x); return
     end if
 
-    if (x <= self%ESmin .or. x >= self%ESmax) return
+    if (x <= self%ESmin) return
+    if (x >= self%ESmax .and. k /= -1) return
 
     y = (x - self%ESmin)/(self%ESmax - self%ESmin)
 
@@ -183,7 +219,7 @@ contains
             + self%coefs(1)/64+ dot_product( self%coefs(5:7), &
             [ (y**3 - 0.226981_dp)/3, y**2/2 - 0.18605_dp, y - 0.61_dp] )
         end if
-      else
+      else if (y < 1) then
         if (k == 0) then
           res = dot_product( self%coefs(3:4), [y, 1._dp] )
         else if (k == 1) then
@@ -193,6 +229,13 @@ contains
         else if (k == -1) then
           res = dot_product( self%coefs(8:9), [0.06105_dp, 0.11_dp] )        + &
           dot_product( self%coefs(3:4), [y**2/2 - 0.39605_dp, y - 0.89_dp] ) + &
+          self%coefs(1)/64 + dot_product( self%coefs(5:7),                     &
+          [ 0.477988_dp/3, 0.21_dp, 0.28_dp] )
+        end if
+      else
+        if (k == -1) then
+          res = dot_product( self%coefs(8:9), [0.06105_dp, 0.11_dp] )        + &
+          dot_product( self%coefs(3:4), [0.10395_dp, 0.11_dp] ) + &
           self%coefs(1)/64 + dot_product( self%coefs(5:7),                     &
           [ 0.477988_dp/3, 0.21_dp, 0.28_dp] )
         end if
@@ -385,6 +428,36 @@ contains
  + 1.8486109981118639e9_dp * m**7 - 2.463766069494559e9_dp * m**8 + 1.4270264140040352e9_dp * m**9 ]
 
   end function LagCoef
+
+!ccccccccccccccc
+
+  recursive pure real (dp) function BreitWigner(Gamma, i, l, l2) result(res)
+    real (dp)          , intent(in)  :: Gamma, l
+    real (dp), optional, intent(in)  :: l2
+    integer            , intent(in)  :: i
+    real (dp)                        :: Gammal
+
+    res = 0
+
+    if ( present(l2) ) then
+      if (l2 > l) res = BreitWigner(Gamma, i, l2) - BreitWigner(Gamma, i, l)
+      return
+    end if
+
+    Gammal = Gamma**2 + l**2
+
+    select case(i)
+    case default; res = 0
+    case(0);  res = Gamma/Gammal/Pi
+    case(1);  res = - 2 * Gamma * l/Gammal**2/Pi
+    case(2);  res = - 2 * Gamma * (Gamma**2 - 3 * l**2)/Gammal**3/Pi
+    case(3);  res = - 24 * Gamma * l * (Gamma**2 - l**2)/Gammal**4/Pi
+    case(-1); res = 0.5_dp + ATan(l/Gamma)/Pi
+    case(-2); res = ( l/2 + Gamma * log(Gammal)/Pi/2 + l/Pi * ATan(l/Gamma) )/Gammal
+    case(-3); res = log(Gammal) * ( 0.5_dp + ATan(l/Gamma)/Pi )/2
+    end select
+
+  end function BreitWigner
 
 !ccccccccccccccc
 
