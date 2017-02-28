@@ -109,9 +109,9 @@ contains
     real (dp), optional, intent(in) :: p2
 
     if ( .not. present(p2) ) then
-      QDist = self%sf * self%Distribution(self%sf * p/self%Q)/self%Q
+      QDist = self%sf * self%Distribution(0, self%sf * p/self%Q)/self%Q
     else
-      QDist = self%sf * self%Distribution(self%sf * p/self%Q, self%sf * p2/self%Q)/self%Q
+      QDist = self%sf * self%Distribution(0, self%sf * p/self%Q, self%sf * p2/self%Q)/self%Q
     end if
 
   end function QDist
@@ -119,16 +119,17 @@ contains
 
 !ccccccccccccccc
 
-  recursive real (dp) function Distribution(self, x, x2) result(res)
+  recursive real (dp) function Distribution(self, k, x, x2) result(res)
     class (MCtop)      , intent(in) :: self
     real (dp)          , intent(in) :: x
     real (dp), optional, intent(in) :: x2
+    integer            , intent(in) :: k
     real (dp)                       :: y
 
     res = 0
 
     if ( present(x2) ) then
-      if (x2 > x) res = self%Distribution(x2) - self%Distribution(x); return
+      if (x2 > x) res = self%Distribution(k, x2) - self%Distribution(k, x); return
     end if
 
     if (x <= self%ESmin .or. x >= self%ESmax) return
@@ -144,18 +145,64 @@ contains
     else if ( self%shape(:6) == 'thrust' ) then
 
       if ( 2 * y <= 1 ) then
-        res = self%coefs(1) * y**3
+        if (k == 0) then
+          res = self%coefs(1) * y**3
+        else if (k == 1) then
+          res = 2 * self%coefs(1) * y**2
+        else if (k == 2) then
+          res = 4 * self%coefs(1) * y
+        else if (k == 3) then
+          res = 4 * self%coefs(1)
+        else if (k > 3) then
+          res = 0
+        else if (k == -1) then
+          res = self%coefs(1) * y**4/4
+        end if
       else if ( y <= 0.61_dp ) then
-        res = dot_product( self%coefs(8:9), [y, 1._dp] )
+        if (k == 0) then
+          res = dot_product( self%coefs(8:9), [y, 1._dp] )
+        else if (k == 1) then
+          res = self%coefs(8)
+        else if (k > 1) then
+          res = 0
+        else if (k == -1) then
+          res =  dot_product( self%coefs(8:9), [y**2/2 - 0.125_dp, y - 0.5_dp] ) &
+          + self%coefs(1)/64
+        end if
       else if ( y <= 0.89_dp ) then
-        res = dot_product( self%coefs(5:7), [y**2, y, 1._dp] )
+        if (k == 0) then
+          res = dot_product( self%coefs(5:7), [y**2, y, 1._dp] )
+        else if (k == 1) then
+          res = dot_product( self%coefs(5:6), [2 * y, 1._dp] )
+        else if (k == 2) then
+          res = 2 * self%coefs(5)
+        else if (k > 2) then
+          res = 0
+        else if (k == -1) then
+          res = dot_product( self%coefs(8:9), [0.06105_dp, 0.11_dp] ) &
+            + self%coefs(1)/64+ dot_product( self%coefs(5:7), &
+            [ (y**3 - 0.226981_dp)/3, y**2/2 - 0.18605_dp, y - 0.61_dp] )
+        end if
       else
-        res = dot_product( self%coefs(3:4), [y, 1._dp] )
+        if (k == 0) then
+          res = dot_product( self%coefs(3:4), [y, 1._dp] )
+        else if (k == 1) then
+          res = self%coefs(3)
+        else if (k > 1) then
+          res = 0
+        else if (k == -1) then
+          res = dot_product( self%coefs(8:9), [0.06105_dp, 0.11_dp] )        + &
+          dot_product( self%coefs(3:4), [y**2/2 - 0.39605_dp, y - 0.89_dp] ) + &
+          self%coefs(1)/64 + dot_product( self%coefs(5:7),                     &
+          [ 0.477988_dp/3, 0.21_dp, 0.28_dp] )
+        end if
       end if
 
-      res = res/self%coefs(10)
+      res = res/self%coefs(10)**k
 
     end if
+
+    res = res * (self%ESmax - self%ESmin)**k
 
    end function Distribution
 

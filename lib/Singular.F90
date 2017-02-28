@@ -1278,8 +1278,8 @@ module SingularClass
     integer                                          :: i, j, k, neval, ier
     type (Kernels)                                   :: ker
     real (dp), dimension(1)                          :: res
-    real (dp)                                        :: w, p, shift, p2, pmid, &
-    tshift, tshift2, abserr, result
+    real (dp)                                        :: w, p, shift, p2, &
+    pshift, pshift2, abserr, result
 
     SingleSingMod = 0
 
@@ -1302,17 +1302,15 @@ module SingularClass
 
     call self%setGammaShift( order, gap, delta0, R0, mu0, h, shift, delta )
 
-    p = (self%Q * tau - self%Q * self%tmin)/self%ESFac - shift
-    p2 = p;  tshift = tau - shift/self%Q; tshift2 = tshift
+    pshift = self%Q * tau/self%ESFac - shift  ;  pshift2 = pshift
+    p = pshift - self%Q * self%tmin/self%ESFac;  p2 = p
 
     if ( present(tau2) ) then
-      p2 = (self%Q * tau2 - self%Q * self%tmin)/self%ESFac - shift
-      tshift2 = tau2 - shift/self%Q
+      pshift2 = self%Q * tau2/self%ESFac - shift
+      p2 = pshift2 - self%Q * self%tmin/self%ESFac
     end if
 
     if ( p <= 0 .and. present(tau2) ) p = p2
-
-    pmid = (p + p2)/2
 
 ! Result = 0 if p is negative
 
@@ -1380,13 +1378,12 @@ module SingularClass
 
       if ( setup(8:15) == 'Unstable' ) then
 
-        SingleSingMod = NoMod(  self%Q * ( tshift - self%Unstable%maxES() )  ) &
-        * self%Unstable%Delta()
+        SingleSingMod = NoMod( pshift - self%Unstable%maxP() ) * self%Unstable%Delta()
 
         if ( present(tau2) ) SingleSingMod = self%Unstable%Delta() * &
-        NoMod(  self%Q * ( tshift - self%Unstable%maxES() )  ) - SingleSingMod
+        NoMod( pshift2 - self%Unstable%maxP() ) - SingleSingMod
 
-        call qags( UnstableInt, tshift - self%Unstable%maxES(), tshift2, prec, &
+        call qags( UnstableInt, pshift - self%Unstable%maxP(), pshift2, prec, &
         prec, result, abserr, neval, ier )
 
         SingleSingMod = result + SingleSingMod
@@ -1428,11 +1425,9 @@ module SingularClass
     class is (SingularMass)
 
       if (.not. present(tau2) ) then
-        UnstableInt = NoMod( self%Q * x )/self%ESFac * &
-        self%Unstable%Distribution( (tshift - x)/self%ESFac )
+        UnstableInt = NoMod(x) * self%Unstable%Qdist(pshift - x)
       else
-        UnstableInt = NoMod( self%Q * x )/self%ESFac * &
-        self%Unstable%Distribution( (tshift - x)/self%ESFac, (tshift2 - x)/self%ESFac )
+        UnstableInt = NoMod(x) * self%Unstable%Qdist( pshift - x, pshift2 - x )
       end if
 
     end select

@@ -33,7 +33,7 @@ subroutine f90MCtop(shape, mt, Q, n, x, res)
   real (dp)          , intent(out) :: res
   type (MCtop)                     :: MC
 
-  MC = MCtop( shape(:6), mt, Q, n );  res = MC%Distribution(x)
+  MC = MCtop( shape(:6), mt, Q, n );  res = MC%Distribution(0,x)
 
 end subroutine f90MCtop
 
