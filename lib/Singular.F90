@@ -1316,7 +1316,7 @@ module SingularClass
 
 ! Result = 0 if p is negative
 
-    if ( p2 <= 0 .and. setup(8:15) /= 'unstable') return
+    if ( p2 <= 0 .and. setup(:15) /= 'NoModelUnstable') return
 
     dobsing = .not. present(tau2) .or. ( present(tau2) .and. abs(p2 - p) <= d1mach(1) )
 
@@ -1378,7 +1378,7 @@ module SingularClass
     select type (self)
     class is (SingularMass)
 
-      if ( setup(8:15) == 'unstable' ) then
+      if ( setup(8:15) == 'Unstable' ) then
 
         SingleSingMod = NoMod(  self%Q * ( tshift - self%Unstable%maxES() )  ) &
         * self%Unstable%Delta()
@@ -1874,7 +1874,7 @@ module SingularClass
     SingleSingWidthMod = NoMod(p)
     if ( present(tau2) ) SingleSingWidthMod = NoMod(p2) - SingleSingWidthMod
 
-    if ( setup(8:15) == 'unstable' ) then
+    if ( setup(8:15) == 'Unstable' ) then
 
       SingleSingWidthMod = NoMod(  self%Q * ( tshift - self%Unstable%maxES() )  ) &
       * self%Unstable%Delta()

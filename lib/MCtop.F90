@@ -102,8 +102,7 @@ contains
     res = 0
 
     if ( present(x2) ) then
-      if (x2 <= x) return
-      res = self%Distribution(x2) - self%Distribution(x); return
+      if (x2 > x) res = self%Distribution(x2) - self%Distribution(x); return
     end if
 
     if (x <= self%ESmin .or. x >= self%ESmax) return
