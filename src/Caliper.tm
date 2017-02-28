@@ -14,7 +14,7 @@
 
 :Evaluate:  LegendreList::usage = "LegendreList[n, x] computes the of the first n + 1 Legendre Polynomial"
 :Evaluate:  QLegendreList::usage = "QLegendreList[n, x] computes the of the first n + 1 Legendre Polynomial"
-:Evaluate:  MCtop::usage = "MCtop[shape, mt, Q, n, x] computes the LO distribution for unstable tops"
+:Evaluate:  MCtop::usage = "MCtop[shape, mt, Q, n, k, x] computes the LO distribution for unstable tops"
 :Evaluate:  DeltaMCtop::usage = "DeltaMCtop[shape, mt, Q] computes the LO distribution for unstable tops"
 :Evaluate:  pFq::usage = "pFq[a,b,z] computes the generalized hypergeometric function"
 :Evaluate:  FindOrigin::usage = "FindOrigin[shape, gap, orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eR, R0, muR0, delta0, h], finds the origin for massless Event Shapes"
@@ -351,9 +351,9 @@
 
 :Begin:
 :Function:      mctop
-:Pattern:       MCtop[shape_, mt_, Q_, n_, x_]
-:Arguments:     {shape, mt, Q, n, x}
-:ArgumentTypes: {String, Real, Real, Integer, Real}
+:Pattern:       MCtop[shape_, mt_, Q_, n_, k_, x_]
+:Arguments:     {shape, mt, Q, n, k, x}
+:ArgumentTypes: {String, Real, Real, Integer, Integer, Real}
 :ReturnType:    Real
 :End:
 
@@ -3211,13 +3211,13 @@ static double nglfunction(int n, double z){
    return res;
 }
 
-extern double f90mctop_(char const* str, double* mt, double* Q, int* n, double* x,
-  double* result);
+extern double f90mctop_(char const* str, double* mt, double* Q, int* n, int* k,
+  double* x, double* result);
 
-static double mctop(char const* str, double mt, double Q, int n, double x){
+static double mctop(char const* str, double mt, double Q, int n, int k, double x){
   double res;
 
-   f90mctop_(str, &mt, &Q, &n, &x, &res);
+   f90mctop_(str, &mt, &Q, &n, &k, &x, &res);
 
    return res;
 }

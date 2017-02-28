@@ -140,7 +140,7 @@ contains
 
       res = dot_product(self%coefs(0:self%n), &
       LegendreList(self%n, 2 * y - 1 ) )
-      if ( res < 0 .and. x > 0.8*self%ESmax ) res = 0
+      if ( res < 0 .and. x > 0.8_dp * self%ESmax ) res = 0
 
     else if ( self%shape(:6) == 'thrust' ) then
 
@@ -148,11 +148,11 @@ contains
         if (k == 0) then
           res = self%coefs(1) * y**3
         else if (k == 1) then
-          res = 2 * self%coefs(1) * y**2
+          res = 3 * self%coefs(1) * y**2
         else if (k == 2) then
-          res = 4 * self%coefs(1) * y
+          res = 6 * self%coefs(1) * y
         else if (k == 3) then
-          res = 4 * self%coefs(1)
+          res = 6 * self%coefs(1)
         else if (k > 3) then
           res = 0
         else if (k == -1) then
@@ -202,7 +202,7 @@ contains
 
     end if
 
-    res = res * (self%ESmax - self%ESmin)**k
+    res = res / (self%ESmax - self%ESmin)**k
 
    end function Distribution
 

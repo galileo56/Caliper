@@ -25,15 +25,15 @@ end subroutine f90QLegendreList
 
 !ccccccccccccccc
 
-subroutine f90MCtop(shape, mt, Q, n, x, res)
+subroutine f90MCtop(shape, mt, Q, n, k, x, res)
   use constants, only: dp; use hyper; use MCtopClass; implicit none
   character (len = *), intent(in)  :: shape
   real (dp)          , intent(in)  :: mt, Q, x
-  integer            , intent(in)  :: n
+  integer            , intent(in)  :: n, k
   real (dp)          , intent(out) :: res
   type (MCtop)                     :: MC
 
-  MC = MCtop( shape(:6), mt, Q, n );  res = MC%Distribution(0,x)
+  MC = MCtop( shape(:6), mt, Q, n );  res = MC%Distribution(k,x)
 
 end subroutine f90MCtop
 
