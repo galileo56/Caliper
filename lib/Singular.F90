@@ -1813,8 +1813,8 @@ module SingularClass
     real (dp), dimension( 0:order, 3, 0:2*order )    :: derInvList
     integer                                          :: i, j, neval, ier
     real (dp), dimension(1)                          :: res
-    real (dp)                                        :: w, p, shift, p2, tshift, &
-    tshift2, result, abserr
+    real (dp)                                        :: w, p, shift, p2, pshift, &
+    pshift2, result, abserr
 
     deltaAdd = 0; SingleSingWidthMod = 0; derInvList = 0
 
@@ -1843,11 +1843,12 @@ module SingularClass
 
     call self%setGammaShift( order, gap, delta0, R0, mu0, h, shift, delta )
 
-    p = (self%Q * tau - self%Q * self%tmin)/self%ESFac - shift; p2 = p
-    tshift = tau - shift/self%Q; tshift2 = tshift
+    pshift = self%Q * tau/self%ESFac - shift; pshift2 = pshift
+    p = pshift - self%Q * self%tmin/self%ESFac; p2 = p
+
     if ( present(tau2) ) then
-      p2 = (self%Q * tau2 - self%Q * self%tmin)/self%ESFac - shift
-      tshift2 = tau2 - shift/self%Q
+      pshift2 = self%Q * tau2 - shift
+      p2 = pshift2 - self%Q * self%tmin/self%ESFac
     end if
 
     w = self%w + cumConst(cum)
@@ -1876,13 +1877,13 @@ module SingularClass
 
     if ( setup(8:15) == 'Unstable' ) then
 
-      SingleSingWidthMod = NoMod(  self%Q * ( tshift - self%Unstable%maxES() )  ) &
+      SingleSingWidthMod = NoMod( pshift - self%Unstable%maxp() ) &
       * self%Unstable%Delta()
 
       if ( present(tau2) ) SingleSingWidthMod = self%Unstable%Delta() * &
-      NoMod(  self%Q * ( tshift2 - self%Unstable%maxES() )  ) - SingleSingWidthMod
+      NoMod( pshift2 - self%Unstable%maxp() ) - SingleSingWidthMod
 
-      call qags( UnstableInt, tshift - self%Unstable%maxES(), tshift2, prec, &
+      call qags( UnstableInt, pshift - self%Unstable%maxp(), pshift2, prec, &
       prec, result, abserr, neval, ier )
 
       SingleSingWidthMod = result + SingleSingWidthMod
@@ -1918,11 +1919,9 @@ module SingularClass
     real (dp), intent(in) :: x
 
     if (.not. present(tau2) ) then
-      UnstableInt = NoMod( self%Q * x )/self%ESFac * &
-      self%Unstable%Distribution( (tshift - x)/self%ESFac )
+      UnstableInt = NoMod(x) * self%Unstable%QDist( pshift - x )
     else
-      UnstableInt = NoMod( self%Q * x )/self%ESFac * &
-      self%Unstable%Distribution( (tshift - x)/self%ESFac, (tshift2 - x)/self%ESFac )
+      UnstableInt = NoMod(x) * self%Unstable%QDist( pshift - x, pshift2 - x )
     end if
 
   end function UnstableInt
@@ -1982,9 +1981,10 @@ module SingularClass
     real (dp), dimension(order,order)                :: delta
     real (dp), dimension( order, 0:2 * (order - 1) ) :: deltaAdd
     integer                                          :: neval, ier, i, j, l, fac
-    real (dp)                                        :: w, abserr, p, shift, p2, newTerm
     real (dp), dimension( size(modList) )            :: resList, Omega
     real (dp), dimension( 0:order, 3, 0:2*order )    :: derInvList, derInvListOr
+    real (dp)                                        :: w, abserr, p, shift, p2, &
+    pshift, pshift2, newTerm, result
 
     delta = 0; deltaAdd = 0; shift = 0; derInvList = 0; fac = 1
 
@@ -2002,8 +2002,13 @@ module SingularClass
 
     call self%setGammaShift( order, gap, delta0, R0, mu0, h, shift, delta )
 
-    p = (self%Q * tau - self%Q * self%tmin)/self%ESFac - shift; p2 = p
-    if ( present(tau2) ) p2 = (self%Q * tau2 - self%Q * self%tmin)/self%ESFac - shift
+    pshift = self%Q * tau/self%ESFac - shift; pshift2 = pshift
+    p = pshift - self%Q * self%tmin/self%ESFac; p2 = p
+
+    if ( present(tau2) ) then
+      pshift2 = self%Q * tau2/self%ESFac - shift
+      p2 = pshift2 - self%Q * self%tmin/self%ESFac
+    end if
 
     w = self%w + cumConst(cum); if ( cum(:6) == 'cumMod' ) w = self%w
 
@@ -2028,55 +2033,70 @@ module SingularClass
 
     kerOr = ker; derInvListOr = derInvList
 
-    if ( space(:3) == 'OPE' ) then
+    if ( setup(6:13) == 'Unstable' ) then
 
-      resList = NoMod(p); if ( present(tau2) ) resList = NoMod(p2) - resList
-      resList = resList * [  ( ModList(i)%MomentModel(0), i = 1, size(modList) )  ]
+      do i = 1, size(modList)
 
-      do l = 1, 30
+        call qagi( UnstableInt, 0._dp, 1, prec, prec, resList(i), abserr, neval, ier )
+        call qagi( ModInt     , 0._dp, 1, prec, prec, result, abserr, neval, ier )
 
-        Omega = [  ( ModList(i)%MomentModel(l), i = 1, size(modList) )  ]
-        w = w + 1; ker = Kernels(n = 2 * order, width = self%width, w = w)
-        derInvList(0,1,:) = ker%DerList(); fac = fac * l
-
-        if (  sum( abs(delta) ) > 0  ) then
-          do i = 1, order
-            derInvList(i,1,:) = DerAdd1(1, derInvList( i - 1,1,:2 * (order - i) ), w + i + 1  )
-          end do
-        end if
-
-        newTerm = NoMod(p); if ( present(tau2) ) newTerm = NoMod(p2) - newTerm
-        newTerm = (-self%compFact)**l * newTerm/fac
-
-        if ( abs( newTerm * maxval(Omega) ) > abs( maxval(resList) ) ) then
-          resList = 0; w = self%w + cumConst(cum); ker = kerOr
-          if ( cum(:6) == 'cumMod' ) w = self%w
-          derInvList = derInvListOr;  go to 10
-        end if
-
-        resList = resList + newTerm * Omega
-        if ( abs( maxval(newTerm * Omega/resList) ) < prec ) go to 20
+      resList(i) = resList(i) + result * self%Unstable%Delta()
 
       end do
 
-      go to 20
+    else
 
-    end if
+      if ( space(:3) == 'OPE' ) then
 
-    10 continue
+        resList = NoMod(p); if ( present(tau2) ) resList = NoMod(p2) - resList
+        resList = resList * [  ( ModList(i)%MomentModel(0), i = 1, size(modList) )  ]
 
-    do i = 1, size(modList)
+        do l = 1, 30
 
-      if ( cum(:6) == 'cumMod' ) then
-        call qagi( ModCumInt, p2, -1, prec, prec, resList(i), abserr, neval, ier )
-        resList(i) = resList(i)/self%muSEuler
-      else
-        call qagi( ModInt, 0._dp, 1, prec, prec, resList(i), abserr, neval, ier )
+          Omega = [  ( ModList(i)%MomentModel(l), i = 1, size(modList) )  ]
+          w = w + 1; ker = Kernels(n = 2 * order, width = self%width, w = w)
+          derInvList(0,1,:) = ker%DerList(); fac = fac * l
+
+          if (  sum( abs(delta) ) > 0  ) then
+            do i = 1, order
+              derInvList(i,1,:) = DerAdd1(1, derInvList( i - 1,1,:2 * (order - i) ), w + i + 1  )
+            end do
+          end if
+
+          newTerm = NoMod(p); if ( present(tau2) ) newTerm = NoMod(p2) - newTerm
+          newTerm = (-self%compFact)**l * newTerm/fac
+
+          if ( abs( newTerm * maxval(Omega) ) > abs( maxval(resList) ) ) then
+            resList = 0; w = self%w + cumConst(cum); ker = kerOr
+            if ( cum(:6) == 'cumMod' ) w = self%w
+            derInvList = derInvListOr;  go to 10
+          end if
+
+          resList = resList + newTerm * Omega
+          if ( abs( maxval(newTerm * Omega/resList) ) < prec ) go to 20
+
+        end do
+
+        go to 20
+
       end if
 
-    end do
+      10 continue
 
-    20 continue
+      do i = 1, size(modList)
+
+        if ( cum(:6) == 'cumMod' ) then
+          call qagi( ModCumInt, p2, -1, prec, prec, resList(i), abserr, neval, ier )
+          resList(i) = resList(i)/self%muSEuler
+        else
+          call qagi( ModInt, 0._dp, 1, prec, prec, resList(i), abserr, neval, ier )
+        end if
+
+      end do
+
+      20 continue
+
+    end if
 
     resList = resList * self%Prefact * self%compFact**cumConst(cum) * &
     Sum( self%HardExp(:order) ) * Sum( self%HardMassExp(:order) ) * &
@@ -2102,12 +2122,17 @@ module SingularClass
 
 !ccccccccccccccc
 
-  real (dp) function WithModel(x, x2)
+  real (dp) function UnstableInt(x, x2)
     real (dp)          , intent(in) :: x
     real (dp), optional, intent(in) :: x2
 
+    if ( .not. present(tau2) ) then
+      UnstableInt = NoMod(pshift - x) * ModList(i)%ModelUnstable(self%Unstable, 0, x)
+    else
+      UnstableInt = NoMod(pshift - x, pshift2 - x) * ModList(i)%ModelUnstable(self%Unstable, 0, x) ! the smart way does not work...
+    end if
 
-  end function WithModel
+  end function UnstableInt
 
 !ccccccccccccccc
 
@@ -2156,7 +2181,7 @@ module SingularClass
     derInvList(0,2:,:) = KernelWidth(2*order, w, y)
     kerSingle          = SumKernelWidth(DerInvList(0,:,:), y)
     kerMatrix          = KernelMatrixList( kerSingle, self%MatAdded(:2*order,order) )
-    res              = LogMatrixSum( kerMatrix, w, self%muS, x, self%width )
+    res                = LogMatrixSum( kerMatrix, w, self%muS, x, self%width )
 
     if (  sum( abs(delta) ) > 0  ) then
       do ii = 1, order
