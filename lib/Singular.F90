@@ -1955,10 +1955,10 @@ module SingularClass
         derInvList( i,2:,:2 * (order - i) ) = KernelWidth(2 * (order - i), w + i, y)
         kerSingle( :2 * (order - i) ) = SumKernelWidth(DerInvList(i,:,:2 * (order - i)), y)
         kerMatrix( :2 * (order - i) ) = KernelMatrixList( kerSingle( :2 * (order - i) ),&
-         deltaAdd(i,:2 * (order - i)) )
+        deltaAdd(i,:2 * (order - i)) )
 
         res = res + (-self%compFact)**i * LogMatrixSum(  kerMatrix( :2 * (order - i) ), &
-                         w + i, self%muS, x, self%width  )
+        w + i, self%muS, x, self%width  )
 
       end do
     end if
@@ -1969,8 +1969,8 @@ module SingularClass
 
 !ccccccccccccccc
 
-  function SingleSingWidthList(self, ModList, setup, gap, space, cum, order, R0, mu0, &
-                                     delta0, h, tau, tau2, Unstable) result(resList)
+  function SingleSingWidthList(self, ModList, setup, gap, space, cum, order, R0, &
+  mu0, delta0, h, tau, tau2, Unstable) result(resList)
     class (SingularMass), intent(in)                 :: self
     class (MCtop), intent(in), optional              :: Unstable
     type (Model)        , intent(in), dimension(:)   :: ModList
@@ -2073,13 +2073,14 @@ module SingularClass
       else
         call qagi( ModInt, 0._dp, 1, prec, prec, resList(i), abserr, neval, ier )
       end if
+
     end do
 
     20 continue
 
     resList = resList * self%Prefact * self%compFact**cumConst(cum) * &
-              Sum( self%HardExp(:order) ) * Sum( self%HardMassExp(:order) ) * &
-              (self%Q/self%ESFac)**( 1 + cumConst(cum) )
+    Sum( self%HardExp(:order) ) * Sum( self%HardMassExp(:order) ) * &
+    (self%Q/self%ESFac)**( 1 + cumConst(cum) )
 
     return ! the rest will not be evaluated
 
@@ -2089,11 +2090,11 @@ module SingularClass
       if (self%muJ < self%muM) return
 
       if ( .not. present(tau2) ) then
-        resList = resList + self%NonDistList(ModList, gap, 'space', cum, order, R0, &
-                                                 mu0, delta0, h, tau)
+        resList = resList + self%NonDistList(ModList, gap, 'space', cum, order, &
+        R0, mu0, delta0, h, tau)
       else
-        resList = resList + self%NonDistList(ModList, gap, 'space', cum, order, R0, &
-                                                 mu0, delta0, h, tau, tau2)
+        resList = resList + self%NonDistList(ModList, gap, 'space', cum, order, &
+        R0, mu0, delta0, h, tau, tau2)
       end if
     end select
 
@@ -2101,9 +2102,12 @@ module SingularClass
 
 !ccccccccccccccc
 
-  ! real (dp) function WithModel(p)
+  real (dp) function WithModel(x, x2)
+    real (dp)          , intent(in) :: x
+    real (dp), optional, intent(in) :: x2
 
-  ! end function WithModel
+
+  end function WithModel
 
 !ccccccccccccccc
 

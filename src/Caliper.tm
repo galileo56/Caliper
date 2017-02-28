@@ -74,6 +74,7 @@
 :Evaluate:  NGLKernel::usage = "NGLKernel[n, n1, n2, width, w, mu, p] computes the first 2*n kernels needed for NGL resummation"
 :Evaluate:  Taylor::usage = "Taylor[c, lambda, k] computes the Taylor expansion of the shape function"
 :Evaluate:  Model::usage = "Model[c, lambda, k, l] computes the shape function"
+:Evaluate:  ModelUnstable::usage = "ModelUnstable[shape, mt, Q, c, lambda, n, k, l] computes the shape function convoluted with the unstable distribution"
 :Evaluate:  BreitModel::usage = "BreitModel[c, lambda, width, k, l] computes the shape function convoluted with a Breit Wigner"
 :Evaluate:  MomentModel::usage = "MomentModel[c, lambda, k] computes the shape function"
 :Evaluate:  ModelPiece::usage = "ModelPiece[c, lambda, k, l] computes the shape function"
@@ -1095,6 +1096,14 @@
 :Pattern:       Model[c_, lambda_, k_, l_]
 :Arguments:     {c, lambda, k, l}
 :ArgumentTypes: {RealList, Real, Integer, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      modelunstable
+:Pattern:       ModelUnstable[shape_, mt_, Q_, c_, lambda_, n_, k_, l_]
+:Arguments:     {shape, mt, Q, c, lambda, n, k, l}
+:ArgumentTypes: {String, Real, Real, RealList, Real, Integer, Integer, Real}
 :ReturnType:    Real
 :End:
 
@@ -3358,6 +3367,18 @@ static double model(double c[], long clen, double lambda, int k, double l){
   int len = clen;
 
    f90model_(c, &len, &lambda, &k, &l, &res);
+
+   return res;
+}
+
+extern double f90modelunstable_(char const* shape, double* mt, double* Q,
+double* c, int* clen, double* lambda, int* n, int* k, double* l, double* result);
+
+static double modelunstable(char const* shape, double mt, double Q, double c[], long clen,
+double lambda, int n, int k, double l){
+  double res;  int len = clen;
+
+   f90modelunstable_(shape, &mt, &Q, c, &len, &lambda, &n, &k, &l, &res);
 
    return res;
 }

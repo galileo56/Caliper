@@ -185,6 +185,8 @@ lib/CMakeFiles/libCaliper.dir/Model.F90.o.requires: lib/CMakeFiles/libCaliper.di
 lib/CMakeFiles/libCaliper.dir/Model.F90.o: lib/CMakeFiles/libCaliper.dir/constants.mod.stamp
 lib/CMakeFiles/libCaliper.dir/Model.F90.o.requires: lib/CMakeFiles/libCaliper.dir/matrixelementsclass.mod.proxy
 lib/CMakeFiles/libCaliper.dir/Model.F90.o: lib/CMakeFiles/libCaliper.dir/matrixelementsclass.mod.stamp
+lib/CMakeFiles/libCaliper.dir/Model.F90.o.requires: lib/CMakeFiles/libCaliper.dir/mctopclass.mod.proxy
+lib/CMakeFiles/libCaliper.dir/Model.F90.o: lib/CMakeFiles/libCaliper.dir/mctopclass.mod.stamp
 lib/CMakeFiles/libCaliper.dir/Model.F90.o.requires: lib/CMakeFiles/libCaliper.dir/quadpack.mod.proxy
 lib/CMakeFiles/libCaliper.dir/Model.F90.o: lib/CMakeFiles/libCaliper.dir/quadpack.mod.stamp
 lib/CMakeFiles/libCaliper.dir/modelclass.mod.proxy: lib/CMakeFiles/libCaliper.dir/Model.F90.o.provides

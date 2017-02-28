@@ -1,7 +1,8 @@
 
 module ModelClass
   use QuadPack, only: qagi; use Constants, only: dp, Pi, ExpEuler, d1mach, prec
-  use AnomDimClass, only: powList; use MatrixElementsClass, only: factList; implicit none
+  use AnomDimClass, only: powList; use MatrixElementsClass, only: factList
+  use MCtopClass; implicit none
   private
 
   public    :: Model2D, BreitWigner, BreitModel2D
@@ -21,13 +22,13 @@ module ModelClass
 
     final                                 :: delete_object
     procedure, pass(self), public         :: BreitModel, SoftFourier, SetLambda, &
-                                             CumMomentModel, ShapeFun, Taylor
-    procedure, pass(self)                 :: CumSoft, Zeta, MomentModel, EModCoefSum,  &
-                                             DModCoefSum, PlusSoft, ModCoef, DModCoef, &
-                                             BinomialInteger, BinomialReal, CModCoef,  &
-                                             Binom, fact
+    CumMomentModel, ShapeFun, Taylor, ModelUnstable
 
-    generic, private :: Binomial => BinomialInteger, BinomialReal
+    procedure, pass(self)                 :: CumSoft, MomentModel, EModCoefSum, &
+    DModCoefSum, PlusSoft, ModCoef, DModCoef, BinomialInteger, BinomialReal,    &
+    Binom, fact, CModCoef, Zeta
+
+    generic, private  :: Binomial => BinomialInteger, BinomialReal
 
   end type Model
 
@@ -133,6 +134,25 @@ module ModelClass
 
 !ccccccccccccccc
 
+  real (dp) function ModelUnstable(self, MC, k, p)
+    class (Model), intent(in) :: self
+    type (MCtop) , intent(in) :: MC
+    real(dp)     , intent(in) :: p
+    integer      , intent(in) :: k
+
+  contains
+
+    real (dp) function InteUns(x)
+      real(dp), intent(in) :: x
+
+      InteUns = self%ShapeFun( k, p - x/MC%Qval() ) * MC%Distribution(x)
+
+    end function InteUns
+
+  end function ModelUnstable
+
+!ccccccccccccccc
+
   real (dp) function Taylor(self, k)
     class (Model), intent(in) :: self
     integer      , intent(in) :: k
@@ -167,7 +187,8 @@ module ModelClass
     real (dp), optional, intent(in) :: p2
     integer                         :: i, l, s
     real (dp)                       :: x, x2, SoftPieceMat2, SoftPieceMat3, a, &
-                                       SoftPieceMat3B, SoftPieceMat2B, b
+    SoftPieceMat3B, SoftPieceMat2B, b
+
     ShapeFun = 0
 
     if (k < -3) return
@@ -182,7 +203,6 @@ module ModelClass
     else if (k < - 1) then
       if (p > 0)         ShapeFun = self%PlusSoft(k + 2, p)
       if ( present(p2) ) ShapeFun = self%PlusSoft(k + 2, p, p2); return
-      ! if ( present(p2) ) ShapeFun = self%PlusSoft(k + 2, p2) - self%PlusSoft(k + 2, p); return
     end if
 
     do i = 0, self%Nmax

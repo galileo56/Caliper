@@ -8,14 +8,14 @@ module MCtopClass
 
   type, public                           :: MCtop
     character (len = 6)                  :: shape
-    real (dp)                            :: ESmin, ESmax, Dirac
+    real (dp)                            :: ESmin, ESmax, Dirac, Q
     integer                              :: n
     real (dp), dimension(:), allocatable :: coefs
 
   contains
 
    final                          :: delete_object
-   procedure, pass(self), public  :: Distribution, Delta, maxES
+   procedure, pass(self), public  :: Distribution, Delta, maxES, Qval
    procedure, pass(self), private :: setMass
 
   end type MCtop
@@ -72,7 +72,7 @@ contains
     real (dp)    , intent(in)    :: mt, Q
     real (dp)                    :: moQ, moQ2
 
-    moQ = mt/Q; moQ2 = moQ**2;
+    moQ = mt/Q; moQ2 = moQ**2; self%Q = Q
 
     if ( self%shape(:6) == 'thrust' ) then
 
@@ -90,6 +90,13 @@ contains
     end if
 
   end subroutine setMass
+
+!ccccccccccccccc
+
+  real (dp) function Qval(self)
+    class (MCtop), intent(in) :: self
+    Qval = self%Q
+  end function Qval
 
 !ccccccccccccccc
 
