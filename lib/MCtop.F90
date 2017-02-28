@@ -234,10 +234,9 @@ contains
         end if
       else
         if (k == -1) then
-          res = dot_product( self%coefs(8:9), [0.06105_dp, 0.11_dp] )        + &
-          dot_product( self%coefs(3:4), [0.10395_dp, 0.11_dp] ) + &
-          self%coefs(1)/64 + dot_product( self%coefs(5:7),                     &
-          [ 0.477988_dp/3, 0.21_dp, 0.28_dp] )
+          res = dot_product( self%coefs(8:9), [0.06105_dp, 0.11_dp] )            + &
+          dot_product( self%coefs(3:4), [0.10395_dp, 0.11_dp] ) + self%coefs(1)/64 &
+          + dot_product( self%coefs(5:7), [ 0.477988_dp/3, 0.21_dp, 0.28_dp] )
         end if
       end if
 

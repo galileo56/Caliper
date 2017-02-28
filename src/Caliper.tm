@@ -76,6 +76,7 @@
 :Evaluate:  Taylor::usage = "Taylor[c, lambda, k] computes the Taylor expansion of the shape function"
 :Evaluate:  Model::usage = "Model[c, lambda, k, l] computes the shape function"
 :Evaluate:  ModelUnstable::usage = "ModelUnstable[shape, mt, Q, c, lambda, n, k, l] computes the shape function convoluted with the unstable distribution"
+:Evaluate:  BreitModelUnstable::usage = "BreitModelUnstable[shape, mt, Q, gamma, c, lambda, n, k, l] computes the shape function convoluted with the unstable distribution plus a BreitWigner"
 :Evaluate:  BreitModel::usage = "BreitModel[c, lambda, width, k, l] computes the shape function convoluted with a Breit Wigner"
 :Evaluate:  MomentModel::usage = "MomentModel[c, lambda, k] computes the shape function"
 :Evaluate:  ModelPiece::usage = "ModelPiece[c, lambda, k, l] computes the shape function"
@@ -1113,6 +1114,14 @@
 :Pattern:       ModelUnstable[shape_, mt_, Q_, c_, lambda_, n_, k_, l_]
 :Arguments:     {shape, mt, Q, c, lambda, n, k, l}
 :ArgumentTypes: {String, Real, Real, RealList, Real, Integer, Integer, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      breitmodelunstable
+:Pattern:       BreitModelUnstable[shape_, mt_, Q_, gamma_, c_, lambda_, n_, k_, l_]
+:Arguments:     {shape, mt, Q, gamma, c, lambda, n, k, l}
+:ArgumentTypes: {String, Real, Real, Real, RealList, Real, Integer, Integer, Real}
 :ReturnType:    Real
 :End:
 
@@ -3409,6 +3418,19 @@ double lambda, int n, int k, double l){
   double res;  int len = clen;
 
    f90modelunstable_(shape, &mt, &Q, c, &len, &lambda, &n, &k, &l, &res);
+
+   return res;
+}
+
+extern double f90breitmodelunstable_(char const* shape, double* mt, double* Q,
+double *gamma, double* c, int* clen, double* lambda, int* n, int* k, double* l,
+double* result);
+
+static double breitmodelunstable(char const* shape, double mt, double Q, double gamma,
+  double c[], long clen, double lambda, int n, int k, double l){
+  double res;  int len = clen;
+
+   f90breitmodelunstable_(shape, &mt, &Q, &gamma, c, &len, &lambda, &n, &k, &l, &res);
 
    return res;
 }
