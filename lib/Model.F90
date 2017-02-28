@@ -150,13 +150,13 @@ module ModelClass
     end if
 
     if ( MC%shape(:6) == 'Cparam' ) then
-      ModelUnstable = dGauss( InteUns, 0._dp, min( MC%maxES(), plim/MC%Qval() ), prec )
+      ModelUnstable = dGauss( InteUns, 0._dp, min( MC%maxp(), plim ), prec )
     else
-      call DAdapt(InteUns, 0._dp, min( MC%maxES(), plim/MC%Qval() ), 1, prec, &
+      call DAdapt(InteUns, 0._dp, min( MC%maxp(), plim ), 1, prec, &
       prec, ModelUnstable, ERR)
     end if
 
-    ! call qags( InteUns, 0._dp, min( MC%maxES(), plim/MC%Qval() ), prec, &
+    ! call qags( InteUns, 0._dp, min( MC%maxp(), plim ), prec, &
     ! prec, ModelUnstable, err, neval, ier )
 
   contains
@@ -165,13 +165,13 @@ module ModelClass
       real(dp), intent(in) :: x
 
       if ( .not. present(p2) ) then
-        InteUns = self%ShapeFun( k, p - x * MC%Qval() ) * MC%Distribution(x)
+        InteUns = self%ShapeFun( k, p - x ) * MC%Qdist(x)
       else
-        if ( p - x * MC%Qval() <= 0 ) then
-          InteUns = self%ShapeFun( k, p2 - x * MC%Qval() ) * MC%Distribution(x)
+        if ( p - x <= 0 ) then
+          InteUns = self%ShapeFun( k, p2 - x ) * MC%QDist(x)
         else
-          InteUns = self%ShapeFun( k, p - x * MC%Qval(), p2 - x * MC%Qval() ) * &
-          MC%Distribution(x)
+          InteUns = self%ShapeFun( k, p - x, p2 - x ) * &
+          MC%QDist(x)
         end if
       end if
 

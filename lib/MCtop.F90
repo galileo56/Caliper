@@ -9,7 +9,7 @@ module MCtopClass
   type, public                           :: MCtop
     character (len = 6)                  :: shape
     real (dp)                            :: ESmin, ESmax, pmax, Dirac, Q
-    integer                              :: n
+    integer                              :: n, sf
     real (dp), dimension(:), allocatable :: coefs
 
   contains
@@ -46,10 +46,11 @@ contains
     InMCtop%ESmin = 0; InMCtop%shape = Eshape
 
     if ( Eshape(:6) == 'thrust' ) then
-      allocate( InMCtop%coefs(10) ); InMCtop%n = 0
+      allocate( InMCtop%coefs(10) ); InMCtop%n = 0; InMCtop%sf = 1
 
     else if ( EShape(:6) == 'Cparam') then
-      allocate( InMCtop%coefs(0:39) )
+
+      allocate( InMCtop%coefs(0:39) ); InMCtop%sf = 6
 
       if ( present(n) ) then
         InMCtop%n = min(39,n)
@@ -89,7 +90,7 @@ contains
 
     end if
 
-    self%pmax = Q * self%ESmax
+    self%pmax = Q * self%ESmax/self%sf
 
   end subroutine setMass
 
@@ -108,9 +109,9 @@ contains
     real (dp), optional, intent(in) :: p2
 
     if ( .not. present(p2) ) then
-      QDist = self%Distribution(p/self%Q)/self%Q
+      QDist = self%sf * self%Distribution(self%sf * p/self%Q)/self%Q
     else
-      QDist = self%Distribution(p/self%Q, p2/self%Q)/self%Q
+      QDist = self%sf * self%Distribution(self%sf * p/self%Q, self%sf * p2/self%Q)/self%Q
     end if
 
   end function QDist
