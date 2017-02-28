@@ -2,7 +2,7 @@
 module ModelClass
   use QuadPack, only: qagi; use Constants, only: dp, Pi, ExpEuler, d1mach, prec
   use AnomDimClass, only: powList; use MatrixElementsClass, only: factList
-  use MCtopClass; implicit none
+  use MCtopClass; use adapt; implicit none
   private
 
   public    :: Model2D, BreitWigner, BreitModel2D
@@ -140,12 +140,14 @@ module ModelClass
     real(dp)     , intent(in) :: p
     integer      , intent(in) :: k
 
+    ModelUnstable = dGauss( InteUns, 0._dp, min( MC%maxES(), p/MC%Qval() ), prec )
+
   contains
 
     real (dp) function InteUns(x)
       real(dp), intent(in) :: x
 
-      InteUns = self%ShapeFun( k, p - x/MC%Qval() ) * MC%Distribution(x)
+      InteUns = self%ShapeFun( k, p - x * MC%Qval() ) * MC%Distribution(x)
 
     end function InteUns
 

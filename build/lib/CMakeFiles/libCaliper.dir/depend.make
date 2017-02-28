@@ -179,6 +179,8 @@ lib/CMakeFiles/libCaliper.dir/MatrixElements.F90.o.provides.build:
 	$(CMAKE_COMMAND) -E touch lib/CMakeFiles/libCaliper.dir/MatrixElements.F90.o.provides.build
 lib/CMakeFiles/libCaliper.dir/build: lib/CMakeFiles/libCaliper.dir/MatrixElements.F90.o.provides.build
 
+lib/CMakeFiles/libCaliper.dir/Model.F90.o.requires: lib/CMakeFiles/libCaliper.dir/adapt.mod.proxy
+lib/CMakeFiles/libCaliper.dir/Model.F90.o: lib/CMakeFiles/libCaliper.dir/adapt.mod.stamp
 lib/CMakeFiles/libCaliper.dir/Model.F90.o.requires: lib/CMakeFiles/libCaliper.dir/anomdimclass.mod.proxy
 lib/CMakeFiles/libCaliper.dir/Model.F90.o: lib/CMakeFiles/libCaliper.dir/anomdimclass.mod.stamp
 lib/CMakeFiles/libCaliper.dir/Model.F90.o.requires: lib/CMakeFiles/libCaliper.dir/constants.mod.proxy
