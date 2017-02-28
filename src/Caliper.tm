@@ -1108,6 +1108,14 @@
 :End:
 
 :Begin:
+:Function:      modelunstablediff
+:Pattern:       ModelUnstable[shape_, mt_, Q_, c_, lambda_, n_, k_, l_, l2_]
+:Arguments:     {shape, mt, Q, c, lambda, n, k, l, l2}
+:ArgumentTypes: {String, Real, Real, RealList, Real, Integer, Integer, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
 :Function:      modeldiff
 :Pattern:       Model[c_, lambda_, k_, l_, l2_]
 :Arguments:     {c, lambda, k, l, l2}
@@ -3379,6 +3387,18 @@ double lambda, int n, int k, double l){
   double res;  int len = clen;
 
    f90modelunstable_(shape, &mt, &Q, c, &len, &lambda, &n, &k, &l, &res);
+
+   return res;
+}
+
+extern double f90modelunstablediff_(char const* shape, double* mt, double* Q,
+double* c, int* clen, double* lambda, int* n, int* k, double* l, double* l2, double* result);
+
+static double modelunstablediff(char const* shape, double mt, double Q, double c[], long clen,
+double lambda, int n, int k, double l, double l2){
+  double res;  int len = clen;
+
+   f90modelunstablediff_(shape, &mt, &Q, c, &len, &lambda, &n, &k, &l, &l2, &res);
 
    return res;
 }

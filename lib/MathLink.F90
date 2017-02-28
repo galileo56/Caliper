@@ -56,6 +56,23 @@ end subroutine f90ModelUnstable
 
 !ccccccccccccccc
 
+subroutine f90ModelUnstablediff(shape, mt, Q, c, clen, lambda, n, k, p, p2, res)
+  use constants, only: dp; use hyper; use MCtopClass; use ModelClass; implicit none
+  character (len = *)       , intent(in)  :: shape
+  real (dp)                 , intent(in)  :: mt, Q, p, p2, lambda
+  real (dp), dimension(clen), intent(in)  :: c
+  integer                   , intent(in)  :: n, clen, k
+  real (dp)                 , intent(out) :: res
+  type (MCtop)                            :: MC
+  type (Model)                            :: Mod
+
+  MC = MCtop( shape(:6), mt, Q, n ); Mod = Model(lambda, c, [0, 0], 'sum')
+  res = Mod%ModelUnstable(MC, k, p, p2)
+
+end subroutine f90ModelUnstablediff
+
+!ccccccccccccccc
+
 subroutine f90DeltaMCtop(shape, mt, Q, res)
   use constants, only: dp; use hyper; use MCtopClass; implicit none
   character (len = *), intent(in)  :: shape

@@ -134,20 +134,34 @@ module ModelClass
 
 !ccccccccccccccc
 
-  real (dp) function ModelUnstable(self, MC, k, p)
-    class (Model), intent(in) :: self
-    type (MCtop) , intent(in) :: MC
-    real(dp)     , intent(in) :: p
-    integer      , intent(in) :: k
+  real (dp) function ModelUnstable(self, MC, k, p, p2)
+    class (Model)     , intent(in) :: self
+    type (MCtop)      , intent(in) :: MC
+    real(dp)          , intent(in) :: p
+    real(dp), optional, intent(in) :: p2
+    integer           , intent(in) :: k
+    real (dp)                      :: plim
 
-    ModelUnstable = dGauss( InteUns, 0._dp, min( MC%maxES(), p/MC%Qval() ), prec )
+    ModelUnstable = 0; plim = p
+
+    if ( present(p2) ) then
+      if (p2 <= p) return; plim = p2
+    end if
+
+    ModelUnstable = dGauss( InteUns, 0._dp, min( MC%maxES(), plim/MC%Qval() ), prec )
+    ! ModelUnstable = dGauss( InteUns, 0._dp, MC%maxES(), prec )
 
   contains
 
     real (dp) function InteUns(x)
       real(dp), intent(in) :: x
 
-      InteUns = self%ShapeFun( k, p - x * MC%Qval() ) * MC%Distribution(x)
+      if ( .not. present(p2) ) then
+        InteUns = self%ShapeFun( k, p - x * MC%Qval() ) * MC%Distribution(x)
+      else
+        InteUns = self%ShapeFun( k, p - x * MC%Qval(), p2 - x * MC%Qval() ) * &
+        MC%Distribution(x)
+      end if
 
     end function InteUns
 
