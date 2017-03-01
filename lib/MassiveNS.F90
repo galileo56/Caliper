@@ -19,9 +19,9 @@ module MassiveNSClass
     real (dp), dimension(3)   :: deltaM, deltaM2
     character (len = 10)      :: shape, ES, current, singular, scheme
     integer                   :: nf, massOrd
-    real (dp)                 :: m2, m4, m6, m8, m10, alphaJ, tmin, tmax, mPole,&
+    real (dp)                 :: m4, m6, m8, m10, alphaJ, tmin, tmax, mPole,   &
     v, lm, m, thrustMin, cp, mm, A1Singular, tint, B1Singular, alphaMu, B1, Q, &
-    alphaM, muM, GlueMax, GlueInt, width, AMS, alphaH, mass
+    alphaM, muM, GlueMax, GlueInt, width, AMS, alphaH, m2, mass
 
    contains
 
@@ -73,7 +73,7 @@ module MassiveNSClass
 !ccccccccccccccc
 
    type (MassiveScales) function InScales(shape, ES, scheme, singular, current, &
-                                          massOrd, matEl, EW)
+   massOrd, matEl, EW)
      character (len = *)        , intent(in) :: shape, ES, current, singular, scheme
      type (MatricesElementsMass), intent(in) :: matEl
      type (ElectroWeak)         , intent(in) :: EW
@@ -102,7 +102,7 @@ module MassiveNSClass
 !ccccccccccccccc
 
    type (MassiveNS) function InMassNS(shape, ES, scheme, singular, current, massOrd,  &
-                                      matEl, EW, width, mu)
+   matEl, EW, width, mu)
      character (len = *)      , intent(in) :: shape, scheme, ES, current, singular
      real (dp), optional      , intent(in) :: mu, width
      type (MatrixElementsMass), intent(in) :: matEl
@@ -320,8 +320,8 @@ module MassiveNSClass
       self%alphaJ = self%alphaMassNl%alphaQCD(muJ)/Pi
     end if
 
-    call self%matEl%MassDeltaSet(self%scheme, self%massOrd, muJ, Rmass, self%mass, &
-                                     self%deltaM, alphaJ)
+    call self%matEl%MassDeltaSet(self%scheme, self%massOrd, muJ, Rmass, &
+    self%mass, self%deltaM, alphaJ)
 
     call self%SetAll(width);  call self%matEl%SetDelta(muS, R, alphaList)
 
@@ -372,8 +372,8 @@ module MassiveNSClass
     tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift
 
     if ( present(t2) ) then
-      tshift2 = t2 - shift/self%Q;  tau2 = tshift2 - self%tmin
-      p2 = self%Q * tau2;  p2shift = self%Q * tshift2
+      tshift2 = t2 - shift/self%Q;  tau2    = tshift2 - self%tmin
+      p2 = self%Q * tau2         ;  p2shift = self%Q * tshift2
     end if
 
     if ( present(t2) .and. p < 0 ) then
