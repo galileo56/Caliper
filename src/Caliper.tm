@@ -12,7 +12,7 @@
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
 
-:Evaluate:  LegendreList::usage = "LegendreList[n, x] computes the of the first n + 1 Legendre Polynomial"
+:Evaluate:  LegendreList::usage = "LegendreList[n, k, x] computes the of the first n + 1 k-th derivative of the Legendre Polynomials"
 :Evaluate:  QLegendreList::usage = "QLegendreList[n, x] computes the of the first n + 1 Legendre Polynomial"
 :Evaluate:  BreitUnstable::usage = "BreitUnstable[shape, mt, Q, gamma, n, k, x] computes the LO distribution for unstable tops convoluted with a BreitWigner"
 :Evaluate:  MCtop::usage = "MCtop[shape, mt, Q, n, k, x] computes the LO distribution for unstable tops"
@@ -121,9 +121,9 @@
 
 :Begin:
 :Function:      legendrelist
-:Pattern:       LegendreList[n_, x_]
-:Arguments:     {n, x}
-:ArgumentTypes: {Integer, Real}
+:Pattern:       LegendreList[n_, k_, x_]
+:Arguments:     {n, k, x}
+:ArgumentTypes: {Integer, Integer, Real}
 :ReturnType:    Manual
 :End:
 
@@ -1691,12 +1691,12 @@ return res;
 
 }
 
-extern double f90legendrelist_(int* n, double* x, double* res);
+extern double f90legendrelist_(int* n, int* k, double* x, double* res);
 
-static void legendrelist(int n, double x){
+static void legendrelist(int n, int k, double x){
   double res[n + 1];
 
-   f90legendrelist_(&n, &x, res);
+   f90legendrelist_(&n, &k, &x, res);
 
    MLPutRealList(stdlink, res, n + 1);
    MLEndPacket(stdlink);

@@ -420,12 +420,12 @@ return res;
 
 }
 
-extern double f90legendrelist_(int* n, double* x, double* res);
+extern double f90legendrelist_(int* n, int* k, double* x, double* res);
 
-static void legendrelist(int n, double x){
+static void legendrelist(int n, int k, double x){
   double res[n + 1];
 
-   f90legendrelist_(&n, &x, res);
+   f90legendrelist_(&n, &k, &x, res);
 
    MLPutRealList(stdlink, res, n + 1);
    MLEndPacket(stdlink);
@@ -2566,7 +2566,7 @@ L0:	return res;
 } /* _tr0 */
 
 
-void legendrelist P(( int _tp1, double _tp2));
+void legendrelist P(( int _tp1, int _tp2, double _tp3));
 
 #if MLPROTOTYPES
 static int _tr1( MLINK mlp)
@@ -2576,15 +2576,17 @@ static int _tr1(mlp) MLINK mlp;
 {
 	int	res = 0;
 	int _tp1;
-	double _tp2;
+	int _tp2;
+	double _tp3;
 	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
-	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
-	if ( ! MLNewPacket(mlp) ) goto L2;
+	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
+	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
+	if ( ! MLNewPacket(mlp) ) goto L3;
 
-	legendrelist(_tp1, _tp2);
+	legendrelist(_tp1, _tp2, _tp3);
 
 	res = 1;
-L2: L1: 
+L3: L2: L1: 
 L0:	return res;
 } /* _tr1 */
 
@@ -10359,7 +10361,7 @@ static struct func {
 	const char  *f_name;
 	} _tramps[110] = {
 		{ 5, 0, _tr0, "ewfactors" },
-		{ 2, 0, _tr1, "legendrelist" },
+		{ 3, 0, _tr1, "legendrelist" },
 		{ 2, 0, _tr2, "qlegendrelist" },
 		{ 2, 0, _tr3, "gammar" },
 		{46, 0, _tr4, "masslessprof" },
@@ -10493,8 +10495,8 @@ static const char* evalstrs[] = {
 	(const char*)0,
 	"sin2ThetaWPythia = 0.2312",
 	(const char*)0,
-	"LegendreList::usage = \"LegendreList[n, x] computes the of the fi",
-	"rst n + 1 Legendre Polynomial\"",
+	"LegendreList::usage = \"LegendreList[n, k, x] computes the of the",
+	" first n + 1 k-th derivative of the Legendre Polynomials\"",
 	(const char*)0,
 	"QLegendreList::usage = \"QLegendreList[n, x] computes the of the ",
 	"first n + 1 Legendre Polynomial\"",
@@ -11075,7 +11077,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _doevalstr( mlp, 105);
 	if (_res) _res = _doevalstr( mlp, 106);
 	if (_res) _res = _definepattern(mlp, (char *)"EWFactors[nf_, Q_, Mz_, GammaZ_, sin2ThetaW_]", (char *)"{nf, Q, Mz, GammaZ, sin2ThetaW}", 0);
-	if (_res) _res = _definepattern(mlp, (char *)"LegendreList[n_, x_]", (char *)"{n, x}", 1);
+	if (_res) _res = _definepattern(mlp, (char *)"LegendreList[n_, k_, x_]", (char *)"{n, k, x}", 1);
 	if (_res) _res = _definepattern(mlp, (char *)"QLegendreList[n_, x_]", (char *)"{n, x}", 2);
 	if (_res) _res = _definepattern(mlp, (char *)"GammaR[str_, nf_]", (char *)"{str, nf}", 3);
 	if (_res) _res = _definepattern(mlp, (char *)"MasslessProf[terms_, hard_, shape_, setup_, gap_, space_, cum_,                 orderAlpha_, runAlpha_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_,                 muT_, mB_, muB_, mC_, muC_, muLambda_, Q_, mu0_, Rat0_, n0_, n1_, t2_,                 tR_, ts_, slope_, cnt_, eH_, eS_, eJ_, eR_, ns_, c_, lambda_, R0_, muR0_,                 delta0_, h_, tau_]", (char *)"{terms, hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order,                  run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q,                  mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, lambda,                  R0, muR0, delta0, h, tau}", 4);

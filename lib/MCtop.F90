@@ -177,7 +177,7 @@ contains
       if ( k == 0 ) then
 
         res = dot_product( self%coefs(0:self%n), &
-        LegendreList(self%n, 2 * y - 1 ) )
+        LegendreList(self%n, 0, 2 * y - 1 ) )
 
         if ( res < 0 .and. x > 0.8_dp * self%ESmax ) res = 0
 
@@ -186,7 +186,7 @@ contains
         if (y > 1) y = 1
 
         res = dot_product( self%coefs(0:self%n), &
-        LegendreInt(self%n, 2 * y - 1 ) )/2
+        LegendreList(self%n, -1, 2 * y - 1 ) )/2
 
       end if
 

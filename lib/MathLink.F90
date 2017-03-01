@@ -1,13 +1,13 @@
 
 !ccccccccccccccc
 
-subroutine f90LegendreList(n, x, res)
+subroutine f90LegendreList(n, k, x, res)
   use constants, only: dp; use Legendre
-  integer                  , intent(in)  :: n
+  integer                  , intent(in)  :: n, k
   real (dp)                , intent(in)  :: x
   real (dp), dimension(0:n), intent(out) :: res
 
-  res = LegendreList(n,x)
+  res = LegendreList(n,k,x)
 
 end subroutine f90LegendreList
 
