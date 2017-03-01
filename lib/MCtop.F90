@@ -159,10 +159,7 @@ contains
     real (dp)           , intent(in) :: x
     real (dp), optional , intent(in) :: x2
     integer             , intent(in) :: k
-    integer                          :: i
     real (dp)                        :: y
-    real (dp), dimension(0:self%n+1) :: List1
-    real (dp), dimension(0:self%n)   :: List2
 
     res = 0
 
@@ -186,13 +183,10 @@ contains
 
       else if ( k == -1 ) then
 
-        List1 = LegendreList(self%n + 1, 2 * y - 1 ); list2(0) = list1(1) + 1
+        if (y > 1) y = 1
 
-        do i = 1, self%n
-          list2(i) = ( list1(i + 1) - list1(i - 1) )/(2 * i + 1)
-        end do
-
-        res = dot_product( self%coefs(0:self%n), list2 )/2
+        res = dot_product( self%coefs(0:self%n), &
+        LegendreInt(self%n, 2 * y - 1 ) )/2
 
       end if
 
