@@ -345,14 +345,12 @@ module MassiveNSClass
     real (dp), dimension(order,order) :: delt
     real (dp), dimension(order)       :: delta
     real (dp), dimension(1)           :: resul
-    real (dp)                         :: abserr, res, tau, Modelo, ModPlus, p, p2, &
-    shift, ModDer, tshift, tshift2, p3, tau2, p3shift, p2shift
+    real (dp)                         :: abserr, res, tau, Modelo, ModPlus, p2, &
+    shift, ModDer, tshift, tshift2, p3, tau2, p3shift, p2shift, p
 
     GapMassive = GapMass(run, gap, self%matEl, R0, mu0); NSMassMod = 0
 
-    if ( present(t2) ) then
-      if (t2 <= t) return
-    end if
+    if ( present(t2) ) then; if (t2 <= t) return;  end if
 
     if ( setup(:5) == 'Model' ) then
       if ( present(t2) ) then
@@ -364,7 +362,7 @@ module MassiveNSClass
     end if
 
     call GapMassive%setGammaShift( order, self%shape, delta0, h, self%matEl%scales('R'), &
-                                   self%matEl%scales('muS'), shift, delt )
+    self%matEl%scales('muS'), shift, delt )
 
     delta = delt(1,:); Modelo = 0; ModPlus = 0; ModDer = 0
 
@@ -421,7 +419,7 @@ module MassiveNSClass
 
            call qags( NS1lloop, tau, tau2, prec, prec, res, abserr, neval, ier )
 
-            NSMassMod = self%alphaMu * (  res + ( self%B1Singular + self%B1 ) * log(tau2/tau)  )
+            NSMassMod = self%alphaMu * ( res + (self%B1Singular + self%B1) * log(tau2/tau) )
 
          end if
 
@@ -486,31 +484,55 @@ module MassiveNSClass
 
       if ( self%singular(:3) /= 'abs' .and. self%width > tiny(1._dp) ) then
 
-        if ( setup(8:15) == 'Unstable' ) then
+        if ( setup(8:15) /= 'Unstable' .or. self%shape(:6) == 'thrust' ) then
 
-                         Modelo  = self%Q**(1 + cumul) * self%MC%BreitUnstable(self%width, cumul    , p3shift)
-          if (order > 0) ModPlus = self%Q**(1 + cumul) * self%MC%BreitUnstable(self%width, cumul - 2, p3shift)
-          if (order > 0) ModDer  = self%Q**(2 + cumul) * self%MC%BreitUnstable(self%width, cumul + 1, p3shift)
+          if ( .not. present(t2) ) then
 
-        else
-                         Modelo  = self%Q**(1 + cumul) * BreitWigner(self%width, cumul    , p3)
-          if (order > 0) ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p3)
-          if (order > 0) ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p3)
+            Modelo = self%Q**(1 + cumul) * BreitWigner(self%width, cumul, p3)
 
-        end if
+            if (order > 0) then
+              ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p3)
+              ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p3)
+            end if
 
-        if ( present(t2) ) then
-
-          if ( setup(8:15) == 'Unstable' ) then
-                           Modelo  = self%Q**(1 + cumul) * self%MC%BreitUnstable(self%width, cumul    , p2shift) - Modelo
-            if (order > 0) ModPlus = self%Q**(1 + cumul) * self%MC%BreitUnstable(self%width, cumul - 2, p2shift) - ModPlus
-            if (order > 0) ModDer  = self%Q**(2 + cumul) * self%MC%BreitUnstable(self%width, cumul + 1, p2shift) - ModDer
           else
-                           Modelo  = self%Q**(1 + cumul) * BreitWigner(self%width, cumul    , p2) - Modelo
-            if (order > 0) ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p2) - ModPlus
-            if (order > 0) ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p2) - ModDer
+
+            Modelo = self%Q**(1 + cumul) * BreitWigner(self%width, cumul, p2, p3)
+
+            if (order > 0) then
+              ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p2, p3)
+              ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p2, p3)
+            end if
           end if
 
+        else
+          Modelo = 0; ModPlus = 0; ModDer = 0
+        end if
+
+        if ( setup(8:15) == 'Unstable' ) then
+          if ( .not. present(t2) ) then
+
+            Modelo = Modelo * self%MC%Delta() + self%Q**(1 + cumul) * &
+            self%MC%BreitUnstable(self%width, cumul, p3shift)
+
+            if (order > 0) then
+
+              ModPlus = ModPlus * self%MC%Delta() + self%Q**(1 + cumul) * &
+              self%MC%BreitUnstable(self%width, cumul - 2, p3shift)
+
+              ModDer  = ModDer  * self%MC%Delta() + self%Q**(2 + cumul) * &
+              self%MC%BreitUnstable(self%width, cumul + 1, p3shift)
+
+            else
+
+              ModPlus = ModPlus * self%MC%Delta() + self%Q**(1 + cumul) * &
+              self%MC%BreitUnstable(self%width, cumul - 2, p2shift, p3shift)
+
+              ModDer  = ModDer  * self%MC%Delta() + self%Q**(2 + cumul) * &
+              self%MC%BreitUnstable(self%width, cumul + 1, p2shift, p3shift)
+
+            end if
+          end if
         end if
       end if
     end if   setup_if
@@ -566,12 +588,10 @@ module MassiveNSClass
 
     GapMassive = GapMass(run, gap, self%matEl, R0, mu0); resList = 0
 
-    if ( present(t2) ) then
-      if (t2 <= t) return
-    end if
+    if ( present(t2) ) then; if (t2 <= t) return;  end if
 
-    call GapMassive%setGammaShift( order, self%shape, delta0, h, self%matEl%scales('R'), &
-                                   self%matEl%scales('muS'), shift, delt )
+    call GapMassive%setGammaShift( order, self%shape, delta0, h, &
+    self%matEl%scales('R'), self%matEl%scales('muS'), shift, delt )
 
     delta = delt(1,:); Modelo = 0; ModPlus = 0; ModDer = 0
 
@@ -606,51 +626,83 @@ module MassiveNSClass
         if ( self%width <= d1mach(1) ) then
 
           if ( dobsing ) then
-                           Modelo(i)  = self%Q**(1 + cumul) * Mod%ShapeFun(cumul    , p)
-            if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%ShapeFun(cumul - 2, p)
-            if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%ShapeFun(cumul + 1, p)
+
+            Modelo(i)  = self%Q**(1 + cumul) * Mod%ShapeFun(cumul, p)
+
+            if (order > 0) then
+              ModPlus(i) = self%Q**(1 + cumul) * Mod%ShapeFun(cumul - 2, p)
+              ModDer(i)  = self%Q**(2 + cumul) * Mod%ShapeFun(cumul + 1, p)
+            end if
 
           else
 
-                           Modelo(i)  = self%Q**(1 + cumul) * Mod%ShapeFun(cumul    , p, p2)
-            if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%ShapeFun(cumul - 2, p, p2)
-            if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%ShapeFun(cumul + 1, p, p2)
+            Modelo(i)  = self%Q**(1 + cumul) * Mod%ShapeFun(cumul, p, p2)
+
+            if (order > 0) then
+              ModPlus(i) = self%Q**(1 + cumul) * Mod%ShapeFun(cumul - 2, p, p2)
+              ModDer(i)  = self%Q**(2 + cumul) * Mod%ShapeFun(cumul + 1, p, p2)
+            end if
 
           end if
 
         else
 
+          if ( setup(6:13) /= 'Unstable' .or. self%shape(:6) == 'thrust' ) then
+
+            if ( .not. present(t2) ) then
+
+              Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul, p)
+
+              if (order > 0) then
+                ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul - 2, p)
+                ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModel(self%width, cumul + 1, p)
+              end if
+
+            else
+
+              Modelo(i) = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul, p3, p2)
+
+              if (order > 0) then
+                ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul - 2, p3, p2)
+                ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModel(self%width, cumul + 1, p3, p2)
+              end if
+
+            end if
+          else
+            Modelo(i) = 0; ModPlus(i) = 0; ModDer(i) = 0
+          end if
+
           if ( setup(6:13) == 'Unstable' ) then
 
             if ( .not. present(t2) ) then
 
-              Modelo(i)  = self%Q**(1 + cumul) * (  self%MC%Delta() * &
-              Mod%BreitModel( self%width, cumul, p3shift  - self%MC%maxP() ) + &
-              Mod%BreitModUns(self%MC, self%width, cumul, p3shift)  )
+              Modelo(i) = self%MC%Delta() * Modelo(i) + self%Q**(1 + cumul) * &
+              Mod%BreitModUns(self%MC, self%width, cumul, p3shift)
 
-              if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModUns(self%MC, self%width, cumul - 2, p3shift)
+              if (order > 0) then
 
-              if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModUns(self%MC, self%width, cumul + 1, p3shift)
+                ModPlus(i) = self%MC%Delta() * ModPlus(i) + self%Q**(1 + cumul) * &
+                Mod%BreitModUns(self%MC, self%width, cumul - 2, p3shift)
 
-            else
-                             Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModUns(self%MC, self%width, cumul    , p3shift, p2shift)
-              if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModUns(self%MC, self%width, cumul - 2, p3shift, p2shift)
-              if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModUns(self%MC, self%width, cumul + 1, p3shift, p2shift)
+                ModDer(i)  = self%MC%Delta() * ModDer(i) + self%Q**(2 + cumul) * &
+                Mod%BreitModUns(self%MC, self%width, cumul + 1, p3shift)
 
-            end if
-
-          else
-
-            if ( .not. present(t2) ) then
-                             Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul    , p)
-              if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul - 2, p)
-              if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModel(self%width, cumul + 1, p)
+              end if
 
             else
-                             Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul    , p3, p2)
-              if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul - 2, p3, p2)
-              if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModel(self%width, cumul + 1, p3, p2)
 
+              Modelo(i) = self%MC%Delta() * Modelo(i) + self%Q**(1 + cumul) * &
+              Mod%BreitModUns(self%MC, self%width, cumul    , p3shift, p2shift)
+
+              if (order > 0) then
+
+                ModPlus(i) = self%MC%Delta() * ModPlus(i) + self%Q**(1 + cumul) * &
+                Mod%BreitModUns(self%MC, self%width, cumul - 2, p3shift, p2shift)
+
+                ModDer(i)  = self%MC%Delta() * ModDer(i) + self%Q**(2 + cumul) * &
+                Mod%BreitModUns(self%MC, self%width, cumul + 1, p3shift, p2shift)
+
+              end if
             end if
           end if
         end if
