@@ -595,9 +595,7 @@ module MassiveNSClass
 
     delta = delt(1,:); Modelo = 0; ModPlus = 0; ModDer = 0
 
-    if ( self%shape(:3) == 'HJM' ) then
-      delta = delta/2; shift = shift/2
-    end if
+    if ( self%shape(:3) == 'HJM' ) then; delta = delta/2; shift = shift/2; end if
 
     tshift = t - shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau
     tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift
