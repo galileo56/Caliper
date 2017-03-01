@@ -30,19 +30,47 @@ end module Constants
 !ccccccccccccccc
 
 module Legendre
-  use Constants, only: dp
+  use Constants, only: dp; implicit none
+
 contains
-  function LegendreList(n,x) result(list)
-    integer      , intent(in) :: n
-    real (dp)    , intent(in) :: x
-    real (dp), dimension(0:n) :: list
-    integer                   :: i
 
-    list(:1) = [ 1._dp, x ]
+  recursive function LegendreList(n, k, x) result(list)
+    integer          , intent(in) :: n, k
+    real (dp)        , intent(in) :: x
+    real (dp), dimension(0:n)     :: list
+    real (dp), dimension(0:n + 1) :: list2
+    integer                       :: i
 
-    do i = 2, n
-      list(i) = ( (2 * i - 1) * x * list(i - 1) - (i - 1) * list(i - 2) )/i
-    end do
+    list = 0; if ( k < -1 ) return;  list2 = 0
+
+    if (k > 0) then
+      list2(:n) = LegendreList(n, k - 1, x)
+    else if (k == -1) then
+      list2 = LegendreList(n + 1, 0, x)
+    end if
+
+    if (k == 0) then
+      list(:1) = [ 1._dp, x ]
+    else if (k == 1) then
+      list(1) = 1
+    else if (k == -1) then
+      list(0) = list2(1) + 1
+    end if
+
+    if (k == -1) then
+
+      do i = 1, n
+        list(i) = ( list2(i + 1) - list2(i - 1) )/(2 * i + 1)
+      end do
+
+    else
+
+      do i = 2, n
+        list(i) = ( (2 * i - 1) * ( k * list2(i - 1) + x * list(i - 1) ) - &
+                  (i - 1) * list(i - 2) )/i
+      end do
+
+    end if
 
   end function LegendreList
 

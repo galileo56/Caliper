@@ -1,21 +1,24 @@
 
 module MCtopClass
-  use Constants, only: dp; use Legendre; implicit none;  private
+  use Constants, only: dp, prec, Pi; use QuadPack, only: qags; use Legendre
+  implicit none; private
 
-  public                         :: MCtop
+  public                                 :: MCtop, BreitWigner
 
 !ccccccccccccccc
 
   type, public                           :: MCtop
     character (len = 6)                  :: shape
-    real (dp)                            :: ESmin, ESmax, Dirac
-    integer                              :: n
+    real (dp)                            :: ESmin, ESmax, pmax, Dirac, Q
+    integer                              :: n, sf
     real (dp), dimension(:), allocatable :: coefs
 
   contains
 
-   final                         :: delete_object
-   procedure, pass(self), public :: Distribution, Delta
+   final                          :: delete_object
+   procedure, pass(self), private :: setMass
+   procedure, pass(self), public  :: Distribution, QDist, Delta, maxES, Qval, &
+   maxP, BreitUnstable
 
   end type MCtop
 
@@ -41,59 +44,210 @@ contains
     integer  , optional, intent(in) :: n
     character (len = *), intent(in) :: Eshape
     real (dp)          , intent(in) :: mt, Q
-    real (dp)                       :: moQ, moQ2
 
-    InMCtop%ESmin = 0; moQ = mt/Q; moQ2 = moQ**2; InMCtop%shape = Eshape
+    InMCtop%ESmin = 0; InMCtop%shape = Eshape
 
     if ( Eshape(:6) == 'thrust' ) then
-
-      InMCtop%ESmax = 1 - sqrt(1 - 4 * moQ2); InMCtop%n = 0
-      InMCtop%Dirac = 1 - 5.996687441937819_dp * moQ2 - 4.418930183289158_dp * &
-      moQ2**2 + 11.76452036058563_dp * moQ2**3
-      allocate( InMCtop%coefs(10) ); InMCtop%coefs = ThrustCoefs(moQ)
-      InMCtop%coefs(10) = InMCtop%coefs(10) * InMCtop%ESmax/(1 - InMCtop%Dirac)
+      allocate( InMCtop%coefs(10) ); InMCtop%n = 0; InMCtop%sf = 1
 
     else if ( EShape(:6) == 'Cparam') then
-      InMCtop%ESmax = 12 * moQ2 * (1 - 3 * moQ2); InMCtop%Dirac = 0
-      allocate( InMCtop%coefs(0:39) ); InMCtop%n = min(39,n)
-      InMCtop%coefs = LagCoef(moQ)/InMCtop%ESmax
+
+      allocate( InMCtop%coefs(0:39) ); InMCtop%sf = 6
+
+      if ( present(n) ) then
+        InMCtop%n = min(39,n)
+      else
+        InMCtop%n = 39
+      end if
+
       if ( present(ESmin) ) InMCtop%ESmin = ESmin
+
     end if
+
+    call InMCtop%setMass(mt, Q)
 
   end function InMCtop
 
 !ccccccccccccccc
 
-  real (dp) function Distribution(self, x)
-    class (MCtop), intent(in) :: self
-    real (dp)    , intent(in) :: x
-    real (dp)                 :: y
+  subroutine setMass(self, mt, Q)
+    class (MCtop), intent(inout) :: self
+    real (dp)    , intent(in)    :: mt, Q
+    real (dp)                    :: moQ, moQ2
 
-    Distribution = 0; if (x <= self%ESmin .or. x >= self%ESmax) return
+    moQ = mt/Q; moQ2 = moQ**2; self%Q = Q
+
+    if ( self%shape(:6) == 'thrust' ) then
+
+      self%ESmax = 1 - sqrt(1 - 4 * moQ2)
+      self%Dirac = 1 - 5.996687441937819_dp * moQ2 - 4.418930183289158_dp * &
+      moQ2**2 + 11.76452036058563_dp * moQ2**3
+      self%coefs = ThrustCoefs(moQ)
+      self%coefs(10) = self%coefs(10) * self%ESmax/(1 - self%Dirac)
+
+    else if ( self%Shape(:6) == 'Cparam') then
+      self%ESmax = 12 * moQ2 * (1 - 3 * moQ2); self%Dirac = 0
+
+      self%coefs = LagCoef(moQ)/self%ESmax
+
+    end if
+
+    self%pmax = Q * self%ESmax/self%sf
+
+  end subroutine setMass
+
+!ccccccccccccccc
+
+  real (dp) function Qval(self)
+    class (MCtop), intent(in) :: self
+    Qval = self%Q
+  end function Qval
+
+!ccccccccccccccc
+
+  real (dp) function QDist(self, p, p2)
+    class (MCtop)      , intent(in) :: self
+    real (dp)          , intent(in) :: p
+    real (dp), optional, intent(in) :: p2
+
+    if ( .not. present(p2) ) then
+      QDist = self%sf * self%Distribution(0, self%sf * p/self%Q)/self%Q
+    else
+      QDist = self%sf * self%Distribution(0, self%sf * p/self%Q, self%sf * p2/self%Q)/self%Q
+    end if
+
+  end function QDist
+
+!ccccccccccccccc
+
+  real (dp) function BreitUnstable(self, Gamma, k, l, l2)
+    class (MCtop)      , intent(in) :: self
+    real (dp)          , intent(in) :: l, Gamma
+    real (dp), optional, intent(in) :: l2
+    integer            , intent(in) :: k
+    real (dp)                       :: lint, abserr
+    integer                         :: ier, neval
+
+    BreitUnstable = 0; lint = l
+
+    if ( present (l2) ) then
+      if (l >= l2) return; lint = l
+    end if
+
+    call qags( integrand, l - self%pmax, lint, prec, &
+    prec, BreitUnstable, abserr, neval, ier )
+
+  contains
+
+    real (dp) function integrand(x)
+      real (dp), intent(in) :: x
+
+      if (.not. present(l2) ) then
+        integrand = BreitWigner(Gamma, k, x) * self%QDist( l - x )
+      else
+        integrand = BreitWigner(Gamma, k, x) * self%QDist( l - x, l2 - x )
+      end if
+
+    end function integrand
+
+  end function BreitUnstable
+
+!ccccccccccccccc
+
+  recursive real (dp) function Distribution(self, k, x, x2) result(res)
+    class (MCtop)       , intent(in) :: self
+    real (dp)           , intent(in) :: x
+    real (dp), optional , intent(in) :: x2
+    integer             , intent(in) :: k
+    real (dp)                        :: y
+
+    res = 0
+
+    if ( present(x2) ) then
+      if (x2 > x) res = self%Distribution(k, x2) - self%Distribution(k, x); return
+    end if
+
+    if (x <= self%ESmin) return
+    if (x >= self%ESmax .and. k /= -1) return
 
     y = (x - self%ESmin)/(self%ESmax - self%ESmin)
 
     if ( self%shape(:6) == 'Cparam' ) then
 
-      Distribution = dot_product(self%coefs(0:self%n), &
-      LegendreList(self%n, 2 * y - 1 ) )
-      if ( Distribution < 0 .and. x > 0.8*self%ESmax ) Distribution = 0
+      if (y > 1 .and. k == -1) y = 1
+
+      res = (2._dp)**k * dot_product( self%coefs(0:self%n), &
+      LegendreList(self%n, k, 2 * y - 1 ) )
+
+      if ( k == 0 .and. res < 0 .and. x > 0.8_dp * self%ESmax ) res = 0
 
     else if ( self%shape(:6) == 'thrust' ) then
 
       if ( 2 * y <= 1 ) then
-        Distribution = self%coefs(1) * y**3
+        if (k == 0) then
+          res = self%coefs(1) * y**3
+        else if (k == 1) then
+          res = 3 * self%coefs(1) * y**2
+        else if (k == 2) then
+          res = 6 * self%coefs(1) * y
+        else if (k == 3) then
+          res = 6 * self%coefs(1)
+        else if (k > 3) then
+          res = 0
+        else if (k == -1) then
+          res = self%coefs(1) * y**4/4
+        end if
       else if ( y <= 0.61_dp ) then
-        Distribution = dot_product( self%coefs(8:9), [y, 1._dp] )
+        if (k == 0) then
+          res = dot_product( self%coefs(8:9), [y, 1._dp] )
+        else if (k == 1) then
+          res = self%coefs(8)
+        else if (k > 1) then
+          res = 0
+        else if (k == -1) then
+          res =  dot_product( self%coefs(8:9), [y**2/2 - 0.125_dp, y - 0.5_dp] ) &
+          + self%coefs(1)/64
+        end if
       else if ( y <= 0.89_dp ) then
-        Distribution = dot_product( self%coefs(5:7), [y**2, y, 1._dp] )
+        if (k == 0) then
+          res = dot_product( self%coefs(5:7), [y**2, y, 1._dp] )
+        else if (k == 1) then
+          res = dot_product( self%coefs(5:6), [2 * y, 1._dp] )
+        else if (k == 2) then
+          res = 2 * self%coefs(5)
+        else if (k > 2) then
+          res = 0
+        else if (k == -1) then
+          res = dot_product( self%coefs(8:9), [0.06105_dp, 0.11_dp] ) &
+            + self%coefs(1)/64+ dot_product( self%coefs(5:7), &
+            [ (y**3 - 0.226981_dp)/3, y**2/2 - 0.18605_dp, y - 0.61_dp] )
+        end if
+      else if (y < 1) then
+        if (k == 0) then
+          res = dot_product( self%coefs(3:4), [y, 1._dp] )
+        else if (k == 1) then
+          res = self%coefs(3)
+        else if (k > 1) then
+          res = 0
+        else if (k == -1) then
+          res = dot_product( self%coefs(8:9), [0.06105_dp, 0.11_dp] )        + &
+          dot_product( self%coefs(3:4), [y**2/2 - 0.39605_dp, y - 0.89_dp] ) + &
+          self%coefs(1)/64 + dot_product( self%coefs(5:7),                     &
+          [ 0.477988_dp/3, 0.21_dp, 0.28_dp] )
+        end if
       else
-        Distribution = dot_product( self%coefs(3:4), [y, 1._dp] )
+        if (k == -1) then
+          res = dot_product( self%coefs(8:9), [0.06105_dp, 0.11_dp] )            + &
+          dot_product( self%coefs(3:4), [0.10395_dp, 0.11_dp] ) + self%coefs(1)/64 &
+          + dot_product( self%coefs(5:7), [ 0.477988_dp/3, 0.21_dp, 0.28_dp] )
+        end if
       end if
 
-      Distribution = Distribution/self%coefs(10)
+      res = res/self%coefs(10)
 
     end if
+
+    res = res / (self%ESmax - self%ESmin)**k
 
    end function Distribution
 
@@ -105,6 +259,24 @@ contains
     delta = self%Dirac
 
    end function Delta
+
+!ccccccccccccccc
+
+  real (dp) function maxES(self)
+    class (MCtop), intent(in) :: self
+
+    maxES = self%ESMax
+
+   end function maxES
+
+!ccccccccccccccc
+
+  real (dp) function maxp(self)
+    class (MCtop), intent(in) :: self
+
+    maxp = self%pMax
+
+  end function maxp
 
 !ccccccccccccccc
 
@@ -129,7 +301,6 @@ contains
     + res(4) * 0.11_dp + res(3) * ( 1 - 0.89_dp**2)/2
 
   end function ThrustCoefs
-
 
 !ccccccccccccccc
 
@@ -259,6 +430,36 @@ contains
  + 1.8486109981118639e9_dp * m**7 - 2.463766069494559e9_dp * m**8 + 1.4270264140040352e9_dp * m**9 ]
 
   end function LagCoef
+
+!ccccccccccccccc
+
+  recursive pure real (dp) function BreitWigner(Gamma, i, l, l2) result(res)
+    real (dp)          , intent(in)  :: Gamma, l
+    real (dp), optional, intent(in)  :: l2
+    integer            , intent(in)  :: i
+    real (dp)                        :: Gammal
+
+    res = 0
+
+    if ( present(l2) ) then
+      if (l2 > l) res = BreitWigner(Gamma, i, l2) - BreitWigner(Gamma, i, l)
+      return
+    end if
+
+    Gammal = Gamma**2 + l**2
+
+    select case(i)
+    case default; res = 0
+    case(0);  res = Gamma/Gammal/Pi
+    case(1);  res = - 2 * Gamma * l/Gammal**2/Pi
+    case(2);  res = - 2 * Gamma * (Gamma**2 - 3 * l**2)/Gammal**3/Pi
+    case(3);  res = - 24 * Gamma * l * (Gamma**2 - l**2)/Gammal**4/Pi
+    case(-1); res = 0.5_dp + ATan(l/Gamma)/Pi
+    case(-2); res = ( l/2 + Gamma * log(Gammal)/Pi/2 + l/Pi * ATan(l/Gamma) )/Gammal
+    case(-3); res = log(Gammal) * ( 0.5_dp + ATan(l/Gamma)/Pi )/2
+    end select
+
+  end function BreitWigner
 
 !ccccccccccccccc
 

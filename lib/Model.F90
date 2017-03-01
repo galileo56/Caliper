@@ -1,10 +1,11 @@
 
 module ModelClass
   use QuadPack, only: qagi; use Constants, only: dp, Pi, ExpEuler, d1mach, prec
-  use AnomDimClass, only: powList; use MatrixElementsClass, only: factList; implicit none
+  use AnomDimClass, only: powList; use MatrixElementsClass, only: factList
+  use MCtopClass; use adapt; use QuadPack; implicit none
   private
 
-  public    :: Model2D, BreitWigner, BreitModel2D
+  public    :: Model2D, BreitModel2D
 
 !ccccccccccccccc
 
@@ -21,13 +22,13 @@ module ModelClass
 
     final                                 :: delete_object
     procedure, pass(self), public         :: BreitModel, SoftFourier, SetLambda, &
-                                             CumMomentModel, ShapeFun, Taylor
-    procedure, pass(self)                 :: CumSoft, Zeta, MomentModel, EModCoefSum,  &
-                                             DModCoefSum, PlusSoft, ModCoef, DModCoef, &
-                                             BinomialInteger, BinomialReal, CModCoef,  &
-                                             Binom, fact
+    CumMomentModel, ShapeFun, Taylor, ModelUnstable, BreitModUns
 
-    generic, private :: Binomial => BinomialInteger, BinomialReal
+    procedure, pass(self)                 :: CumSoft, MomentModel, EModCoefSum, &
+    DModCoefSum, PlusSoft, ModCoef, DModCoef, BinomialInteger, BinomialReal,    &
+    Binom, fact, CModCoef, Zeta
+
+    generic, private  :: Binomial => BinomialInteger, BinomialReal
 
   end type Model
 
@@ -133,6 +134,53 @@ module ModelClass
 
 !ccccccccccccccc
 
+  real (dp) function ModelUnstable(self, MC, k, p, p2)
+    class (Model)     , intent(in) :: self
+    type (MCtop)      , intent(in) :: MC
+    real(dp)          , intent(in) :: p
+    real(dp), optional, intent(in) :: p2
+    integer           , intent(in) :: k
+    real (dp)                      :: plim, err
+    ! integer                        :: neval, ier
+
+    ModelUnstable = 0; plim = p
+
+    if ( present(p2) ) then
+      if (p2 <= p) return; plim = p2
+    end if
+
+    if ( MC%shape(:6) == 'Cparam' ) then
+      ModelUnstable = dGauss( InteUns, 0._dp, min( MC%maxp(), plim ), prec )
+    else
+      call DAdapt(InteUns, 0._dp, min( MC%maxp(), plim ), 1, prec, &
+      prec, ModelUnstable, ERR)
+    end if
+
+    ! call qags( InteUns, 0._dp, min( MC%maxp(), plim ), prec, &
+    ! prec, ModelUnstable, err, neval, ier )
+
+  contains
+
+    real (dp) function InteUns(x)
+      real(dp), intent(in) :: x
+
+      if ( .not. present(p2) ) then
+        InteUns = self%ShapeFun( k, p - x ) * MC%Qdist(x)
+      else
+        if ( p - x <= 0 ) then
+          InteUns = self%ShapeFun( k, p2 - x ) * MC%QDist(x)
+        else
+          InteUns = self%ShapeFun( k, p - x, p2 - x ) * &
+          MC%QDist(x)
+        end if
+      end if
+
+    end function InteUns
+
+  end function ModelUnstable
+
+!ccccccccccccccc
+
   real (dp) function Taylor(self, k)
     class (Model), intent(in) :: self
     integer      , intent(in) :: k
@@ -167,7 +215,8 @@ module ModelClass
     real (dp), optional, intent(in) :: p2
     integer                         :: i, l, s
     real (dp)                       :: x, x2, SoftPieceMat2, SoftPieceMat3, a, &
-                                       SoftPieceMat3B, SoftPieceMat2B, b
+    SoftPieceMat3B, SoftPieceMat2B, b
+
     ShapeFun = 0
 
     if (k < -3) return
@@ -182,7 +231,6 @@ module ModelClass
     else if (k < - 1) then
       if (p > 0)         ShapeFun = self%PlusSoft(k + 2, p)
       if ( present(p2) ) ShapeFun = self%PlusSoft(k + 2, p, p2); return
-      ! if ( present(p2) ) ShapeFun = self%PlusSoft(k + 2, p2) - self%PlusSoft(k + 2, p); return
     end if
 
     do i = 0, self%Nmax
@@ -227,7 +275,8 @@ module ModelClass
     real (dp)          , intent(in) :: x
     real (dp), optional, intent(in) :: x2
     integer                         :: i, j, l
-    real (dp)                       :: CumSoft2, CumSoft2B, CumSoft3, CumSoft3B, a, b, c
+    real (dp)                       :: CumSoft2, CumSoft2B, CumSoft3, CumSoft3B, &
+    a, b, c
 
     CumSoft = 0
     if (  ( .not. present(x2) ) .and. x <= 0 ) return
@@ -248,7 +297,7 @@ module ModelClass
         end do
 
         b = self%EmodCoef(i,l) * self%Listfact(l + 3); c = ( 4._dp * (i + 1) )**(- 4 - l)
-        if (x > 0) CumSoft2 = CumSoft2 + b * (  c - exp( - 4 * (i + 1) * x ) * CumSoft3 )
+        if (x > 0) CumSoft2 = CumSoft2 + b * (  c - exp( - 4 * (i + 1) * x ) * CumSoft3  )
         if ( present(x2) ) CumSoft2B = CumSoft2B + b * (  c - exp( - 4 * (i + 1) * x2 ) * CumSoft3B )
 
       enddo
@@ -362,6 +411,34 @@ module ModelClass
     enddo
 
    end function SoftFourier
+
+!ccccccccccccccc
+
+  real (dp) function BreitModUns(self, MC, width, i, l, l2)
+    class (Model)      , intent(in) :: self
+    real (dp)          , intent(in) :: l, width
+    real (dp), optional, intent(in) :: l2
+    integer            , intent(in) :: i
+    type (MCtop)       , intent(in) :: MC
+
+    BreitModUns = dGauss( integrand, 0._dp, MC%maxp(), prec )
+
+    ! call DAdapt(integrand, 0._dp, MC%maxp(), 1, prec, prec, BreitModUns, ERR)
+
+  contains
+
+    real (dp) function integrand(x)
+      real (dp), intent(in) :: x
+
+      if (.not. present(l2) ) then
+        integrand = self%BreitModel(width, i, l - x) * MC%Qdist(x)
+      else
+        integrand = self%BreitModel(width, i, l - x, l2 - x) * MC%Qdist(x)
+      end if
+
+    end function integrand
+
+  end function BreitModUns
 
 !ccccccccccccccc
 
@@ -731,9 +808,9 @@ module ModelClass
 
    real (dp) function CModCoef(self, n, i, m)
      class (Model), intent(in) :: self
-     integer, intent(in) :: n, i, m
-     integer             :: j, k
-     real (dp)           :: CModCoef2
+     integer      , intent(in) :: n, i, m
+     integer                   :: j, k
+     real (dp)                 :: CModCoef2
 
      CModCoef = 0; if ( i < 0 .or. i > n .or. m < 0 .or. m > 3 * i ) return
 
@@ -844,36 +921,6 @@ module ModelClass
     end do
 
   end  function SemiBreitModel2D
-
-!ccccccccccccccc
-
-  recursive pure real (dp) function BreitWigner(Gamma, i, l, l2) result(res)
-    real (dp)          , intent(in)  :: Gamma, l
-    real (dp), optional, intent(in)  :: l2
-    integer            , intent(in)  :: i
-    real (dp)                        :: Gammal
-
-    res = 0
-
-    if ( present(l2) ) then
-      if (l2 > l) res = BreitWigner(Gamma, i, l2) - BreitWigner(Gamma, i, l)
-      return
-    end if
-
-    Gammal = Gamma**2 + l**2
-
-    select case(i)
-    case default; res = 0
-    case(0);  res = Gamma/Gammal/Pi
-    case(1);  res = - 2 * Gamma * l/Gammal**2/Pi
-    case(2);  res = - 2 * Gamma * (Gamma**2 - 3 * l**2)/Gammal**3/Pi
-    case(3);  res = - 24 * Gamma * l * (Gamma**2 - l**2)/Gammal**4/Pi
-    case(-1); res = 0.5_dp + ATan(l/Gamma)/Pi
-    case(-2); res = ( l/2 + Gamma * log(Gammal)/Pi/2 + l/Pi * ATan(l/Gamma) )/Gammal
-    case(-3); res = log(Gammal) * ( 0.5_dp + ATan(l/Gamma)/Pi )/2
-    end select
-
-  end function BreitWigner
 
 !ccccccccccccccc
 

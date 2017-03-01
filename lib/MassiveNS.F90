@@ -1,9 +1,9 @@
 
 module MassiveNSClass
   use MatrixElementsClass; use RunningClass; use ElectroWeakClass; use AnomDimClass
-  use ModelClass         ; use carlson_elliptic_module;            use GapMassClass
-  use Constants, only: dp, Pi, Pi2, Pio2, d1mach, sr2, l2, prec  ; use QuadPack, only: qags
-  implicit none          ; private
+  use ModelClass         ; use carlson_elliptic_module           ; use GapMassClass
+  use Constants, only: dp, Pi, Pi2, Pio2, d1mach, sr2, l2, prec  ; use MCtopClass
+  use QuadPack, only: qags; implicit none                        ; private
 
   real (dp), parameter :: mth = 0.39307568887871164_dp, mcrit = 0.29913473867076185_dp
 
@@ -14,24 +14,26 @@ module MassiveNSClass
     class (MatricesElementsMass), allocatable :: matEl
     type (ElectroWeak)        :: EWeak
     type (Running)            :: alphaMass, alphaMassNl
+    type (MCtop)              :: MC
     real (dp), dimension(2)   :: EW, Dirac
     real (dp), dimension(3)   :: deltaM, deltaM2
     character (len = 10)      :: shape, ES, current, singular, scheme
     integer                   :: nf, massOrd
-    real (dp)                 :: m2, m4, m6, m8, m10, alphaJ, tmin, tmax, mPole, GlueInt,&
-                                 GlueMax, v, lm, m, thrustMin, cp, mm, A1Singular, tint, &
-                                 B1Singular, alphaMu, B1, Q, width, mass, AMS, alphaH  , &
-                                 alphaM, muM
+    real (dp)                 :: m2, m4, m6, m8, m10, alphaJ, tmin, tmax, mPole,&
+    v, lm, m, thrustMin, cp, mm, A1Singular, tint, B1Singular, alphaMu, B1, Q, &
+    alphaM, muM, GlueMax, GlueInt, width, AMS, alphaH, mass
+
    contains
 
    final                         :: delete_object
-   procedure, pass(self), public :: JetMassExp, FOMass, HJMNSMass, SetMCharm, MassVar,   &
-                                    MassDelta, MassDeltaShift, numFlav, matElementNS,    &
-                                    SetEverything, SetAlpha, SetMTop, SetMasses, SetAll, &
-                                    SetMBottom, EShape
-   procedure, pass(self)         :: Quark, Glue, EWAdd, f1Q, f2Q, f3Q, f4Q, B1NS, Hcorr, &
-                                    MassSing1loop, CumMassSing1loop, A1loop, FunCp, A0MS,&
-                                    CparamFOMass, CoefsCparam, NSMassMod, NSMassList, A0
+   procedure, pass(self), public :: JetMassExp, FOMass, HJMNSMass, SetMCharm, &
+   MassDelta, MassDeltaShift, numFlav, matElementNS, SetEverything, SetAlpha, &
+   SetMBottom, EShape, MassVar, SetMTop, SetMasses, SetAll
+
+   procedure, pass(self)         :: Quark, Glue, EWAdd, f1Q, f2Q, f3Q, f4Q, B1NS, &
+   MassSing1loop, CumMassSing1loop, A1loop, FunCp, A0MS, CparamFOMass, Hcorr, A0, &
+   CoefsCparam, NSMassMod, NSMassList
+
    generic   , public            :: NSMass => NSMassMod, NSMassList
 
   end type MassiveNS
@@ -127,6 +129,8 @@ module MassiveNSClass
          call InMassNS%SetAll(0._dp)
        end if
      end if
+
+     InMassNS%MC = MCtop(shape, InMassNS%mass, InMassNS%Q)
 
      InMassNS%EW = EW%EWfactors(InMassNS%nf, InMassNS%Q)
      InMassNS%EW = InMassNS%EW/Sum(InMassNS%EW)
@@ -321,12 +325,14 @@ module MassiveNSClass
 
     call self%SetAll(width);  call self%matEl%SetDelta(muS, R, alphaList)
 
+    self%MC = MCtop(self%shape, self%mass, Q)
+
   end subroutine SetEverything
 
 !ccccccccccccccc
 
-  real (dp) function NSMassMod(self, Mod, setup, gap, cum, order, run, R0, mu0, delta0, &
-                               h, t, t2)
+  real (dp) function NSMassMod(self, Mod, setup, gap, cum, order, run, R0, mu0, &
+  delta0, h, t, t2)
     class (MassiveNS)    , intent(in) :: self
     character (len = *)  , intent(in) :: setup, gap, cum
     integer              , intent(in) :: order, run
@@ -339,38 +345,35 @@ module MassiveNSClass
     real (dp), dimension(order,order) :: delt
     real (dp), dimension(order)       :: delta
     real (dp), dimension(1)           :: resul
-    real (dp)                         :: abserr, res, tau, Modelo, ModPlus, p, tau2, p2, &
-                                         shift, ModDer, tshift, tshift2, p3
+    real (dp)                         :: abserr, res, tau, Modelo, ModPlus, p2, &
+    shift, ModDer, tshift, tshift2, p3, tau2, p3shift, p2shift, p
 
     GapMassive = GapMass(run, gap, self%matEl, R0, mu0); NSMassMod = 0
 
-    if ( present(t2) ) then
-      if (t2 <= t) return
-    end if
+    if ( present(t2) ) then; if (t2 <= t) return;  end if
 
     if ( setup(:5) == 'Model' ) then
       if ( present(t2) ) then
-        resul = NSMassList(self, [Mod], gap, cum, order, run, R0, mu0, delta0, h, t, t2)
+        resul = NSMassList(self, [Mod], setup, gap, cum, order, run, R0, mu0, delta0, h, t, t2)
       else
-        resul = NSMassList(self, [Mod], gap, cum, order, run, R0, mu0, delta0, h, t)
+        resul = NSMassList(self, [Mod], setup, gap, cum, order, run, R0, mu0, delta0, h, t)
       end if
       NSMassMod = resul(1); return
     end if
 
-    call GapMassive%setGammaShift( order, self%shape, delta0, h, self%matEl%scales('R'), &
-                                   self%matEl%scales('muS'), shift, delt )
+    call GapMassive%setGammaShift( order, self%shape, delta0, h, &
+    self%matEl%scales('R'), self%matEl%scales('muS'), shift, delt )
 
     delta = delt(1,:); Modelo = 0; ModPlus = 0; ModDer = 0
 
-    if ( self%shape(:3) == 'HJM' ) then
-      delta = delta/2; shift = shift/2
-    end if
+    if ( self%shape(:3) == 'HJM' ) then; delta = delta/2; shift = shift/2;end if
 
-    tshift = t - shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau; p3 = p
-    tau2   = tau; p2 = p; tshift2 = tshift
+    tshift = t - shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau
+    tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift
 
     if ( present(t2) ) then
-      tshift2 = t2 - shift/self%Q;  tau2 = tshift2 - self%tmin; p2 = self%Q * tau2
+      tshift2 = t2 - shift/self%Q;  tau2 = tshift2 - self%tmin
+      p2 = self%Q * tau2;  p2shift = self%Q * tshift2
     end if
 
     if ( present(t2) .and. p < 0 ) then
@@ -408,13 +411,13 @@ module MassiveNSClass
             call qags( NS1lloop, 0._dp, tau, prec, prec, res, abserr, neval, ier )
 
             NSMassMod = NSMassMod + self%alphaMu * (  res + self%A1Singular + self%Dirac(2) + &
-                    ( self%B1Singular + self%B1 ) * log(tau)  ) + self%deltaM(1) * self%AMS
+            ( self%B1Singular + self%B1 ) * log(tau)  ) + self%deltaM(1) * self%AMS
 
          else
 
            call qags( NS1lloop, tau, tau2, prec, prec, res, abserr, neval, ier )
 
-            NSMassMod = self%alphaMu * (  res + ( self%B1Singular + self%B1 ) * log(tau2/tau)  )
+            NSMassMod = self%alphaMu * ( res + (self%B1Singular + self%B1) * log(tau2/tau) )
 
          end if
 
@@ -423,7 +426,7 @@ module MassiveNSClass
 
     else if ( setup(:7) == 'NoModel') then
 
-      cum_if_2: if ( cum(:4) == 'diff'  .and. tau2 > 0 ) then
+      cum_if_2: if ( cum(:4) == 'diff' .and. tau2 > 0 ) then
 
         if (order > 0) then
 
@@ -456,21 +459,21 @@ module MassiveNSClass
             call qags( NS1lloop, 0._dp, tau, prec, prec, res, abserr, neval, ier )
 
             NSMassMod = NSMassMod + self%alphaMu * ( res - self%CumMassSing1loop(tshift) +  &
-                                          self%A1Singular + self%B1Singular * log(tau) )
+            self%A1Singular + self%B1Singular * log(tau) )
 
             if ( self%singular(:3) /= 'abs' .and. self%width <= d1mach(1) )  &
-                NSMassMod = NSMassMod + self%AMS * self%deltaM(1) + &
-                self%alphaMu * ( self%Dirac(2) + self%B1 * log(tau) )
+            NSMassMod = NSMassMod + self%AMS * self%deltaM(1) + &
+            self%alphaMu * ( self%Dirac(2) + self%B1 * log(tau) )
 
           else
 
             call qags( NS1lloop, tau, tau2, prec, prec, res, abserr, neval, ier )
 
             NSMassMod = NSMassMod + self%alphaMu * ( res + self%CumMassSing1loop(tshift) -  &
-                     self%CumMassSing1loop(tshift2) +  self%B1Singular * log(tau2/tau) )
+            self%CumMassSing1loop(tshift2) +  self%B1Singular * log(tau2/tau) )
 
             if ( self%singular(:3) /= 'abs' .and. self%width <= d1mach(1) )  &
-                NSMassMod = NSMassMod + self%alphaMu * self%B1 * log(tau2/tau)
+            NSMassMod = NSMassMod + self%alphaMu * self%B1 * log(tau2/tau)
 
           end if
 
@@ -479,21 +482,60 @@ module MassiveNSClass
 
       if ( self%singular(:3) /= 'abs' .and. self%width > tiny(1._dp) ) then
 
-                       Modelo  = self%Q**(1 + cumul) * BreitWigner(self%width, cumul    , p3)
-        if (order > 0) ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p3)
-        if (order > 0) ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p3)
+        if ( setup(8:15) /= 'Unstable' .or. self%shape(:6) == 'thrust' ) then
 
-        if ( present(t2) ) then
+          if ( .not. present(t2) ) then
 
-                         Modelo  = self%Q**(1 + cumul) * BreitWigner(self%width, cumul    , p2) - Modelo
-          if (order > 0) ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p2) - ModPlus
-          if (order > 0) ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p2) - ModDer
+            Modelo = self%Q**(1 + cumul) * BreitWigner(self%width, cumul, p3)
 
+            if (order > 0) then
+              ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p3)
+              ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p3)
+            end if
+
+          else
+
+            Modelo = self%Q**(1 + cumul) * BreitWigner(self%width, cumul, p3, p2)
+
+            if (order > 0) then
+              ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p3, p2)
+              ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p3, p2)
+            end if
+          end if
+
+        else
+          Modelo = 0; ModPlus = 0; ModDer = 0
+        end if
+
+        if ( setup(8:15) == 'Unstable' ) then
+          if ( .not. present(t2) ) then
+
+            Modelo = Modelo * self%MC%Delta() + self%Q**(1 + cumul) * &
+            self%MC%BreitUnstable(self%width, cumul, p3shift)
+
+            if (order > 0) then
+
+              ModPlus = ModPlus * self%MC%Delta() + self%Q**(1 + cumul) * &
+              self%MC%BreitUnstable(self%width, cumul - 2, p3shift)
+
+              ModDer  = ModDer  * self%MC%Delta() + self%Q**(2 + cumul) * &
+              self%MC%BreitUnstable(self%width, cumul + 1, p3shift)
+
+            else
+
+              ModPlus = ModPlus * self%MC%Delta() + self%Q**(1 + cumul) * &
+              self%MC%BreitUnstable(self%width, cumul - 2, p3shift, p2shift)
+
+              ModDer  = ModDer  * self%MC%Delta() + self%Q**(2 + cumul) * &
+              self%MC%BreitUnstable(self%width, cumul + 1, p3shift, p2shift)
+
+            end if
+          end if
         end if
       end if
     end if   setup_if
 
-    if (  self%singular(:3) /= 'abs' .and. ( setup(:5) == 'Model'  .or. &
+    if (  self%singular(:3) /= 'abs' .and. ( setup(:5) == 'Model' .or. &
          ( setup(:7) == 'NoModel' .and. self%width > tiny(1._dp) ) )   ) then
 
       if (order >= 0) NSMassMod = NSMassMod + self%Dirac(1) * Modelo
@@ -524,10 +566,10 @@ module MassiveNSClass
 
 !ccccccccccccccc
 
-  function NSMassList(self, ModList, gap, cum, order, run, R0, mu0, delta0, h, t, t2) &
-  result(resList)
+  function NSMassList(self, ModList, setup, gap, cum, order, run, R0, mu0, &
+  delta0, h, t, t2) result(resList)
     class (MassiveNS)    , intent(in)      :: self
-    character (len = *)  , intent(in)      :: gap, cum
+    character (len = *)  , intent(in)      :: setup, gap, cum
     integer              , intent(in)      :: order, run
     real (dp)            , intent(in)      :: R0, mu0, delta0, h, t
     real (dp), optional  , intent(in)      :: t2
@@ -540,28 +582,25 @@ module MassiveNSClass
     real (dp), dimension(order)            :: delta
     real (dp), dimension( size(ModList) )  :: resList, Modelo, ModPlus, ModDer
     real (dp)                              :: abserr, tau, p, tau2, p2, p3, &
-                                              shift, tshift, tshift2
+    shift, tshift, tshift2, p3shift, p2shift
 
     GapMassive = GapMass(run, gap, self%matEl, R0, mu0); resList = 0
 
-    if ( present(t2) ) then
-      if (t2 <= t) return
-    end if
+    if ( present(t2) ) then; if (t2 <= t) return;  end if
 
-    call GapMassive%setGammaShift( order, self%shape, delta0, h, self%matEl%scales('R'), &
-                                   self%matEl%scales('muS'), shift, delt )
+    call GapMassive%setGammaShift( order, self%shape, delta0, h, &
+    self%matEl%scales('R'), self%matEl%scales('muS'), shift, delt )
 
     delta = delt(1,:); Modelo = 0; ModPlus = 0; ModDer = 0
 
-    if ( self%shape(:3) == 'HJM' ) then
-      delta = delta/2; shift = shift/2
-    end if
+    if ( self%shape(:3) == 'HJM' ) then; delta = delta/2; shift = shift/2;end if
 
-    tshift = t - shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau; p3 = p
-    tau2   = tau; p2 = p; tshift2 = tshift
+    tshift = t - shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau
+    tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift
 
     if ( present(t2) ) then
-      tshift2 = t2 - shift/self%Q;  tau2 = tshift2 - self%tmin; p2 = self%Q * tau2
+      tshift2 = t2 - shift/self%Q;  tau2    = tshift2 - self%tmin
+      p2 = self%Q * tau2         ;  p2shift = self%Q * tshift2
     end if
 
     if ( present(t2) .and. p < 0 ) then
@@ -583,29 +622,84 @@ module MassiveNSClass
         if ( self%width <= d1mach(1) ) then
 
           if ( dobsing ) then
-                           Modelo(i)  = self%Q**(1 + cumul) * Mod%ShapeFun(cumul    , p)
-            if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%ShapeFun(cumul - 2, p)
-            if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%ShapeFun(cumul + 1, p)
+
+            Modelo(i)  = self%Q**(1 + cumul) * Mod%ShapeFun(cumul, p)
+
+            if (order > 0) then
+              ModPlus(i) = self%Q**(1 + cumul) * Mod%ShapeFun(cumul - 2, p)
+              ModDer(i)  = self%Q**(2 + cumul) * Mod%ShapeFun(cumul + 1, p)
+            end if
 
           else
 
-                           Modelo(i)  = self%Q**(1 + cumul) * Mod%ShapeFun(cumul    , p, p2)
-            if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%ShapeFun(cumul - 2, p, p2)
-            if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%ShapeFun(cumul + 1, p, p2)
+            Modelo(i)  = self%Q**(1 + cumul) * Mod%ShapeFun(cumul, p, p2)
+
+            if (order > 0) then
+              ModPlus(i) = self%Q**(1 + cumul) * Mod%ShapeFun(cumul - 2, p, p2)
+              ModDer(i)  = self%Q**(2 + cumul) * Mod%ShapeFun(cumul + 1, p, p2)
+            end if
 
           end if
 
         else
-          if ( .not. present(t2) ) then
-                           Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul    , p)
-            if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul - 2, p)
-            if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModel(self%width, cumul + 1, p)
 
+          if ( setup(6:13) /= 'Unstable' .or. self%shape(:6) == 'thrust' ) then
+
+            if ( .not. present(t2) ) then
+
+              Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul, p)
+
+              if (order > 0) then
+                ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul - 2, p)
+                ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModel(self%width, cumul + 1, p)
+              end if
+
+            else
+
+              Modelo(i) = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul, p3, p2)
+
+              if (order > 0) then
+                ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul - 2, p3, p2)
+                ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModel(self%width, cumul + 1, p3, p2)
+              end if
+
+            end if
           else
-                           Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul    , p3, p2)
-            if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul - 2, p3, p2)
-            if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModel(self%width, cumul + 1, p3, p2)
+            Modelo(i) = 0; ModPlus(i) = 0; ModDer(i) = 0
+          end if
 
+          if ( setup(6:13) == 'Unstable' ) then
+
+            if ( .not. present(t2) ) then
+
+              Modelo(i) = self%MC%Delta() * Modelo(i) + self%Q**(1 + cumul) * &
+              Mod%BreitModUns(self%MC, self%width, cumul, p3shift)
+
+              if (order > 0) then
+
+                ModPlus(i) = self%MC%Delta() * ModPlus(i) + self%Q**(1 + cumul) * &
+                Mod%BreitModUns(self%MC, self%width, cumul - 2, p3shift)
+
+                ModDer(i)  = self%MC%Delta() * ModDer(i) + self%Q**(2 + cumul) * &
+                Mod%BreitModUns(self%MC, self%width, cumul + 1, p3shift)
+
+              end if
+
+            else
+
+              Modelo(i) = self%MC%Delta() * Modelo(i) + self%Q**(1 + cumul) * &
+              Mod%BreitModUns(self%MC, self%width, cumul    , p3shift, p2shift)
+
+              if (order > 0) then
+
+                ModPlus(i) = self%MC%Delta() * ModPlus(i) + self%Q**(1 + cumul) * &
+                Mod%BreitModUns(self%MC, self%width, cumul - 2, p3shift, p2shift)
+
+                ModDer(i)  = self%MC%Delta() * ModDer(i) + self%Q**(2 + cumul) * &
+                Mod%BreitModUns(self%MC, self%width, cumul + 1, p3shift, p2shift)
+
+              end if
+            end if
           end if
         end if
 
@@ -662,8 +756,8 @@ module MassiveNSClass
 
 !ccccccccccccccc
 
-  real (dp) function HJMNSMassScales(self, c, modList, setup, gap, cum, order, run, mu, &
-                    Q, muJ, muS, R, Rmass, muM, width, R0, mu0, delta0, h, t, t2)
+  real (dp) function HJMNSMassScales(self, c, modList, setup, gap, cum, order, &
+  run, mu, Q, muJ, muS, R, Rmass, muM, width, R0, mu0, delta0, h, t, t2)
     class (MassiveScales)     , intent(inout) :: self
     character (len = *)          , intent(in) :: setup, gap, cum
     integer                      , intent(in) :: order, run
@@ -671,7 +765,7 @@ module MassiveNSClass
     real (dp)    , dimension(:,:), intent(in) :: c
     type (Model) , dimension(:,:), intent(in) :: modList
     real (dp)                    , intent(in) :: R0, mu0, delta0, h, t, mu, muJ, muS, Q, &
-                                                 Rmass, width, R, muM
+    Rmass, width, R, muM
 
     call self%SetEverything(mu, Q, mu, muJ, muS, R, Rmass, muM, width)
 

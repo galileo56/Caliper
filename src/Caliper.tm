@@ -12,9 +12,10 @@
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
 
-:Evaluate:  LegendreList::usage = "LegendreList[n, x] computes the of the first n + 1 Legendre Polynomial"
+:Evaluate:  LegendreList::usage = "LegendreList[n, k, x] computes the of the first n + 1 k-th derivative of the Legendre Polynomials"
 :Evaluate:  QLegendreList::usage = "QLegendreList[n, x] computes the of the first n + 1 Legendre Polynomial"
-:Evaluate:  MCtop::usage = "MCtop[shape, mt, Q, n, x] computes the LO distribution for unstable tops"
+:Evaluate:  BreitUnstable::usage = "BreitUnstable[shape, mt, Q, gamma, n, k, x] computes the LO distribution for unstable tops convoluted with a BreitWigner"
+:Evaluate:  MCtop::usage = "MCtop[shape, mt, Q, n, k, x] computes the LO distribution for unstable tops"
 :Evaluate:  DeltaMCtop::usage = "DeltaMCtop[shape, mt, Q] computes the LO distribution for unstable tops"
 :Evaluate:  pFq::usage = "pFq[a,b,z] computes the generalized hypergeometric function"
 :Evaluate:  FindOrigin::usage = "FindOrigin[shape, gap, orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eR, R0, muR0, delta0, h], finds the origin for massless Event Shapes"
@@ -74,6 +75,8 @@
 :Evaluate:  NGLKernel::usage = "NGLKernel[n, n1, n2, width, w, mu, p] computes the first 2*n kernels needed for NGL resummation"
 :Evaluate:  Taylor::usage = "Taylor[c, lambda, k] computes the Taylor expansion of the shape function"
 :Evaluate:  Model::usage = "Model[c, lambda, k, l] computes the shape function"
+:Evaluate:  ModelUnstable::usage = "ModelUnstable[shape, mt, Q, c, lambda, n, k, l] computes the shape function convoluted with the unstable distribution"
+:Evaluate:  BreitModelUnstable::usage = "BreitModelUnstable[shape, mt, Q, gamma, c, lambda, n, k, l] computes the shape function convoluted with the unstable distribution plus a BreitWigner"
 :Evaluate:  BreitModel::usage = "BreitModel[c, lambda, width, k, l] computes the shape function convoluted with a Breit Wigner"
 :Evaluate:  MomentModel::usage = "MomentModel[c, lambda, k] computes the shape function"
 :Evaluate:  ModelPiece::usage = "ModelPiece[c, lambda, k, l] computes the shape function"
@@ -118,9 +121,9 @@
 
 :Begin:
 :Function:      legendrelist
-:Pattern:       LegendreList[n_, x_]
-:Arguments:     {n, x}
-:ArgumentTypes: {Integer, Real}
+:Pattern:       LegendreList[n_, k_, x_]
+:Arguments:     {n, k, x}
+:ArgumentTypes: {Integer, Integer, Real}
 :ReturnType:    Manual
 :End:
 
@@ -350,9 +353,17 @@
 
 :Begin:
 :Function:      mctop
-:Pattern:       MCtop[shape_, mt_, Q_, n_, x_]
-:Arguments:     {shape, mt, Q, n, x}
-:ArgumentTypes: {String, Real, Real, Integer, Real}
+:Pattern:       MCtop[shape_, mt_, Q_, n_, k_, x_]
+:Arguments:     {shape, mt, Q, n, k, x}
+:ArgumentTypes: {String, Real, Real, Integer, Integer, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      breitunstable
+:Pattern:       BreitUnstable[shape_, mt_, Q_, gamma_, n_, k_, x_]
+:Arguments:     {shape, mt, Q, gamma, n, k, x}
+:ArgumentTypes: {String, Real, Real, Real, Integer, Integer, Real}
 :ReturnType:    Real
 :End:
 
@@ -1099,6 +1110,30 @@
 :End:
 
 :Begin:
+:Function:      modelunstable
+:Pattern:       ModelUnstable[shape_, mt_, Q_, c_, lambda_, n_, k_, l_]
+:Arguments:     {shape, mt, Q, c, lambda, n, k, l}
+:ArgumentTypes: {String, Real, Real, RealList, Real, Integer, Integer, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      breitmodelunstable
+:Pattern:       BreitModelUnstable[shape_, mt_, Q_, gamma_, c_, lambda_, n_, k_, l_]
+:Arguments:     {shape, mt, Q, gamma, c, lambda, n, k, l}
+:ArgumentTypes: {String, Real, Real, Real, RealList, Real, Integer, Integer, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      modelunstablediff
+:Pattern:       ModelUnstable[shape_, mt_, Q_, c_, lambda_, n_, k_, l_, l2_]
+:Arguments:     {shape, mt, Q, c, lambda, n, k, l, l2}
+:ArgumentTypes: {String, Real, Real, RealList, Real, Integer, Integer, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
 :Function:      modeldiff
 :Pattern:       Model[c_, lambda_, k_, l_, l2_]
 :Arguments:     {c, lambda, k, l, l2}
@@ -1656,12 +1691,12 @@ return res;
 
 }
 
-extern double f90legendrelist_(int* n, double* x, double* res);
+extern double f90legendrelist_(int* n, int* k, double* x, double* res);
 
-static void legendrelist(int n, double x){
+static void legendrelist(int n, int k, double x){
   double res[n + 1];
 
-   f90legendrelist_(&n, &x, res);
+   f90legendrelist_(&n, &k, &x, res);
 
    MLPutRealList(stdlink, res, n + 1);
    MLEndPacket(stdlink);
@@ -3194,13 +3229,26 @@ static double nglfunction(int n, double z){
    return res;
 }
 
-extern double f90mctop_(char const* str, double* mt, double* Q, int* n, double* x,
-  double* result);
+extern double f90mctop_(char const* str, double* mt, double* Q, int* n, int* k,
+  double* x, double* result);
 
-static double mctop(char const* str, double mt, double Q, int n, double x){
+static double mctop(char const* str, double mt, double Q, int n, int k, double x){
   double res;
 
-   f90mctop_(str, &mt, &Q, &n, &x, &res);
+   f90mctop_(str, &mt, &Q, &n, &k, &x, &res);
+
+   return res;
+}
+
+
+extern double f90breitunstable_(char const* str, double* mt, double* Q,
+  double * gamma, int* n, int* k, double* x, double* result);
+
+static double breitunstable(char const* str, double mt, double Q, double gamma,
+  int n, int k, double x){
+  double res;
+
+   f90breitunstable_(str, &mt, &Q, &gamma, &n, &k, &x, &res);
 
    return res;
 }
@@ -3351,13 +3399,51 @@ static void coefmat(char const* str, int nf, double s3){
    MLEndPacket(stdlink);
 }
 
-extern double f90model_(double* c, int* clen, double* lambda, int* k, double* l, double* result);
+extern double f90model_(double* c, int* clen, double* lambda, int* k, double* l,
+  double* result);
 
 static double model(double c[], long clen, double lambda, int k, double l){
   double res;
   int len = clen;
 
    f90model_(c, &len, &lambda, &k, &l, &res);
+
+   return res;
+}
+
+extern double f90modelunstable_(char const* shape, double* mt, double* Q,
+double* c, int* clen, double* lambda, int* n, int* k, double* l, double* result);
+
+static double modelunstable(char const* shape, double mt, double Q, double c[], long clen,
+double lambda, int n, int k, double l){
+  double res;  int len = clen;
+
+   f90modelunstable_(shape, &mt, &Q, c, &len, &lambda, &n, &k, &l, &res);
+
+   return res;
+}
+
+extern double f90breitmodelunstable_(char const* shape, double* mt, double* Q,
+double *gamma, double* c, int* clen, double* lambda, int* n, int* k, double* l,
+double* result);
+
+static double breitmodelunstable(char const* shape, double mt, double Q, double gamma,
+  double c[], long clen, double lambda, int n, int k, double l){
+  double res;  int len = clen;
+
+   f90breitmodelunstable_(shape, &mt, &Q, &gamma, c, &len, &lambda, &n, &k, &l, &res);
+
+   return res;
+}
+
+extern double f90modelunstablediff_(char const* shape, double* mt, double* Q,
+double* c, int* clen, double* lambda, int* n, int* k, double* l, double* l2, double* result);
+
+static double modelunstablediff(char const* shape, double mt, double Q, double c[], long clen,
+double lambda, int n, int k, double l, double l2){
+  double res;  int len = clen;
+
+   f90modelunstablediff_(shape, &mt, &Q, c, &len, &lambda, &n, &k, &l, &l2, &res);
 
    return res;
 }
