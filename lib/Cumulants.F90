@@ -142,7 +142,7 @@ module CumulantClass
 
     do i = 1, size(tauList)
       crossList(i) = self%Bin( terms, cum, Mod, setup, gap, space, order, R0, &
-                               mu0, delta0, h, 0, tauList(i) )
+      mu0, delta0, h, 0, tauList(i) )
     end do
 
   end function ListDist
@@ -183,7 +183,7 @@ module CumulantClass
 
     do i = 1, size(tauList)
       crossList(:,i) = self%BinPiece( terms, cum, ModList, setup, gap, space, order, R0, &
-                                      mu0, delta0, h, 0, tauList(i) )
+      mu0, delta0, h, 0, tauList(i) )
     end do
 
   end function ListDistPiece
@@ -204,7 +204,7 @@ module CumulantClass
 
     do i = 1, size(tauList,2)
       crossList(:,i) = self%BinPiece( terms, cum, ModList, setup, gap, space, order, R0, &
-                                     mu0, delta0, h, 0, tauList(1,i), tauList(2,i) )
+      mu0, delta0, h, 0, tauList(1,i), tauList(2,i) )
     end do
 
   end function ListBinPiece
@@ -304,10 +304,10 @@ module CumulantClass
 
             if ( present(tau2) ) then
               list = Sing%SingleSingWidth(ModList, setup, gap, space, 'cum', order, &
-                                              R0, mu0, delta0, h, tau, tau2)
+              R0, mu0, delta0, h, tau, tau2)
             else
               list = Sing%SingleSingWidth(ModList, setup, gap, space, cumul, order, &
-                                              R0, mu0, delta0, h, tau)
+              R0, mu0, delta0, h, tau)
             end if
           end select
 
@@ -315,10 +315,10 @@ module CumulantClass
 
           if ( present(tau2) ) then
             list = self%Sing%SingleSing(ModList, gap, space, 'cum', order, &
-                                            R0, mu0, delta0, h, tau, tau2)
+            R0, mu0, delta0, h, tau, tau2)
           else
             list = self%Sing%SingleSing(ModList, gap, space, cumul, order, &
-                                            R0, mu0, delta0, h, tau)
+            R0, mu0, delta0, h, tau)
           end if
         end if
       end if
@@ -372,7 +372,7 @@ module CumulantClass
     real (dp), dimension(2)              :: pScen
     integer                              :: power, run, shapeCum, neval, ier
     character (len = 4)                  :: cumul
-    character (len = 7)                  :: setup
+    character (len = 15)                 :: setup
     logical                              :: dobsing
     real (dp)                            :: muNS, muH, muJ, muS, R, abserr, p, &
                                             p2, tmin, res0, res1, pmin
@@ -418,7 +418,7 @@ module CumulantClass
     if ( self%width < d1mach(1) .and. t0 < tmin  .and. cum(:3) /= 'cum') then
 
       res = self%Bin(terms, cum, Mod, setup, gap, space, order, R0, mu0, &
-                     delta0, h, pow, tmin, t1);  return
+      delta0, h, pow, tmin, t1);  return
 
     else if ( t0 < self%tScen(1) .and. t1 > self%tScen(1)) then
 
@@ -493,10 +493,10 @@ module CumulantClass
 
             if ( present(tau2) ) then
               CrossProf = Sing%SingleSingWidth(Mod, setup, gap, space, 'cum', order, &
-                                              R0, mu0, delta0, h, tau, tau2)
+              R0, mu0, delta0, h, tau, tau2)
             else
               CrossProf = Sing%SingleSingWidth(Mod, setup, gap, space, cumul, order, &
-                                              R0, mu0, delta0, h, tau)
+              R0, mu0, delta0, h, tau)
             end if
           end select
 

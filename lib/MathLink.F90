@@ -192,7 +192,7 @@ subroutine f90MassiveProfList(terms, hard, shape, EShape, setup, gap, space, cum
   Mod       = Model(lambda, c, [0,0], 'sum')
   Cumul     = CumulantMass(Prof, Sing, xi, xiB, width)
 
-  res = Cumul%ListDist(terms(:7), cum(:4), Mod, setup(:7), gap(:12), space(:6), order, R0, &
+  res = Cumul%ListDist(terms(:7), cum(:4), Mod, setup(:15), gap(:12), space(:6), order, R0, &
                   muR0, del0, h, tauList)
 
 end subroutine f90MassiveProfList
@@ -371,7 +371,7 @@ subroutine f90MassiveBinList(terms, hard, shape, EShape, setup, gap, space, cum,
   Mod       = Model(lambda, c, [0,0], 'sum')
   Cumul     = CumulantMass(Prof, Sing, xi, xiB, width)
 
-  res = Cumul%ListBin(terms(:7), cum(:9), Mod, setup(:7), gap(:12), space(:6), order, R0, &
+  res = Cumul%ListBin(terms(:7), cum(:9), Mod, setup(:15), gap(:12), space(:6), order, R0, &
                   muR0, del0, h, tauList)
 
 end subroutine f90MassiveBinList
@@ -424,8 +424,8 @@ subroutine f90MassiveProf(terms, hard, shape, EShape, setup, gap, space, cum, sc
   Mod       = Model(lambda, c, [0,0], 'sum')
   Cumul     = CumulantMass(Prof, Sing, xi, xiB, width)
 
-  res = Cumul%Bin(terms(:7), cum(:4), Mod, setup(:7), gap(:12), space(:6), order, R0, &
-                  muR0, del0, h, 0, tau)
+  res = Cumul%Bin(terms(:7), cum(:4), Mod, setup(:15), gap(:12), space(:6), order, R0, &
+  muR0, del0, h, 0, tau)
 
 end subroutine f90MassiveProf
 
@@ -644,7 +644,7 @@ subroutine f90MassiveProfDiff(terms, hard, shape, EShape, setup, gap, space, cum
   Mod       = Model(lambda, c, [0,0], 'sum')
   Cumul     = CumulantMass(Prof, Sing, xi, xiB, width)
 
-  res = Cumul%Bin(terms(:7), cum(:9), Mod, setup(:7), gap(:12), space(:6), order, R0, &
+  res = Cumul%Bin(terms(:7), cum(:9), Mod, setup(:15), gap(:12), space(:6), order, R0, &
                   muR0, del0, h, 0, tau, tau2)
 
 end subroutine f90MassiveProfDiff
@@ -697,7 +697,7 @@ subroutine f90MassiveMoment(terms, hard, shape, EShape, setup, gap, space, schem
   Mod       = Model(lambda, c, [0,0], 'sum')
   Cumul     = CumulantMass(Prof, Sing, xi, xiB, width)
 
-  res = Cumul%Bin(terms(:7), 'Integrate', Mod, setup(:7), gap(:12), space(:6), order, R0, &
+  res = Cumul%Bin(terms(:7), 'Integrate', Mod, setup(:15), gap(:12), space(:6), order, R0, &
                   muR0, del0, h, pow, tau, tau2)
 
 end subroutine f90MassiveMoment
@@ -737,7 +737,7 @@ subroutine f90MasslessProfList(terms, hard, shape, setup, gap, space, cum, order
   Mod      = Model(lambda, c, [0,0], 'sum')
   Cumul    = CumulantMassless(Prof, Sing)
 
-  res = Cumul%ListDist( terms(:7), cum(:4), Mod, setup(:7), gap(:12), space(:6), order, R0, &
+  res = Cumul%ListDist( terms(:7), cum(:4), Mod, setup(:15), gap(:12), space(:6), order, R0, &
                   muR0, delta0, h, tauList )
 
 end subroutine f90MasslessProfList
@@ -1042,7 +1042,7 @@ subroutine f90MasslessProfDiff(terms, hard, shape, setup, gap, space, cum, order
   Mod      = Model(lambda, c, [0,0], 'sum')
   Cumul    = CumulantMassless(Prof, Sing)
 
-  res = Cumul%Bin(terms(:7), cum(:9), Mod, setup(:7), gap(:12), space(:6), order, R0, &
+  res = Cumul%Bin(terms(:7), cum(:9), Mod, setup(:15), gap(:12), space(:6), order, R0, &
                   muR0, delta0, h, 0, tau, tau2)
 
 end subroutine f90MasslessProfDiff
@@ -1081,7 +1081,7 @@ subroutine f90MasslessMoment(terms, hard, shape, setup, gap, space, orderAlpha, 
   Mod      = Model(lambda, c, [0,0], 'sum')
   Cumul    = CumulantMassless(Prof, Sing)
 
-  res = Cumul%Bin(terms(:7), 'Integrate', Mod, setup(:7), gap(:12), space(:6), order, R0, &
+  res = Cumul%Bin(terms(:7), 'Integrate', Mod, setup(:15), gap(:12), space(:6), order, R0, &
                   muR0, delta0, h, pow, tau, tau2)
 
 end subroutine f90MasslessMoment
@@ -1289,15 +1289,15 @@ subroutine f90SingularMassDiff(hard, shape, Eshape, setup, gap, space, cum, sche
 
   if ( width <= d1mach(1) ) then
 
-    res = Sing%SingleSing( Mod, setup(:7), gap(:12), space(:6), cum(:4), order, R0,   &
+    res = Sing%SingleSing( Mod, setup(:15), gap(:12), space(:6), cum(:4), order, R0,   &
                                mu0, delta0, h, tau, tau2 )
   else
 
-    res = Sing%SingleSingWidth( Mod, setup(:7), gap(:12), space(:6), cum(:4), order, R0,   &
+    res = Sing%SingleSingWidth( Mod, setup(:15), gap(:12), space(:6), cum(:4), order, R0,   &
                                 mu0, delta0, h, tau, tau2 )
   end if
 
-  if (muJ >= muM) res = res + Sing%NonDist(Mod, setup(:7), gap(:12), space(:6), cum(:4), order,&
+  if (muJ >= muM) res = res + Sing%NonDist(Mod, setup(:15), gap(:12), space(:6), cum(:4), order,&
                                                R0, mu0, delta0, h, tau, tau2)
 end subroutine f90SingularMassDiff
 
@@ -1607,7 +1607,7 @@ subroutine f90MassNonDist(hard, shape, Eshape, setup, gap, space, cum, scheme,  
   call Sing%setHard(Q, muH);  call Sing%setHardMass(muM)
   call Sing%SetRunning(muJ, muS, R, mu); call Sing%SetMat(muJ, muS, 0._dp, 0._dp)
 
-  res = Sing%NonDist(Mod, setup(:7), gap(:12), space(:3), cum(:4), order, R0, &
+  res = Sing%NonDist(Mod, setup(:15), gap(:12), space(:3), cum(:4), order, R0, &
                      mu0, delta0, h, tau)
 
 end subroutine f90MassNonDist
@@ -1661,7 +1661,7 @@ subroutine f90MassNonDistDiff(hard, shape, Eshape, setup, gap, space, cum, schem
   call Sing%setHard(Q, muH);  call Sing%setHardMass(muM)
   call Sing%SetRunning(muJ, muS, R, mu); call Sing%SetMat(muJ, muS, 0._dp, 0._dp)
 
-  res = Sing%NonDist(Mod, setup(:7), gap(:12), space(:3), cum(:4), order, R0, &
+  res = Sing%NonDist(Mod, setup(:15), gap(:12), space(:3), cum(:4), order, R0, &
                      mu0, delta0, h, tau, tau2)
 
 end subroutine f90MassNonDistDiff
@@ -1908,7 +1908,7 @@ subroutine f90NSMass(shape, setup, gap, cum, scheme, abs, current, orderAlpha, r
 
   call nonSing%SetEverything(mu, Q, mu, muJ, muS, R, Rmass, muM, width)
 
-  res = nonSing%NSMass( Mod, setup(:7), gap(:12), cum(:4), order, run, R0, mu0, delta0, &
+  res = nonSing%NSMass( Mod, setup(:15), gap(:12), cum(:4), order, run, R0, mu0, delta0, &
                         h, t )
 
 end subroutine f90NSMass
@@ -1952,7 +1952,7 @@ subroutine f90NSMassDiff(shape, setup, gap, cum, scheme, abs, current, orderAlph
 
   call nonSing%SetEverything(mu, Q, mu, muJ, muS, R, Rmass, muM, width)
 
-  res = nonSing%NSMass( Mod, setup(:7), gap(:12), cum(:4), order, run, R0, mu0, delta0, &
+  res = nonSing%NSMass( Mod, setup(:15), gap(:12), cum(:4), order, run, R0, mu0, delta0, &
                         h, t, t2 )
 
 end subroutine f90NSMassDiff
@@ -2203,7 +2203,7 @@ subroutine f90HJMNSMass(setup, gap, cum, scheme, abs, current, orderAlpha, runAl
     enddo
   end do
 
-  res = nonSing%HJMNSMass(c, Mod, setup(:7), gap(:12), cum(:4), &
+  res = nonSing%HJMNSMass(c, Mod, setup(:15), gap(:12), cum(:4), &
                           order, run, R0, mu0, delta0, h, t)
 
 end subroutine f90HJMNSMass
@@ -2259,7 +2259,7 @@ subroutine f90HJMNSMassDiff(setup, gap, cum, scheme, abs, current, orderAlpha, r
     enddo
   end do
 
-  res = nonSing%HJMNSMass(c, Mod, setup(:7), gap(:12), cum(:4), &
+  res = nonSing%HJMNSMass(c, Mod, setup(:15), gap(:12), cum(:4), &
                           order, run, R0, mu0, delta0, h, t, t2)
 
 end subroutine f90HJMNSMassDiff
@@ -2865,7 +2865,7 @@ subroutine f90Singular(hard, shape, setup, gap, space, cum, orderAlpha, runAlpha
     call Sing%setHard(Q, muH); call sing%SetMat(muJ, muS)
     call Sing%SetRunning(muJ, muS, R, mu)
 
-  res       = Sing%SingleSing(Mod, setup(:7), gap(:12), space(:6), cum(:4), order, R0, &
+  res       = Sing%SingleSing(Mod, setup(:15), gap(:12), space(:6), cum(:4), order, R0, &
                               mu0, delta0, h, tau)
 
 end subroutine f90Singular
@@ -2904,7 +2904,7 @@ subroutine f90SingularDiff(hard, shape, setup, gap, space, cum, orderAlpha, runA
     call Sing%setHard(Q, muH); call sing%SetMat(muJ, muS)
     call Sing%SetRunning(muJ, muS, R, mu)
 
-  res       = Sing%SingleSing(Mod, setup(:7), gap(:12), space(:6), cum(:4), order, R0, &
+  res       = Sing%SingleSing(Mod, setup(:15), gap(:12), space(:6), cum(:4), order, R0, &
                               mu0, delta0, h, tau1, tau2)
 
 end subroutine f90SingularDiff
@@ -2954,7 +2954,7 @@ subroutine f90SingularHJM(hard, setup, gap, space, cum, orderAlpha, runAlpha, or
     enddo
   end do
 
-  res = Sing%HJMSing(c, Mod, 'sum', setup(:7), gap(:12), space(:3), cum(:4), order, &
+  res = Sing%HJMSing(c, Mod, 'sum', setup(:15), gap(:12), space(:3), cum(:4), order, &
                      isoft, s31, s32, R0, mu0, delta0, h, tau)
 
 end subroutine f90SingularHJM
@@ -3069,7 +3069,7 @@ run, isoft, nf, j3, s3, s31, s32, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLamb
     enddo
   end do
 
-  res = Sing%DoubleSing(c, Mod, 'sum', setup(:7), gap(:12), space(:3), cum1(:4), &
+  res = Sing%DoubleSing(c, Mod, 'sum', setup(:15), gap(:12), space(:3), cum1(:4), &
                         cum2(:4), order, isoft, s31, s32, R0, mu0, delta0, h, rho1, rho2)
 
 end subroutine f90SingularDouble
