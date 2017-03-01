@@ -7,10 +7,22 @@ module MCtopClass
 
 !ccccccccccccccc
 
+<<<<<<< HEAD
+  type, public                   :: MCtop
+    character (len = 6)          :: shape
+    real (dp)                    :: ESmin, ESmax, Dirac
+    integer                      :: n
+=======
   type, public                           :: MCtop
     character (len = 6)                  :: shape
+<<<<<<< HEAD
     real (dp)                            :: ESmin, ESmax, pmax, Dirac, Q
     integer                              :: n, sf
+=======
+    real (dp)                            :: ESmin, ESmax, Dirac
+    integer                              :: n
+>>>>>>> origin/master
+>>>>>>> origin/master
     real (dp), dimension(:), allocatable :: coefs
 
   contains
@@ -48,7 +60,19 @@ contains
     InMCtop%ESmin = 0; InMCtop%shape = Eshape
 
     if ( Eshape(:6) == 'thrust' ) then
+<<<<<<< HEAD
       allocate( InMCtop%coefs(10) ); InMCtop%n = 0; InMCtop%sf = 1
+=======
+
+      InMCtop%ESmax = 1 - sqrt(1 - 4 * moQ2); InMCtop%n = 0
+      InMCtop%Dirac = 1 - 5.996687441937819_dp * moQ2 - 4.418930183289158_dp * &
+      moQ2**2 + 11.76452036058563_dp * moQ2**3
+<<<<<<< HEAD
+      allocate( InMCtop%coefs(11) ); InMCtop%coefs = ThrustCoefs(moQ2)
+=======
+      allocate( InMCtop%coefs(9) ); InMCtop%coefs = ThrustCoefs(moQ)
+>>>>>>> origin/master
+>>>>>>> origin/master
 
     else if ( EShape(:6) == 'Cparam') then
 
@@ -70,6 +94,7 @@ contains
 
 !ccccccccccccccc
 
+<<<<<<< HEAD
   subroutine setMass(self, mt, Q)
     class (MCtop), intent(inout) :: self
     real (dp)    , intent(in)    :: mt, Q
@@ -115,6 +140,18 @@ contains
     else
       QDist = self%sf * self%Distribution(0, self%sf * p/self%Q, self%sf * p2/self%Q)/self%Q
     end if
+=======
+  real (dp) function Distribution(self, x)
+<<<<<<< HEAD
+    class (MCtop)          , intent(in) :: self
+    real (dp)              , intent(in) :: x
+    real (dp)                           :: y
+=======
+    class (MCtop), intent(in) :: self
+    real (dp)    , intent(in) :: x
+    real (dp)                 :: y
+>>>>>>> origin/master
+>>>>>>> origin/master
 
   end function QDist
 
@@ -198,6 +235,7 @@ contains
           res = self%coefs(1) * y**4/4
         end if
       else if ( y <= 0.61_dp ) then
+<<<<<<< HEAD
         if (k == 0) then
           res = dot_product( self%coefs(8:9), [y, 1._dp] )
         else if (k == 1) then
@@ -208,6 +246,16 @@ contains
           res =  dot_product( self%coefs(8:9), [y**2/2 - 0.125_dp, y - 0.5_dp] ) &
           + self%coefs(1)/64
         end if
+=======
+<<<<<<< HEAD
+        Distribution = dot_product( self%coefs(6:7), [y, 1._dp] )
+      else if ( y <= 0.885_dp ) then
+        Distribution = dot_product( self%coefs(8:9), [y, 1._dp] )
+      else
+        Distribution = dot_product( self%coefs(10:), [y, 1._dp] )
+=======
+        Distribution = dot_product( self%coefs(8:9), [y, 1._dp] )
+>>>>>>> origin/master
       else if ( y <= 0.89_dp ) then
         if (k == 0) then
           res = dot_product( self%coefs(5:7), [y**2, y, 1._dp] )
@@ -236,11 +284,16 @@ contains
           [ 0.477988_dp/3, 0.21_dp, 0.28_dp] )
         end if
       else
+<<<<<<< HEAD
         if (k == -1) then
           res = dot_product( self%coefs(8:9), [0.06105_dp, 0.11_dp] )            + &
           dot_product( self%coefs(3:4), [0.10395_dp, 0.11_dp] ) + self%coefs(1)/64 &
           + dot_product( self%coefs(5:7), [ 0.477988_dp/3, 0.21_dp, 0.28_dp] )
         end if
+=======
+        Distribution = dot_product( self%coefs(3:4), [y, 1._dp] )
+>>>>>>> origin/master
+>>>>>>> origin/master
       end if
 
       res = res/self%coefs(10)
@@ -284,8 +337,24 @@ contains
     real (dp)   , intent(in) :: m
     real (dp), dimension(11) :: res
 
+<<<<<<< HEAD
     res(:6) = [ 0.3310188452495506_dp + 29.408029059401223_dp * m**2 + 420.78161872939825_dp * m**4, &
              10.582416684643045_dp + 59.168098208694204_dp * m**2 - 86.0283647010381_dp * m**4, &
+=======
+<<<<<<< HEAD
+    res(:5) = [ 0.04933290148517331_dp +  5.553075520468492_dp * m +  43.79602537989945_dp * m**2, &
+             1.2075982725563466_dp +  8.870486545894227_dp * m +  46.15991456496873_dp * m**2, &
+             3.7227744444959296_dp +  4.903780285790073_dp * m + 15.802604499394254_dp * m**2, &
+             10.431875042978294_dp - 19.319249068371196_dp * m -  73.81636720457186_dp * m**2, &
+             10.249586551339457_dp - 19.72683653300232_dp  * m -  171.4891355458256_dp * m**2 ]
+
+    res(6:7) = Line( [   0.5_dp, res(1) ] , [  0.61_dp, res(2) ] )
+    res(8:9) = Line( [  0.61_dp, res(3) ] , [ 0.885_dp, res(4) ] )
+    res(10:) = Line( [ 0.885_dp, res(4) ] , [    1._dp, res(5) ] )
+=======
+    res(:6) = [ 0.05796008516601898_dp + 5.376570171678456_dp * m**2 + 45.47883097494923_dp * m**4, &
+             1.2237383047335457_dp + 8.20239498575777_dp * m**2 + 52.545258951809956_dp * m**4, &
+>>>>>>> origin/master
              0.5661957300078854_dp + 24.96314852772734_dp * m - 199.1120591815817_dp * m**2, &
              9.343012917211_dp - 16.997770889484364_dp * m + 141.4278848881199_dp * m**2, &
              42.85501883992358_dp + 50.26811493972574_dp * m - 540.819475023059_dp * m**2, &
@@ -294,7 +363,11 @@ contains
     res(7)   = res(4) + 0.89_dp * ( res(3) - res(6) ) - res(5) * 0.89_dp**2
     res(8:9) = [ res(2), res(1) * 0.5_dp**3 - res(2) * 0.5_dp ]
 
+<<<<<<< HEAD
     ! norm computation
+=======
+>>>>>>> origin/master
+>>>>>>> origin/master
 
     res(10) = res(1) * 0.5_dp**4/4 + res(9) * 0.11_dp + res(8) * ( 0.61_dp**2 - 0.5_dp**2)/2 &
     + res(7) * 0.28_dp + res(6) * ( 0.89_dp**2 - 0.61_dp**2)/2 + res(5) * ( 0.89_dp**3 - 0.61_dp**3)/3 &

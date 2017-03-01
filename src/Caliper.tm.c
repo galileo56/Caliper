@@ -289,7 +289,15 @@ MLYDEFN( devyield_result, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
+<<<<<<< HEAD
 # line 1564 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
+=======
+<<<<<<< HEAD
+# line 1529 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm"
+=======
+# line 1529 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
+>>>>>>> origin/master
+>>>>>>> origin/master
 #include "mathlink.h"
 #include "ftypes.h"
 #include <stdio.h>
@@ -2534,7 +2542,15 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
+<<<<<<< HEAD
 # line 2538 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
+=======
+<<<<<<< HEAD
+# line 2487 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm.c"
+=======
+# line 2487 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
+>>>>>>> origin/master
+>>>>>>> origin/master
 
 
 void ewfactors P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5));
