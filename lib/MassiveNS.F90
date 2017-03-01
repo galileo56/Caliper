@@ -623,8 +623,13 @@ module MassiveNSClass
           if ( setup(6:13) == 'Unstable' ) then
 
             if ( .not. present(t2) ) then
-                             Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModUns(self%MC, self%width, cumul    , p3shift)
+
+              Modelo(i)  = self%Q**(1 + cumul) * (  self%MC%Delta() * &
+              Mod%BreitModel( self%width, cumul, p3shift  - self%MC%maxP() ) + &
+              Mod%BreitModUns(self%MC, self%width, cumul, p3shift)  )
+
               if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModUns(self%MC, self%width, cumul - 2, p3shift)
+
               if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModUns(self%MC, self%width, cumul + 1, p3shift)
 
             else
