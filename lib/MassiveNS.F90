@@ -426,7 +426,7 @@ module MassiveNSClass
 
     else if ( setup(:7) == 'NoModel') then
 
-      cum_if_2: if ( cum(:4) == 'diff'  .and. tau2 > 0 ) then
+      cum_if_2: if ( cum(:4) == 'diff' .and. tau2 > 0 ) then
 
         if (order > 0) then
 
@@ -495,11 +495,11 @@ module MassiveNSClass
 
           else
 
-            Modelo = self%Q**(1 + cumul) * BreitWigner(self%width, cumul, p2, p3)
+            Modelo = self%Q**(1 + cumul) * BreitWigner(self%width, cumul, p3, p2)
 
             if (order > 0) then
-              ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p2, p3)
-              ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p2, p3)
+              ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p3, p2)
+              ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p3, p2)
             end if
           end if
 
@@ -524,10 +524,10 @@ module MassiveNSClass
             else
 
               ModPlus = ModPlus * self%MC%Delta() + self%Q**(1 + cumul) * &
-              self%MC%BreitUnstable(self%width, cumul - 2, p2shift, p3shift)
+              self%MC%BreitUnstable(self%width, cumul - 2, p3shift, p2shift)
 
               ModDer  = ModDer  * self%MC%Delta() + self%Q**(2 + cumul) * &
-              self%MC%BreitUnstable(self%width, cumul + 1, p2shift, p3shift)
+              self%MC%BreitUnstable(self%width, cumul + 1, p3shift, p2shift)
 
             end if
           end if
@@ -535,7 +535,7 @@ module MassiveNSClass
       end if
     end if   setup_if
 
-    if (  self%singular(:3) /= 'abs' .and. ( setup(:5) == 'Model'  .or. &
+    if (  self%singular(:3) /= 'abs' .and. ( setup(:5) == 'Model' .or. &
          ( setup(:7) == 'NoModel' .and. self%width > tiny(1._dp) ) )   ) then
 
       if (order >= 0) NSMassMod = NSMassMod + self%Dirac(1) * Modelo
