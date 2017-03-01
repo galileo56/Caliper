@@ -1378,10 +1378,10 @@ module SingularClass
 
       if ( setup(8:15) == 'Unstable' ) then
 
-        SingleSingMod = NoMod( pshift - self%MC%maxP() ) * self%MC%Delta()
+        if ( self%shape(:6) == 'thrust' ) SingleSingMod = NoMod(p) * self%MC%Delta()
 
-        if ( present(tau2) ) SingleSingMod = self%MC%Delta() * &
-        NoMod( pshift2 - self%MC%maxP() ) - SingleSingMod
+        if ( present(tau2) .and. self%shape(:6) == 'thrust' ) SingleSingMod = &
+        self%MC%Delta() * NoMod(p2) - SingleSingMod
 
         call qags( UnstableInt, pshift - self%MC%maxP(), pshift2, prec, &
         prec, result, abserr, neval, ier )
@@ -1872,11 +1872,10 @@ module SingularClass
 
     if ( setup(8:15) == 'Unstable' ) then
 
-      SingleSingWidthMod = NoMod( pshift - self%MC%maxP() ) &
-      * self%MC%Delta()
+      if ( self%shape(:6) == 'thrust' ) SingleSingWidthMod = NoMod(p) * self%MC%Delta()
 
-      if ( present(tau2) ) SingleSingWidthMod = self%MC%Delta() * &
-      NoMod( pshift2 - self%MC%maxP() ) - SingleSingWidthMod
+      if ( present(tau2) .and. self%shape(:6) == 'thrust' ) SingleSingWidthMod = &
+      self%MC%Delta() * NoMod(p2) - SingleSingWidthMod
 
       call qags( UnstableInt, pshift - self%MC%maxP(), pshift2, prec, &
       prec, result, abserr, neval, ier )
@@ -2032,9 +2031,11 @@ module SingularClass
       do i = 1, size(modList)
 
         call qagi( UnstableInt, 0._dp, 1, prec, prec, resList(i), abserr, neval, ier )
-        call qagi( ModInt     , 0._dp, 1, prec, prec, result, abserr, neval, ier )
 
-      resList(i) = resList(i) + result * self%MC%Delta()
+        if ( self%shape(:6) == 'thrust' ) then
+          call qagi( ModInt, 0._dp, 1, prec, prec, result, abserr, neval, ier )
+          resList(i) = resList(i) + result * self%MC%Delta()
+        end if
 
       end do
 
