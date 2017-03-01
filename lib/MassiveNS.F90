@@ -21,7 +21,7 @@ module MassiveNSClass
     integer                   :: nf, massOrd
     real (dp)                 :: m4, m6, m8, m10, alphaJ, tmin, tmax, mPole,   &
     v, lm, m, thrustMin, cp, mm, A1Singular, tint, B1Singular, alphaMu, B1, Q, &
-    alphaM, muM, GlueMax, GlueInt, width, AMS, alphaH, m2, mass
+    alphaM, muM, GlueMax, GlueInt, width, AMS, alphaH, m2, mass, ESfac
 
    contains
 
@@ -97,6 +97,8 @@ module MassiveNSClass
 
      call InScales%SetMasses()
 
+     InScales%ESfac = 1; if ( shape(:6) == 'Cparam' ) InScales%ESfac = 6
+
    end function InScales
 
 !ccccccccccccccc
@@ -143,6 +145,8 @@ module MassiveNSClass
      end select
 
      call InMassNS%SetMasses()
+
+     InMassNS%ESfac = 1; if ( shape(:6) == 'Cparam' ) InMassNS%ESfac = 6
 
    end function InMassNS
 
@@ -998,9 +1002,9 @@ module MassiveNSClass
     real (dp)        , intent(in) :: tau
     real (dp)                     :: t
 
-    t = tau - self%tmin; MassSing1loop = 0; if (t <= 0) return
+    t = (tau - self%tmin)/self%ESfac; MassSing1loop = 0; if (t <= 0) return
 
-    MassSing1loop = ( - 8/t + 2 * t/(t + self%m2)**2 - 8 * log(t + self%m2)/t )/3
+    MassSing1loop = ( - 8/t + 2 * t/(t + self%m2)**2 - 8 * log(t + self%m2)/t )/3/self%ESfac
 
    end function MassSing1loop
 
