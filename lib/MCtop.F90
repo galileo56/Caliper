@@ -174,21 +174,12 @@ contains
 
     if ( self%shape(:6) == 'Cparam' ) then
 
-      if ( k == 0 ) then
+      if (y > 1 .and. k == -1) y = 1
 
-        res = dot_product( self%coefs(0:self%n), &
-        LegendreList(self%n, 0, 2 * y - 1 ) )
+      res = (2._dp)**k * dot_product( self%coefs(0:self%n), &
+      LegendreList(self%n, k, 2 * y - 1 ) )
 
-        if ( res < 0 .and. x > 0.8_dp * self%ESmax ) res = 0
-
-      else if ( k == -1 ) then
-
-        if (y > 1) y = 1
-
-        res = dot_product( self%coefs(0:self%n), &
-        LegendreList(self%n, -1, 2 * y - 1 ) )/2
-
-      end if
+      if ( k == 0 .and. res < 0 .and. x > 0.8_dp * self%ESmax ) res = 0
 
     else if ( self%shape(:6) == 'thrust' ) then
 

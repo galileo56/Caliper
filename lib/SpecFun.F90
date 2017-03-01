@@ -75,40 +75,6 @@ contains
   end function LegendreList
 
 !ccccccccccccccc
-!
-!   function LegendreDer(n,x) result(list)
-!     integer      , intent(in) :: n
-!     real (dp)    , intent(in) :: x
-!     real (dp), dimension(0:n) :: list, list1
-!     integer                   :: i
-!
-!     List1 = LegendreList(n, x); list(0) = 0; list1(1) = 1
-!
-!     do i = 2, n
-!       list(i) = ( (2 * i - 1) * ( list1(i - 1) + x * list(i - 1) ) - &
-!                 (i - 1) * list(i - 2) )/i
-!     end do
-!
-!   end function LegendreDer
-!
-! !ccccccccccccccc
-!
-!   function LegendreInt(n,x) result(list)
-!     integer      , intent(in) :: n
-!     real (dp)    , intent(in) :: x
-!     real (dp), dimension(0:n) :: list
-!     real (dp), dimension(0:n+1) :: list1
-!     integer                   :: i
-!
-!     List1 = LegendreList(n + 1, x ); list(0) = list1(1) + 1
-!
-!     do i = 1, n
-!       list(i) = ( list1(i + 1) - list1(i - 1) )/(2 * i + 1)
-!     end do
-!
-! end function LegendreInt
-
-!ccccccccccccccc
 
   function QLegendreList(n,x) result(list)
     integer      , intent(in) :: n
