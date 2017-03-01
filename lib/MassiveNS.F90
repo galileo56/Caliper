@@ -19,20 +19,20 @@ module MassiveNSClass
     real (dp), dimension(3)   :: deltaM, deltaM2
     character (len = 10)      :: shape, ES, current, singular, scheme
     integer                   :: nf, massOrd
-    real (dp)                 :: m2, m4, m6, m8, m10, alphaJ, tmin, tmax, mPole, GlueInt,&
-                                 GlueMax, v, lm, m, thrustMin, cp, mm, A1Singular, tint, &
-                                 B1Singular, alphaMu, B1, Q, width, mass, AMS, alphaH  , &
-                                 alphaM, muM
+    real (dp)                 :: m2, m4, m6, m8, m10, alphaJ, tmin, tmax, mPole,&
+    v, lm, m, thrustMin, cp, mm, A1Singular, tint, B1Singular, alphaMu, B1, Q, &
+    alphaM, muM, GlueMax, GlueInt, width, AMS, alphaH, mass
+
    contains
 
    final                         :: delete_object
-   procedure, pass(self), public :: JetMassExp, FOMass, HJMNSMass, SetMCharm, MassVar,   &
-                                    MassDelta, MassDeltaShift, numFlav, matElementNS,    &
-                                    SetEverything, SetAlpha, SetMTop, SetMasses, SetAll, &
-                                    SetMBottom, EShape
-   procedure, pass(self)         :: Quark, Glue, EWAdd, f1Q, f2Q, f3Q, f4Q, B1NS, Hcorr, &
-                                    MassSing1loop, CumMassSing1loop, A1loop, FunCp, A0MS,&
-                                    CparamFOMass, CoefsCparam, NSMassMod, NSMassList, A0
+   procedure, pass(self), public :: JetMassExp, FOMass, HJMNSMass, SetMCharm, &
+   MassDelta, MassDeltaShift, numFlav, matElementNS, SetEverything, SetAlpha, &
+   SetMBottom, EShape, MassVar, SetMTop, SetMasses, SetAll
+
+   procedure, pass(self)         :: Quark, Glue, EWAdd, f1Q, f2Q, f3Q, f4Q, B1NS, &
+   MassSing1loop, CumMassSing1loop, A1loop, FunCp, A0MS, CparamFOMass, Hcorr, A0, &
+   CoefsCparam, NSMassMod, NSMassList
 
    generic   , public            :: NSMass => NSMassMod, NSMassList
 
@@ -356,9 +356,9 @@ module MassiveNSClass
 
     if ( setup(:5) == 'Model' ) then
       if ( present(t2) ) then
-        resul = NSMassList(self, [Mod], gap, cum, order, run, R0, mu0, delta0, h, t, t2)
+        resul = NSMassList(self, [Mod], setup, gap, cum, order, run, R0, mu0, delta0, h, t, t2)
       else
-        resul = NSMassList(self, [Mod], gap, cum, order, run, R0, mu0, delta0, h, t)
+        resul = NSMassList(self, [Mod], setup, gap, cum, order, run, R0, mu0, delta0, h, t)
       end if
       NSMassMod = resul(1); return
     end if
@@ -545,10 +545,10 @@ module MassiveNSClass
 
 !ccccccccccccccc
 
-  function NSMassList(self, ModList, gap, cum, order, run, R0, mu0, delta0, h, t, t2) &
-  result(resList)
+  function NSMassList(self, ModList, setup, gap, cum, order, run, R0, mu0, &
+  delta0, h, t, t2) result(resList)
     class (MassiveNS)    , intent(in)      :: self
-    character (len = *)  , intent(in)      :: gap, cum
+    character (len = *)  , intent(in)      :: setup, gap, cum
     integer              , intent(in)      :: order, run
     real (dp)            , intent(in)      :: R0, mu0, delta0, h, t
     real (dp), optional  , intent(in)      :: t2

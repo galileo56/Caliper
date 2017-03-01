@@ -2004,16 +2004,16 @@ end subroutine f90NSMassPiece
 
 !ccccccccccccccc
 
-subroutine f90NSMassList(shape, gap, cum, scheme, abs, current, orderAlpha, runAlpha,   &
-  orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1,&
-  muLambda2, Q, mu, muM, muJ, muS, R, Rmass, clen, width, lambda, R0, mu0, delta0, h,   &
-  gammaZ, sin2ThetaW, t, res)
+subroutine f90NSMassList(shape, setup, gap, cum, scheme, abs, current, orderAlpha, &
+runAlpha, orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC,  &
+muLambda1, muLambda2, Q, mu, muM, muJ, muS, R, Rmass, clen, width, lambda, R0, mu0,&
+delta0, h, gammaZ, sin2ThetaW, t, res)
 
   use MassiveNSClass     ; use ElectroWeakClass; use AlphaClass
   use MatrixElementsClass; use ModelClass
   use constants, only: dp; implicit none
 
-  character (len = *)  , intent(in ) :: shape, current, cum, gap, abs, scheme
+  character (len = *)  , intent(in ) :: shape, current, cum, gap, abs, scheme, setup
   integer              , intent(in ) :: orderAlpha, runAlpha, order, run, nf, runMass,   &
                                         orderMass, clen
   real (dp)            , intent(in ) :: t, muT, mC, muC, Q, mZ, gammaZ, sin2ThetaW, muB, &
@@ -2051,22 +2051,22 @@ subroutine f90NSMassList(shape, gap, cum, scheme, abs, current, orderAlpha, runA
 
   call nonSing%SetEverything(mu, Q, mu, muJ, muS, R, Rmass, muM, width)
 
-  res = nonSing%NSMass(Mod, gap(:12), cum(:4), order, run, R0, mu0, delta0, h, t)
+  res = nonSing%NSMass(Mod, setup(:15), gap(:12), cum(:4), order, run, R0, mu0, delta0, h, t)
 
 end subroutine f90NSMassList
 
 !ccccccccccccccc
 
-subroutine f90NSMassDiffList(shape, gap, cum, scheme, abs, current, orderAlpha, runAlpha, &
-  orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1,&
-  muLambda2, Q, mu, muM, muJ, muS, R, Rmass, clen, width, lambda, R0, mu0, delta0, h,   &
-  gammaZ, sin2ThetaW, t, t2, res)
+subroutine f90NSMassDiffList(shape, setup, gap, cum, scheme, abs, current, orderAlpha, &
+runAlpha, orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, &
+muLambda1, muLambda2, Q, mu, muM, muJ, muS, R, Rmass, clen, width, lambda, R0, mu0,&
+delta0, h, gammaZ, sin2ThetaW, t, t2, res)
 
   use MassiveNSClass     ; use ElectroWeakClass; use AlphaClass
   use MatrixElementsClass; use ModelClass
   use constants, only: dp; implicit none
 
-  character (len = *)  , intent(in ) :: shape, current, cum, gap, abs, scheme
+  character (len = *)  , intent(in ) :: shape, current, cum, gap, abs, scheme, setup
   integer              , intent(in ) :: orderAlpha, runAlpha, order, run, nf, &
                                         orderMass, runMass, clen
   real (dp)            , intent(in ) :: t, muT, mC, muC, Q, mZ, gammaZ, sin2ThetaW, muB, &
@@ -2104,7 +2104,7 @@ subroutine f90NSMassDiffList(shape, gap, cum, scheme, abs, current, orderAlpha, 
 
   call nonSing%SetEverything(mu, Q, mu, muJ, muS, R, Rmass, muM, width)
 
-  res = nonSing%NSMass(Mod, gap(:12), cum(:4), order, run, R0, mu0, delta0, h, t, t2)
+  res = nonSing%NSMass(Mod, setup(:15), gap(:12), cum(:4), order, run, R0, mu0, delta0, h, t, t2)
 
 end subroutine f90NSMassDiffList
 

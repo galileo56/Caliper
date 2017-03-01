@@ -137,7 +137,6 @@ module CumulantClass
     character (len = *)     , intent(in   ) :: setup, space, gap, cum, terms
     real (dp)               , intent(in   ) :: R0, mu0, delta0, h
     integer                 , intent(in   ) :: order
-
     real (dp), dimension( size(tauList) )   :: crossList
     integer                                 :: i
 
@@ -158,13 +157,12 @@ module CumulantClass
     character (len = *)      , intent(in   ) :: setup, space, gap, cum, terms
     real (dp)                , intent(in   ) :: R0, mu0, delta0, h
     integer                  , intent(in   ) :: order
-
     real (dp), dimension( size(tauList,2) )  :: crossList
     integer                                  :: i
 
     do i = 1, size(tauList,2)
       crossList(i) = self%Bin( terms, cum, Mod, setup, gap, space, order, R0, &
-                               mu0, delta0, h, 0, tauList(1,i), tauList(2,i) )
+      mu0, delta0, h, 0, tauList(1,i), tauList(2,i) )
     end do
 
   end function ListBin
@@ -343,11 +341,11 @@ module CumulantClass
           type is (CumulantMass)
 
              if ( present(tau2) ) then
-              list = list + self%MassNS%NSMass(ModList, gap, 'cum', order, run, &
-                                               R0, mu0, delta0, h, tau, tau2)
+              list = list + self%MassNS%NSMass(ModList, setup, gap, 'cum', &
+              order, run, R0, mu0, delta0, h, tau, tau2)
             else
-              list = list + self%MassNS%NSMass(ModList, gap, cumul, order, run, &
-                                               R0, mu0, delta0, h, tau)
+              list = list + self%MassNS%NSMass(ModList, setup, gap, cumul, &
+              order, run,  R0, mu0, delta0, h, tau)
             end if
 
           end select
