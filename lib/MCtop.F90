@@ -155,11 +155,14 @@ contains
 !ccccccccccccccc
 
   recursive real (dp) function Distribution(self, k, x, x2) result(res)
-    class (MCtop)      , intent(in) :: self
-    real (dp)          , intent(in) :: x
-    real (dp), optional, intent(in) :: x2
-    integer            , intent(in) :: k
-    real (dp)                       :: y
+    class (MCtop)       , intent(in) :: self
+    real (dp)           , intent(in) :: x
+    real (dp), optional , intent(in) :: x2
+    integer             , intent(in) :: k
+    integer                          :: i
+    real (dp)                        :: y
+    real (dp), dimension(0:self%n+1) :: List1
+    real (dp), dimension(0:self%n)   :: List2
 
     res = 0
 
@@ -174,9 +177,24 @@ contains
 
     if ( self%shape(:6) == 'Cparam' ) then
 
-      res = dot_product(self%coefs(0:self%n), &
-      LegendreList(self%n, 2 * y - 1 ) )
-      if ( res < 0 .and. x > 0.8_dp * self%ESmax ) res = 0
+      if ( k == 0 ) then
+
+        res = dot_product( self%coefs(0:self%n), &
+        LegendreList(self%n, 2 * y - 1 ) )
+
+        if ( res < 0 .and. x > 0.8_dp * self%ESmax ) res = 0
+
+      else if ( k == -1 ) then
+
+        List1 = LegendreList(self%n + 1, 2 * y - 1 ); list2(0) = list1(1) + 1
+
+        do i = 1, self%n
+          list2(i) = ( list1(i + 1) - list1(i - 1) )/(2 * i + 1)
+        end do
+
+        res = dot_product( self%coefs(0:self%n), list2 )/2
+
+      end if
 
     else if ( self%shape(:6) == 'thrust' ) then
 
