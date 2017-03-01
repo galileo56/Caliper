@@ -941,15 +941,15 @@ module MassiveNSClass
         p4 = self%Q * tshift2
 
         integrand = 4 * self%Glue(tt3)/2**(1 - cumul)                 * &
-                  ( Model2D(c, modList, cumul,    -1, p2 - l, p4)     - &
-                    Model2D(c, modList, cumul,    -1, p  - l, p3)     + &
-                    Model2D(c, modList, -1   , cumul, p2 - l, p4)     - &
-                    Model2D(c, modList, -1   , cumul, p  - l, p3) )/3
+        ( Model2D(c, modList, cumul,    -1, p2 - l, p4)     - &
+        Model2D(c, modList, cumul,    -1, p  - l, p3)     + &
+        Model2D(c, modList, -1   , cumul, p2 - l, p4)     - &
+        Model2D(c, modList, -1   , cumul, p  - l, p3) )/3
 
-        integrand = integrand + (  4 * self%Quark(tt3)/3 - ( self%B1    + &
-        self%B1Singular )/t3 - 2 * ( t3/(t3 + self%m2)**2 - 4/t3 * log(t3/self%m2 + 1) )/3  )&
+        integrand = integrand + (  4 * self%Quark(tt3)/3 - ( self%B1 + self%B1Singular &
+         )/t3 - 2 * ( t3/(t3 + self%m2)**2 - 4/t3 * log(t3/self%m2 + 1) )/3  )&
         /2**(-cumul) * ( Model2D(c, modList, cumul, -1, p2 - l, p2) - &
-                         Model2D(c, modList, cumul, -1, p  - l, p ) + &
+        Model2D(c, modList, cumul, -1, p  - l, p ) + &
         Model2D(c, modList, -1, cumul, p2 - l, p2) - Model2D(c, modList, -1, cumul, p - l, p) )
 
       end if
@@ -1068,9 +1068,9 @@ module MassiveNSClass
   real (dp) function CparamFOMass(self, c2)
     class (MassiveNS), intent(in) :: self
     real (dp)        , intent(in) :: c2
-    real (dp), dimension(4)       :: Coef(4)
-    real (dp)                     :: c, ypt, ymt, yp, ym, denom1, root1, n2, h2, k2, &
-                                        denom2, root2, Thetap, Thetam, Xi, Xi2
+    real (dp), dimension(4)       :: Coef
+    real (dp)                     :: c, ypt, ymt, yp, ym, denom1, root1, n2, &
+    denom2, root2, Thetap, Thetam, Xi, Xi2, h2, k2
 
     c = c2/6;  denom1 = 2 * ( c + (c - 1) * self%m2 ); denom2 = 2 * (1 + c)
     root2 = Sqrt( 1 + 16 * self%m2 + 32 * self%m4 - 8 * c * (1 + 2 * self%m2)**2 )
@@ -1088,7 +1088,7 @@ module MassiveNSClass
 
     CparamFOMass = 0
 
-    if (self%m < 0 .or. self%m > 0.5 .or. c2 <= self%tmin .or. c >= self%tmax) return
+    if (self%m < 0 .or. 2 * self%m >= 1 .or. c2 <= self%tmin .or. c >= self%tmax) return
 
     call self%CoefsCparam(c, Coef, n2, h2, k2, Xi, Xi2)
 
@@ -1103,7 +1103,7 @@ module MassiveNSClass
                      self%FunCp(Coef, n2, h2, k2, Xi, Xi2, c, Pio2  )
 
     else if ( ( (mcrit < self%m .and. self%m < mth) .and. c >= self%tint ) .or.  &
-                (self%m <= mcrit .and. c >= self%cp)  ) then
+    (self%m <= mcrit .and. c >= self%cp)  ) then
 
       CparamFOMass = self%FunCp(Coef, n2, h2, k2, Xi, Xi2, c, Pio2)
 
@@ -1121,7 +1121,7 @@ module MassiveNSClass
     real (dp)              , intent(out) :: n2, h2, k2, Xi, Xi2
     real (dp), dimension(4), intent(out) :: Coef
     real (dp)                            :: CoefV1, CoefV2, CoefV3, CoefV4, c1, c2, &
-                                                  CoefA1, CoefA2, CoefA3, CoefA4
+    CoefA1, CoefA2, CoefA3, CoefA4
 
     Xi        = Sqrt( 1 + 16 * self%m2 + 32 * self%m4 - 8 * c * (1 + 2 * self%m2)**2 )
     c2        = c - 2 * self%m2 ; c1 = 1 + c
@@ -1130,6 +1130,7 @@ module MassiveNSClass
     h2        = 2 * Xi/(1 - 4 * c + 8 * self%m2 + Xi);    k2 = n2 * h2/Xi
 
     CoefV2 = 0; CoefV3 = 0; CoefV4 = 0; CoefA1 = 0; CoefA2 = 0; CoefA3 = 0; CoefA4 = 0
+
     if ( self%current(:6) == 'vector' .or. self%current(:3) == 'all' ) then
 
       CoefV1 = - 4 * (3 * c**2 * (1 + 2 * c) + 2 * c * ( c * (8 * c - 3) - 4 ) * self%m2 &
