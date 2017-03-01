@@ -346,7 +346,7 @@ module MassiveNSClass
     real (dp), dimension(order)       :: delta
     real (dp), dimension(1)           :: resul
     real (dp)                         :: abserr, res, tau, Modelo, ModPlus, p, p2, &
-    shift, ModDer, tshift, tshift2, p3, tau2
+    shift, ModDer, tshift, tshift2, p3, tau2, p3shift, p2shift
 
     GapMassive = GapMass(run, gap, self%matEl, R0, mu0); NSMassMod = 0
 
@@ -372,11 +372,12 @@ module MassiveNSClass
       delta = delta/2; shift = shift/2
     end if
 
-    tshift = t - shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau; p3 = p
-    tau2   = tau; p2 = p; tshift2 = tshift
+    tshift = t - shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau
+    tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift
 
     if ( present(t2) ) then
-      tshift2 = t2 - shift/self%Q;  tau2 = tshift2 - self%tmin; p2 = self%Q * tau2
+      tshift2 = t2 - shift/self%Q;  tau2 = tshift2 - self%tmin
+      p2 = self%Q * tau2;  p2shift = self%Q * tshift2
     end if
 
     if ( present(t2) .and. p < 0 ) then
@@ -462,21 +463,21 @@ module MassiveNSClass
             call qags( NS1lloop, 0._dp, tau, prec, prec, res, abserr, neval, ier )
 
             NSMassMod = NSMassMod + self%alphaMu * ( res - self%CumMassSing1loop(tshift) +  &
-                                          self%A1Singular + self%B1Singular * log(tau) )
+            self%A1Singular + self%B1Singular * log(tau) )
 
             if ( self%singular(:3) /= 'abs' .and. self%width <= d1mach(1) )  &
-                NSMassMod = NSMassMod + self%AMS * self%deltaM(1) + &
-                self%alphaMu * ( self%Dirac(2) + self%B1 * log(tau) )
+            NSMassMod = NSMassMod + self%AMS * self%deltaM(1) + &
+            self%alphaMu * ( self%Dirac(2) + self%B1 * log(tau) )
 
           else
 
             call qags( NS1lloop, tau, tau2, prec, prec, res, abserr, neval, ier )
 
             NSMassMod = NSMassMod + self%alphaMu * ( res + self%CumMassSing1loop(tshift) -  &
-                     self%CumMassSing1loop(tshift2) +  self%B1Singular * log(tau2/tau) )
+            self%CumMassSing1loop(tshift2) +  self%B1Singular * log(tau2/tau) )
 
             if ( self%singular(:3) /= 'abs' .and. self%width <= d1mach(1) )  &
-                NSMassMod = NSMassMod + self%alphaMu * self%B1 * log(tau2/tau)
+            NSMassMod = NSMassMod + self%alphaMu * self%B1 * log(tau2/tau)
 
           end if
 
@@ -487,9 +488,9 @@ module MassiveNSClass
 
         if ( setup(8:15) == 'Unstable' ) then
 
-                         Modelo  = self%Q**(1 + cumul) * self%MC%BreitUnstable(self%width, cumul, p3)
-          if (order > 0) ModPlus = self%Q**(1 + cumul) * self%MC%BreitUnstable(self%width, cumul - 2, p3)
-          if (order > 0) ModDer  = self%Q**(2 + cumul) * self%MC%BreitUnstable(self%width, cumul + 1, p3)
+                         Modelo  = self%Q**(1 + cumul) * self%MC%BreitUnstable(self%width, cumul    , p3shift)
+          if (order > 0) ModPlus = self%Q**(1 + cumul) * self%MC%BreitUnstable(self%width, cumul - 2, p3shift)
+          if (order > 0) ModDer  = self%Q**(2 + cumul) * self%MC%BreitUnstable(self%width, cumul + 1, p3shift)
 
         else
                          Modelo  = self%Q**(1 + cumul) * BreitWigner(self%width, cumul    , p3)
@@ -501,9 +502,9 @@ module MassiveNSClass
         if ( present(t2) ) then
 
           if ( setup(8:15) == 'Unstable' ) then
-                           Modelo  = self%Q**(1 + cumul) * self%MC%BreitUnstable(self%width, cumul    , p2) - Modelo
-            if (order > 0) ModPlus = self%Q**(1 + cumul) * self%MC%BreitUnstable(self%width, cumul - 2, p2) - ModPlus
-            if (order > 0) ModDer  = self%Q**(2 + cumul) * self%MC%BreitUnstable(self%width, cumul + 1, p2) - ModDer
+                           Modelo  = self%Q**(1 + cumul) * self%MC%BreitUnstable(self%width, cumul    , p2shift) - Modelo
+            if (order > 0) ModPlus = self%Q**(1 + cumul) * self%MC%BreitUnstable(self%width, cumul - 2, p2shift) - ModPlus
+            if (order > 0) ModDer  = self%Q**(2 + cumul) * self%MC%BreitUnstable(self%width, cumul + 1, p2shift) - ModDer
           else
                            Modelo  = self%Q**(1 + cumul) * BreitWigner(self%width, cumul    , p2) - Modelo
             if (order > 0) ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p2) - ModPlus
@@ -561,7 +562,7 @@ module MassiveNSClass
     real (dp), dimension(order)            :: delta
     real (dp), dimension( size(ModList) )  :: resList, Modelo, ModPlus, ModDer
     real (dp)                              :: abserr, tau, p, tau2, p2, p3, &
-                                              shift, tshift, tshift2
+    shift, tshift, tshift2, p3shift, p2shift
 
     GapMassive = GapMass(run, gap, self%matEl, R0, mu0); resList = 0
 
@@ -578,11 +579,12 @@ module MassiveNSClass
       delta = delta/2; shift = shift/2
     end if
 
-    tshift = t - shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau; p3 = p
-    tau2   = tau; p2 = p; tshift2 = tshift
+    tshift = t - shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau
+    tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift
 
     if ( present(t2) ) then
-      tshift2 = t2 - shift/self%Q;  tau2 = tshift2 - self%tmin; p2 = self%Q * tau2
+      tshift2 = t2 - shift/self%Q;  tau2    = tshift2 - self%tmin
+      p2 = self%Q * tau2         ;  p2shift = self%Q * tshift2
     end if
 
     if ( present(t2) .and. p < 0 ) then
@@ -621,14 +623,14 @@ module MassiveNSClass
           if ( setup(6:13) == 'Unstable' ) then
 
             if ( .not. present(t2) ) then
-                             Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModelUnstable(self%MC, self%width, cumul    , p)
-              if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModelUnstable(self%MC, self%width, cumul - 2, p)
-              if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModelUnstable(self%MC, self%width, cumul + 1, p)
+                             Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModUns(self%MC, self%width, cumul    , p3shift)
+              if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModUns(self%MC, self%width, cumul - 2, p3shift)
+              if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModUns(self%MC, self%width, cumul + 1, p3shift)
 
             else
-                             Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModelUnstable(self%MC, self%width, cumul    , p3, p2)
-              if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModelUnstable(self%MC, self%width, cumul - 2, p3, p2)
-              if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModelUnstable(self%MC, self%width, cumul + 1, p3, p2)
+                             Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModUns(self%MC, self%width, cumul    , p3shift, p2shift)
+              if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModUns(self%MC, self%width, cumul - 2, p3shift, p2shift)
+              if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModUns(self%MC, self%width, cumul + 1, p3shift, p2shift)
 
             end if
 

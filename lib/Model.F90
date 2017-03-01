@@ -22,7 +22,7 @@ module ModelClass
 
     final                                 :: delete_object
     procedure, pass(self), public         :: BreitModel, SoftFourier, SetLambda, &
-    CumMomentModel, ShapeFun, Taylor, ModelUnstable, BreitModelUnstable
+    CumMomentModel, ShapeFun, Taylor, ModelUnstable, BreitModUns
 
     procedure, pass(self)                 :: CumSoft, MomentModel, EModCoefSum, &
     DModCoefSum, PlusSoft, ModCoef, DModCoef, BinomialInteger, BinomialReal,    &
@@ -414,16 +414,16 @@ module ModelClass
 
 !ccccccccccccccc
 
-  real (dp) function BreitModelUnstable(self, MC, width, i, l, l2)
+  real (dp) function BreitModUns(self, MC, width, i, l, l2)
     class (Model)      , intent(in) :: self
     real (dp)          , intent(in) :: l, width
     real (dp), optional, intent(in) :: l2
     integer            , intent(in) :: i
     type (MCtop)       , intent(in) :: MC
 
-    BreitModelUnstable = dGauss( integrand, 0._dp, MC%maxp(), prec )
+    BreitModUns = dGauss( integrand, 0._dp, MC%maxp(), prec )
 
-    ! call DAdapt(integrand, 0._dp, MC%maxp(), 1, prec, prec, BreitModelUnstable, ERR)
+    ! call DAdapt(integrand, 0._dp, MC%maxp(), 1, prec, prec, BreitModUns, ERR)
 
   contains
 
@@ -438,7 +438,7 @@ module ModelClass
 
     end function integrand
 
-  end function BreitModelUnstable
+  end function BreitModUns
 
 !ccccccccccccccc
 

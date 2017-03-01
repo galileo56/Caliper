@@ -81,7 +81,7 @@ subroutine f90BreitModelUnstable(shape, mt, Q, gamma, c, clen, lambda, n, k, p, 
   type (Model)                            :: Mod
 
   MC = MCtop( shape(:6), mt, Q, n ); Mod = Model(lambda, c, [0, 0], 'sum')
-  res = Mod%BreitModelUnstable(MC, gamma, k, p)
+  res = Mod%BreitModUns(MC, gamma, k, p)
 
 end subroutine f90BreitModelUnstable
 
