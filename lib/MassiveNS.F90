@@ -262,7 +262,7 @@ module MassiveNSClass
        else if ( self%shape(:6) == 'Cparam' ) then
 
          self%tmin = 12 * m2 * (1 - m2); self%tint = 4 * m2 * (1 + 2 * m2)/(1 + 4 * m2)**2
-         self%cp   = ( 2 * m2 - 2 * m4 + Sqrt(m2 - 4 * m**6 + 4 * m8) )/2
+         self%cp   = ( 2 * m2 - 2 * m4 + Sqrt(m2 - 4 * m6 + 4 * m8) )/2
 
          self%deltaM2 = 2 * m**2 * [ 2 * (1 - 2 * m2) * self%deltaM(1), &
          self%deltaM(1)**2 * (1 - 6 * m2) + 2 * (1 - 2 * m2) * self%deltaM(2),  &
@@ -1203,7 +1203,7 @@ module MassiveNSClass
     real (dp), dimension(4), intent(in) :: Coef
     real (dp), dimension(4)             :: res
     real (dp)                           :: IndTerm, Stheta, Ctheta, Xi2Ctheta, c1, &
-                                                 c2, IndTermV, IndTermA
+    c2, IndTermV, IndTermA
 
     c2        = c - 2 * self%m2 ; c1 = 1 + c  ; Ctheta = Cos(2 * theta)
     Xi2Ctheta = Xi2**2 - 2 * (1 - Ctheta) * Xi; Stheta = Sin(2 * theta)
@@ -1859,9 +1859,10 @@ module MassiveNSClass
 
     res(1)  = Sphi * drf(Cphi2, 1 - k * Sphi2, 1._dp, ier)
 
-    res(2:) = res(1) - Sphi3/3 * [ k * drj(Cphi2, 1 - k * Sphi2, 1._dp, 1._dp, ier) , &
-                          c * drj(Cphi2, 1._dp, 1 - k * Sphi2, 1 - c  * Sphi2, ier) , &
-                         c2 * drj(Cphi2, 1._dp, 1 - k * Sphi2, 1 - c2 * Sphi2, ier) ]
+    res(2:) = res(1) - Sphi3/3 * &
+    [  k * drj(Cphi2,        1 - k * Sphi2, 1._dp, 1._dp  , ier) , &
+    -  c * drj(Cphi2, 1._dp, 1 - k * Sphi2, 1 - c  * Sphi2, ier) , &
+    - c2 * drj(Cphi2, 1._dp, 1 - k * Sphi2, 1 - c2 * Sphi2, ier) ]
 
 end subroutine f90Elliptic4
 

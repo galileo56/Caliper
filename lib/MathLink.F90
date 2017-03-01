@@ -2274,7 +2274,6 @@ subroutine f90FOMass(shape, current, m, Q, mZ, gammaZ, sin2ThetaW, t, res)
   real (dp)          , intent(in ) :: t, m, Q, mZ, gammaZ, sin2ThetaW
   character (len = *), intent(in ) :: shape, current
   real (dp)          , intent(out) :: res
-
   type (MassiveNS)                 :: nonSing
   type (ElectroWeak)               :: EW
   type (MatrixElementsMass)        :: MatEl
@@ -2283,9 +2282,10 @@ subroutine f90FOMass(shape, current, m, Q, mZ, gammaZ, sin2ThetaW, t, res)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, m, m, m, m, m, m)
   MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, Q, Q, Q, &
-                             tiny(1._dp), Q, Q, Q, 0._dp, 0._dp)
+  tiny(1._dp), Q, Q, Q, 0._dp, 0._dp)
+
   nonSing   = MassiveNS( shape(:6), 'Q', 'pole', 'noAbs', current(:6), 0, matEl, EW,  &
-                         0._dp, Q)
+  0._dp, Q)
 
   res = nonSing%FOMass(t)
 
