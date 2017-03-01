@@ -361,14 +361,12 @@ module MassiveNSClass
       NSMassMod = resul(1); return
     end if
 
-    call GapMassive%setGammaShift( order, self%shape, delta0, h, self%matEl%scales('R'), &
-    self%matEl%scales('muS'), shift, delt )
+    call GapMassive%setGammaShift( order, self%shape, delta0, h, &
+    self%matEl%scales('R'), self%matEl%scales('muS'), shift, delt )
 
     delta = delt(1,:); Modelo = 0; ModPlus = 0; ModDer = 0
 
-    if ( self%shape(:3) == 'HJM' ) then
-      delta = delta/2; shift = shift/2
-    end if
+    if ( self%shape(:3) == 'HJM' ) then; delta = delta/2; shift = shift/2;end if
 
     tshift = t - shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau
     tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift
@@ -413,7 +411,7 @@ module MassiveNSClass
             call qags( NS1lloop, 0._dp, tau, prec, prec, res, abserr, neval, ier )
 
             NSMassMod = NSMassMod + self%alphaMu * (  res + self%A1Singular + self%Dirac(2) + &
-                    ( self%B1Singular + self%B1 ) * log(tau)  ) + self%deltaM(1) * self%AMS
+            ( self%B1Singular + self%B1 ) * log(tau)  ) + self%deltaM(1) * self%AMS
 
          else
 
@@ -595,7 +593,7 @@ module MassiveNSClass
 
     delta = delt(1,:); Modelo = 0; ModPlus = 0; ModDer = 0
 
-    if ( self%shape(:3) == 'HJM' ) then; delta = delta/2; shift = shift/2; end if
+    if ( self%shape(:3) == 'HJM' ) then; delta = delta/2; shift = shift/2;end if
 
     tshift = t - shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau
     tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift
@@ -767,7 +765,7 @@ module MassiveNSClass
     real (dp)    , dimension(:,:), intent(in) :: c
     type (Model) , dimension(:,:), intent(in) :: modList
     real (dp)                    , intent(in) :: R0, mu0, delta0, h, t, mu, muJ, muS, Q, &
-                                                 Rmass, width, R, muM
+    Rmass, width, R, muM
 
     call self%SetEverything(mu, Q, mu, muJ, muS, R, Rmass, muM, width)
 
