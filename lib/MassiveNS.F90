@@ -756,8 +756,8 @@ module MassiveNSClass
 
 !ccccccccccccccc
 
-  real (dp) function HJMNSMassScales(self, c, modList, setup, gap, cum, order, run, mu, &
-                    Q, muJ, muS, R, Rmass, muM, width, R0, mu0, delta0, h, t, t2)
+  real (dp) function HJMNSMassScales(self, c, modList, setup, gap, cum, order, &
+  run, mu, Q, muJ, muS, R, Rmass, muM, width, R0, mu0, delta0, h, t, t2)
     class (MassiveScales)     , intent(inout) :: self
     character (len = *)          , intent(in) :: setup, gap, cum
     integer                      , intent(in) :: order, run
