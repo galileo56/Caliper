@@ -617,16 +617,34 @@ module MassiveNSClass
           end if
 
         else
-          if ( .not. present(t2) ) then
-                           Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul    , p)
-            if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul - 2, p)
-            if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModel(self%width, cumul + 1, p)
+
+          if ( setup(6:13) == 'Unstable' ) then
+
+            if ( .not. present(t2) ) then
+                             Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModelUnstable(self%MC, self%width, cumul    , p)
+              if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModelUnstable(self%MC, self%width, cumul - 2, p)
+              if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModelUnstable(self%MC, self%width, cumul + 1, p)
+
+            else
+                             Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModelUnstable(self%MC, self%width, cumul    , p3, p2)
+              if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModelUnstable(self%MC, self%width, cumul - 2, p3, p2)
+              if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModelUnstable(self%MC, self%width, cumul + 1, p3, p2)
+
+            end if
 
           else
-                           Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul    , p3, p2)
-            if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul - 2, p3, p2)
-            if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModel(self%width, cumul + 1, p3, p2)
 
+            if ( .not. present(t2) ) then
+                             Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul    , p)
+              if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul - 2, p)
+              if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModel(self%width, cumul + 1, p)
+
+            else
+                             Modelo(i)  = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul    , p3, p2)
+              if (order > 0) ModPlus(i) = self%Q**(1 + cumul) * Mod%BreitModel(self%width, cumul - 2, p3, p2)
+              if (order > 0) ModDer(i)  = self%Q**(2 + cumul) * Mod%BreitModel(self%width, cumul + 1, p3, p2)
+
+            end if
           end if
         end if
 
