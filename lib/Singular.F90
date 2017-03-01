@@ -52,7 +52,7 @@ module SingularClass
     real (dp), dimension(3)        :: deltaM
     real (dp)                      :: width, lm, LQ, alphaM, mass, muM, muJ, m2, m
     class (MassiveNS), allocatable :: MassNS
-    type (MCtop)                   :: Unstable
+    type (MCtop)                   :: MC
 
     contains
 
@@ -282,7 +282,7 @@ module SingularClass
     JetArg = muJ**2/Q/muS      ; alphaM  = matEl%alphaScale('massNf') ; QoM  = Q/mPole
     InSingMass%alphaM = alphaM ; InSingMass%muJ = muJ; InSingMass%run1 = run1
 
-    InSingMass%Unstable = MCtop( shape, mass, Q)
+    InSingMass%MC = MCtop(shape, mass, Q)
 
     if (muJ < muM) then
       InSingMass%MatExp = MatEl%CoefMat('bJet')
@@ -972,7 +972,7 @@ module SingularClass
     self%width = self%MassNS%MassVar('width')
     self%tmin  = self%MassNS%MassVar('tmin') ; self%deltaM = self%MassNS%MassDeltaShift()
 
-    self%Unstable = MCtop( self%shape, self%MassNS%MassVar('mass'), self%Q)
+    self%MC = MCtop( self%shape, self%MassNS%MassVar('mass'), self%Q)
 
     if (muJ > self%muM) then  ! SCET scenarios, III and IV
 
@@ -1378,12 +1378,12 @@ module SingularClass
 
       if ( setup(8:15) == 'Unstable' ) then
 
-        SingleSingMod = NoMod( pshift - self%Unstable%maxP() ) * self%Unstable%Delta()
+        SingleSingMod = NoMod( pshift - self%MC%maxP() ) * self%MC%Delta()
 
-        if ( present(tau2) ) SingleSingMod = self%Unstable%Delta() * &
-        NoMod( pshift2 - self%Unstable%maxP() ) - SingleSingMod
+        if ( present(tau2) ) SingleSingMod = self%MC%Delta() * &
+        NoMod( pshift2 - self%MC%maxP() ) - SingleSingMod
 
-        call qags( UnstableInt, pshift - self%Unstable%maxP(), pshift2, prec, &
+        call qags( UnstableInt, pshift - self%MC%maxP(), pshift2, prec, &
         prec, result, abserr, neval, ier )
 
         SingleSingMod = result + SingleSingMod
@@ -1425,9 +1425,9 @@ module SingularClass
     class is (SingularMass)
 
       if (.not. present(tau2) ) then
-        UnstableInt = NoMod(x) * self%Unstable%Qdist(pshift - x)
+        UnstableInt = NoMod(x) * self%MC%Qdist(pshift - x)
       else
-        UnstableInt = NoMod(x) * self%Unstable%Qdist( pshift - x, pshift2 - x )
+        UnstableInt = NoMod(x) * self%MC%Qdist( pshift - x, pshift2 - x )
       end if
 
     end select
@@ -1795,7 +1795,7 @@ module SingularClass
 !ccccccccccccccc
 
   real (dp) function SingleSingWidthMod(self, Mod, setup, gap, space, cum, order, &
-                                        R0, mu0, delta0, h, tau, tau2)
+    R0, mu0, delta0, h, tau, tau2)
     class (SingularMass), intent(in)                 :: self
     type (Model)        , intent(in)                 :: Mod
     character (len = *) , intent(in)                 :: setup, gap, cum, space
@@ -1872,13 +1872,13 @@ module SingularClass
 
     if ( setup(8:15) == 'Unstable' ) then
 
-      SingleSingWidthMod = NoMod( pshift - self%Unstable%maxP() ) &
-      * self%Unstable%Delta()
+      SingleSingWidthMod = NoMod( pshift - self%MC%maxP() ) &
+      * self%MC%Delta()
 
-      if ( present(tau2) ) SingleSingWidthMod = self%Unstable%Delta() * &
-      NoMod( pshift2 - self%Unstable%maxP() ) - SingleSingWidthMod
+      if ( present(tau2) ) SingleSingWidthMod = self%MC%Delta() * &
+      NoMod( pshift2 - self%MC%maxP() ) - SingleSingWidthMod
 
-      call qags( UnstableInt, pshift - self%Unstable%maxP(), pshift2, prec, &
+      call qags( UnstableInt, pshift - self%MC%maxP(), pshift2, prec, &
       prec, result, abserr, neval, ier )
 
       SingleSingWidthMod = result + SingleSingWidthMod
@@ -1914,9 +1914,9 @@ module SingularClass
     real (dp), intent(in) :: x
 
     if (.not. present(tau2) ) then
-      UnstableInt = NoMod(x) * self%Unstable%QDist( pshift - x )
+      UnstableInt = NoMod(x) * self%MC%QDist( pshift - x )
     else
-      UnstableInt = NoMod(x) * self%Unstable%QDist( pshift - x, pshift2 - x )
+      UnstableInt = NoMod(x) * self%MC%QDist( pshift - x, pshift2 - x )
     end if
 
   end function UnstableInt
@@ -1964,9 +1964,8 @@ module SingularClass
 !ccccccccccccccc
 
   function SingleSingWidthList(self, ModList, setup, gap, space, cum, order, R0, &
-  mu0, delta0, h, tau, tau2, Unstable) result(resList)
+  mu0, delta0, h, tau, tau2) result(resList)
     class (SingularMass), intent(in)                 :: self
-    class (MCtop), intent(in), optional              :: Unstable
     type (Model)        , intent(in), dimension(:)   :: ModList
     character (len = *) , intent(in)                 :: space, gap, cum, setup
     real (dp)           , intent(in)                 :: R0, mu0, delta0, tau, h
@@ -2035,7 +2034,7 @@ module SingularClass
         call qagi( UnstableInt, 0._dp, 1, prec, prec, resList(i), abserr, neval, ier )
         call qagi( ModInt     , 0._dp, 1, prec, prec, result, abserr, neval, ier )
 
-      resList(i) = resList(i) + result * self%Unstable%Delta()
+      resList(i) = resList(i) + result * self%MC%Delta()
 
       end do
 
@@ -2122,9 +2121,9 @@ module SingularClass
     real (dp), optional, intent(in) :: x2
 
     if ( .not. present(tau2) ) then
-      UnstableInt = NoMod(pshift - x) * ModList(i)%ModelUnstable(self%Unstable, 0, x)
+      UnstableInt = NoMod(pshift - x) * ModList(i)%ModelUnstable(self%MC, 0, x)
     else
-      UnstableInt = NoMod(pshift - x, pshift2 - x) * ModList(i)%ModelUnstable(self%Unstable, 0, x) ! the smart way does not work...
+      UnstableInt = NoMod(pshift - x, pshift2 - x) * ModList(i)%ModelUnstable(self%MC, 0, x) ! the smart way does not work...
     end if
 
   end function UnstableInt

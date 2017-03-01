@@ -3399,7 +3399,8 @@ static void coefmat(char const* str, int nf, double s3){
    MLEndPacket(stdlink);
 }
 
-extern double f90model_(double* c, int* clen, double* lambda, int* k, double* l, double* result);
+extern double f90model_(double* c, int* clen, double* lambda, int* k, double* l,
+  double* result);
 
 static double model(double c[], long clen, double lambda, int k, double l){
   double res;
