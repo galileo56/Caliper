@@ -599,12 +599,12 @@ module MassiveNSClass
 
     if ( self%shape(:3) == 'HJM' ) then; delta = delta/2; shift = shift/2;end if
 
-    tshift = t - shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau
+    tshift = t - shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau/self%ESFac
     tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift
 
     if ( present(t2) ) then
-      tshift2 = t2 - shift/self%Q;  tau2    = tshift2 - self%tmin
-      p2 = self%Q * tau2         ;  p2shift = self%Q * tshift2
+      tshift2 = t2 - shift/self%Q   ;  tau2    = tshift2 - self%tmin
+      p2 = self%Q * tau2/self%ESFac ;  p2shift = self%Q * tshift2
     end if
 
     if ( present(t2) .and. p < 0 ) then
@@ -709,7 +709,7 @@ module MassiveNSClass
 
       end if abs_if
 
-      order_if_3: if (order > 0 .and. p2 > 0) then
+      order_if_3: if ( order > 0 .and. p2 > 0 ) then
 
         call qags( inteNSMod, 0._dp, p2, prec, prec, resList(i), abserr, neval, ier )
 
@@ -735,6 +735,8 @@ module MassiveNSClass
       end if
     end if
 
+    resList = resList/self%ESFac**(1 + cumul)
+
     contains
 
 !ccccccccccccccc
@@ -743,9 +745,9 @@ module MassiveNSClass
       real (dp), intent(in) :: l
       real (dp)             :: t2, t3
 
-      t3 = l/self%Q; t2 = t3 + self%tmin
+      t3 = l/self%Q; t2 = t3 + self%tmin/self%ESFac
 
-      inteNSMod = self%FOMass(t2) - ( self%B1 + self%B1Singular )/t3 - &
+      inteNSMod = self%ESFac * self%FOMass(self%ESFac * t2) - ( self%B1 + self%B1Singular )/t3 - &
       2 * ( t3/(t3 + self%m2)**2 - 4 * log( t3/self%m2 + 1 )/t3 )/3
 
       if ( dobsing ) then
