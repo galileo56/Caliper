@@ -490,20 +490,20 @@ module MassiveNSClass
 
           if ( .not. present(t2) ) then
 
-            Modelo = self%Q**(1 + cumul) * BreitWigner(self%width, cumul, p3)/self%ESFac**(1 - cumul)
+            Modelo = self%Q**(1 + cumul) * BreitWigner(self%width, cumul, p3)/self%ESFac**(1 + cumul)
 
             if (order > 0) then
-              ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p3)/self%ESFac**(1 - cumul)
-              ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p3)/self%ESFac**(1 - cumul)
+              ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p3)/self%ESFac**(1 + cumul)
+              ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p3)/self%ESFac**(1 + cumul)
             end if
 
           else
 
-            Modelo = self%Q**(1 + cumul) * BreitWigner(self%width, cumul, p3, p2)/self%ESFac**(1 - cumul)
+            Modelo = self%Q**(1 + cumul) * BreitWigner(self%width, cumul, p3, p2)/self%ESFac**(1 + cumul)
 
             if (order > 0) then
-              ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p3, p2)/self%ESFac**(1 - cumul)
-              ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p3, p2)/self%ESFac**(1 - cumul)
+              ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p3, p2)/self%ESFac**(1 + cumul)
+              ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p3, p2)/self%ESFac**(1 + cumul)
             end if
           end if
 
