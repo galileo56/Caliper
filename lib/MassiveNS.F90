@@ -373,11 +373,11 @@ module MassiveNSClass
     if ( self%shape(:3) == 'HJM' ) then; delta = delta/2; shift = shift/2;end if
 
     tshift = t - self%ESFac * shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau/self%ESFac
-    tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift
+    tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift/self%ESFac
 
     if ( present(t2) ) then
       tshift2 = t2 - self%ESFac * shift/self%Q;  tau2    = tshift2 - self%tmin
-      p2      = self%Q * tau2/self%ESFac      ;  p2shift = self%Q * tshift2
+      p2      = self%Q * tau2/self%ESFac      ;  p2shift = self%Q * tshift2/self%ESFac
     end if
 
     if ( present(t2) .and. p < 0 ) then
@@ -515,23 +515,23 @@ module MassiveNSClass
           if ( .not. present(t2) ) then
 
             Modelo = Modelo * self%MC%Delta() + self%Q**(1 + cumul) * &
-            self%MC%BreitUnstable(self%width, cumul, p3shift)
+            self%MC%BreitUnstable(self%width, cumul, p3shift)/self%ESFac**(1 + cumul)
 
             if (order > 0) then
 
               ModPlus = ModPlus * self%MC%Delta() + self%Q**(1 + cumul) * &
-              self%MC%BreitUnstable(self%width, cumul - 2, p3shift)
+              self%MC%BreitUnstable(self%width, cumul - 2, p3shift)/self%ESFac**(1 + cumul)
 
               ModDer  = ModDer  * self%MC%Delta() + self%Q**(2 + cumul) * &
-              self%MC%BreitUnstable(self%width, cumul + 1, p3shift)
+              self%MC%BreitUnstable(self%width, cumul + 1, p3shift)/self%ESFac**(1 + cumul)
 
             else
 
               ModPlus = ModPlus * self%MC%Delta() + self%Q**(1 + cumul) * &
-              self%MC%BreitUnstable(self%width, cumul - 2, p3shift, p2shift)
+              self%MC%BreitUnstable(self%width, cumul - 2, p3shift, p2shift)/self%ESFac**(1 + cumul)
 
               ModDer  = ModDer  * self%MC%Delta() + self%Q**(2 + cumul) * &
-              self%MC%BreitUnstable(self%width, cumul + 1, p3shift, p2shift)
+              self%MC%BreitUnstable(self%width, cumul + 1, p3shift, p2shift)/self%ESFac**(1 + cumul)
 
             end if
           end if
