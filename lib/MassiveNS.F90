@@ -19,9 +19,9 @@ module MassiveNSClass
     real (dp), dimension(3)   :: deltaM, deltaM2
     character (len = 10)      :: shape, ES, current, singular, scheme
     integer                   :: nf, massOrd
-    real (dp)                 :: m2, m4, m6, m8, m10, alphaJ, tmin, tmax, mPole,&
+    real (dp)                 :: m4, m6, m8, m10, alphaJ, tmin, tmax, mPole,   &
     v, lm, m, thrustMin, cp, mm, A1Singular, tint, B1Singular, alphaMu, B1, Q, &
-    alphaM, muM, GlueMax, GlueInt, width, AMS, alphaH, mass
+    alphaM, muM, GlueMax, GlueInt, width, AMS, alphaH, m2, mass, ESfac
 
    contains
 
@@ -73,7 +73,7 @@ module MassiveNSClass
 !ccccccccccccccc
 
    type (MassiveScales) function InScales(shape, ES, scheme, singular, current, &
-                                          massOrd, matEl, EW)
+   massOrd, matEl, EW)
      character (len = *)        , intent(in) :: shape, ES, current, singular, scheme
      type (MatricesElementsMass), intent(in) :: matEl
      type (ElectroWeak)         , intent(in) :: EW
@@ -97,12 +97,14 @@ module MassiveNSClass
 
      call InScales%SetMasses()
 
+     InScales%ESfac = 1; if ( shape(:6) == 'Cparam' ) InScales%ESfac = 6
+
    end function InScales
 
 !ccccccccccccccc
 
    type (MassiveNS) function InMassNS(shape, ES, scheme, singular, current, massOrd,  &
-                                      matEl, EW, width, mu)
+   matEl, EW, width, mu)
      character (len = *)      , intent(in) :: shape, scheme, ES, current, singular
      real (dp), optional      , intent(in) :: mu, width
      type (MatrixElementsMass), intent(in) :: matEl
@@ -143,6 +145,8 @@ module MassiveNSClass
      end select
 
      call InMassNS%SetMasses()
+
+     InMassNS%ESfac = 1; if ( shape(:6) == 'Cparam' ) InMassNS%ESfac = 6
 
    end function InMassNS
 
@@ -262,7 +266,7 @@ module MassiveNSClass
        else if ( self%shape(:6) == 'Cparam' ) then
 
          self%tmin = 12 * m2 * (1 - m2); self%tint = 4 * m2 * (1 + 2 * m2)/(1 + 4 * m2)**2
-         self%cp   = ( 2 * m2 - 2 * m4 + Sqrt(m2 - 4 * m**6 + 4 * m8) )/2
+         self%cp   = ( 2 * m2 - 2 * m4 + Sqrt(m2 - 4 * m6 + 4 * m8) )/2
 
          self%deltaM2 = 2 * m**2 * [ 2 * (1 - 2 * m2) * self%deltaM(1), &
          self%deltaM(1)**2 * (1 - 6 * m2) + 2 * (1 - 2 * m2) * self%deltaM(2),  &
@@ -278,7 +282,7 @@ module MassiveNSClass
        end if
      end if
 
-     self%AMS = self%A0MS() ; self%B1  = self%B1NS()
+     self%AMS = self%A0MS() ; self%B1 = self%B1NS()
      self%A1Singular = (4 * self%lm + 16 * self%lm**2)/3
 
      if ( self%shape(:6) /= 'Cparam' ) self%A1Singular = self%A1Singular + 6.579736267392905_dp
@@ -320,8 +324,8 @@ module MassiveNSClass
       self%alphaJ = self%alphaMassNl%alphaQCD(muJ)/Pi
     end if
 
-    call self%matEl%MassDeltaSet(self%scheme, self%massOrd, muJ, Rmass, self%mass, &
-                                     self%deltaM, alphaJ)
+    call self%matEl%MassDeltaSet(self%scheme, self%massOrd, muJ, Rmass, &
+    self%mass, self%deltaM, alphaJ)
 
     call self%SetAll(width);  call self%matEl%SetDelta(muS, R, alphaList)
 
@@ -372,8 +376,8 @@ module MassiveNSClass
     tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift
 
     if ( present(t2) ) then
-      tshift2 = t2 - shift/self%Q;  tau2 = tshift2 - self%tmin
-      p2 = self%Q * tau2;  p2shift = self%Q * tshift2
+      tshift2 = t2 - shift/self%Q;  tau2    = tshift2 - self%tmin
+      p2 = self%Q * tau2         ;  p2shift = self%Q * tshift2
     end if
 
     if ( present(t2) .and. p < 0 ) then
@@ -411,7 +415,7 @@ module MassiveNSClass
             call qags( NS1lloop, 0._dp, tau, prec, prec, res, abserr, neval, ier )
 
             NSMassMod = NSMassMod + self%alphaMu * (  res + self%A1Singular + self%Dirac(2) + &
-            ( self%B1Singular + self%B1 ) * log(tau)  ) + self%deltaM(1) * self%AMS
+            ( self%B1Singular + self%B1 ) * log(tau/self%ESfac)  ) + self%deltaM(1) * self%AMS
 
          else
 
@@ -459,11 +463,11 @@ module MassiveNSClass
             call qags( NS1lloop, 0._dp, tau, prec, prec, res, abserr, neval, ier )
 
             NSMassMod = NSMassMod + self%alphaMu * ( res - self%CumMassSing1loop(tshift) +  &
-            self%A1Singular + self%B1Singular * log(tau) )
+            self%A1Singular + self%B1Singular * log(tau/self%ESfac) )
 
             if ( self%singular(:3) /= 'abs' .and. self%width <= d1mach(1) )  &
             NSMassMod = NSMassMod + self%AMS * self%deltaM(1) + &
-            self%alphaMu * ( self%Dirac(2) + self%B1 * log(tau) )
+            self%alphaMu * ( self%Dirac(2) + self%B1 * log(tau/self%ESfac) )
 
           else
 
@@ -772,11 +776,13 @@ module MassiveNSClass
     if ( present(t2) ) then
 
       HJMNSMassScales = self%HJMNSMass(c, modList, setup, gap, cum, order, run, R0, &
-                                mu0, delta0, h, t, t2)
+      mu0, delta0, h, t, t2)
+
     else
 
       HJMNSMassScales = self%HJMNSMass(c, modList, setup, gap, cum, order, run, R0, &
-                                mu0, delta0, h, t)
+      mu0, delta0, h, t)
+
     end if
 
   end function HJMNSMassScales
@@ -808,10 +814,10 @@ module MassiveNSClass
     if ( setup(:2) == 'FO' .or. setup(:7) == 'NoModel' ) then
 
       if ( .not. present(t2) ) HJMNSMass = self%NSMass( ModList(1,1), setup, gap, cum, &
-                                                        order, run, R0, mu0, delta0, h, t )
+      order, run, R0, mu0, delta0, h, t )
 
       if ( present(t2) ) HJMNSMass = self%NSMass( ModList(1,1), setup, gap, cum, order, &
-                                                  run, R0, mu0, delta0, h, t, t2 )
+      run, R0, mu0, delta0, h, t, t2 )
 
       return
     end if
@@ -871,10 +877,11 @@ module MassiveNSClass
         else
 
         Modelo = (2*self%Q)**(1 + cumul) * BreitModel2D(self%width, c, modList, &
-                                                         cumul, - 1, p, p)
+        cumul, - 1, p, p)
 
         if ( .not. dobsing ) Modelo = (2*self%Q)**(1 + cumul) * BreitModel2D(self%width,  &
-                                                c, modList, cumul, - 1, p2, p2) - Modelo
+        c, modList, cumul, - 1, p2, p2) - Modelo
+
           if (order > 0) then
 
              ModPlus = self%Q**(1 + cumul)/2**(-cumul) * (                      &
@@ -998,9 +1005,9 @@ module MassiveNSClass
     real (dp)        , intent(in) :: tau
     real (dp)                     :: t
 
-    t = tau - self%tmin; MassSing1loop = 0; if (t <= 0) return
+    t = (tau - self%tmin)/self%ESfac; MassSing1loop = 0; if (t <= 0) return
 
-    MassSing1loop = ( - 8/t + 2 * t/(t + self%m2)**2 - 8 * log(t + self%m2)/t )/3
+    MassSing1loop = ( - 8/t + 2 * t/(t + self%m2)**2 - 8 * log(t + self%m2)/t )/3/self%ESfac
 
    end function MassSing1loop
 
@@ -1011,7 +1018,7 @@ module MassiveNSClass
     real (dp)        , intent(in) :: tau
     real (dp)                     :: t, DiLog, dilogpiece
 
-    t = tau - self%tmin; CumMassSing1loop = 0;  if (t <= 0) return
+    t = (tau - self%tmin)/self%ESfac; CumMassSing1loop = 0;  if (t <= 0) return
 
     if (self%m > 1e-4_dp) then
        dilogpiece = 8 * DiLog(-t/self%m2) + 4 * Log(t/self%m2)**2
@@ -1203,7 +1210,7 @@ module MassiveNSClass
     real (dp), dimension(4), intent(in) :: Coef
     real (dp), dimension(4)             :: res
     real (dp)                           :: IndTerm, Stheta, Ctheta, Xi2Ctheta, c1, &
-                                                 c2, IndTermV, IndTermA
+    c2, IndTermV, IndTermA
 
     c2        = c - 2 * self%m2 ; c1 = 1 + c  ; Ctheta = Cos(2 * theta)
     Xi2Ctheta = Xi2**2 - 2 * (1 - Ctheta) * Xi; Stheta = Sin(2 * theta)
@@ -1488,9 +1495,9 @@ module MassiveNSClass
 
     A = 0; V = 0
 
-    massIf: if ( self%m > 0.499 ) then
+    massIf: if ( self%m > 0.499_dp ) then
 
-      h = sqrt(0.5 - self%m); lh = 0; if (h > 1.d-6) lh = log(h)
+      h = sqrt(0.5_dp - self%m); lh = 0; if (h > 1.d-6) lh = log(h)
 
       current_if_1: if ( self%current(:6) == 'vector' .or. self%current(:3) == 'all' ) then
 
@@ -1508,7 +1515,7 @@ module MassiveNSClass
           V = 4.954944900637917_dp + 42.595415652878366_dp * h**2 - 553.6278884247788_dp * h**12 + &
           148.11234489001265_dp * h**3 - 241.2319251819811_dp * h**4 + 44.07477463565101_dp * h**5 &
           + 118.01211476041078_dp * h**6 + 19.2854288762748_dp * h**7 - 289.658731751325_dp * h**8 &
-          + 330.21767767807745_dp * h**9 - 311.89178067391487_dp * h**10 - 48 * h               &
+          + 330.21767767807745_dp * h**9 - 311.89178067391487_dp * h**10 - 48 * h                  &
           + 416.86212391885135_dp * h**11
 
         end if shape_if_1
@@ -1859,9 +1866,10 @@ module MassiveNSClass
 
     res(1)  = Sphi * drf(Cphi2, 1 - k * Sphi2, 1._dp, ier)
 
-    res(2:) = res(1) - Sphi3/3 * [ k * drj(Cphi2, 1 - k * Sphi2, 1._dp, 1._dp, ier) , &
-                          c * drj(Cphi2, 1._dp, 1 - k * Sphi2, 1 - c  * Sphi2, ier) , &
-                         c2 * drj(Cphi2, 1._dp, 1 - k * Sphi2, 1 - c2 * Sphi2, ier) ]
+    res(2:) = res(1) - Sphi3/3 * &
+    [  k * drj(Cphi2,        1 - k * Sphi2, 1._dp, 1._dp  , ier) , &
+    -  c * drj(Cphi2, 1._dp, 1 - k * Sphi2, 1 - c  * Sphi2, ier) , &
+    - c2 * drj(Cphi2, 1._dp, 1 - k * Sphi2, 1 - c2 * Sphi2, ier) ]
 
 end subroutine f90Elliptic4
 
