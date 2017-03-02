@@ -719,24 +719,24 @@ module SingularClass
         NonDistMod = 2 * self%alphaJ * self%JetNonDist(cum, self%Q * p)
       else
         NonDistMod = 2 * self%alphaJ * ( self%JetNonDist(cum, self%Q * p2) - &
-                                      self%JetNonDist(cum, self%Q * p ) )
+        self%JetNonDist(cum, self%Q * p ) )
       end if
 
     else
 
       if ( dobsing ) then
         NonDistMod = 2 * self%muSEuler**w * self%alphaJ/3 * &
-                   NonDist(p)/gamma(1 - w)/self%m2/self%Q
+        NonDist(p)/gamma(1 - w)/self%m2/self%Q
       else
         NonDistMod = 2 * self%muSEuler**w * self%alphaJ/3/self%m2/self%Q * &
-                   ( NonDist(p2) - NonDist(p) )/gamma(1 - w)
+        ( NonDist(p2) - NonDist(p) )/gamma(1 - w)
       end if
 
     end if
 
     NonDistMod = Sum( self%HardExp(:order) ) * Sum( self%HardMassExp(:order) ) * &
     NonDistMod * self%Prefact * self%compFact**cumConst(cum) * &
-                 (self%Q/self%ESFac)**( 1 + cumConst(cum) )
+    (self%Q/self%ESFac)**( 1 + cumConst(cum) )
 
     contains
 
@@ -762,7 +762,8 @@ module SingularClass
     real (dp), optional       , intent(in) :: tau2
     integer                   , intent(in) :: order
     real (dp)                              :: p, p2, Qm2, shift, w, absErr, gam, &
-                                              newTerm, wProd
+    newTerm, wProd
+
     real (dp), dimension(order,order)      :: delta
     real (dp), dimension( size(ModList) )  :: resList, Omega
     integer                                :: neval, ier, i, l, fac
@@ -918,7 +919,7 @@ module SingularClass
     end select
 
       call GapMassive%setGammaShift( order, self%shape, delta0, h, self%R, &
-                                     self%muS, shift, delta(1,:) )
+      self%muS, shift, delta(1,:) )
 
       delta(1,:) = delta(1,:) + self%Q * self%deltaM(:order)
 
@@ -934,9 +935,8 @@ module SingularClass
   subroutine SetRunning(self, muJ, muS, R, mu)
     class (SingularMassless), intent(inout) :: self
     real (dp)               , intent(in)    :: muJ, muS, R, mu
-
-    real (dp)                               :: wJet, k, kHard, kJet, kSoft, wB, wHard, &
-                                               wSoftnf, wSoftnl, wJetNf, wJetNl, wSoft
+    real (dp)                               :: wJet, k, kHard, kJet, kSoft, wB, &
+    wSoftnf, wSoftnl, wJetNf, wJetNl, wSoft, wHard
 
     self%preFact = 1;  self%muS = muS;  self%R = R
 
@@ -948,11 +948,11 @@ module SingularClass
     self%w = - 2 * self%alpha%wTilde( self%run, self%cusp, muS, mu) + wJet
 
     k = self%k - 2 * self%alpha%kTilde( self%run, self%cusp, muS, mu )  &
-        - 2 * self%alpha%kTilde( self%run , self%cusp, self%muH, mu )       &
-        + 4 * self%alpha%kTilde( self%run , self%cusp, muJ     , mu )       &
-        +     self%alpha%wTilde( self%run1, self%soft, muS , mu )       &
-        +     self%alpha%wTilde( self%run1, self%jet , muJ , mu )       &
-        +     self%alpha%wTilde( self%run1, self%NonCusp, self%muH, mu )
+    - 2 * self%alpha%kTilde( self%run , self%cusp, self%muH, mu )       &
+    + 4 * self%alpha%kTilde( self%run , self%cusp, muJ     , mu )       &
+    +     self%alpha%wTilde( self%run1, self%soft, muS     , mu )       &
+    +     self%alpha%wTilde( self%run1, self%jet , muJ     , mu )       &
+    +     self%alpha%wTilde( self%run1, self%NonCusp, self%muH, mu )
 
     self%preFact = self%PiResum * (muJ**2/self%Q/muS)**wJet * exp(k) * &
     self%QoMuH**( 2 * self%alpha%wTilde(self%run, self%cusp, self%muH, mu )  )
@@ -982,7 +982,7 @@ module SingularClass
 
         wJet = 2 * self%alpha%wTilde( self%run, self%cusp, muJ, mu )
 
-        kJet = 4 * self%alpha%kTilde( self%run    , self%cusp, muJ, mu ) &
+        kJet = 4 * self%alpha%kTilde( self%run , self%cusp, muJ, mu ) &
                  + self%alpha%wTilde( self%run1, self%jet , muJ, mu )
 
         wHard = 2 * self%alpha%wTilde( self%run, self%cusp, self%muH, mu )
@@ -1005,12 +1005,12 @@ module SingularClass
         wHard = 2 * self%alpha%wTilde( self%run, self%cusp, self%muH, self%muM )
 
         kHard = self%alpha%wTilde( self%run1, self%NonCusp, self%muH, self%muM ) &
-          - 2 * self%alpha%kTilde( self%run , self%cusp, self%muH, self%muM )        &
+          - 2 * self%alpha%kTilde( self%run , self%cusp, self%muH, self%muM )    &
           +   self%alphaNl%wTilde( self%run1, self%Hm, self%muM     , mu  )
 
-        self%preFact = self%QoMuH**wHard * (muJ**2/self%Q/muS)**wJet *         &
-                   (self%muM * self%mass/self%Q/muS)**wB * (self%Q/self%mass)**(  2 *   &
-                    self%alphaNl%wTilde(self%run, self%cuspNl, self%muM, mu  )  )
+        self%preFact = self%QoMuH**wHard * (muJ**2/self%Q/muS)**wJet *       &
+        (self%muM * self%mass/self%Q/muS)**wB * (self%Q/self%mass)**(  2 *   &
+        self%alphaNl%wTilde(self%run, self%cuspNl, self%muM, mu  )  )
 
         wJet = wJet + wB
 
@@ -1110,8 +1110,9 @@ module SingularClass
               - 2 * self%alpha%kTilde( self%run , self%cusp, self%muH, mu )
 
       self%preFact = (self%muM/muS)**wSoftnf * (muJ/self%QoMpole/muS)**wJetNl * &
-                     (self%muM**2/self%Q/muS)**wJetNf * self%QoMuH**(  2      * &
-                      self%alpha%wTilde(self%run, self%cusp, self%muH, mu )  )
+      (self%muM**2/self%Q/muS)**wJetNf * self%QoMuH**(  2      * &
+      self%alpha%wTilde(self%run, self%cusp, self%muH, mu )  )
+
     end if
 
     end if
@@ -1818,20 +1819,22 @@ module SingularClass
     end if
 
     if ( self%width <= d1mach(1) ) then
-      if ( .not. present(tau2) ) SingleSingWidthMod = self%SingleSingMod(Mod, setup, gap, &
-                                 'posExp', cum, order, R0, mu0, delta0, h, tau)
-      if (       present(tau2) ) SingleSingWidthMod = self%SingleSingMod(Mod, setup, gap, &
-                                 'posExp', cum, order, R0, mu0, delta0, h, tau, tau2)
+      if ( .not. present(tau2) ) SingleSingWidthMod = self%SingleSingMod(Mod, &
+      setup, gap, 'posExp', cum, order, R0, mu0, delta0, h, tau)
+
+      if (       present(tau2) ) SingleSingWidthMod = self%SingleSingMod(Mod, &
+      setup, gap, 'posExp', cum, order, R0, mu0, delta0, h, tau, tau2)
+
       return
     end if
 
     if ( setup(:5) == 'Model' ) then
       if ( present(tau2) ) then
-        res = self%SingleSingWidthList([Mod], setup, gap, space, cum, order, R0, mu0, &
-                                        delta0, h, tau, tau2)
+        res = self%SingleSingWidthList([Mod], setup, gap, space, cum, order,  &
+        R0, mu0, delta0, h, tau, tau2)
       else
-        res = self%SingleSingWidthList([Mod], setup, gap, space, cum, order, R0, mu0, &
-                                     delta0, h, tau)
+        res = self%SingleSingWidthList([Mod], setup, gap, space, cum, order, &
+        R0, mu0, delta0, h, tau)
       end if
       SingleSingWidthMod = res(1); return
     end if
@@ -1853,7 +1856,8 @@ module SingularClass
         do j = 0, 2 * (order - i)
 
           deltaAdd(i,j) = sum(   self%MatAdded( j, order - i: ceiling(j/2.): -1 ) * &
-                                 delta( i,i:order - ceiling(j/2.) )   )
+          delta( i,i:order - ceiling(j/2.) )   )
+
         end do
       end do
     end if
@@ -1867,10 +1871,12 @@ module SingularClass
       end do
     end if
 
-    SingleSingWidthMod = NoMod(p)
-    if ( present(tau2) ) SingleSingWidthMod = NoMod(p2) - SingleSingWidthMod
+    if ( setup(8:15) /= 'Unstable' ) then
 
-    if ( setup(8:15) == 'Unstable' ) then
+      SingleSingWidthMod = NoMod(p)
+      if ( present(tau2) ) SingleSingWidthMod = NoMod(p2) - SingleSingWidthMod
+
+    else
 
       if ( self%shape(:6) == 'thrust' ) SingleSingWidthMod = NoMod(p) * self%MC%Delta()
 
@@ -1885,8 +1891,8 @@ module SingularClass
     end if
 
     SingleSingWidthMod = SingleSingWidthMod * self%Prefact * self%compFact**cumConst(cum) * &
-                        Sum( self%HardExp(:order) ) * Sum( self%HardMassExp(:order) ) * &
-                        (self%Q/self%ESFac)**( 1 + cumConst(cum) )
+    Sum( self%HardExp(:order) ) * Sum( self%HardMassExp(:order) ) * &
+    (self%Q/self%ESFac)**( 1 + cumConst(cum) )
 
     return ! the rest will not be evaluated
 
@@ -1897,11 +1903,11 @@ module SingularClass
       if ( .not. present(tau2) ) then
 
         SingleSingWidthMod = SingleSingWidthMod + self%NonDist(Mod, setup, space, &
-                                            gap, cum, order, R0, mu0, delta0, h, tau)
+        gap, cum, order, R0, mu0, delta0, h, tau)
       else
 
         SingleSingWidthMod = SingleSingWidthMod + self%NonDist(Mod, setup, space, &
-                                     gap, cum, order, R0, mu0, delta0, h, tau, tau2)
+        gap, cum, order, R0, mu0, delta0, h, tau, tau2)
       end if
     end select
 
