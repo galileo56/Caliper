@@ -282,7 +282,7 @@ module MassiveNSClass
        end if
      end if
 
-     self%AMS = self%A0MS() ; self%B1  = self%B1NS()
+     self%AMS = self%A0MS() ; self%B1 = self%B1NS()
      self%A1Singular = (4 * self%lm + 16 * self%lm**2)/3
 
      if ( self%shape(:6) /= 'Cparam' ) self%A1Singular = self%A1Singular + 6.579736267392905_dp
@@ -415,7 +415,7 @@ module MassiveNSClass
             call qags( NS1lloop, 0._dp, tau, prec, prec, res, abserr, neval, ier )
 
             NSMassMod = NSMassMod + self%alphaMu * (  res + self%A1Singular + self%Dirac(2) + &
-            ( self%B1Singular + self%B1 ) * log(tau)  ) + self%deltaM(1) * self%AMS
+            ( self%B1Singular + self%B1 ) * log(tau/self%ESfac)  ) + self%deltaM(1) * self%AMS
 
          else
 
@@ -463,11 +463,11 @@ module MassiveNSClass
             call qags( NS1lloop, 0._dp, tau, prec, prec, res, abserr, neval, ier )
 
             NSMassMod = NSMassMod + self%alphaMu * ( res - self%CumMassSing1loop(tshift) +  &
-            self%A1Singular + self%B1Singular * log(tau) )
+            self%A1Singular + self%B1Singular * log(tau/self%ESfac) )
 
             if ( self%singular(:3) /= 'abs' .and. self%width <= d1mach(1) )  &
             NSMassMod = NSMassMod + self%AMS * self%deltaM(1) + &
-            self%alphaMu * ( self%Dirac(2) + self%B1 * log(tau) )
+            self%alphaMu * ( self%Dirac(2) + self%B1 * log(tau/self%ESfac) )
 
           else
 
@@ -776,11 +776,13 @@ module MassiveNSClass
     if ( present(t2) ) then
 
       HJMNSMassScales = self%HJMNSMass(c, modList, setup, gap, cum, order, run, R0, &
-                                mu0, delta0, h, t, t2)
+      mu0, delta0, h, t, t2)
+
     else
 
       HJMNSMassScales = self%HJMNSMass(c, modList, setup, gap, cum, order, run, R0, &
-                                mu0, delta0, h, t)
+      mu0, delta0, h, t)
+
     end if
 
   end function HJMNSMassScales
@@ -812,10 +814,10 @@ module MassiveNSClass
     if ( setup(:2) == 'FO' .or. setup(:7) == 'NoModel' ) then
 
       if ( .not. present(t2) ) HJMNSMass = self%NSMass( ModList(1,1), setup, gap, cum, &
-                                                        order, run, R0, mu0, delta0, h, t )
+      order, run, R0, mu0, delta0, h, t )
 
       if ( present(t2) ) HJMNSMass = self%NSMass( ModList(1,1), setup, gap, cum, order, &
-                                                  run, R0, mu0, delta0, h, t, t2 )
+      run, R0, mu0, delta0, h, t, t2 )
 
       return
     end if
@@ -875,10 +877,11 @@ module MassiveNSClass
         else
 
         Modelo = (2*self%Q)**(1 + cumul) * BreitModel2D(self%width, c, modList, &
-                                                         cumul, - 1, p, p)
+        cumul, - 1, p, p)
 
         if ( .not. dobsing ) Modelo = (2*self%Q)**(1 + cumul) * BreitModel2D(self%width,  &
-                                                c, modList, cumul, - 1, p2, p2) - Modelo
+        c, modList, cumul, - 1, p2, p2) - Modelo
+
           if (order > 0) then
 
              ModPlus = self%Q**(1 + cumul)/2**(-cumul) * (                      &
@@ -1015,7 +1018,7 @@ module MassiveNSClass
     real (dp)        , intent(in) :: tau
     real (dp)                     :: t, DiLog, dilogpiece
 
-    t = tau - self%tmin; CumMassSing1loop = 0;  if (t <= 0) return
+    t = (tau - self%tmin)/self%ESfac; CumMassSing1loop = 0;  if (t <= 0) return
 
     if (self%m > 1e-4_dp) then
        dilogpiece = 8 * DiLog(-t/self%m2) + 4 * Log(t/self%m2)**2
@@ -1492,9 +1495,9 @@ module MassiveNSClass
 
     A = 0; V = 0
 
-    massIf: if ( self%m > 0.499 ) then
+    massIf: if ( self%m > 0.499_dp ) then
 
-      h = sqrt(0.5 - self%m); lh = 0; if (h > 1.d-6) lh = log(h)
+      h = sqrt(0.5_dp - self%m); lh = 0; if (h > 1.d-6) lh = log(h)
 
       current_if_1: if ( self%current(:6) == 'vector' .or. self%current(:3) == 'all' ) then
 
@@ -1512,7 +1515,7 @@ module MassiveNSClass
           V = 4.954944900637917_dp + 42.595415652878366_dp * h**2 - 553.6278884247788_dp * h**12 + &
           148.11234489001265_dp * h**3 - 241.2319251819811_dp * h**4 + 44.07477463565101_dp * h**5 &
           + 118.01211476041078_dp * h**6 + 19.2854288762748_dp * h**7 - 289.658731751325_dp * h**8 &
-          + 330.21767767807745_dp * h**9 - 311.89178067391487_dp * h**10 - 48 * h               &
+          + 330.21767767807745_dp * h**9 - 311.89178067391487_dp * h**10 - 48 * h                  &
           + 416.86212391885135_dp * h**11
 
         end if shape_if_1
