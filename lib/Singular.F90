@@ -3600,11 +3600,11 @@ module SingularClass
        x = p * y
 
        if (self%EShape(:1) == 'Q') then
-         ThrustJet = ( - x *  (4 + 7 * x + 5 * x**2)+ 4 * (1 + x)**3 * log(1 + x) )    &
-                     /x**2/(1 + x)**3
+         ThrustJet = ( - x *  (4 + 7 * x + 5 * x**2) +    &
+         4 * (1 + x)**3 * log(1 + x) )/x**2/(1 + x)**3
        else
-         ThrustJet =  ( 28 * x - 23 - 5 * x**2 + 2 * (2 * x**2 - 5 - 6 * x) * log(x) ) &
-                      /(x - 1)**4
+         ThrustJet =  ( 28 * x - 23 - 5 * x**2 +  &
+         2 * (2 * x**2 - 5 - 6 * x) * log(x) )/(x - 1)**4
        end if
 
        ThrustJet = (1 - y)**(- w) * ThrustJet

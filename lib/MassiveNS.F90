@@ -372,12 +372,12 @@ module MassiveNSClass
 
     if ( self%shape(:3) == 'HJM' ) then; delta = delta/2; shift = shift/2;end if
 
-    tshift = t - shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau
+    tshift = t - self%ESFac * shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau
     tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift
 
     if ( present(t2) ) then
-      tshift2 = t2 - shift/self%Q;  tau2    = tshift2 - self%tmin
-      p2 = self%Q * tau2         ;  p2shift = self%Q * tshift2
+      tshift2 = t2 - self%ESFac * shift/self%Q;  tau2    = tshift2 - self%tmin
+      p2 = self%Q * tau2                      ;  p2shift = self%Q * tshift2
     end if
 
     if ( present(t2) .and. p < 0 ) then
@@ -599,11 +599,11 @@ module MassiveNSClass
 
     if ( self%shape(:3) == 'HJM' ) then; delta = delta/2; shift = shift/2;end if
 
-    tshift = t - shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau/self%ESFac
+    tshift = t - self%ESFac * shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau/self%ESFac
     tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift
 
     if ( present(t2) ) then
-      tshift2 = t2 - shift/self%Q   ;  tau2    = tshift2 - self%tmin
+      tshift2 = t2 - self%ESFac * shift/self%Q   ;  tau2    = tshift2 - self%tmin
       p2 = self%Q * tau2/self%ESFac ;  p2shift = self%Q * tshift2
     end if
 
@@ -792,7 +792,7 @@ module MassiveNSClass
 !ccccccccccccccc
 
   real (dp) function HJMNSMass(self, c, modList, setup, gap, cum, order, run, R0, &
-                                mu0, delta0, h, t, t2)
+  mu0, delta0, h, t, t2)
     class (MassiveNS)           , intent(in) :: self
     character (len = *)         , intent(in) :: setup, gap, cum
     integer                     , intent(in) :: order, run
@@ -804,8 +804,8 @@ module MassiveNSClass
     logical                                  :: dobsing
     real (dp), dimension(order,order)        :: delt
     real (dp), dimension(order)              :: delta
-    real (dp)                                :: abserr, res, tau, Modelo, ModPlus, tau2, &
-                                                shift, ModDer, tshift, tshift2, p, p2
+    real (dp)                                :: abserr, res, tau, Modelo, tau2, &
+    shift, ModDer, tshift, tshift2, p, p2, ModPlus
 
     HJMNSMass = 0; if ( self%shape(:3) /= 'HJM' ) return
 
