@@ -600,11 +600,11 @@ module MassiveNSClass
     if ( self%shape(:3) == 'HJM' ) then; delta = delta/2; shift = shift/2;end if
 
     tshift = t - self%ESFac * shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau/self%ESFac
-    tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift
+    tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift/self%ESFac
 
     if ( present(t2) ) then
       tshift2 = t2 - self%ESFac * shift/self%Q   ;  tau2    = tshift2 - self%tmin
-      p2 = self%Q * tau2/self%ESFac ;  p2shift = self%Q * tshift2
+      p2 = self%Q * tau2/self%ESFac ;  p2shift = self%Q * tshift2/self%ESFac
     end if
 
     if ( present(t2) .and. p < 0 ) then
