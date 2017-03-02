@@ -32,7 +32,7 @@ module MassiveNSClass
 
    procedure, pass(self)         :: Quark, Glue, EWAdd, f1Q, f2Q, f3Q, f4Q, B1NS, &
    MassSing1loop, CumMassSing1loop, A1loop, FunCp, A0MS, CparamFOMass, Hcorr, A0, &
-   CoefsCparam, NSMassMod, NSMassList
+   CoefsCparam, NSMassMod, NSMassList, A1NSDiff
 
    generic   , public            :: NSMass => NSMassMod, NSMassList
 
@@ -1501,7 +1501,7 @@ module MassiveNSClass
 
       current_if_1: if ( self%current(:6) == 'vector' .or. self%current(:3) == 'all' ) then
 
-        shape_if_1: if ( self%shape(:6) == 'thrust' ) then
+        shape_if_1: if ( self%shape(:6) == 'thrust' .or. self%shape(:6) == 'Cparam' ) then
 
           V =  42.595415652878366_dp * h**2 - 241.2319251819811_dp * h**4 + 4.954944900637917_dp   + &
           118.01211476041078_dp * h**6 - 289.658731751325_dp * h**8 - 311.89178067391487_dp * h**10 - &
@@ -1522,7 +1522,7 @@ module MassiveNSClass
 
       end if current_if_1; if ( self%current(:5) == 'axial' .or. self%current(:3) == 'all' ) then
 
-        shape_if_2: if ( self%shape(:6) == 'thrust' ) then
+        shape_if_2: if ( self%shape(:6) == 'thrust' .or. self%shape(:6) == 'Cparam' ) then
 
           A = - 24.65386830263016_dp + 42.595415652878366_dp * h**2 + 36.88227950096423_dp * h**8  &
          + 136.5090860703081_dp * h**4 - 552.1365744108343 * h**6 - 64 * h**3                &
@@ -1545,7 +1545,7 @@ module MassiveNSClass
 
       current_if_2: if ( self%current(:6) == 'vector' .or. self%current(:3) == 'all' ) then
 
-        shape_if_3: if ( self%shape(:6) == 'thrust' ) then
+        shape_if_3: if ( self%shape(:6) == 'thrust' .or. self%shape(:6) == 'Cparam' ) then
 
           V = - 4 * (5 - 8 * self%m2 - 24 * self%m4) * log( self%thrustMin/2/self%m )   + &
           2 * (1 - 4 * self%m4) * (  - 2 * self%v * self%thrustMin/(1 - 2 * self%m2)    + &
@@ -1572,7 +1572,7 @@ module MassiveNSClass
 
       end if current_if_2; if ( self%current(:5) == 'axial' .or. self%current(:3) == 'all' ) then
 
-        shape_if_4: if ( self%shape(:6) == 'thrust' ) then
+        shape_if_4: if ( self%shape(:6) == 'thrust' .or. self%shape(:6) == 'Cparam' ) then
 
           A = 4 * self%v**2 * (   self%v * (  self%v - 2 * log( self%v*(1 + self%v)/2     / &
           self%m**3 ) - 1  ) - (5 - 8 * self%m2) * log( self%thrustMin/2/self%m )         + &
@@ -1601,7 +1601,7 @@ module MassiveNSClass
 
       current_if_3: if ( self%current(:6) == 'vector' .or. self%current(:3) == 'all' ) then
 
-        shape_if_5: if ( self%shape(:6) == 'thrust' ) then
+        shape_if_5: if ( self%shape(:6) == 'thrust' .or. self%shape(:6) == 'Cparam' ) then
 
           V = (4 + 48 * self%lm) * self%m2 + (848/9._dp - 800 * self%lm/3) * self%m6 &
           + (89._dp/2 - 556 * self%lm) * self%m8 + self%m4 * (60 - 40 * self%lm      &
@@ -1615,9 +1615,11 @@ module MassiveNSClass
 
         end if shape_if_5
 
-      end if current_if_3; if ( self%current(:5) == 'axial' .or. self%current(:3) == 'all' ) then
+      end if current_if_3
 
-        shape_if_6: if ( self%shape(:6) == 'thrust' ) then
+      if ( self%current(:5) == 'axial' .or. self%current(:3) == 'all' ) then
+
+        shape_if_6: if ( self%shape(:6) == 'thrust' .or. self%shape(:6) == 'Cparam' ) then
 
           A = (- 628/9._dp + 496 * self%lm/3) * self%m6 + (180 * self%lm - 37/6._dp)  * &
           self%m8 + self%m2    * (4 - 16 * self%lm - 96 * self%lm**2 - 12 * Pi2)     + &
@@ -1633,9 +1635,47 @@ module MassiveNSClass
       end if
     end if massif
 
-    A1loop = self%EWAdd(V, A)/3
+    A1loop = self%EWAdd(V, A)/3 + self%A1NSDiff()
 
   end
+
+!ccccccccccccccc
+
+  real (dp) function A1NSDiff(self)
+    class (MassiveNS), intent(in) :: self
+    real (dp)                     :: h2, h3, factV, factA, dilog
+
+    A1NSDiff = 0; if ( self%shape(:6) /= 'Cparam' ) return
+
+    factV = 1 + 2 * self%m2; factA = 1 - 4 * self%m2
+
+    if ( self%m > 1e-3_dp ) then
+
+      h2 = Sqrt(1 - 8 * self%m4);  h3 = 1 - 2 * self%m2
+
+      A1NSdiff = 1 - 4 * self%m2 - 2 * (1 - 2 * self%m4)/self%m2 * &
+      log( (1 - self%v)/(2 * self%m) ) + self%v * (  1 + 2 * &
+      log( (1 - self%v)/(2 * self%m2 * h3 * self%v) )  ) +   &
+      2 * h2/self%m2 * Log(  (h2 - self%v)/( 2 * self%m * Sqrt(h3) )  ) + &
+      h3 * ( -Pi2/6 + 13 * l2**2 + 36 * l2 * self%lm + 24 * self%lm**2  + &
+      4 * Log(2 * self%m) * Log(self%v) + 2 * ( 5 * l2 + 6 * self%lm ) * Log(h3) - &
+      2 * Log(2 * self%m4 * self%v**2 * h3**2) * Log(1 - self%v) + Log(1 - self%v)**2 -&
+      4 * Log(4 * self%m2 * h3) * Log(1 - h2) + (- 12 * l2 + 8 * &
+      Log( (1 - h2)/self%m2) ) * Log(h2 -self%v) + 2 * Dilog( (1 + self%v)/2 ) - &
+      2 * Dilog( (self%v - h2)/(1 - h2) ) + 2 * Dilog( (h2 - self%v)/(1 + h2) ) + &
+      2 * Dilog( (self%v + h2)/(h2 - 1) ) - 2 * Dilog( (self%v + h2)/(1 + h2) ) )
+
+    else
+
+      A1NSdiff = (119._dp/6 + 16 * self%lm) * self%m4 - (29._dp/9 + 112 * self%lm/3) &
+      * self%m6 + (10471._dp/360 + 272 * self%lm/3) * self%m8 - (2569._dp/300 + &
+      32 * self%lm/5) * self%m10 - Pi2/6 + self%m2 * (4 + 4 * self%lm + Pi2/3)
+
+    end if
+
+    A1NSdiff = - 4 * ( self%EWAdd(factV, factA) * A1NSdiff + Pi2/6 )/3
+
+  end function
 
 !ccccccccccccccc
 
