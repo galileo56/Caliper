@@ -372,12 +372,12 @@ module MassiveNSClass
 
     if ( self%shape(:3) == 'HJM' ) then; delta = delta/2; shift = shift/2;end if
 
-    tshift = t - self%ESFac * shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau
+    tshift = t - self%ESFac * shift/self%Q;  tau = tshift - self%tmin; p = self%Q * tau/self%ESFac
     tau2   = tau; p3 = p; p2 = p; tshift2 = tshift; p3shift = self%Q * tshift
 
     if ( present(t2) ) then
       tshift2 = t2 - self%ESFac * shift/self%Q;  tau2    = tshift2 - self%tmin
-      p2 = self%Q * tau2                      ;  p2shift = self%Q * tshift2
+      p2      = self%Q * tau2/self%ESFac      ;  p2shift = self%Q * tshift2
     end if
 
     if ( present(t2) .and. p < 0 ) then
@@ -490,20 +490,20 @@ module MassiveNSClass
 
           if ( .not. present(t2) ) then
 
-            Modelo = self%Q**(1 + cumul) * BreitWigner(self%width, cumul, p3)
+            Modelo = self%Q**(1 + cumul) * BreitWigner(self%width, cumul, p3)/self%ESFac**(1 - cumul)
 
             if (order > 0) then
-              ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p3)
-              ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p3)
+              ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p3)/self%ESFac**(1 - cumul)
+              ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p3)/self%ESFac**(1 - cumul)
             end if
 
           else
 
-            Modelo = self%Q**(1 + cumul) * BreitWigner(self%width, cumul, p3, p2)
+            Modelo = self%Q**(1 + cumul) * BreitWigner(self%width, cumul, p3, p2)/self%ESFac**(1 - cumul)
 
             if (order > 0) then
-              ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p3, p2)
-              ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p3, p2)
+              ModPlus = self%Q**(1 + cumul) * BreitWigner(self%width, cumul - 2, p3, p2)/self%ESFac**(1 - cumul)
+              ModDer  = self%Q**(2 + cumul) * BreitWigner(self%width, cumul + 1, p3, p2)/self%ESFac**(1 - cumul)
             end if
           end if
 
