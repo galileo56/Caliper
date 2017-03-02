@@ -1615,7 +1615,9 @@ module MassiveNSClass
 
         end if shape_if_5
 
-      end if current_if_3; if ( self%current(:5) == 'axial' .or. self%current(:3) == 'all' ) then
+      end if current_if_3
+
+      if ( self%current(:5) == 'axial' .or. self%current(:3) == 'all' ) then
 
         shape_if_6: if ( self%shape(:6) == 'thrust' .or. self%shape(:6) == 'Cparam' ) then
 
@@ -1645,11 +1647,7 @@ module MassiveNSClass
 
     A1NSDiff = 0; if ( self%shape(:6) /= 'Cparam' ) return
 
-    if ( self%current(:6) == 'vector' .or. self%current(:3) == 'all' ) then
-      factV = 1 + 2 * self%m2
-    else if ( self%current(:5) == 'axial' .or. self%current(:3) == 'all' ) then
-      factA = 1 - 4 * self%m2
-    end if
+    factV = 1 + 2 * self%m2; factA = 1 - 4 * self%m2
 
     if ( self%m > 1e-3_dp ) then
 
@@ -1662,7 +1660,7 @@ module MassiveNSClass
       h3 * ( -Pi2/6 + 13 * l2**2 + 36 * l2 * self%lm + 24 * self%lm**2  + &
       4 * Log(2 * self%m) * Log(self%v) + 2 * ( 5 * l2 + 6 * self%lm ) * Log(h3) - &
       2 * Log(2 * self%m4 * self%v**2 * h3**2) * Log(1 - self%v) + Log(1 - self%v)**2 -&
-      4 * Log(4 * self%m**2 * h3) * Log(1 - h2) + (- 12 * l2 + 8 * &
+      4 * Log(4 * self%m2 * h3) * Log(1 - h2) + (- 12 * l2 + 8 * &
       Log( (1 - h2)/self%m2) ) * Log(h2 -self%v) + 2 * Dilog( (1 + self%v)/2 ) - &
       2 * Dilog( (self%v - h2)/(1 - h2) ) + 2 * Dilog( (h2 - self%v)/(1 + h2) ) + &
       2 * Dilog( (self%v + h2)/(h2 - 1) ) - 2 * Dilog( (self%v + h2)/(1 + h2) ) )
@@ -1675,7 +1673,7 @@ module MassiveNSClass
 
     end if
 
-    A1NSdiff = - 4 * (self%EWAdd(factV, factA) * A1NSdiff + Pi2/6)/3
+    A1NSdiff = - 4 * ( self%EWAdd(factV, factA) * A1NSdiff + Pi2/6 )/3
 
   end function
 
