@@ -899,7 +899,7 @@ subroutine f90MasslessProf(terms, hard, shape, setup, gap, space, cum, orderAlph
   type (ProfilesMassless)            :: Prof
   type (CumulantMassless)            :: Cumul
 
-  Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH,
+  Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, &
   eS, eJ, eR, ns)
 
   alphaAll = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, &
