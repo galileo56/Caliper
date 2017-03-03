@@ -156,15 +156,15 @@ subroutine f90MassiveProfList(terms, hard, shape, EShape, setup, gap, space, cum
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
 
   real (dp), dimension (clen), intent(in) :: c
-  character (len = *), intent(in)    :: shape, scheme, setup, space, gap, hard, terms, &
-                                        cum, abs, current, Eshape
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns, &
-                                        runMass, orderMass, n
-  real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC, muC, Q, &
-                                        G3, lambda, R0, mu0, delta0, h, s3, muR0, j3,&
-                                        Rat0, n0, n1, t2, cnt, eS, slope, eH, eJ, width, &
-                                        ts, xi, xiB, muLambda2, beta, deltaLambda, del0, &
-                                        delta1, muM, mass, gammaZ, sin2ThetaW
+  character (len = *), intent(in)    :: shape, scheme, setup, space, gap, hard, &
+  cum, abs, current, Eshape, terms
+  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, ns, &
+  runMass, orderMass, n, clen
+  real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC, &
+  muC, Q, G3, lambda, R0, mu0, delta0, h, s3, muR0, j3, Rat0, n0, n1, t2, cnt, eS,&
+  slope, eH, eJ, width, ts, xi, xiB, muLambda2, beta, deltaLambda, del0, delta1, &
+  muM, mass, gammaZ, sin2ThetaW
+
   real (dp), dimension(n), intent(in)   :: tauList
   real (dp), dimension(n), intent(out)  :: res
 
