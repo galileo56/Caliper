@@ -158,7 +158,6 @@ module SingularClass
     integer                      , intent(in) :: run
     character (len = *)          , intent(in) :: shape
     character (len = *), optional, intent(in) :: hard
-
     type (AnomDim)                            :: andim
     type (Running)                            :: alpha
 
@@ -195,7 +194,6 @@ module SingularClass
     real (dp)                    , intent(in) :: mu
     character (len = *)          , intent(in) :: shape
     character (len = *), optional, intent(in) :: hard
-
     real (dp)                                 :: Q, muS, muJ, muH, k, wJet, QoMuH
     real (dp), dimension(0:3)                 :: cusp, NonCusp, soft, jet
     complex (dp)                              :: muHC
@@ -664,7 +662,6 @@ module SingularClass
   subroutine setHard(self, Q, muH)
     class (SingularMassless), intent(inout) :: self
     real (dp)               , intent(in)    :: Q, muH
-
     complex (dp)                            :: muHC
 
     self%Q = Q; self%muH = abs(muH);  self%QoMuH = Q/self%muH
@@ -729,7 +726,6 @@ module SingularClass
     real (dp)            , intent(in) :: R0, mu0, delta0, tau, h
     real (dp), optional  , intent(in) :: tau2
     integer              , intent(in) :: order
-
     real (dp)                         :: p, p2, Qm2, shift, w
     real (dp), dimension(1)           :: res
     real (dp), dimension(order,order) :: delta
@@ -952,7 +948,6 @@ module SingularClass
     real (dp)                        , intent(in ) :: R0, mu0, delta0, h
     real (dp)                        , intent(out) :: shift
     real (dp), dimension(order,order), intent(out) :: delta
-
     type (GapMass)                                 :: GapMassive
 
     delta = 0; shift = 0
