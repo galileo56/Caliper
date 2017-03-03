@@ -801,9 +801,9 @@ subroutine f90MasslessPieceBin(terms, hard, shape, setup, gap, space, cum, order
 
   character (len = *), intent(in)    :: shape, cum, space, gap, hard, terms, setup
   integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, n, ns
-  real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, muC, j3, &
-                                        Q, G3, lambda, ts, R0, mu0, delta0, h, s3, muR0, &
-                                        Rat0, n0, n1, t2, cnt, eS, eR, tR, slope, eH, eJ
+  real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, &
+  Q, G3, lambda, ts, R0, mu0, delta0, h, s3, muR0, Rat0, n0, n1, t2, cnt, eS, &
+  eR, tR, slope, eH, eJ, muC, j3
   real (dp), dimension(2,n), intent(in ) :: tauList
   real (dp), dimension((clen + 2) * (clen + 1)/2,n), intent(out) :: res
 
@@ -899,16 +899,19 @@ subroutine f90MasslessProf(terms, hard, shape, setup, gap, space, cum, orderAlph
   type (ProfilesMassless)            :: Prof
   type (CumulantMassless)            :: Cumul
 
-  Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
-  alphaAll = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH,
+  eS, eJ, eR, ns)
+
+  alphaAll = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, &
+  muT, mB, muB, mC, muC)
+
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Mod      = Model(lambda, c, [0,0], 'sum')
   Cumul    = CumulantMassless(Prof, Sing)
 
   res = Cumul%Bin( terms(:7), cum(:4), Mod, setup(:8), gap(:12), space(:6), order, R0, &
-                  muR0, delta0, h, 0, tau )
+  muR0, delta0, h, 0, tau )
 
 end subroutine f90MasslessProf
 
