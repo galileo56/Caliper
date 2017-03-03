@@ -210,15 +210,14 @@ subroutine f90MassiveProfPieceList(terms, hard, shape, EShape, setup, gap, space
   use constants, only: dp; use ProfilesClass, only: ProfilesPythia  ; use ElectroWeakClass
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
 
-  character (len = *), intent(in)    :: shape, scheme, space, gap, hard, terms, Eshape, &
-                                        cum, abs, current, setup
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns, &
-                                        runMass, orderMass, n
-  real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC, muC, Q,&
-                                        G3, lambda, R0, mu0, delta0, h, s3, muR0, j3, &
-                                        Rat0, n0, n1, t2, cnt, eS, slope, eH, eJ, width, &
-                                        ts, xi, xiB, muLambda2, beta, deltaLambda, del0, &
-                                        delta1, muM, mass, gammaZ, sin2ThetaW
+  character (len = *), intent(in)    :: shape, scheme, space, gap, hard, terms, &
+  cum, abs, current, setup, Eshape
+  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, &
+  runMass, orderMass, n, clen, ns
+  real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC,&
+  G3, lambda, R0, mu0, delta0, s3, muR0, j3, muC, Q, Rat0, n0, n1, t2, cnt, eS,  &
+   slope, eH, eJ, width, ts, xi, xiB, muLambda2, beta, deltaLambda, del0, delta1,&
+   muM, mass, gammaZ, sin2ThetaW, h
   real (dp), dimension(n), intent(in)   :: tauList
   real (dp), dimension((clen + 2) * (clen + 1)/2,n), intent(out)  :: res
 
@@ -335,15 +334,14 @@ subroutine f90MassiveBinList(terms, hard, shape, EShape, setup, gap, space, cum,
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
 
   real (dp), dimension (clen), intent(in) :: c
-  character (len = *), intent(in)    :: shape, scheme, setup, space, gap, hard, terms, &
-                                        cum, abs, current, Eshape
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns, &
-                                        runMass, orderMass, n
-  real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC, muC, Q, &
-                                        G3, lambda, R0, mu0, delta0, h, s3, muR0, j3,&
-                                        Rat0, n0, n1, t2, cnt, eS, slope, eH, eJ, width, &
-                                        ts, xi, xiB, muLambda2, beta, deltaLambda, del0, &
-                                        delta1, muM, mass, gammaZ, sin2ThetaW
+  character (len = *), intent(in)    :: shape, scheme, setup, space, gap, hard, &
+  cum, abs, current, Eshape, terms
+  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, ns, &
+  runMass, orderMass, n, clen
+  real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC,&
+  muC, Q, G3, lambda, R0, mu0, delta0, h, s3, muR0, j3, Rat0, n0, n1, t2, cnt,  &
+  slope, eH, eJ, width, ts, xi, xiB, muLambda2, beta, deltaLambda, del0, delta1,&
+  muM, mass, gammaZ, sin2ThetaW, eS
   real (dp), dimension(2,n), intent(in) :: tauList
   real (dp), dimension(n), intent(out)  :: res
 
@@ -361,13 +359,13 @@ subroutine f90MassiveBinList(terms, hard, shape, EShape, setup, gap, space, cum,
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
-                       ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
+  ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
   alphaAll  = Alpha(alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
-                                    muLambda1, muLambda2 )
+  muLambda1, muLambda2 )
   nonSing   = MassiveScales( shape(:6), EShape(:1), scheme(:10), abs(:3), current(:6), &
-                              orderMass, matEl, EW )
+  orderMass, matEl, EW )
   Sing      = SingularMassScales( nonSing, run, hard(:6) )
   Mod       = Model(lambda, c, [0,0], 'sum')
   Cumul     = CumulantMass(Prof, Sing, xi, xiB, width)
@@ -890,10 +888,9 @@ subroutine f90MasslessProf(terms, hard, shape, setup, gap, space, cum, orderAlph
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in)    :: shape, cum, setup, space, gap, hard, terms
   integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns
-  real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, muC, j3, &
-                                        Q, G3, lambda, tau, R0, mu0, delta0, h, s3, muR0, &
-                                        Rat0, n0, n1, t2, cnt, eS, eR, tR, slope, eH, eJ, &
-                                        ts
+  real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, &
+  Q, G3, lambda, tau, R0, mu0, delta0, h, s3, muR0, Rat0, n0, n1, t2, cnt, eS, &
+  eR, tR, slope, eH, eJ, ts, muC, j3
   real (dp)          , intent(out)   :: res
   type (Alpha)                       :: alphaAll
   type (MatricesElements)            :: MatEl
@@ -952,7 +949,8 @@ subroutine f90MasslessProfPiece(terms, hard, shape, setup, gap, space, cum, orde
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
   alphaAll = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  mB, muB, mC, muC)
+
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Cumul    = CumulantMassless(Prof, Sing)
@@ -1126,12 +1124,12 @@ subroutine f90Profiles(Q, mu0, R0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, e
                        tau, res)
   use constants, only: dp; use ProfilesClass, only: profilesmassless; implicit none
   integer                 , intent(in) :: ns
-  real (dp)               , intent(in) :: mu0, R0, n0, n1, t2, cnt, eS, eR, tR, slope, &
-                                          Q, eH, eJ, tau, ts
+  real (dp)               , intent(in) :: mu0, R0, n0, n1, t2, cnt, eS, eR, tR, &
+  Q, eH, eJ, tau, ts, slope
   real (dp), dimension(5), intent(out) :: res
 
   real (dp)                            :: muS, muJ, muH, muNS, R
-  type (ProfilesMassless)                      :: Prof
+  type (ProfilesMassless)              :: Prof
 
   Prof = ProfilesMassless(Q, mu0, R0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
 
@@ -1304,7 +1302,7 @@ end subroutine f90SingularMassDiff
 
 !ccccccccccccccc
 
-subroutine f90SingularMassPiece(hard, shape, Eshape, gap, space, cum, scheme, abs,        &
+subroutine f90SingularMassPiece(hard, shape, Eshape, setup, gap, space, cum, scheme, abs,        &
   current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, &
   mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,   &
   muM, mu, width, piece, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, res)
@@ -1315,7 +1313,7 @@ subroutine f90SingularMassPiece(hard, shape, Eshape, gap, space, cum, scheme, ab
 
   integer, dimension(2), intent(in ) :: piece
   character (len = *)  , intent(in ) :: shape, cum, space, gap, Eshape, abs, current,  &
-                                        hard, scheme
+                                        hard, scheme, setup
   integer              , intent(in ) :: orderAlpha, order, runAlpha, run, nf, runMass, &
                                         orderMass
   real (dp)            , intent(in ) :: mZ, amZ, muLambda1, muLambda2, mT, muT, mB, muB, &
@@ -1336,12 +1334,14 @@ subroutine f90SingularMassPiece(hard, shape, Eshape, gap, space, cum, scheme, ab
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,  &
-                     muT, mB, muB, mC, muC )
+  muT, mB, muB, mC, muC )
+
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
-                                    muLambda1, muLambda2 )
+  muLambda1, muLambda2 )
 
   nonSing   = MassiveScales( shape(:6), Eshape(:1), scheme(:10), abs(:3), current(:6), &
-                              orderMass, matEl, EW )
+  orderMass, matEl, EW )
+
   Sing      = SingularMassScales( nonSing, run, hard(:6) )
   Mod       = Model(lambda, [1._dp], piece, 'piece')
 
@@ -1351,16 +1351,17 @@ subroutine f90SingularMassPiece(hard, shape, Eshape, gap, space, cum, scheme, ab
 
   if ( width <= d1mach(1) ) then
 
-    res = Sing%SingleSing( Mod, 'Model', gap(:12), space(:6), cum(:4), order, R0, mu0,   &
+    res = Sing%SingleSing( Mod, 'Model'//setup, gap(:12), space(:6), cum(:4), order, R0, mu0,   &
                            delta0, h, tau )
   else
 
-    res = Sing%SingleSingWidth( Mod, 'Model', gap(:12), space(:6), cum(:4), order, R0, mu0, delta0, &
+    res = Sing%SingleSingWidth( Mod, 'Model'//setup, gap(:12), space(:6), cum(:4), order, R0, mu0, delta0, &
                                 h, tau )
   end if
 
   if (muJ >= muM) res = res + Sing%NonDist(Mod, 'Model', gap(:12), space(:6), cum(:4), order,&
-                                               R0, mu0, delta0, h, tau)
+  R0, mu0, delta0, h, tau)
+
 end subroutine f90SingularMassPiece
 
 !ccccccccccccccc
@@ -1420,20 +1421,21 @@ subroutine f90SingularMassList(hard, shape, Eshape, setup, gap, space, cum, sche
   if ( width <= d1mach(1) ) then
 
     res = Sing%SingleSing( Mod, gap(:12), space(:6), cum(:4), order, R0,   &
-                                mu0, delta0, h, tau )
+    mu0, delta0, h, tau )
   else
 
     res = Sing%SingleSingWidth( Mod, setup, gap(:12), space(:6), cum(:4), order, R0,   &
-                                mu0, delta0, h, tau )
+    mu0, delta0, h, tau )
   end if
 
   if (muJ >= muM) res = res + Sing%NonDist(Mod, gap(:12), space(:6), cum(:4), order, &
-                                               R0, mu0, delta0, h, tau)
+  R0, mu0, delta0, h, tau)
+
 end subroutine f90SingularMassList
 
 !ccccccccccccccc
 
-subroutine f90SingularMassDiffList(hard, shape, Eshape, setup, gap, space, cum, scheme, abs,     &
+subroutine f90SingularMassDiffList(hard, shape, Eshape, setup, gap, space, cum, scheme, abs,&
   current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, &
   mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,   &
   muM, mu, width, clen, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, tau2, res)
@@ -1442,8 +1444,8 @@ subroutine f90SingularMassDiffList(hard, shape, Eshape, setup, gap, space, cum, 
   use MassiveNSClass ; use ElectroWeakClass     ;  use constants, only: dp, d1mach
   implicit none
 
-  character (len = *)  , intent(in ) :: shape, cum, space, gap, Eshape, abs, current,  &
-                                        hard, scheme, setup
+  character (len = *)  , intent(in ) :: shape, cum, space, gap, Eshape, current,  &
+  hard, scheme, setup, abs
   integer              , intent(in ) :: orderAlpha, order, runAlpha, run, nf, runMass, &
                                         orderMass, clen
   real (dp)            , intent(in ) :: mZ, amZ, muLambda1, muLambda2, mT, muT, mB, muB, &
@@ -1500,7 +1502,7 @@ end subroutine f90SingularMassDiffList
 
 !ccccccccccccccc
 
-subroutine f90SingularMassDiffPiece(hard, shape, Eshape, gap, space, cum, scheme, abs,   &
+subroutine f90SingularMassDiffPiece(hard, shape, Eshape, setup, gap, space, cum, scheme, abs,   &
   current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3,&
   mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,  &
   muM, mu, width, piece, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, tau2, res)
@@ -1510,14 +1512,13 @@ subroutine f90SingularMassDiffPiece(hard, shape, Eshape, gap, space, cum, scheme
   implicit none
 
   integer, dimension(2), intent(in ) :: piece
-  character (len = *)  , intent(in ) :: shape, cum, space, gap, Eshape, abs, current,  &
-                                        hard, scheme
-  integer              , intent(in ) :: orderAlpha, order, runAlpha, run, nf, runMass, &
-                                        orderMass
-  real (dp)            , intent(in ) :: mZ, amZ, muLambda1, muLambda2, mT, muT, mB, muB, &
-                                        mu,  Q, G3, lambda, tau, R0, mu0, delta0, h, s3, &
-                                        xi, gammaZ, sin2ThetaW, width, mC, muC, j3, muH, &
-                                        muJ, muS, R, muM, tau2, xiB, Rmass
+  character (len = *)  , intent(in ) :: shape, cum, space, gap, Eshape, current,  &
+  hard, scheme, setup, abs
+  integer              , intent(in ) :: orderAlpha, order, runAlpha, nf, runMass, &
+  orderMass, run
+  real (dp)            , intent(in ) :: mZ, amZ, muLambda1, muLambda2, mT, muT, &
+  mu,  Q, G3, lambda, tau, R0, mu0, delta0, h, s3, mB, muB, xi, gammaZ, &
+  sin2ThetaW, width, mC, muC, j3, muH, muJ, muS, R, muM, tau2, xiB, Rmass
   real (dp)            , intent(out) :: res
 
   type (ElectroWeak)                 :: EW
@@ -1546,11 +1547,11 @@ subroutine f90SingularMassDiffPiece(hard, shape, Eshape, gap, space, cum, scheme
 
   if ( width <= d1mach(1) ) then
 
-    res = Sing%SingleSing( Mod, 'Model', gap(:12), space(:6), cum(:4), order, R0, mu0, &
+    res = Sing%SingleSing( Mod, 'Model'//setup, gap(:12), space(:6), cum(:4), order, R0, mu0, &
                            delta0, h, tau, tau2 )
   else
 
-    res = Sing%SingleSingWidth( Mod, 'Model', gap(:12), space(:6), cum(:4), order, R0, mu0, delta0, &
+    res = Sing%SingleSingWidth( Mod, 'Model'//setup, gap(:12), space(:6), cum(:4), order, R0, mu0, delta0, &
                                 h, tau, tau2 )
   end if
 
@@ -1710,7 +1711,7 @@ subroutine f90MassNonDistPiece(hard, shape, Eshape, gap, space, cum, scheme, &
   call Sing%SetRunning(muJ, muS, R, mu); call Sing%SetMat(muJ, muS, 0._dp, 0._dp)
 
   res       = Sing%NonDist( Mod, 'Model', gap(:12), space(:3), cum(:4), order, &
-                            R0, mu0, delta0, h, tau )
+  R0, mu0, delta0, h, tau )
 
 end subroutine f90MassNonDistPiece
 
@@ -1945,16 +1946,16 @@ subroutine f90NSMassDiff(shape, setup, gap, cum, scheme, abs, current, orderAlph
   Mod       = Model(lambda, c, [0,0], 'sum')
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   alphaAll  = Alpha(alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, &
-                    muT, mB, muB, mC, muC)
+  muT, mB, muB, mC, muC)
   MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
-                                    muLambda1, muLambda2)
-  nonSing   = MassiveScales( shape(:6), 'Q', scheme(:7), abs(:3), current(:6), orderMass, &
-                             matEl, EW)
+  muLambda1, muLambda2)
+  nonSing   = MassiveScales( shape(:6), 'Q', scheme(:7), abs(:3), current(:6), &
+  orderMass, matEl, EW)
 
   call nonSing%SetEverything(mu, Q, mu, muJ, muS, R, Rmass, muM, width)
 
-  res = nonSing%NSMass( Mod, setup(:15), gap(:12), cum(:4), order, run, R0, mu0, delta0, &
-                        h, t, t2 )
+  res = nonSing%NSMass( Mod, setup(:15), gap(:12), cum(:4), order, run, R0, mu0, &
+   delta0, h, t, t2 )
 
 end subroutine f90NSMassDiff
 

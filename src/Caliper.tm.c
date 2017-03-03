@@ -1126,8 +1126,8 @@ f90massiveprofpiecelist_(terms, hard, shape, Eshape, setup, gap, space, cum, sch
    MLEndPacket(stdlink);
 }
 
-extern double f90massivepiecebin_(char const* terms, char const* hard,
- char const* shape, char const* Eshape, char const* gap, char const* space,
+extern double f90massivepiecebin_(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* setup, char const* gap, char const* space,
  char const* cum, char const* scheme, char const* abs, char const* current, double* xi,
  double* xiB, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order,
  int* run, int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz,
@@ -1140,7 +1140,7 @@ extern double f90massivepiecebin_(char const* terms, char const* hard,
  double* tau, int* taulen, double* res);
 
 static void massivepiecebin(char const* terms, char const* hard, char const* shape,
- char const* Eshape, char const* gap, char const* space, char const* cum,
+ char const* Eshape, char const* setup, char const* gap, char const* space, char const* cum,
  char const* scheme, char const* abs, char const* current, double xi, double xiB,
  int orderAlpha, int runAlpha, int orderMass, int runMass, int order, int run,
  int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
@@ -1152,7 +1152,7 @@ static void massivepiecebin(char const* terms, char const* hard, char const* sha
  double gammaZ, double sinW, double tau[], long tlen, int taulen){
   double res[taulen * (clen + 1) * (clen + 2)/2];
 
-f90massivepiecebin_(terms, hard, shape, Eshape, gap, space, cum, scheme, abs, current,
+f90massivepiecebin_(terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,
  &xi, &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3,
  &G3,  &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &beta,
  &mu0, &deltaLambda, &Rat0, &n0, &delta0, &n1, &delta1, &t2, &ts, &slope, &cnt, &eH, &eS,
@@ -1574,7 +1574,7 @@ return res;
 }
 
 extern double f90singularmasspiece_(char const* hard, char const* shape,
- char const* Eshape, char const* gap, char const* space, char const* cum,
+ char const* Eshape, char const* setup, char const* gap, char const* space, char const* cum,
  char const* scheme, char const* abs, char const* current, double* xi, double* xiB,
  int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order, int* run,
  int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz, double* mT,
@@ -1585,7 +1585,7 @@ extern double f90singularmasspiece_(char const* hard, char const* shape,
  double* res);
 
 static double singularmasspiece(char const* hard, char const* shape, char const* Eshape,
-char const* gap, char const* space, char const* cum, char const* scheme, char const* abs,
+char const* setup, char const* gap, char const* space, char const* cum, char const* scheme, char const* abs,
 char const* current, double xi, double xiB, int orderAlpha, int runAlpha, int orderMass,
 int runMass, int order, int run, int nf, double j3, double s3, double G3, double mZ,
 double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
@@ -1594,7 +1594,7 @@ double Rmass, double muM, double mu, double width, int c[], long len, double lam
 double R0, double mu0, double delta0, double h, double gammaZ, double sinW, double tau){
   double res;
 
-f90singularmasspiece_(hard, shape, Eshape, gap, space, cum, scheme, abs, current, &xi,
+f90singularmasspiece_(hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current, &xi,
 &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3, &G3, &mZ,
 &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &muH, &muJ, &muS, &R,
 &Rmass, &muM, &mu, &width, c, &lambda, &R0, &mu0, &delta0, &h, &gammaZ, &sinW, &tau, &res);
@@ -1604,7 +1604,7 @@ return res;
 }
 
 extern double f90singularmassdiffpiece_(char const* hard, char const* shape,
- char const* Eshape, char const* gap, char const* space, char const* cum,
+ char const* setup, char const* Eshape, char const* gap, char const* space, char const* cum,
  char const* scheme, char const* abs, char const* current, double* xi, double* xiB,
  int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order, int* run,
  int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz, double* mT,
@@ -1615,7 +1615,7 @@ extern double f90singularmassdiffpiece_(char const* hard, char const* shape,
  double* tau2, double* res);
 
 static double singularmassdiffpiece(char const* hard, char const* shape, char const* Eshape,
-char const* gap, char const* space, char const* cum, char const* scheme, char const* abs,
+char const* setup, char const* gap, char const* space, char const* cum, char const* scheme, char const* abs,
 char const* current, double xi, double xiB, int orderAlpha, int runAlpha, int orderMass,
 int runMass, int order, int run, int nf, double j3, double s3, double G3, double mZ,
 double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
@@ -1625,7 +1625,7 @@ double R0, double mu0, double delta0, double h, double gammaZ, double sinW, doub
 double tau2){
   double res;
 
-f90singularmassdiffpiece_(hard, shape, Eshape, gap, space, cum, scheme, abs, current, &xi,
+f90singularmassdiffpiece_(hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current, &xi,
 &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3, &G3, &mZ,
 &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &muH, &muJ, &muS, &R,
 &Rmass, &muM, &mu, &width, c, &lambda, &R0, &mu0, &delta0, &h, &gammaZ, &sinW, &tau, &tau2,
@@ -5630,7 +5630,7 @@ L0:	return res;
 } /* _tr32 */
 
 
-void massivepiecebin P(( const char * _tp1, const char * _tp2, const char * _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, const char * _tp9, const char * _tp10, double _tp11, double _tp12, int _tp13, int _tp14, int _tp15, int _tp16, int _tp17, int _tp18, int _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double _tp27, double _tp28, double _tp29, double _tp30, double _tp31, double _tp32, double _tp33, double _tp34, double _tp35, double _tp36, double _tp37, double _tp38, double _tp39, double _tp40, double _tp41, double _tp42, double _tp43, double _tp44, double _tp45, double _tp46, double _tp47, double _tp48, double _tp49, double _tp50, int _tp51, double _tp52, int _tp53, double _tp54, double _tp55, double _tp56, double _tp57, double _tp58, double _tp59, double _tp60, double * _tp61, long _tpl61, int _tp62));
+void massivepiecebin P(( const char * _tp1, const char * _tp2, const char * _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, const char * _tp9, const char * _tp10, const char * _tp11, double _tp12, double _tp13, int _tp14, int _tp15, int _tp16, int _tp17, int _tp18, int _tp19, int _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double _tp27, double _tp28, double _tp29, double _tp30, double _tp31, double _tp32, double _tp33, double _tp34, double _tp35, double _tp36, double _tp37, double _tp38, double _tp39, double _tp40, double _tp41, double _tp42, double _tp43, double _tp44, double _tp45, double _tp46, double _tp47, double _tp48, double _tp49, double _tp50, double _tp51, int _tp52, double _tp53, int _tp54, double _tp55, double _tp56, double _tp57, double _tp58, double _tp59, double _tp60, double _tp61, double * _tp62, long _tpl62, int _tp63));
 
 #if MLPROTOTYPES
 static int _tr33( MLINK mlp)
@@ -5649,16 +5649,16 @@ static int _tr33(mlp) MLINK mlp;
 	const char * _tp8;
 	const char * _tp9;
 	const char * _tp10;
-	double _tp11;
+	const char * _tp11;
 	double _tp12;
-	int _tp13;
+	double _tp13;
 	int _tp14;
 	int _tp15;
 	int _tp16;
 	int _tp17;
 	int _tp18;
 	int _tp19;
-	double _tp20;
+	int _tp20;
 	double _tp21;
 	double _tp22;
 	double _tp23;
@@ -5689,19 +5689,20 @@ static int _tr33(mlp) MLINK mlp;
 	double _tp48;
 	double _tp49;
 	double _tp50;
-	int _tp51;
-	double _tp52;
-	int _tp53;
-	double _tp54;
+	double _tp51;
+	int _tp52;
+	double _tp53;
+	int _tp54;
 	double _tp55;
 	double _tp56;
 	double _tp57;
 	double _tp58;
 	double _tp59;
 	double _tp60;
-	double * _tp61;
-	long _tpl61;
-	int _tp62;
+	double _tp61;
+	double * _tp62;
+	long _tpl62;
+	int _tp63;
 	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetString( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetString( mlp, &_tp3) ) goto L2;
@@ -5712,16 +5713,16 @@ static int _tr33(mlp) MLINK mlp;
 	if ( ! MLGetString( mlp, &_tp8) ) goto L7;
 	if ( ! MLGetString( mlp, &_tp9) ) goto L8;
 	if ( ! MLGetString( mlp, &_tp10) ) goto L9;
-	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
+	if ( ! MLGetString( mlp, &_tp11) ) goto L10;
 	if ( ! MLGetReal( mlp, &_tp12) ) goto L11;
-	if ( ! MLGetInteger( mlp, &_tp13) ) goto L12;
+	if ( ! MLGetReal( mlp, &_tp13) ) goto L12;
 	if ( ! MLGetInteger( mlp, &_tp14) ) goto L13;
 	if ( ! MLGetInteger( mlp, &_tp15) ) goto L14;
 	if ( ! MLGetInteger( mlp, &_tp16) ) goto L15;
 	if ( ! MLGetInteger( mlp, &_tp17) ) goto L16;
 	if ( ! MLGetInteger( mlp, &_tp18) ) goto L17;
 	if ( ! MLGetInteger( mlp, &_tp19) ) goto L18;
-	if ( ! MLGetReal( mlp, &_tp20) ) goto L19;
+	if ( ! MLGetInteger( mlp, &_tp20) ) goto L19;
 	if ( ! MLGetReal( mlp, &_tp21) ) goto L20;
 	if ( ! MLGetReal( mlp, &_tp22) ) goto L21;
 	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
@@ -5752,25 +5753,27 @@ static int _tr33(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp48) ) goto L47;
 	if ( ! MLGetReal( mlp, &_tp49) ) goto L48;
 	if ( ! MLGetReal( mlp, &_tp50) ) goto L49;
-	if ( ! MLGetInteger( mlp, &_tp51) ) goto L50;
-	if ( ! MLGetReal( mlp, &_tp52) ) goto L51;
-	if ( ! MLGetInteger( mlp, &_tp53) ) goto L52;
-	if ( ! MLGetReal( mlp, &_tp54) ) goto L53;
+	if ( ! MLGetReal( mlp, &_tp51) ) goto L50;
+	if ( ! MLGetInteger( mlp, &_tp52) ) goto L51;
+	if ( ! MLGetReal( mlp, &_tp53) ) goto L52;
+	if ( ! MLGetInteger( mlp, &_tp54) ) goto L53;
 	if ( ! MLGetReal( mlp, &_tp55) ) goto L54;
 	if ( ! MLGetReal( mlp, &_tp56) ) goto L55;
 	if ( ! MLGetReal( mlp, &_tp57) ) goto L56;
 	if ( ! MLGetReal( mlp, &_tp58) ) goto L57;
 	if ( ! MLGetReal( mlp, &_tp59) ) goto L58;
 	if ( ! MLGetReal( mlp, &_tp60) ) goto L59;
-	if ( ! MLGetRealList( mlp, &_tp61, &_tpl61) ) goto L60;
-	if ( ! MLGetInteger( mlp, &_tp62) ) goto L61;
-	if ( ! MLNewPacket(mlp) ) goto L62;
+	if ( ! MLGetReal( mlp, &_tp61) ) goto L60;
+	if ( ! MLGetRealList( mlp, &_tp62, &_tpl62) ) goto L61;
+	if ( ! MLGetInteger( mlp, &_tp63) ) goto L62;
+	if ( ! MLNewPacket(mlp) ) goto L63;
 
-	massivepiecebin(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tp27, _tp28, _tp29, _tp30, _tp31, _tp32, _tp33, _tp34, _tp35, _tp36, _tp37, _tp38, _tp39, _tp40, _tp41, _tp42, _tp43, _tp44, _tp45, _tp46, _tp47, _tp48, _tp49, _tp50, _tp51, _tp52, _tp53, _tp54, _tp55, _tp56, _tp57, _tp58, _tp59, _tp60, _tp61, _tpl61, _tp62);
+	massivepiecebin(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tp27, _tp28, _tp29, _tp30, _tp31, _tp32, _tp33, _tp34, _tp35, _tp36, _tp37, _tp38, _tp39, _tp40, _tp41, _tp42, _tp43, _tp44, _tp45, _tp46, _tp47, _tp48, _tp49, _tp50, _tp51, _tp52, _tp53, _tp54, _tp55, _tp56, _tp57, _tp58, _tp59, _tp60, _tp61, _tp62, _tpl62, _tp63);
 
 	res = 1;
-L62: L61:	MLReleaseReal64List(mlp, _tp61, _tpl61);
-L60: L59: L58: L57: L56: L55: L54: L53: L52: L51: L50: L49: L48: L47: L46: L45: L44: L43: L42: L41: L40: L39: L38: L37: L36: L35: L34: L33: L32: L31: L30: L29: L28: L27: L26: L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10:	MLReleaseString(mlp, _tp10);
+L63: L62:	MLReleaseReal64List(mlp, _tp62, _tpl62);
+L61: L60: L59: L58: L57: L56: L55: L54: L53: L52: L51: L50: L49: L48: L47: L46: L45: L44: L43: L42: L41: L40: L39: L38: L37: L36: L35: L34: L33: L32: L31: L30: L29: L28: L27: L26: L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11:	MLReleaseString(mlp, _tp11);
+L10:	MLReleaseString(mlp, _tp10);
 L9:	MLReleaseString(mlp, _tp9);
 L8:	MLReleaseString(mlp, _tp8);
 L7:	MLReleaseString(mlp, _tp7);
@@ -7296,7 +7299,7 @@ L0:	return res;
 } /* _tr44 */
 
 
-double singularmasspiece P(( const char * _tp1, const char * _tp2, const char * _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, const char * _tp9, double _tp10, double _tp11, int _tp12, int _tp13, int _tp14, int _tp15, int _tp16, int _tp17, int _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double _tp27, double _tp28, double _tp29, double _tp30, double _tp31, double _tp32, double _tp33, double _tp34, double _tp35, double _tp36, double _tp37, double _tp38, double _tp39, double _tp40, int * _tp41, long _tpl41, double _tp42, double _tp43, double _tp44, double _tp45, double _tp46, double _tp47, double _tp48, double _tp49));
+double singularmasspiece P(( const char * _tp1, const char * _tp2, const char * _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, const char * _tp9, const char * _tp10, double _tp11, double _tp12, int _tp13, int _tp14, int _tp15, int _tp16, int _tp17, int _tp18, int _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double _tp27, double _tp28, double _tp29, double _tp30, double _tp31, double _tp32, double _tp33, double _tp34, double _tp35, double _tp36, double _tp37, double _tp38, double _tp39, double _tp40, double _tp41, int * _tp42, long _tpl42, double _tp43, double _tp44, double _tp45, double _tp46, double _tp47, double _tp48, double _tp49, double _tp50));
 
 #if MLPROTOTYPES
 static int _tr45( MLINK mlp)
@@ -7314,16 +7317,16 @@ static int _tr45(mlp) MLINK mlp;
 	const char * _tp7;
 	const char * _tp8;
 	const char * _tp9;
-	double _tp10;
+	const char * _tp10;
 	double _tp11;
-	int _tp12;
+	double _tp12;
 	int _tp13;
 	int _tp14;
 	int _tp15;
 	int _tp16;
 	int _tp17;
 	int _tp18;
-	double _tp19;
+	int _tp19;
 	double _tp20;
 	double _tp21;
 	double _tp22;
@@ -7345,139 +7348,9 @@ static int _tr45(mlp) MLINK mlp;
 	double _tp38;
 	double _tp39;
 	double _tp40;
-	int * _tp41;
-	long _tpl41;
-	double _tp42;
-	double _tp43;
-	double _tp44;
-	double _tp45;
-	double _tp46;
-	double _tp47;
-	double _tp48;
-	double _tp49;
-	double _rp0;
-	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
-	if ( ! MLGetString( mlp, &_tp2) ) goto L1;
-	if ( ! MLGetString( mlp, &_tp3) ) goto L2;
-	if ( ! MLGetString( mlp, &_tp4) ) goto L3;
-	if ( ! MLGetString( mlp, &_tp5) ) goto L4;
-	if ( ! MLGetString( mlp, &_tp6) ) goto L5;
-	if ( ! MLGetString( mlp, &_tp7) ) goto L6;
-	if ( ! MLGetString( mlp, &_tp8) ) goto L7;
-	if ( ! MLGetString( mlp, &_tp9) ) goto L8;
-	if ( ! MLGetReal( mlp, &_tp10) ) goto L9;
-	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
-	if ( ! MLGetInteger( mlp, &_tp12) ) goto L11;
-	if ( ! MLGetInteger( mlp, &_tp13) ) goto L12;
-	if ( ! MLGetInteger( mlp, &_tp14) ) goto L13;
-	if ( ! MLGetInteger( mlp, &_tp15) ) goto L14;
-	if ( ! MLGetInteger( mlp, &_tp16) ) goto L15;
-	if ( ! MLGetInteger( mlp, &_tp17) ) goto L16;
-	if ( ! MLGetInteger( mlp, &_tp18) ) goto L17;
-	if ( ! MLGetReal( mlp, &_tp19) ) goto L18;
-	if ( ! MLGetReal( mlp, &_tp20) ) goto L19;
-	if ( ! MLGetReal( mlp, &_tp21) ) goto L20;
-	if ( ! MLGetReal( mlp, &_tp22) ) goto L21;
-	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
-	if ( ! MLGetReal( mlp, &_tp24) ) goto L23;
-	if ( ! MLGetReal( mlp, &_tp25) ) goto L24;
-	if ( ! MLGetReal( mlp, &_tp26) ) goto L25;
-	if ( ! MLGetReal( mlp, &_tp27) ) goto L26;
-	if ( ! MLGetReal( mlp, &_tp28) ) goto L27;
-	if ( ! MLGetReal( mlp, &_tp29) ) goto L28;
-	if ( ! MLGetReal( mlp, &_tp30) ) goto L29;
-	if ( ! MLGetReal( mlp, &_tp31) ) goto L30;
-	if ( ! MLGetReal( mlp, &_tp32) ) goto L31;
-	if ( ! MLGetReal( mlp, &_tp33) ) goto L32;
-	if ( ! MLGetReal( mlp, &_tp34) ) goto L33;
-	if ( ! MLGetReal( mlp, &_tp35) ) goto L34;
-	if ( ! MLGetReal( mlp, &_tp36) ) goto L35;
-	if ( ! MLGetReal( mlp, &_tp37) ) goto L36;
-	if ( ! MLGetReal( mlp, &_tp38) ) goto L37;
-	if ( ! MLGetReal( mlp, &_tp39) ) goto L38;
-	if ( ! MLGetReal( mlp, &_tp40) ) goto L39;
-	if ( ! MLGetIntegerList( mlp, &_tp41, &_tpl41) ) goto L40;
-	if ( ! MLGetReal( mlp, &_tp42) ) goto L41;
-	if ( ! MLGetReal( mlp, &_tp43) ) goto L42;
-	if ( ! MLGetReal( mlp, &_tp44) ) goto L43;
-	if ( ! MLGetReal( mlp, &_tp45) ) goto L44;
-	if ( ! MLGetReal( mlp, &_tp46) ) goto L45;
-	if ( ! MLGetReal( mlp, &_tp47) ) goto L46;
-	if ( ! MLGetReal( mlp, &_tp48) ) goto L47;
-	if ( ! MLGetReal( mlp, &_tp49) ) goto L48;
-	if ( ! MLNewPacket(mlp) ) goto L49;
-
-	_rp0 = singularmasspiece(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tp27, _tp28, _tp29, _tp30, _tp31, _tp32, _tp33, _tp34, _tp35, _tp36, _tp37, _tp38, _tp39, _tp40, _tp41, _tpl41, _tp42, _tp43, _tp44, _tp45, _tp46, _tp47, _tp48, _tp49);
-
-	res = MLAbort ?
-		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L49: L48: L47: L46: L45: L44: L43: L42: L41:	MLReleaseInteger32List( mlp, _tp41, _tpl41);
-L40: L39: L38: L37: L36: L35: L34: L33: L32: L31: L30: L29: L28: L27: L26: L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9:	MLReleaseString(mlp, _tp9);
-L8:	MLReleaseString(mlp, _tp8);
-L7:	MLReleaseString(mlp, _tp7);
-L6:	MLReleaseString(mlp, _tp6);
-L5:	MLReleaseString(mlp, _tp5);
-L4:	MLReleaseString(mlp, _tp4);
-L3:	MLReleaseString(mlp, _tp3);
-L2:	MLReleaseString(mlp, _tp2);
-L1:	MLReleaseString(mlp, _tp1);
-
-L0:	return res;
-} /* _tr45 */
-
-
-double singularmassdiffpiece P(( const char * _tp1, const char * _tp2, const char * _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, const char * _tp9, double _tp10, double _tp11, int _tp12, int _tp13, int _tp14, int _tp15, int _tp16, int _tp17, int _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double _tp27, double _tp28, double _tp29, double _tp30, double _tp31, double _tp32, double _tp33, double _tp34, double _tp35, double _tp36, double _tp37, double _tp38, double _tp39, double _tp40, int * _tp41, long _tpl41, double _tp42, double _tp43, double _tp44, double _tp45, double _tp46, double _tp47, double _tp48, double _tp49, double _tp50));
-
-#if MLPROTOTYPES
-static int _tr46( MLINK mlp)
-#else
-static int _tr46(mlp) MLINK mlp;
-#endif
-{
-	int	res = 0;
-	const char * _tp1;
-	const char * _tp2;
-	const char * _tp3;
-	const char * _tp4;
-	const char * _tp5;
-	const char * _tp6;
-	const char * _tp7;
-	const char * _tp8;
-	const char * _tp9;
-	double _tp10;
-	double _tp11;
-	int _tp12;
-	int _tp13;
-	int _tp14;
-	int _tp15;
-	int _tp16;
-	int _tp17;
-	int _tp18;
-	double _tp19;
-	double _tp20;
-	double _tp21;
-	double _tp22;
-	double _tp23;
-	double _tp24;
-	double _tp25;
-	double _tp26;
-	double _tp27;
-	double _tp28;
-	double _tp29;
-	double _tp30;
-	double _tp31;
-	double _tp32;
-	double _tp33;
-	double _tp34;
-	double _tp35;
-	double _tp36;
-	double _tp37;
-	double _tp38;
-	double _tp39;
-	double _tp40;
-	int * _tp41;
-	long _tpl41;
-	double _tp42;
+	double _tp41;
+	int * _tp42;
+	long _tpl42;
 	double _tp43;
 	double _tp44;
 	double _tp45;
@@ -7496,16 +7369,16 @@ static int _tr46(mlp) MLINK mlp;
 	if ( ! MLGetString( mlp, &_tp7) ) goto L6;
 	if ( ! MLGetString( mlp, &_tp8) ) goto L7;
 	if ( ! MLGetString( mlp, &_tp9) ) goto L8;
-	if ( ! MLGetReal( mlp, &_tp10) ) goto L9;
+	if ( ! MLGetString( mlp, &_tp10) ) goto L9;
 	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
-	if ( ! MLGetInteger( mlp, &_tp12) ) goto L11;
+	if ( ! MLGetReal( mlp, &_tp12) ) goto L11;
 	if ( ! MLGetInteger( mlp, &_tp13) ) goto L12;
 	if ( ! MLGetInteger( mlp, &_tp14) ) goto L13;
 	if ( ! MLGetInteger( mlp, &_tp15) ) goto L14;
 	if ( ! MLGetInteger( mlp, &_tp16) ) goto L15;
 	if ( ! MLGetInteger( mlp, &_tp17) ) goto L16;
 	if ( ! MLGetInteger( mlp, &_tp18) ) goto L17;
-	if ( ! MLGetReal( mlp, &_tp19) ) goto L18;
+	if ( ! MLGetInteger( mlp, &_tp19) ) goto L18;
 	if ( ! MLGetReal( mlp, &_tp20) ) goto L19;
 	if ( ! MLGetReal( mlp, &_tp21) ) goto L20;
 	if ( ! MLGetReal( mlp, &_tp22) ) goto L21;
@@ -7527,8 +7400,8 @@ static int _tr46(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp38) ) goto L37;
 	if ( ! MLGetReal( mlp, &_tp39) ) goto L38;
 	if ( ! MLGetReal( mlp, &_tp40) ) goto L39;
-	if ( ! MLGetIntegerList( mlp, &_tp41, &_tpl41) ) goto L40;
-	if ( ! MLGetReal( mlp, &_tp42) ) goto L41;
+	if ( ! MLGetReal( mlp, &_tp41) ) goto L40;
+	if ( ! MLGetIntegerList( mlp, &_tp42, &_tpl42) ) goto L41;
 	if ( ! MLGetReal( mlp, &_tp43) ) goto L42;
 	if ( ! MLGetReal( mlp, &_tp44) ) goto L43;
 	if ( ! MLGetReal( mlp, &_tp45) ) goto L44;
@@ -7539,12 +7412,148 @@ static int _tr46(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp50) ) goto L49;
 	if ( ! MLNewPacket(mlp) ) goto L50;
 
-	_rp0 = singularmassdiffpiece(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tp27, _tp28, _tp29, _tp30, _tp31, _tp32, _tp33, _tp34, _tp35, _tp36, _tp37, _tp38, _tp39, _tp40, _tp41, _tpl41, _tp42, _tp43, _tp44, _tp45, _tp46, _tp47, _tp48, _tp49, _tp50);
+	_rp0 = singularmasspiece(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tp27, _tp28, _tp29, _tp30, _tp31, _tp32, _tp33, _tp34, _tp35, _tp36, _tp37, _tp38, _tp39, _tp40, _tp41, _tp42, _tpl42, _tp43, _tp44, _tp45, _tp46, _tp47, _tp48, _tp49, _tp50);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L50: L49: L48: L47: L46: L45: L44: L43: L42: L41:	MLReleaseInteger32List( mlp, _tp41, _tpl41);
-L40: L39: L38: L37: L36: L35: L34: L33: L32: L31: L30: L29: L28: L27: L26: L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9:	MLReleaseString(mlp, _tp9);
+L50: L49: L48: L47: L46: L45: L44: L43: L42:	MLReleaseInteger32List( mlp, _tp42, _tpl42);
+L41: L40: L39: L38: L37: L36: L35: L34: L33: L32: L31: L30: L29: L28: L27: L26: L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10:	MLReleaseString(mlp, _tp10);
+L9:	MLReleaseString(mlp, _tp9);
+L8:	MLReleaseString(mlp, _tp8);
+L7:	MLReleaseString(mlp, _tp7);
+L6:	MLReleaseString(mlp, _tp6);
+L5:	MLReleaseString(mlp, _tp5);
+L4:	MLReleaseString(mlp, _tp4);
+L3:	MLReleaseString(mlp, _tp3);
+L2:	MLReleaseString(mlp, _tp2);
+L1:	MLReleaseString(mlp, _tp1);
+
+L0:	return res;
+} /* _tr45 */
+
+
+double singularmassdiffpiece P(( const char * _tp1, const char * _tp2, const char * _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, const char * _tp9, const char * _tp10, double _tp11, double _tp12, int _tp13, int _tp14, int _tp15, int _tp16, int _tp17, int _tp18, int _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double _tp27, double _tp28, double _tp29, double _tp30, double _tp31, double _tp32, double _tp33, double _tp34, double _tp35, double _tp36, double _tp37, double _tp38, double _tp39, double _tp40, double _tp41, int * _tp42, long _tpl42, double _tp43, double _tp44, double _tp45, double _tp46, double _tp47, double _tp48, double _tp49, double _tp50, double _tp51));
+
+#if MLPROTOTYPES
+static int _tr46( MLINK mlp)
+#else
+static int _tr46(mlp) MLINK mlp;
+#endif
+{
+	int	res = 0;
+	const char * _tp1;
+	const char * _tp2;
+	const char * _tp3;
+	const char * _tp4;
+	const char * _tp5;
+	const char * _tp6;
+	const char * _tp7;
+	const char * _tp8;
+	const char * _tp9;
+	const char * _tp10;
+	double _tp11;
+	double _tp12;
+	int _tp13;
+	int _tp14;
+	int _tp15;
+	int _tp16;
+	int _tp17;
+	int _tp18;
+	int _tp19;
+	double _tp20;
+	double _tp21;
+	double _tp22;
+	double _tp23;
+	double _tp24;
+	double _tp25;
+	double _tp26;
+	double _tp27;
+	double _tp28;
+	double _tp29;
+	double _tp30;
+	double _tp31;
+	double _tp32;
+	double _tp33;
+	double _tp34;
+	double _tp35;
+	double _tp36;
+	double _tp37;
+	double _tp38;
+	double _tp39;
+	double _tp40;
+	double _tp41;
+	int * _tp42;
+	long _tpl42;
+	double _tp43;
+	double _tp44;
+	double _tp45;
+	double _tp46;
+	double _tp47;
+	double _tp48;
+	double _tp49;
+	double _tp50;
+	double _tp51;
+	double _rp0;
+	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetString( mlp, &_tp2) ) goto L1;
+	if ( ! MLGetString( mlp, &_tp3) ) goto L2;
+	if ( ! MLGetString( mlp, &_tp4) ) goto L3;
+	if ( ! MLGetString( mlp, &_tp5) ) goto L4;
+	if ( ! MLGetString( mlp, &_tp6) ) goto L5;
+	if ( ! MLGetString( mlp, &_tp7) ) goto L6;
+	if ( ! MLGetString( mlp, &_tp8) ) goto L7;
+	if ( ! MLGetString( mlp, &_tp9) ) goto L8;
+	if ( ! MLGetString( mlp, &_tp10) ) goto L9;
+	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
+	if ( ! MLGetReal( mlp, &_tp12) ) goto L11;
+	if ( ! MLGetInteger( mlp, &_tp13) ) goto L12;
+	if ( ! MLGetInteger( mlp, &_tp14) ) goto L13;
+	if ( ! MLGetInteger( mlp, &_tp15) ) goto L14;
+	if ( ! MLGetInteger( mlp, &_tp16) ) goto L15;
+	if ( ! MLGetInteger( mlp, &_tp17) ) goto L16;
+	if ( ! MLGetInteger( mlp, &_tp18) ) goto L17;
+	if ( ! MLGetInteger( mlp, &_tp19) ) goto L18;
+	if ( ! MLGetReal( mlp, &_tp20) ) goto L19;
+	if ( ! MLGetReal( mlp, &_tp21) ) goto L20;
+	if ( ! MLGetReal( mlp, &_tp22) ) goto L21;
+	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
+	if ( ! MLGetReal( mlp, &_tp24) ) goto L23;
+	if ( ! MLGetReal( mlp, &_tp25) ) goto L24;
+	if ( ! MLGetReal( mlp, &_tp26) ) goto L25;
+	if ( ! MLGetReal( mlp, &_tp27) ) goto L26;
+	if ( ! MLGetReal( mlp, &_tp28) ) goto L27;
+	if ( ! MLGetReal( mlp, &_tp29) ) goto L28;
+	if ( ! MLGetReal( mlp, &_tp30) ) goto L29;
+	if ( ! MLGetReal( mlp, &_tp31) ) goto L30;
+	if ( ! MLGetReal( mlp, &_tp32) ) goto L31;
+	if ( ! MLGetReal( mlp, &_tp33) ) goto L32;
+	if ( ! MLGetReal( mlp, &_tp34) ) goto L33;
+	if ( ! MLGetReal( mlp, &_tp35) ) goto L34;
+	if ( ! MLGetReal( mlp, &_tp36) ) goto L35;
+	if ( ! MLGetReal( mlp, &_tp37) ) goto L36;
+	if ( ! MLGetReal( mlp, &_tp38) ) goto L37;
+	if ( ! MLGetReal( mlp, &_tp39) ) goto L38;
+	if ( ! MLGetReal( mlp, &_tp40) ) goto L39;
+	if ( ! MLGetReal( mlp, &_tp41) ) goto L40;
+	if ( ! MLGetIntegerList( mlp, &_tp42, &_tpl42) ) goto L41;
+	if ( ! MLGetReal( mlp, &_tp43) ) goto L42;
+	if ( ! MLGetReal( mlp, &_tp44) ) goto L43;
+	if ( ! MLGetReal( mlp, &_tp45) ) goto L44;
+	if ( ! MLGetReal( mlp, &_tp46) ) goto L45;
+	if ( ! MLGetReal( mlp, &_tp47) ) goto L46;
+	if ( ! MLGetReal( mlp, &_tp48) ) goto L47;
+	if ( ! MLGetReal( mlp, &_tp49) ) goto L48;
+	if ( ! MLGetReal( mlp, &_tp50) ) goto L49;
+	if ( ! MLGetReal( mlp, &_tp51) ) goto L50;
+	if ( ! MLNewPacket(mlp) ) goto L51;
+
+	_rp0 = singularmassdiffpiece(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tp27, _tp28, _tp29, _tp30, _tp31, _tp32, _tp33, _tp34, _tp35, _tp36, _tp37, _tp38, _tp39, _tp40, _tp41, _tp42, _tpl42, _tp43, _tp44, _tp45, _tp46, _tp47, _tp48, _tp49, _tp50, _tp51);
+
+	res = MLAbort ?
+		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
+L51: L50: L49: L48: L47: L46: L45: L44: L43: L42:	MLReleaseInteger32List( mlp, _tp42, _tpl42);
+L41: L40: L39: L38: L37: L36: L35: L34: L33: L32: L31: L30: L29: L28: L27: L26: L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10:	MLReleaseString(mlp, _tp10);
+L9:	MLReleaseString(mlp, _tp9);
 L8:	MLReleaseString(mlp, _tp8);
 L7:	MLReleaseString(mlp, _tp7);
 L6:	MLReleaseString(mlp, _tp6);
@@ -10402,7 +10411,7 @@ static struct func {
 		{43, 0, _tr30, "massorigin" },
 		{62, 0, _tr31, "massiveprofpiece" },
 		{62, 0, _tr32, "massiveprofpiecelist" },
-		{62, 0, _tr33, "massivepiecebin" },
+		{63, 0, _tr33, "massivepiecebin" },
 		{63, 0, _tr34, "massiveprofdiffpiece" },
 		{63, 0, _tr35, "massiveprofdiff" },
 		{62, 0, _tr36, "massiveproflist" },
@@ -10414,8 +10423,8 @@ static struct func {
 		{42, 0, _tr42, "massnondistdiff" },
 		{40, 0, _tr43, "massnondistpiece" },
 		{41, 0, _tr44, "massnondistdiffpiece" },
-		{49, 0, _tr45, "singularmasspiece" },
-		{50, 0, _tr46, "singularmassdiffpiece" },
+		{50, 0, _tr45, "singularmasspiece" },
+		{51, 0, _tr46, "singularmassdiffpiece" },
 		{39, 0, _tr47, "singularhjm" },
 		{36, 0, _tr48, "singularhjm1d" },
 		{36, 0, _tr49, "singularhjm1dpiece" },
@@ -10602,13 +10611,13 @@ static const char* evalstrs[] = {
 	"oss section including profiles for massive cross section\"",
 	(const char*)0,
 	"MassivePieceBin::usage = \"MassivePieceBin[terms, hard, shape, ES",
-	"hape, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha",
-	", runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, ",
-	"amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, m",
-	"u0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cn",
-	"t, eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del",
-	"0, h, gammaZ, sin2ThetaW, tauList], computes the cross section i",
-	"ncluding profiles for massive cross section\"",
+	"hape, setup, gap, space, cum, scheme, abs, current, xi, xiB, ord",
+	"erAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G",
+	"3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, ",
+	"beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, sl",
+	"ope, cnt, eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, mu",
+	"R0, del0, h, gammaZ, sin2ThetaW, tauList], computes the cross se",
+	"ction including profiles for massive cross section\"",
 	(const char*)0,
 	"MassiveMoment::usage = \"MassiveMoment[terms, hard, shape, EShape",
 	", setup, gap, space, scheme, abs, current, xi, xiB, orderAlpha, ",
@@ -10858,12 +10867,12 @@ static const char* evalstrs[] = {
 	"arameter distrubution\"",
 	(const char*)0,
 	"SingularMassPiece::usage = \"SingularMassPiece[hard, shape, Eshap",
-	"e, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, r",
-	"unAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ",
-	", mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, ",
-	"muS, R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0, h, ga",
-	"mmaZ, sin2ThetaW, tau] computes the Singular Massive Thrust and ",
-	"C-parameter distrubution\"",
+	"e, setup, gap, space, cum, scheme, abs, current, xi, xiB, orderA",
+	"lpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, ",
+	"mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH",
+	", muJ, muS, R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0",
+	", h, gammaZ, sin2ThetaW, tau] computes the Singular Massive Thru",
+	"st and C-parameter distrubution\"",
 	(const char*)0,
 	"SingularPiece::usage = \"SingularPiece[hard, shape, gap, space, c",
 	"um, orderAlpha, runAlpha, order, run, nf, j3, s3, G3, mZ, aMz, m",
@@ -11118,7 +11127,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"MassOrigin[shape_, Eshape_, gap_, scheme_, orderAlpha_, runAlpha_,                 orderMass_, runMass_, order_, run_, nf_, mZ_, amZ_, mT_, muT_, mB_,                 muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,                 Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,                 mass_, muM_, R0_, muR0_, del0_, h_]", (char *)"{shape, Eshape, gap, scheme, orderAlpha, runAlpha, orderMass, runMass,                  order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2,                  Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope,                  cnt, eH, eS, eJ, mass, muM, R0, muR0, del0, h}", 30);
 	if (_res) _res = _definepattern(mlp, (char *)"MassiveProfPiece[terms_, hard_, shape_, Eshape_, setup_, gap_, space_, cum_,                 scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,                 runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,                 muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,                 Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,                 mass_, muM_, ns_, width_, clen_, lambda_, R0_, muR0_, del0_, h_, gammaZ_,                 sin2ThetaW_, tau_]", (char *)"{terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,                  xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,                  s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,                  beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,                  eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ,                  sin2ThetaW, tau}", 31);
 	if (_res) _res = _definepattern(mlp, (char *)"MassiveProfPieceList[terms_, hard_, shape_, Eshape_, setup_, gap_, space_, cum_,                 scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,                 runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,                 muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,                 Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,                 mass_, muM_, ns_, width_, clen_, lambda_, R0_, muR0_, del0_, h_, gammaZ_,                 sin2ThetaW_, tauList_]", (char *)"{terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,                  xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,                  s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,                  beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,                  eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ,                  sin2ThetaW, tauList}", 32);
-	if (_res) _res = _definepattern(mlp, (char *)"MassivePieceBin[terms_, hard_, shape_, Eshape_, gap_, space_, cum_,                 scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,                 runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,                 muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,                 Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,                 mass_, muM_, ns_, width_, clen_, lambda_, R0_, muR0_, del0_, h_, gammaZ_,                 sin2ThetaW_, tauList_]", (char *)"{terms, hard, shape, Eshape, gap, space, cum, scheme, abs, current,                  xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,                  s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,                  beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,                  eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ,                  sin2ThetaW, Flatten[tauList], Length[tauList]}", 33);
+	if (_res) _res = _definepattern(mlp, (char *)"MassivePieceBin[terms_, hard_, shape_, Eshape_, setup_, gap_, space_, cum_,                 scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,                 runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,                 muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,                 Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,                 mass_, muM_, ns_, width_, clen_, lambda_, R0_, muR0_, del0_, h_, gammaZ_,                 sin2ThetaW_, tauList_]", (char *)"{terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,                  xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,                  s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,                  beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,                  eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ,                  sin2ThetaW, Flatten[tauList], Length[tauList]}", 33);
 	if (_res) _res = _definepattern(mlp, (char *)"MassiveProfPiece[terms_, hard_, shape_, Eshape_, setup_, gap_, space_, cum_,                 scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,                 runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,                 muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,                 Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,                 mass_, muM_, ns_, width_, clen_, lambda_, R0_, muR0_, del0_, h_, gammaZ_,                 sin2ThetaW_, tau_, tau2_]", (char *)"{terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,                  xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,                  s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,                  beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,                  eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ,                  sin2ThetaW, tau, tau2}", 34);
 	if (_res) _res = _definepattern(mlp, (char *)"MassiveProf[terms_, hard_, shape_, Eshape_, setup_, gap_, space_, cum_,                 scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,                 runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,                 muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,                 Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,                 mass_, muM_, ns_, width_, c_, lambda_, R0_, muR0_, del0_, h_, gammaZ_,                 sin2ThetaW_, tau_, tau2_]", (char *)"{terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,                  xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,                  s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,                  beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,                  eH, eS, eJ, mass, muM, ns, width, c, lambda, R0, muR0, del0, h, gammaZ,                  sin2ThetaW, tau, tau2}", 35);
 	if (_res) _res = _definepattern(mlp, (char *)"MassiveProfList[terms_, hard_, shape_, Eshape_, setup_, gap_, space_, cum_,                 scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,                 runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,                 muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,                 Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,                 mass_, muM_, ns_, width_, c_, lambda_, R0_, muR0_, del0_, h_, gammaZ_,                 sin2ThetaW_, tauList_]", (char *)"{terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,                  xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,                  s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,                  beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,                  eH, eS, eJ, mass, muM, ns, width, c, lambda, R0, muR0, del0, h, gammaZ,                  sin2ThetaW, tauList}", 36);
@@ -11130,8 +11139,8 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"MassNonDist[hard_, shape_, Eshape_, setup_, gap_, space_, cum_,                 scheme_, orderAlpha_, runAlpha_, orderMass_, runMass_, order_,                 run_, nf_, G3_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_, muC_,                 muLambda1_, muLambda2_, Q_, muH_, muJ_, muS_, R_, Rmass_, muM_,                 mu_, c_, lambda_, R0_, mu0_, delta0_, h_, tau_, tau2_]", (char *)"{hard, shape, Eshape, setup, gap, space, cum, scheme, orderAlpha,                  runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT,                  mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,                  muM, mu, c, lambda, R0, mu0, delta0, h, tau, tau2}", 42);
 	if (_res) _res = _definepattern(mlp, (char *)"MassNonDistPiece[hard_, shape_, Eshape_, gap_, space_, cum_, scheme_,                  orderAlpha_, runAlpha_, orderMass_, runMass_, order_, run_, nf_, G3_,                  mZ_, amZ_, mT_, muT_, mB_, muB_, mC_, muC_, muLambda1_, muLambda2_,                  Q_, muH_, muJ_, muS_, R_, Rmass_, muM_, mu_, c_, lambda_, R0_, mu0_,                  delta0_, h_, tau_]", (char *)"{hard, shape, Eshape, gap, space, cum, scheme, orderAlpha, runAlpha,                  orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT, mB, muB,                  mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu,                  c, lambda, R0, mu0, delta0, h, tau}", 43);
 	if (_res) _res = _definepattern(mlp, (char *)"MassNonDistPiece[hard_, shape_, Eshape_, gap_, space_, cum_, scheme_,                  orderAlpha_, runAlpha_, orderMass_, runMass_, order_, run_, nf_, G3_,                  mZ_, amZ_, mT_, muT_, mB_, muB_, mC_, muC_, muLambda1_, muLambda2_,                  Q_, muH_, muJ_, muS_, R_, Rmass_, muM_, mu_, c_, lambda_, R0_, mu0_,                  delta0_, h_, tau_, tau2_]", (char *)"{hard, shape, Eshape, gap, space, cum, scheme, orderAlpha, runAlpha,                  orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT, mB, muB,                  mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu,                  c, lambda, R0, mu0, delta0, h, tau, tau2}", 44);
-	if (_res) _res = _definepattern(mlp, (char *)"SingularMassPiece[hard_, shape_, Eshape_, gap_, space_, cum_, scheme_,                 abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_, runMass_,                 order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_,                 muC_, muLambda1_, muLambda2_, Q_, muH_, muJ_, muS_, R_, Rmass_, muM_, mu_,                 width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_, sin2ThetaW_, tau_]", (char *)"{hard, shape, Eshape, gap, space, cum, scheme, abs, current, xi, xiB,                  orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ,                  amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS,                  R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0, h, gammaZ,                  sin2ThetaW, tau}", 45);
-	if (_res) _res = _definepattern(mlp, (char *)"SingularMassPiece[hard_, shape_, Eshape_, gap_, space_, cum_, scheme_,                 abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_, runMass_,                 order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_,                 muC_, muLambda1_, muLambda2_, Q_, muH_, muJ_, muS_, R_, Rmass_, muM_, mu_,                 width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_, sin2ThetaW_, tau_,                 tau2_]", (char *)"{hard, shape, Eshape, gap, space, cum, scheme, abs, current, xi, xiB,                  orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ,                  amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS,                  R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0, h, gammaZ,                  sin2ThetaW, tau, tau2}", 46);
+	if (_res) _res = _definepattern(mlp, (char *)"SingularMassPiece[hard_, shape_, Eshape_, setup_, gap_, space_, cum_, scheme_,                 abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_, runMass_,                 order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_,                 muC_, muLambda1_, muLambda2_, Q_, muH_, muJ_, muS_, R_, Rmass_, muM_, mu_,                 width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_, sin2ThetaW_, tau_]", (char *)"{hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current, xi, xiB,                  orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ,                  amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS,                  R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0, h, gammaZ,                  sin2ThetaW, tau}", 45);
+	if (_res) _res = _definepattern(mlp, (char *)"SingularMassPiece[hard_, shape_, Eshape_, setup_, gap_, space_, cum_, scheme_,                 abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_, runMass_,                 order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_,                 muC_, muLambda1_, muLambda2_, Q_, muH_, muJ_, muS_, R_, Rmass_, muM_, mu_,                 width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_, sin2ThetaW_, tau_,                 tau2_]", (char *)"{hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current, xi, xiB,                  orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ,                  amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS,                  R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0, h, gammaZ,                  sin2ThetaW, tau, tau2}", 46);
 	if (_res) _res = _definepattern(mlp, (char *)"SingularHJM[hard_, setup_, gap_, space_, cum_, orderAlpha_, runAlpha_, order_,                 run_, isoft_, nf_, j3_, s3_, s31_, s32_, G3_, mZ_, aMz_, mT_, muT_, mB_,                 muB_, mC_, muC_, muLambda_, Q_, muH_, muJ_, muS_, R_, mu_, c_, lambda_,                 R0_, mu0_, delta0_, h_, tau_]", (char *)"{hard, setup, gap, space, cum, orderAlpha, runAlpha, order, run, isoft, nf, j3,                  s3, s31, s32, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH,                  muJ, muS, R, mu, Flatten[Transpose[c]], Length[c], lambda, R0, mu0,                  delta0, h, tau}", 47);
 	if (_res) _res = _definepattern(mlp, (char *)"SingularHJM1D[hard_, gap_, cum_, orderAlpha_, runAlpha_, order_,                 run_, isoft_, nf_, j3_, s3_, s31_, s32_, G3_, mZ_, aMz_, mT_, muT_, mB_,                 muB_, mC_, muC_, muLambda_, Q_, muH_, muJ_, muS_, R_, mu_, c_, lambda_,                 R0_, mu0_, delta0_, h_, tau_]", (char *)"{hard, gap, cum, orderAlpha, runAlpha, order, run, isoft, nf, j3, s3, s31, s32,                  G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS,                  R, mu, c, lambda, R0, mu0, delta0, h, tau}", 48);
 	if (_res) _res = _definepattern(mlp, (char *)"SingularHJM1DPiece[hard_, gap_, cum_, orderAlpha_, runAlpha_, order_, run_,                 isoft_, nf_, j3_, s3_, s31_, s32_, G3_, mZ_, aMz_, mT_, muT_, mB_, muB_,                 mC_, muC_, muLambda_, Q_, muH_, muJ_, muS_, R_, mu_, c_, lambda_, R0_,                 mu0_, delta0_, h_, tau_]", (char *)"{hard, gap, cum, orderAlpha, runAlpha, order, run, isoft, nf, j3,                  s3, s31, s32, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS,                  R, mu, c, lambda, R0, mu0, delta0, h, tau}", 49);

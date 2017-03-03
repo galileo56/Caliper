@@ -28,7 +28,7 @@
 :Evaluate:  MassiveProf::usage = "MassiveProf[terms, hard, shape, EShape, setup, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, c, clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau], computes the cross section including profiles for massive cross section"
 :Evaluate:  MassiveProfPiece::usage = "MassiveProfPiece[terms, hard, shape, EShape, setup, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau], computes the cross section including profiles for massive cross section"
 :Evaluate:  MassiveProfPieceList::usage = "MassiveProfPieceList[terms, hard, shape, EShape, setup, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau], computes the cross section including profiles for massive cross section"
-:Evaluate:  MassivePieceBin::usage = "MassivePieceBin[terms, hard, shape, EShape, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tauList], computes the cross section including profiles for massive cross section"
+:Evaluate:  MassivePieceBin::usage = "MassivePieceBin[terms, hard, shape, EShape, setup, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tauList], computes the cross section including profiles for massive cross section"
 :Evaluate:  MassiveMoment::usage = "MassiveMoment[terms, hard, shape, EShape, setup, gap, space, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, c, clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau, tau2, pow], computes the moment including profiles for massive cross section"
 :Evaluate:  MasslessMoment::usage = "MasslessMoment[terms, hard, shape, setup, gap, space, orderAlpha, runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, lambda, R0, muR0, delta0, h, tau, tau2, pow], computes moments including profiles for massless cross section"
 :Evaluate:  MasslessProf::usage = "MasslessProf[terms, hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, lambda, R0, muR0, delta0, h, tau], computes the cross section including profiles for massless cross section"
@@ -89,7 +89,7 @@
 :Evaluate:  MassNonDist::usage = "MassNonDist[hard, shape, Eshape, setup, gap, space, cum, scheme, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu, c, lambda, R0, mu0, delta0, h, tau] computes the Non distributional part of the Singular Massive Thrust and C-parameter distrubution"
 :Evaluate:  MassNonDistPiece::usage = "MassNonDistPiece[hard, shape, Eshape, gap, space, cum, scheme, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu, c, lambda, R0, mu0, delta0, h, tau] computes the Non distributional part of the Singular Massive Thrust and C-parameter distrubution"
 :Evaluate:  SingularMass::usage = "SingularMass[hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau] computes the Singular Massive Thrust and C-parameter distrubution"
-:Evaluate:  SingularMassPiece::usage = "SingularMassPiece[hard, shape, Eshape, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau] computes the Singular Massive Thrust and C-parameter distrubution"
+:Evaluate:  SingularMassPiece::usage = "SingularMassPiece[hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau] computes the Singular Massive Thrust and C-parameter distrubution"
 :Evaluate:  SingularPiece::usage = "SingularPiece[hard, shape, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3, s3, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, c, lambda, R0, mu0, delta0, h, tau] computes the Singular Thrust and C-parameter distrubution"
 :Evaluate:  SingularHJM::usage = "SingularHJM[hard, setup, gap, space, cum, orderAlpha, runAlpha, order, run, isoft, nf, j3, s3, s31, s32, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, c, lambda, R0, mu0, delta0, h, tau] computes the Singular Thrust and C-parameter distrubution"
 :Evaluate:  SingularHJMPiece::usage = "SingularHJMPiece[hard, gap, space, cum, orderAlpha, runAlpha, order, run, isoft, nf, j3, s3, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, c, lambda, R0, mu0, delta0, h, tau] computes the Singular Thrust and C-parameter distrubution"
@@ -637,20 +637,20 @@
 
 :Begin:
 :Function:      massivepiecebin
-:Pattern:       MassivePieceBin[terms_, hard_, shape_, Eshape_, gap_, space_, cum_,
+:Pattern:       MassivePieceBin[terms_, hard_, shape_, Eshape_, setup_, gap_, space_, cum_,
                 scheme_, abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_,
                 runMass_, order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_,
                 muB_, mC_, muC_, muLambda1_, muLambda2_, Q_, beta_, mu0_, deltaLambda_,
                 Rat0_, n0_, delta0_, n1_, delta1_, t2_, ts_, slope_, cnt_, eH_, eS_, eJ_,
                 mass_, muM_, ns_, width_, clen_, lambda_, R0_, muR0_, del0_, h_, gammaZ_,
                 sin2ThetaW_, tauList_]
-:Arguments:     {terms, hard, shape, Eshape, gap, space, cum, scheme, abs, current,
+:Arguments:     {terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,
                  xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3,
                  s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q,
                  beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt,
                  eH, eS, eJ, mass, muM, ns, width, clen, lambda, R0, muR0, del0, h, gammaZ,
                  sin2ThetaW, Flatten[tauList], Length[tauList]}
-:ArgumentTypes: {String, String, String, String, String, String, String, String,
+:ArgumentTypes: {String, String, String, String, String, String, String, String, String,
                  String, String, Real, Real, Integer, Integer, Integer, Integer, Integer,
                  Integer, Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
                  Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
@@ -900,17 +900,17 @@
 
 :Begin:
 :Function:      singularmasspiece
-:Pattern:       SingularMassPiece[hard_, shape_, Eshape_, gap_, space_, cum_, scheme_,
+:Pattern:       SingularMassPiece[hard_, shape_, Eshape_, setup_, gap_, space_, cum_, scheme_,
                 abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_, runMass_,
                 order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_,
                 muC_, muLambda1_, muLambda2_, Q_, muH_, muJ_, muS_, R_, Rmass_, muM_, mu_,
                 width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_, sin2ThetaW_, tau_]
-:Arguments:     {hard, shape, Eshape, gap, space, cum, scheme, abs, current, xi, xiB,
+:Arguments:     {hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current, xi, xiB,
                  orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ,
                  amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS,
                  R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0, h, gammaZ,
                  sin2ThetaW, tau}
-:ArgumentTypes: {String, String, String, String, String, String, String, String, String,
+:ArgumentTypes: {String, String, String, String, String, String, String, String, String, String,
                  Real, Real, Integer, Integer, Integer, Integer, Integer, Integer, Integer,
                  Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
                  Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, IntegerList,
@@ -920,18 +920,18 @@
 
 :Begin:
 :Function:      singularmassdiffpiece
-:Pattern:       SingularMassPiece[hard_, shape_, Eshape_, gap_, space_, cum_, scheme_,
+:Pattern:       SingularMassPiece[hard_, shape_, Eshape_, setup_, gap_, space_, cum_, scheme_,
                 abs_, current_, xi_, xiB_, orderAlpha_, runAlpha_, orderMass_, runMass_,
                 order_, run_, nf_, j3_, s3_, G3_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_,
                 muC_, muLambda1_, muLambda2_, Q_, muH_, muJ_, muS_, R_, Rmass_, muM_, mu_,
                 width_, c_, lambda_, R0_, mu0_, delta0_, h_, gammaZ_, sin2ThetaW_, tau_,
                 tau2_]
-:Arguments:     {hard, shape, Eshape, gap, space, cum, scheme, abs, current, xi, xiB,
+:Arguments:     {hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current, xi, xiB,
                  orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ,
                  amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS,
                  R, Rmass, muM, mu, width, c, lambda, R0, mu0, delta0, h, gammaZ,
                  sin2ThetaW, tau, tau2}
-:ArgumentTypes: {String, String, String, String, String, String, String, String, String,
+:ArgumentTypes: {String, String, String, String, String, String, String, String, String, String,
                  Real, Real, Integer, Integer, Integer, Integer, Integer, Integer, Integer,
                  Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
                  Real, Real, Real, Real, Real, Real, Real, Real, Real, Real, IntegerList,
@@ -2397,8 +2397,8 @@ f90massiveprofpiecelist_(terms, hard, shape, Eshape, setup, gap, space, cum, sch
    MLEndPacket(stdlink);
 }
 
-extern double f90massivepiecebin_(char const* terms, char const* hard,
- char const* shape, char const* Eshape, char const* gap, char const* space,
+extern double f90massivepiecebin_(char const* terms, char const* hard, char const* shape,
+ char const* Eshape, char const* setup, char const* gap, char const* space,
  char const* cum, char const* scheme, char const* abs, char const* current, double* xi,
  double* xiB, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order,
  int* run, int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz,
@@ -2411,7 +2411,7 @@ extern double f90massivepiecebin_(char const* terms, char const* hard,
  double* tau, int* taulen, double* res);
 
 static void massivepiecebin(char const* terms, char const* hard, char const* shape,
- char const* Eshape, char const* gap, char const* space, char const* cum,
+ char const* Eshape, char const* setup, char const* gap, char const* space, char const* cum,
  char const* scheme, char const* abs, char const* current, double xi, double xiB,
  int orderAlpha, int runAlpha, int orderMass, int runMass, int order, int run,
  int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
@@ -2423,7 +2423,7 @@ static void massivepiecebin(char const* terms, char const* hard, char const* sha
  double gammaZ, double sinW, double tau[], long tlen, int taulen){
   double res[taulen * (clen + 1) * (clen + 2)/2];
 
-f90massivepiecebin_(terms, hard, shape, Eshape, gap, space, cum, scheme, abs, current,
+f90massivepiecebin_(terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,
  &xi, &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3,
  &G3,  &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &beta,
  &mu0, &deltaLambda, &Rat0, &n0, &delta0, &n1, &delta1, &t2, &ts, &slope, &cnt, &eH, &eS,
@@ -2845,7 +2845,7 @@ return res;
 }
 
 extern double f90singularmasspiece_(char const* hard, char const* shape,
- char const* Eshape, char const* gap, char const* space, char const* cum,
+ char const* Eshape, char const* setup, char const* gap, char const* space, char const* cum,
  char const* scheme, char const* abs, char const* current, double* xi, double* xiB,
  int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order, int* run,
  int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz, double* mT,
@@ -2856,7 +2856,7 @@ extern double f90singularmasspiece_(char const* hard, char const* shape,
  double* res);
 
 static double singularmasspiece(char const* hard, char const* shape, char const* Eshape,
-char const* gap, char const* space, char const* cum, char const* scheme, char const* abs,
+char const* setup, char const* gap, char const* space, char const* cum, char const* scheme, char const* abs,
 char const* current, double xi, double xiB, int orderAlpha, int runAlpha, int orderMass,
 int runMass, int order, int run, int nf, double j3, double s3, double G3, double mZ,
 double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
@@ -2865,7 +2865,7 @@ double Rmass, double muM, double mu, double width, int c[], long len, double lam
 double R0, double mu0, double delta0, double h, double gammaZ, double sinW, double tau){
   double res;
 
-f90singularmasspiece_(hard, shape, Eshape, gap, space, cum, scheme, abs, current, &xi,
+f90singularmasspiece_(hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current, &xi,
 &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3, &G3, &mZ,
 &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &muH, &muJ, &muS, &R,
 &Rmass, &muM, &mu, &width, c, &lambda, &R0, &mu0, &delta0, &h, &gammaZ, &sinW, &tau, &res);
@@ -2875,7 +2875,7 @@ return res;
 }
 
 extern double f90singularmassdiffpiece_(char const* hard, char const* shape,
- char const* Eshape, char const* gap, char const* space, char const* cum,
+ char const* setup, char const* Eshape, char const* gap, char const* space, char const* cum,
  char const* scheme, char const* abs, char const* current, double* xi, double* xiB,
  int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order, int* run,
  int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz, double* mT,
@@ -2886,7 +2886,7 @@ extern double f90singularmassdiffpiece_(char const* hard, char const* shape,
  double* tau2, double* res);
 
 static double singularmassdiffpiece(char const* hard, char const* shape, char const* Eshape,
-char const* gap, char const* space, char const* cum, char const* scheme, char const* abs,
+char const* setup, char const* gap, char const* space, char const* cum, char const* scheme, char const* abs,
 char const* current, double xi, double xiB, int orderAlpha, int runAlpha, int orderMass,
 int runMass, int order, int run, int nf, double j3, double s3, double G3, double mZ,
 double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
@@ -2896,7 +2896,7 @@ double R0, double mu0, double delta0, double h, double gammaZ, double sinW, doub
 double tau2){
   double res;
 
-f90singularmassdiffpiece_(hard, shape, Eshape, gap, space, cum, scheme, abs, current, &xi,
+f90singularmassdiffpiece_(hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current, &xi,
 &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3, &s3, &G3, &mZ,
 &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &muH, &muJ, &muS, &R,
 &Rmass, &muM, &mu, &width, c, &lambda, &R0, &mu0, &delta0, &h, &gammaZ, &sinW, &tau, &tau2,
