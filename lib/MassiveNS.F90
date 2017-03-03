@@ -9,19 +9,20 @@ module MassiveNSClass
 
 !ccccccccccccccc
 
-  type, public                :: MassiveNS
+  type, public                 :: MassiveNS
     private
-    class (MatricesElementsMass), allocatable :: matEl
-    type (ElectroWeak)        :: EWeak
-    type (Running)            :: alphaMass, alphaMassNl
-    type (MCtop)              :: MC
-    real (dp), dimension(2)   :: EW, Dirac
-    real (dp), dimension(3)   :: deltaM, deltaM2
-    character (len = 10)      :: shape, ES, current, singular, scheme
-    integer                   :: nf, massOrd
-    real (dp)                 :: m4, m6, m8, m10, alphaJ, tmin, tmax, mPole,   &
+    type (ElectroWeak)         :: EWeak
+    type (Running)             :: alphaMass, alphaMassNl
+    class (MCtop), allocatable :: MC
+    real (dp), dimension(2)    :: EW, Dirac
+    real (dp), dimension(3)    :: deltaM, deltaM2
+    character (len = 10)       :: shape, ES, current, singular, scheme
+    integer                    :: nf, massOrd
+    real (dp)                  :: m4, m6, m8, m10, alphaJ, tmin, tmax, mPole,   &
     v, lm, m, thrustMin, cp, mm, A1Singular, tint, B1Singular, alphaMu, B1, Q, &
     alphaM, muM, GlueMax, GlueInt, width, AMS, alphaH, m2, mass, ESfac
+
+    class (MatricesElementsMass), allocatable :: matEl
 
    contains
 
@@ -46,6 +47,7 @@ module MassiveNSClass
     contains
 
     procedure, pass(self)  , public  :: HJMNSMassScales, orderMass, matElementScales
+    final                            :: delete_Scales
 
   end type MassiveScales
 
@@ -68,7 +70,16 @@ module MassiveNSClass
  subroutine delete_object(this)
    type (MassiveNS) :: this
      if ( allocated(this%MatEl ) ) deallocate(this%MatEl)
+     if ( allocated(this%MC    ) ) deallocate(this%MC   )
   end subroutine delete_object
+
+!ccccccccccccccc
+
+ subroutine delete_scales(this)
+   type (MassiveScales) :: this
+     if ( allocated(this%MatEl ) ) deallocate(this%MatEl)
+     if ( allocated(this%MC    ) ) deallocate(this%MC   )
+  end subroutine delete_scales
 
 !ccccccccccccccc
 
@@ -87,6 +98,13 @@ module MassiveNSClass
      InScales%nf        = andim%numFlav()
 
      InScales%massOrd = massOrd;  InScales%scheme = scheme; InScales%EWeak = EW
+
+     allocate( MCScales :: InScales%MC )
+
+     select type (selector => InScales%MC)
+     type is (MCScales)
+       selector = MCScales(shape)
+     end select
 
      allocate( MatricesElementsMass :: InScales%MatEl )
 
@@ -132,7 +150,12 @@ module MassiveNSClass
        end if
      end if
 
-     InMassNS%MC = MCtop(shape, InMassNS%mass, InMassNS%Q)
+     allocate( MCtop :: InMassNS%MC )
+
+     select type (selector => InMassNS%MC)
+     type is (MCtop)
+       selector = MCtop(shape, InMassNS%mass, InMassNS%Q)
+     end select
 
      InMassNS%EW = EW%EWfactors(InMassNS%nf, InMassNS%Q)
      InMassNS%EW = InMassNS%EW/Sum(InMassNS%EW)
@@ -329,7 +352,7 @@ module MassiveNSClass
 
     call self%SetAll(width);  call self%matEl%SetDelta(muS, R, alphaList)
 
-    self%MC = MCtop(self%shape, self%mass, Q)
+    call self%MC%setMass(self%mass, Q)
 
   end subroutine SetEverything
 
@@ -1767,9 +1790,31 @@ module MassiveNSClass
 
 !ccccccccccccccc
 
-  type (MCtop) function Unstable(self)
+  function Unstable(self) result(res)
     class (MassiveNS), intent(in) :: self
-    Unstable = self%MC
+    class (MCtop), allocatable    :: res
+
+    select type (self)
+    type is (MassiveNS)
+      allocate (MCtop :: res)
+      select type (res)
+      type is (MCtop)
+        select type (selector => self%MC)
+        type is (MCtop)
+          res = selector
+        end select
+      end select
+    type is (MassiveScales)
+      allocate (MCScales :: res)
+      select type (res)
+      type is (MCScales)
+        select type (selector => self%MC)
+        type is (MCScales)
+          res = selector
+        end select
+      end select
+    end select
+
   end function Unstable
 
 !ccccccccccccccc

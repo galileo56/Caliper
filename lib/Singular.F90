@@ -21,16 +21,18 @@ module SingularClass
     real (dp), dimension(0:4,3)   :: MatExp, MatHard
     real (dp), dimension(6)       :: NGL2loop, NGLog2loop
     real (dp), dimension(0:6,0:3) :: MatExpanded, MatExpandedHJM, MatAdded, MatHJMFO, MatFO
-    real (dp)                     :: Prefact, muS, alphaS, alphaJ, w, R, tmin, compfact, &
-                                     ESFac, alphaR, muSEuler, A0, Q, muH, k, PiResum, QoMuH
+    real (dp)                     :: Prefact, muS, alphaS, alphaJ, w, R, tmin, &
+    ESFac, alphaR, muSEuler, A0, Q, muH, k, PiResum, QoMuH, compfact
+
     contains
 
     final                         :: delete_object
-    procedure, pass(self), public :: Prefactor, ExpMat, s2rho, s2theta, SetMat, SetHard,  &
-                                     HJMSing, s2log, Resum, wTilde, HJMSing1D, SetRunning,&
-                                     DoubleSing, runOrd, setAlpha, SetMTop, SetMBottom,   &
-                                     SetMCharm, setGammaShift, ESmin
-    procedure, pass(self)         :: NGLIntComputer, IntMassJet, SingleSingMod, SingleSingList
+    procedure, pass(self), public :: Prefactor, ExpMat, s2rho, s2theta, SetMat, &
+    HJMSing, s2log, Resum, wTilde, HJMSing1D, SetRunning, DoubleSing, runOrd,   &
+    setAlpha, SetMTop, SetMBottom, SetMCharm, setGammaShift, ESmin, SetHard
+
+    procedure, pass(self)         :: NGLIntComputer, IntMassJet, SingleSingMod, &
+    SingleSingList
 
     generic, public               :: SingleSing => SingleSingMod, SingleSingList
 
@@ -43,6 +45,10 @@ module SingularClass
     real (dp), dimension(0:4,3)  , private :: MatJet, MatSoft
     real (dp), dimension(0:3)    , private :: Soft, Jet
 
+  contains
+
+    final                         :: delete_scales
+
   end type SingularScales
 
 !ccccccccccccccc
@@ -52,12 +58,13 @@ module SingularClass
     real (dp), dimension(3)        :: deltaM
     real (dp)                      :: width, lm, LQ, alphaM, mass, muM, muJ, m2, m
     class (MassiveNS), allocatable :: MassNS
-    type (MCtop)                   :: MC
+    class (MCtop), allocatable     :: MC
 
     contains
 
-    procedure, pass(self)          :: SoftMatchingExp, JetNonDist, NonDistMod, SetMass, &
-                                      SingleSingWidthMod, SingleSingWidthList, NonDistList
+    final                          :: delete_mass
+    procedure, pass(self)          :: SoftMatchingExp, JetNonDist, NonDistMod, &
+    SingleSingWidthMod, SingleSingWidthList, NonDistList, SetMass
 
     procedure, pass(self), public  :: NSMass
 
@@ -70,15 +77,17 @@ module SingularClass
 
   type, extends (SingularMass), public   :: SingularMassScales
     private
-    real (dp), dimension(0:4,3), private :: MatMassHard, MatJet, MatSoft, &
-                                            MatSoftNl, MatBJet
+
     real (dp), dimension(6)    , private :: NGLog2loopNl
     real (dp)                  , private :: Hmat, QoMpole
     type (Running)             , private :: alphaNl
     real (dp), dimension(0:3)  , private :: cuspNl, Soft, SoftNl, Jet, bJet, Hm
+    real (dp), dimension(0:4,3), private :: MatMassHard, MatJet, MatSoft, &
+    MatSoftNl, MatBJet
 
   contains
 
+    final                                :: delete_mass_scales
     procedure, pass(self)                :: SetEverything
     procedure, pass(self), public        :: setHardMass, NSScales
 
@@ -116,6 +125,31 @@ module SingularClass
    type (SingularMassless) :: this
      if ( allocated(this%MatEl ) ) deallocate(this%MatEl)
   end subroutine delete_object
+
+!ccccccccccccccc
+
+ subroutine delete_scales(this)
+   type (SingularScales) :: this
+     if ( allocated(this%MatEl ) ) deallocate(this%MatEl)
+  end subroutine delete_scales
+
+!ccccccccccccccc
+
+ subroutine delete_mass(this)
+   type (SingularMass) :: this
+     if ( allocated(this%MatEl  ) ) deallocate(this%MatEl)
+     if ( allocated(this%MassNS ) ) deallocate(this%MassNS)
+
+  end subroutine delete_mass
+
+!ccccccccccccccc
+
+ subroutine delete_mass_scales(this)
+   type (SingularMassScales) :: this
+     if ( allocated(this%MatEl  ) ) deallocate(this%MatEl)
+     if ( allocated(this%MassNS ) ) deallocate(this%MassNS)
+
+  end subroutine delete_mass_scales
 
 !ccccccccccccccc
 
@@ -281,7 +315,15 @@ module SingularClass
     JetArg = muJ**2/Q/muS      ; alphaM  = matEl%alphaScale('massNf') ; QoM  = Q/mPole
     InSingMass%alphaM = alphaM ; InSingMass%muJ = muJ; InSingMass%run1 = run1
 
-    InSingMass%MC = MassNS%Unstable()
+    allocate ( MCtop :: InSingMass%MC )
+
+    select type (selector => InSingMass%MC)
+    type is (MCtop)
+      select type ( MC => MassNS%Unstable() )
+      type is (MCtop)
+        selector = MC
+      end select
+    end select
 
     if (muJ < muM) then
       InSingMass%MatExp = MatEl%CoefMat('bJet')
@@ -492,7 +534,6 @@ module SingularClass
     type (MassiveScales)         , intent(in) :: MassNS
     integer                      , intent(in) :: run
     character (len = *), optional, intent(in) :: hard
-
     character (len = 6)                       :: shape, EShape
     type (MatricesElementsMass)               :: MatEl
     type (AnomDim)                            :: andim, andimNl
@@ -513,7 +554,17 @@ module SingularClass
     allocate( MatricesElementsMass :: InMassScales%MatEl )
 
     select type (selector => InMassScales%MatEl)
-     type is (MatricesElementsMass);  selector = MatEl
+      type is (MatricesElementsMass);  selector = MatEl
+    end select
+
+    allocate ( MCScales :: InMassScales%MC)
+
+    select type (selector => InMassScales%MC)
+    type is (MCScales)
+      select type ( MC => MassNS%Unstable() )
+      type is (MCScales)
+        selector = MC
+      end select
     end select
 
     andim = MatEl%adim('nf');  InMassScales%nf = MassNS%numFlav(); InMassScales%run = run
@@ -671,7 +722,7 @@ module SingularClass
 !ccccccccccccccc
 
   real (dp) function NonDistMod(self, Mod, setup, gap, space, cum, order, R0, &
-                                mu0, delta0, h, tau, tau2)
+  mu0, delta0, h, tau, tau2)
     class (SingularMass) , intent(in) :: self
     type (Model)         , intent(in) :: Mod
     character (len = *)  , intent(in) :: setup, space, gap, cum
@@ -753,7 +804,7 @@ module SingularClass
 !ccccccccccccccc
 
   function NonDistList(self, ModList, gap, space, cum, order, R0, mu0, delta0, &
-                       h, tau, tau2) result(resList)
+  h, tau, tau2) result(resList)
     class (SingularMass)      , intent(in) :: self
     type (Model), dimension(:), intent(in) :: ModList
     character (len = *)       , intent(in) :: gap, cum, space
@@ -967,11 +1018,18 @@ module SingularClass
       end select
     end select
 
-    self%m2    = self%MassNS%MassVar('m2')   ; self%muJ = muJ
-    self%width = self%MassNS%MassVar('width')
-    self%tmin  = self%MassNS%MassVar('tmin') ; self%deltaM = self%MassNS%MassDeltaShift()
+    self%m2     = self%MassNS%MassVar('m2')   ; self%muJ = muJ
+    self%width  = self%MassNS%MassVar('width')
+    self%tmin   = self%MassNS%MassVar('tmin')
+    self%deltaM = self%MassNS%MassDeltaShift()
 
-    self%MC = self%MassNS%Unstable()
+    select type (selector => self%MC)
+    type is (MCScales)
+      select type ( MC => self%MassNS%Unstable() )
+      type is (MCScales)
+       selector = MC
+      end select
+    end select
 
     if (muJ > self%muM) then  ! SCET scenarios, III and IV
 
@@ -1275,11 +1333,11 @@ module SingularClass
     real (dp), dimension(0:order,0:2 * order)        :: kerMatrix
     real (dp), dimension(2 * order)                  :: logList
     logical                                          :: dobsing
-    integer                                          :: i, j, k, neval, ier
+    integer                                          :: i, j, k
     type (Kernels)                                   :: ker
     real (dp), dimension(1)                          :: res
     real (dp)                                        :: w, p, shift, p2, &
-    pshift, pshift2, abserr, result
+    pshift, pshift2
 
     SingleSingMod = 0
 
@@ -1314,7 +1372,7 @@ module SingularClass
 
 ! Result = 0 if p is negative
 
-    if ( p2 <= 0 .and. setup(:15) /= 'NoModelUnstable') return
+    if ( p2 <= 0 ) return
 
     dobsing = .not. present(tau2) .or. ( present(tau2) .and. abs(p2 - p) <= d1mach(1) )
 
@@ -1372,25 +1430,6 @@ module SingularClass
 
     SingleSingMod = NoMod(p)
     if ( present(tau2) .and. p2 > p ) SingleSingMod = NoMod(p2) - SingleSingMod
-
-    select type (self)
-    class is (SingularMass)
-
-      if ( setup(8:15) == 'Unstable' ) then
-
-        if ( self%shape(:6) == 'thrust' ) SingleSingMod = NoMod(p) * self%MC%Delta()
-
-        if ( present(tau2) .and. self%shape(:6) == 'thrust' ) SingleSingMod = &
-        self%MC%Delta() * NoMod(p2) - SingleSingMod
-
-        call qags( UnstableInt, pshift - self%MC%maxP(), pshift2, prec, &
-        prec, result, abserr, neval, ier )
-
-        SingleSingMod = result + SingleSingMod
-
-      end if
-
-    end select
 
     SingleSingMod = SingleSingMod * self%Prefact * self%compFact**cumConst(cum) * &
            (self%Q/self%ESFac)**( 1 + cumConst(cum) )  * &
