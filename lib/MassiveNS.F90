@@ -28,7 +28,7 @@ module MassiveNSClass
    final                         :: delete_object
    procedure, pass(self), public :: JetMassExp, FOMass, HJMNSMass, SetMCharm, &
    MassDelta, MassDeltaShift, numFlav, matElementNS, SetEverything, SetAlpha, &
-   SetMBottom, EShape, MassVar, SetMTop, SetMasses, SetAll
+   SetMBottom, EShape, MassVar, SetMTop, SetMasses, SetAll, Unstable
 
    procedure, pass(self)         :: Quark, Glue, EWAdd, f1Q, f2Q, f3Q, f4Q, B1NS, &
    MassSing1loop, CumMassSing1loop, A1loop, FunCp, A0MS, CparamFOMass, Hcorr, A0, &
@@ -1764,6 +1764,13 @@ module MassiveNSClass
     end if
 
   end function MassVar
+
+!ccccccccccccccc
+
+  type (MCtop) function Unstable(self)
+    class (MassiveNS), intent(in) :: self
+    Unstable = self%MC
+  end function Unstable
 
 !ccccccccccccccc
 

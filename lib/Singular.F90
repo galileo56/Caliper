@@ -246,16 +246,15 @@ module SingularClass
     character (len = *), optional, intent(in) :: hard
     character (len = 6)                       :: shape, EShape
     real (dp), dimension(0:3)                 :: cusp, cuspNl, jet, bJet, NonCusp, Hmass, &
-                                                 Soft, SoftNl
+    Soft, SoftNl
     type (MatrixElementsMass)                 :: MatEl
     type (AnomDim)                            :: andim, andimNl
     type (Running)                            :: alpha, alphaNl
     integer                                   :: i, j, run1
     complex (dp)                              :: muHC
-    real    (dp)                              :: Q, muS, muJ, muH, muM, k, wJet, wSoft, &
-                                                 mPole, kSoft, wSoftnf, wHard, kHard  , &
-                                                 kJet, wSoftNl, mass, wJetNf, wJetNl  , &
-                                                 QoMu, QoM, JetArg, alphaM, m2, A0, wB
+    real    (dp)                              :: Q, muS, muJ, muH, muM, k, wJet, &
+    mPole, kSoft, wSoftnf, wHard, kHard, kJet, wSoftNl, mass, wJetNf, wJetNl, &
+    QoMu, QoM, JetArg, alphaM, m2, A0, wB, wSoft
 
     mPole   = MassNS%MassVar('mPole')   ; InSingMass%deltaM = MassNS%MassDeltaShift()
     shape   = MassNS%EShape('shape')    ; InSingMass%shape  = shape; run1 = run - 1
@@ -282,7 +281,7 @@ module SingularClass
     JetArg = muJ**2/Q/muS      ; alphaM  = matEl%alphaScale('massNf') ; QoM  = Q/mPole
     InSingMass%alphaM = alphaM ; InSingMass%muJ = muJ; InSingMass%run1 = run1
 
-    InSingMass%MC = MCtop(shape, mass, Q)
+    InSingMass%MC = MassNS%Unstable()
 
     if (muJ < muM) then
       InSingMass%MatExp = MatEl%CoefMat('bJet')
@@ -972,7 +971,7 @@ module SingularClass
     self%width = self%MassNS%MassVar('width')
     self%tmin  = self%MassNS%MassVar('tmin') ; self%deltaM = self%MassNS%MassDeltaShift()
 
-    self%MC = MCtop( self%shape, self%MassNS%MassVar('mass'), self%Q)
+    self%MC = self%MassNS%Unstable()
 
     if (muJ > self%muM) then  ! SCET scenarios, III and IV
 

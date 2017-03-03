@@ -31,9 +31,10 @@ subroutine f90MCtop(shape, mt, Q, n, k, x, res)
   real (dp)          , intent(in)  :: mt, Q, x
   integer            , intent(in)  :: n, k
   real (dp)          , intent(out) :: res
-  type (MCtop)                     :: MC
+  type (MCScales)                  :: MC
 
-  MC = MCtop( shape(:6), mt, Q, n );  res = MC%Distribution(k,x)
+  MC = MCScales( shape(:6), n );     call MC%setMass(mt, Q)
+  res = MC%Distribution(k,x)
 
 end subroutine f90MCtop
 

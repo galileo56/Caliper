@@ -3,7 +3,7 @@ module MCtopClass
   use Constants, only: dp, prec, Pi; use QuadPack, only: qags; use Legendre
   implicit none; private
 
-  public                                 :: MCtop, BreitWigner
+  public                                 :: MCtop, MCScales, BreitWigner
 
 !ccccccccccccccc
 
@@ -16,17 +16,32 @@ module MCtopClass
   contains
 
    final                          :: delete_object
-   procedure, pass(self), private :: setMass
    procedure, pass(self), public  :: Distribution, QDist, Delta, maxES, Qval, &
-   maxP, BreitUnstable
+   maxP, BreitUnstable, setMass
 
   end type MCtop
+
+!ccccccccccccccc
+
+  type, extends(MCtop), public :: MCScales
+
+  contains
+
+   final                          :: delete_scales
+
+  end type MCScales
 
 !ccccccccccccccc
 
   interface MCtop
     module procedure InMCtop
   end interface MCtop
+
+!ccccccccccccccc
+
+  interface MCScales
+    module procedure InMCScales
+  end interface MCScales
 
 contains
 
@@ -36,6 +51,13 @@ contains
     type (MCtop) :: self
     if ( allocated(self%coefs) ) deallocate(self%coefs)
   end subroutine delete_object
+
+!ccccccccccccccc
+
+  subroutine delete_scales(self)
+    type (MCScales) :: self
+    if ( allocated(self%coefs) ) deallocate(self%coefs)
+  end subroutine delete_scales
 
 !ccccccccccccccc
 
@@ -67,6 +89,31 @@ contains
     call InMCtop%setMass(mt, Q)
 
   end function InMCtop
+
+!ccccccccccccccc
+
+  type (MCScales) function InMCScales(Eshape, n)
+    integer  , optional, intent(in) :: n
+    character (len = *), intent(in) :: Eshape
+
+    InMCScales%ESmin = 0; InMCScales%shape = Eshape
+
+    if ( Eshape(:6) == 'thrust' ) then
+      allocate( InMCScales%coefs(10) ); InMCScales%n = 0; InMCScales%sf = 1
+
+    else if ( EShape(:6) == 'Cparam') then
+
+      allocate( InMCScales%coefs(0:39) ); InMCScales%sf = 6
+
+      if ( present(n) ) then
+        InMCScales%n = min(39,n)
+      else
+        InMCScales%n = 39
+      end if
+
+    end if
+
+  end function InMCScales
 
 !ccccccccccccccc
 
