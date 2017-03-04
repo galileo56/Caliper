@@ -4,9 +4,11 @@ module AnomDimClass
   use adapt, only: dGauss; implicit none ;  private
 
   real (dp), parameter :: al = 0.634_dp, bet = 1.035_dp, gam = - 23.6_dp, &
-                          ep = 1.19_dp, del = - 0.481_dp
+  ep = 1.19_dp, del = - 0.481_dp
+
   public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta, &
-                          MSbarDeltaPiece, PowList
+  MSbarDeltaPiece, PowList
+
   interface PowList
     module procedure   :: PowListDP, PowListInt, PowListComp
   end interface PowList
@@ -20,9 +22,11 @@ module AnomDimClass
     real (dp)                     :: G4
     real (dp), dimension(0:3,0:3) :: gammaHm
     real (dp), dimension(3)       :: sCoefMSR, sCoefMSRNatural, bHat, betaList,&
-                                      gammaR,  gammaRNatural
+    gammaR,  gammaRNatural
+
     real (dp), dimension(0:3)     :: beta, cusp, gammaMass, gammaHard, gammaB, &
-                                     gammaJet, gammaSoft
+    gammaJet, gammaSoft
+
     contains
 
     procedure, pass(self), public :: expandAlpha, wTildeExpand, kTildeExpand, &
@@ -53,7 +57,6 @@ module AnomDimClass
     real (dp)          , intent(in) :: G4         ! cusp anomalous dimension
     real (dp), dimension(3)         :: betaList
     real (dp), dimension(0:3)       :: beta
-
 
     beta = [ 11 - 2 * nf/3._dp, 102 - 38._dp * nf/3, 1428.5 - 5033 * nf/18._dp            + &
                     325 * nf**2/54._dp, 29242.964136194132_dp - 6946.289617003555_dp * nf + &
@@ -108,6 +111,21 @@ module AnomDimClass
     class (AnomDim), intent(in) :: self
     scheme = self%str
    end function scheme
+
+!ccccccccccccccc
+
+  pure real (dp) function betaFun(self, n, alpha)
+    class (AnomDim), intent(in) :: self
+    integer        , intent(in) :: n
+    real (dp)      , intent(in) :: alpha
+    real (dp)                   :: a
+
+    a = alpha/4/Pi
+
+    betaFun = 8 * a * dot_product( self%beta(:n-1), powList(a, n) )
+
+  end function betaFun
+
 
 !ccccccccccccccc
 
