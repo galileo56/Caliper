@@ -53,7 +53,7 @@
 :Evaluate:  CoefMat::usage = "CoefMat[str, nf, s3] computes the hard, soft and jet matrix elements"
 :Evaluate:  wTilde::usage = "wTilde[order, nf, gamma, a0, a1] computes wTilde for a given anomalous dimension gamma"
 :Evaluate:  kTilde::usage = "kTilde[order, nf, gamma, a0, a1] computes kTilde for a given anomalous dimension gamma"
-:Evaluate:  AlphaQCD::usage = "AlphaQCD[scheme, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of alpha with flavor matching."
+:Evaluate:  AlphaQCD::usage = "AlphaQCD[scheme, method, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of alpha with flavor matching."
 :Evaluate:  MSbarMass::usage = "MSbarMass[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  PoleMass::usage = "PoleMass[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  MSbarMassLow::usage = "MSbarMassLow[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching below the mass."
@@ -1362,10 +1362,10 @@
 
 :Begin:
 :Function:      alphaqcd
-:Pattern:       AlphaQCD[str_, order_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_,
+:Pattern:       AlphaQCD[str_, method_, order_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_,
                  muC_, mu_]
-:Arguments:     {str, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}
-:ArgumentTypes: {String, Integer, Integer, Integer, Real, Real, Real, Real, Real, Real,
+:Arguments:     {str, method, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}
+:ArgumentTypes: {String, String, Integer, Integer, Integer, Real, Real, Real, Real, Real, Real,
                  Real, Real, Real}
 :ReturnType:     Real
 :End:
@@ -3551,16 +3551,16 @@ double a1){
    return res;
 }
 
-extern double f90alphaqcd_(char const* str, int* order, int* run, int* nf, double* Mz,
+extern double f90alphaqcd_(char const* str, char const* method, int* order, int* run, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
 double* mu, double* res);
 
-static double alphaqcd(char const* str, int order, int run, int nf, double Mz, double
+static double alphaqcd(char const* str, char const* method, int order, int run, int nf, double Mz, double
 aMz, double mT, double muT, double mB, double muB, double mC, double muC, double mu){
 
    double res;
 
-   f90alphaqcd_(str, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
+   f90alphaqcd_(str, method, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
    &mu, &res);
 
   return res;

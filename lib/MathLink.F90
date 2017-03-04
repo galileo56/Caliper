@@ -2630,16 +2630,18 @@ end subroutine f90InteCorre
 
 !ccccccccccccccc
 
-subroutine f90alphaQCD(str, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, mu, res)
+subroutine f90alphaQCD(str, method, order, run, nf, mZ, amZ, mT, muT, mB, muB, &
+mC, muC, mu, res)
   use AlphaClass;  use constants, only: dp; implicit none
-  character (len = *), intent(in ) :: str
+  character (len = *), intent(in ) :: str, method
   integer            , intent(in ) :: order, run, nf
   real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC
   real (dp)          , intent(out) :: res
 
   type (Alpha)                     :: alphaOb
 
-  alphaOb = alpha(str(:5), order, run, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  alphaOb = alpha( str(:5), order, run, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, mB, &
+  muB, mC, muC, method(:8) )
 
   res     = alphaOb%alphaQCD(nf, mu)
 

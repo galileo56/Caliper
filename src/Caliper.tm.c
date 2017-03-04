@@ -2280,16 +2280,16 @@ double a1){
    return res;
 }
 
-extern double f90alphaqcd_(char const* str, int* order, int* run, int* nf, double* Mz,
+extern double f90alphaqcd_(char const* str, char const* method, int* order, int* run, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
 double* mu, double* res);
 
-static double alphaqcd(char const* str, int order, int run, int nf, double Mz, double
+static double alphaqcd(char const* str, char const* method, int order, int run, int nf, double Mz, double
 aMz, double mT, double muT, double mB, double muB, double mC, double muC, double mu){
 
    double res;
 
-   f90alphaqcd_(str, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
+   f90alphaqcd_(str, method, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
    &mu, &res);
 
   return res;
@@ -9495,7 +9495,7 @@ L0:	return res;
 } /* _tr89 */
 
 
-double alphaqcd P(( const char * _tp1, int _tp2, int _tp3, int _tp4, double _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13));
+double alphaqcd P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14));
 
 #if MLPROTOTYPES
 static int _tr90( MLINK mlp)
@@ -9505,10 +9505,10 @@ static int _tr90(mlp) MLINK mlp;
 {
 	int	res = 0;
 	const char * _tp1;
-	int _tp2;
+	const char * _tp2;
 	int _tp3;
 	int _tp4;
-	double _tp5;
+	int _tp5;
 	double _tp6;
 	double _tp7;
 	double _tp8;
@@ -9517,12 +9517,13 @@ static int _tr90(mlp) MLINK mlp;
 	double _tp11;
 	double _tp12;
 	double _tp13;
+	double _tp14;
 	double _rp0;
 	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
-	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
+	if ( ! MLGetString( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
 	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
-	if ( ! MLGetReal( mlp, &_tp5) ) goto L4;
+	if ( ! MLGetInteger( mlp, &_tp5) ) goto L4;
 	if ( ! MLGetReal( mlp, &_tp6) ) goto L5;
 	if ( ! MLGetReal( mlp, &_tp7) ) goto L6;
 	if ( ! MLGetReal( mlp, &_tp8) ) goto L7;
@@ -9531,13 +9532,15 @@ static int _tr90(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
 	if ( ! MLGetReal( mlp, &_tp12) ) goto L11;
 	if ( ! MLGetReal( mlp, &_tp13) ) goto L12;
-	if ( ! MLNewPacket(mlp) ) goto L13;
+	if ( ! MLGetReal( mlp, &_tp14) ) goto L13;
+	if ( ! MLNewPacket(mlp) ) goto L14;
 
-	_rp0 = alphaqcd(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13);
+	_rp0 = alphaqcd(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
+L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2:	MLReleaseString(mlp, _tp2);
+L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
 } /* _tr90 */
@@ -10468,7 +10471,7 @@ static struct func {
 		{ 3, 0, _tr87, "coefmat" },
 		{ 5, 0, _tr88, "wtilde" },
 		{ 5, 0, _tr89, "ktilde" },
-		{13, 0, _tr90, "alphaqcd" },
+		{14, 0, _tr90, "alphaqcd" },
 		{13, 0, _tr91, "msbarmass" },
 		{14, 0, _tr92, "polemass" },
 		{13, 0, _tr93, "msbarmasslow" },
@@ -10715,9 +10718,9 @@ static const char* evalstrs[] = {
 	"kTilde::usage = \"kTilde[order, nf, gamma, a0, a1] computes kTild",
 	"e for a given anomalous dimension gamma\"",
 	(const char*)0,
-	"AlphaQCD::usage = \"AlphaQCD[scheme, order, run, nf, Mz, aMz, mT,",
-	" muT, mB, muB, mC, muC, mu] computes the running of alpha with f",
-	"lavor matching.\"",
+	"AlphaQCD::usage = \"AlphaQCD[scheme, method, order, run, nf, Mz, ",
+	"aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of alph",
+	"a with flavor matching.\"",
 	(const char*)0,
 	"MSbarMass::usage = \"MSbarMass[order, runAlpha, run, nf, Mz, aMz,",
 	" mT, muT, mB, muB, mC, muC, mu] computes the running of the quar",
@@ -11184,7 +11187,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"CoefMat[str_, nf_, s3_]", (char *)"{str, nf, s3}", 87);
 	if (_res) _res = _definepattern(mlp, (char *)"wTilde[order_, nf_, gamma_, a0_, a1_]", (char *)"{order, nf, gamma, a0, a1}", 88);
 	if (_res) _res = _definepattern(mlp, (char *)"kTilde[order_, nf_, gamma_, a0_, a1_]", (char *)"{order, nf, gamma, a0, a1}", 89);
-	if (_res) _res = _definepattern(mlp, (char *)"AlphaQCD[str_, order_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_,                  muC_, mu_]", (char *)"{str, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 90);
+	if (_res) _res = _definepattern(mlp, (char *)"AlphaQCD[str_, method_, order_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_,                  muC_, mu_]", (char *)"{str, method, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 90);
 	if (_res) _res = _definepattern(mlp, (char *)"MSbarMass[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,                 mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 91);
 	if (_res) _res = _definepattern(mlp, (char *)"PoleMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_, muT_,                 mB_, muB_, mC_, muC_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC,                  mu}", 92);
 	if (_res) _res = _definepattern(mlp, (char *)"MSbarMassLow[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_,                 muB_, mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 93);

@@ -11,7 +11,7 @@ module AlphaClass
 
   type, public :: Alpha
     private
-    character (len = 5)             :: str
+    character (len = 8)             :: str, method
     integer                         :: order, run, n
     type (AnomDim) , dimension(3:6) :: andim
     real (dp)      , dimension(3:6) :: alphaRef, muRef
@@ -22,8 +22,9 @@ module AlphaClass
 
    generic                          :: alphaQCD => alphaQCDReal, alphaQCDComplex
    procedure, pass(self)            :: alphaQCDReal, alphaQCDComplex
-   procedure, pass(self), public    :: scales, orders, adim, scheme, SetAlpha, SetMTop, &
-                                       SetMBottom, SetMCharm
+   procedure, pass(self), public    :: scales, orders, scheme, SetAlpha, SetMTop, &
+   SetMBottom, SetMCharm, adim
+
   end type Alpha
 
 !ccccccccccccccc
@@ -31,21 +32,29 @@ module AlphaClass
   interface Alpha
     module procedure  InitAlpha
   end interface Alpha
-  
+
   contains
 
 !ccccccccccccccc
 
-  type (Alpha) function InitAlpha(str, order, run, G4, mZ, amZ, mT, muT, mB, muB, mC, muC)
-    integer  , intent(in)                 :: order
-    integer  , intent(in)                 :: run
-    real (dp), intent(in), optional       :: amZ
-    real (dp), intent(in), optional       :: mZ, mT, muT, mB, muB, mC, muC
-    real (dp), intent(in), dimension(3:6) :: G4
-    character (len = *), intent(in):: str
+  type (Alpha) function InitAlpha(str, order, run, G4, mZ, amZ, mT, muT,&
+    mB, muB, mC, muC, method)
+    character (len = *), optional, intent(in) :: method
+    character (len = *)      , intent(in) :: str
+    integer                  , intent(in) :: order
+    integer                  , intent(in) :: run
+    real (dp), optional      , intent(in) :: amZ
+    real (dp), optional      , intent(in) :: mZ, mT, muT, mB, muB, mC, muC
+    real (dp), dimension(3:6), intent(in) :: G4
 
     InitAlpha%muRef = 0; InitAlpha%run = run; InitAlpha%n = order - 1
     InitAlpha%muRef(5) = mZ
+
+    if ( present(method) ) then
+      InitAlpha%method = method
+    else
+      InitAlpha%method = 'analytic'
+    end if
 
 ! initialising all Anomalous Dimension Objects
 
@@ -64,7 +73,7 @@ module AlphaClass
       InitAlpha%muRef(6) = muT; InitAlpha%andim(6) = AnomDim( str, 6, G4(6) )
       InitAlpha%QmuT = .true.
     end if
-    
+
     if ( present(muC) ) then
       InitAlpha%muRef(3) = muC; InitAlpha%andim(3) = AnomDim( str, 3, G4(3) )
       InitAlpha%QmuC = .true.
@@ -94,7 +103,7 @@ module AlphaClass
       call self%SetMBottom( self%mB, self%muRef(4) )
 
     end if
-  
+
   end subroutine SetAlpha
 
 !ccccccccccccccc
@@ -110,7 +119,7 @@ module AlphaClass
     self%mT = mT; self%muRef(6) = muT; alphaList(0) = 1; lgList(0) = 1
 
     tab = self%andim(6)%alphaMatchingInverse(6)
-    aS = alphaGeneric(self%run, self%andim(5)%betaQCD('beta'), self%muRef(5), self%alphaRef(5), muT)
+    aS = alphaGeneric(self%method,self%run, self%andim(5)%betaQCD('beta'), self%muRef(5), self%alphaRef(5), muT)
     lgList(1:) = PowList(2 * log(muT/mT), self%n); alphaList(1:) = PowList(aS/Pi, self%n)
     self%alphaRef(6) = aS * dot_product( alphaList, matmul(tab(:self%n,:self%n), lgList) )
 
@@ -128,13 +137,13 @@ module AlphaClass
 
     self%mB = mB; self%muRef(4) = muB; alphaList(0) = 1; lgList(0) = 1
 
-    aS  = alphaGeneric(self%run, self%andim(5)%betaQCD('beta'), self%muRef(5), self%alphaRef(5), muB )
+    aS  = alphaGeneric(self%method,self%run, self%andim(5)%betaQCD('beta'), self%muRef(5), self%alphaRef(5), muB )
     tab = self%andim(5)%alphaMatching(5)
     lgList(1:) = PowList(2 * log(muB/mB), self%n); alphaList(1:) = PowList(aS/Pi, self%n)
     self%alphaRef(4) = aS * dot_product( alphaList, matmul(tab(:self%n,:self%n), lgList) )
 
 !   Running from mB to muC, with nf = 4 flavors, and matching
- 
+
     if (self%QmuC .and. self%QmC) call self%SetMCharm( self%mC, self%muRef(3) )
 
   end subroutine SetMBottom
@@ -152,7 +161,7 @@ module AlphaClass
     self%mC = mC; self%muRef(3) = muC; alphaList(0) = 1; lgList(0) = 1
 
     tab = self%andim(4)%alphaMatching(4)
-    aS  = alphaGeneric(self%run, self%andim(4)%betaQCD('beta'), self%muRef(4), self%alphaRef(4), muC)
+    aS  = alphaGeneric(self%method,self%run, self%andim(4)%betaQCD('beta'), self%muRef(4), self%alphaRef(4), muC)
     lgList(1:) = PowList(2 * log(muC/mC), self%n); alphaList(1:) = PowList(aS/Pi, self%n)
     self%alphaRef(3) = aS * dot_product(  alphaList, matmul( tab(:self%n,:self%n), lgList )  )
 
@@ -171,7 +180,6 @@ module AlphaClass
     class (Alpha)  , intent(in) :: self
     real (dp)      , intent(in) :: mu
     integer        , intent(in) :: nf
-
     integer                     :: n
 
     n = nf; if (nf < 4) n = 3
@@ -179,8 +187,8 @@ module AlphaClass
     if ( self%muRef(5) <= d1mach(1) ) then
       alphaQCDReal = Pi
     else
-      alphaQCDReal = alphaGeneric( self%run, self%andim(n)%betaQCD('beta'), self%muRef(n), &
-                                   self%alphaRef(n), mu )
+      alphaQCDReal = alphaGeneric(self%method, self%run, self%andim(n)%betaQCD('beta'), self%muRef(n), &
+      self%alphaRef(n), mu )
     end if
 
    end function alphaQCDReal
@@ -199,8 +207,8 @@ module AlphaClass
     if ( self%muRef(5) <= d1mach(1) ) then
       alphaQCDComplex = Pi
     else
-      alphaQCDComplex = alphaGeneric( self%run, self%andim(n)%betaQCD('beta'), &
-                                             self%muRef(n), self%alphaRef(n), mu )
+      alphaQCDComplex = alphaGeneric(self%method, self%run, self%andim(n)%betaQCD('beta'), &
+      self%muRef(n), self%alphaRef(n), mu )
     end if
 
    end function alphaQCDComplex
@@ -210,7 +218,7 @@ module AlphaClass
   pure real (dp) function scales(self, str)
     class (Alpha)      , intent(in) :: self
     character (len = *), intent(in) :: str
-    
+
     scales = 0
 
     if ( str(:3) == 'muC' ) scales = self%muRef(3)
@@ -239,15 +247,32 @@ module AlphaClass
 
 !ccccccccccccccc
 
- pure real (dp) function alphaGenericReal(order, beta, mZ, amZ, mu)
-    integer                  , intent(in) :: order
-    real (dp)                , intent(in) :: mZ, amZ, mu
-    real (dp), dimension(0:3), intent(in) :: beta
-    real (dp)                             :: L, arg, LG
+  pure real (dp) function PiBeta(beta, alpha)
+    real (dp), dimension(:), intent(in) :: beta
+    real (dp)              , intent(in) :: alpha
+    real (dp)                           :: a
+
+    PiBeta = 0; if ( size(beta) < 1 ) return;  a = alpha/4/Pi
+
+    PiBeta = 2 * alpha * dot_product(  beta, powList( a, size(beta) )  )
+
+  end function PiBeta
+
+!ccccccccccccccc
+
+ pure real (dp) function alphaGenericReal(method, order, beta, mZ, amZ, mu)
+   character (len = *)      , intent(in) :: method
+   integer                  , intent(in) :: order
+   real (dp)                , intent(in) :: mZ, amZ, mu
+   real (dp), dimension(0:3), intent(in) :: beta
+   real (dp)                             :: L, arg, LG, h, k1, k2, k3, k4
+   integer                               :: n, i
 
     if ( max( amZ, mZ, mu) <= d1mach(1) ) then
       alphaGenericReal = 0; return
     end if
+
+    if ( method(:8) == 'analytic' ) then
 
     L = log(mu/mZ);  arg = amZ * L * beta(0)/2/Pi;  LG  = log(1 + arg)
     alphaGenericReal = 1
@@ -266,11 +291,31 @@ module AlphaClass
 
     alphaGenericReal = amZ/alphaGenericReal
 
+  else if ( method(:7) == 'numeric' ) then
+
+    h = 0.04_dp; n =  Abs(  Nint( Log(Mz/mu)/h )  ); h = - Log(Mz/mu)/n
+
+    alphaGenericReal = amZ
+
+    do i = 1, n
+
+     k1 = - h * PiBeta( beta(:order-1), alphaGenericReal        )
+     k2 = - h * PiBeta( beta(:order-1), alphaGenericReal + k1/2 )
+     k3 = - h * PiBeta( beta(:order-1), alphaGenericReal + k2/2 )
+     k4 = - h * PiBeta( beta(:order-1), alphaGenericReal + k3   )
+
+     alphaGenericReal = alphaGenericReal + (k1 + k4)/6 + (k2 + k3)/3
+
+    end do
+
+  end if
+
   end function alphaGenericReal
 
 !ccccccccccccccc
 
-  pure complex (dp) function alphaGenericComplex(order, beta, mZ, amZ, mu)
+  pure complex (dp) function alphaGenericComplex(method, order, beta, mZ, amZ, mu)
+    character (len = *)      , intent(in) :: method
     integer                  , intent(in) :: order
     real    (dp)             , intent(in) :: mZ, amZ
     complex (dp)             , intent(in) :: mu
@@ -305,7 +350,6 @@ module AlphaClass
   pure type (AnomDim) function adim(self, nf)
     class (Alpha), intent(in) :: self
     integer      , intent(in) :: nf
-
     integer                   :: n
 
     n = nf; if (nf > 6) n = 6; if (nf < 4) n = 4;  adim = self%andim(n)
