@@ -11,8 +11,8 @@ module RunningClass
     integer                     :: nf, runMass
     type (AnomDim)              :: andim
     type (Alpha)                :: AlphaOb
-    real (dp), dimension(0:3)   :: beta, gamma
-    real (dp), dimension(3)     :: sCoef, sCoefNatural
+    real (dp), dimension(0:4)   :: beta, gamma
+    real (dp), dimension(4)     :: sCoef, sCoefNatural
     real (dp)                   :: muLambda, mH, mL
     real (dp), dimension(0:4,4) :: tab
 
@@ -44,10 +44,10 @@ module RunningClass
 !ccccccccccccccc
 
    type (Running) function InitRun(nf, runMass, AlphaOb, muLambda)
-    integer     , intent(in) :: runMass, nf
-    real (dp)   , intent(in) :: muLambda
-    type (Alpha), intent(in) :: AlphaOb
-    real (dp), dimension(0:3) :: sCoef
+    integer     , intent(in)  :: runMass, nf
+    real (dp)   , intent(in)  :: muLambda
+    type (Alpha), intent(in)  :: AlphaOb
+    real (dp), dimension(0:4) :: sCoef
 
     InitRun%AlphaOb = AlphaOb          ;  InitRun%andim    = AlphaOb%adim(nf)
     InitRun%str     = AlphaOb%scheme() ;  InitRun%muLambda = muLambda
@@ -251,7 +251,6 @@ module RunningClass
    pure real (dp) function RunningMass(self, m, mu)
      real (dp)      , intent(in) :: m, mu
      class (Running), intent(in) :: self
-
      real (dp)                   :: a0, a1
 
      a0 = self%alphaQCD(m);  a1 = self%alphaQCD(mu)
@@ -283,7 +282,7 @@ module RunningClass
      real (dp)      , intent(in) :: R
 
      MSRmass = self%mH + self%lambdaQCD(self%runMass) * &
-               self%DiffR( self%sCoef, self%runMass, self%mH, R )
+     self%DiffR( self%sCoef, self%runMass, self%mH, R )
 
    end function MSRmass
 
@@ -375,15 +374,14 @@ module RunningClass
      matching = 1 + dot_product( a(:i), PowList(alphaM, i) )
 
      MSRNaturalMass = self%mH * matching + self%lambdaQCD(self%runMass) * &
-                      self%DiffR( self%sCoefNatural, self%runMass, self%mH, R )
+     self%DiffR( self%sCoefNatural, self%runMass, self%mH, R )
 
    end function MSRNaturalMass
 
 !ccccccccccccccc
 
   function MSRMatching(self) result(a)
-    class (Running), intent(in)     :: self
-
+    class (Running), intent(in)    :: self
     real (dp) , dimension(4)       :: a, b, c
     real (dp) , dimension(0:3,0:3) :: tab
 
@@ -399,7 +397,6 @@ module RunningClass
    real (dp) function lambdaQCD(self, run)
     integer        , intent(in) :: run
     class (Running), intent(in) :: self
-
     real (dp)                   :: t
 
     t = - 2 * pi/self%beta(0)/self%alphaQCD(self%muLambda)
@@ -428,7 +425,6 @@ module RunningClass
     integer        , intent(in) :: order
     real (dp)      , intent(in) :: r0, r1, m
     class (Running), intent(in) :: self
-
     real (dp)                   :: a0, a1
 
     DiffRMass = 0; if ( abs(r0 - r1) <= d1mach(1) .or. order < 2) return
@@ -446,7 +442,6 @@ module RunningClass
     real (dp)              , intent(in) :: r0, r1, mu0, mu1
     class (Running)        , intent(in) :: self
     real (dp), dimension(3), intent(in) :: gamma
-
     real (dp)                           :: a, b, delta, a0, a1, abserr, tny
     real (dp), dimension(3)             :: gammaBet(3)
     integer                             :: neval, ier

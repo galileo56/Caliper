@@ -282,7 +282,7 @@ module AlphaClass
    character (len = *)      , intent(in) :: method
    integer                  , intent(in) :: order
    real (dp)                , intent(in) :: mZ, amZ, mu
-   real (dp), dimension(0:3), intent(in) :: beta
+   real (dp), dimension(0:4), intent(in) :: beta
    real (dp)                             :: L, arg, LG, h, k1, k2, k3, k4
    integer                               :: n, i
 
@@ -306,6 +306,14 @@ module AlphaClass
      amZ**5 * L**2 * beta(1)**3/beta(0)/4/Pi2 - amZ**5 * L**2 * beta(1) * beta(2)/2/Pi2 + &
      2 * amZ**3 * LG * beta(1) * beta(2)/beta(0)**2 - amZ**4 * L * beta(1) * beta(2)/beta(0)/Pi + &
      amZ**4 * L * beta(3)/Pi + amZ**5 * L**2 * beta(0) * beta(3)/4/Pi2 )/32/Pi/( 2 * Pi + amZ * L * beta(0) )**2
+
+    if (order > 4) alphaGenericReal = alphaGenericReal + 4 * amZ**4 * ( - arg * (   6 * beta(0)**2 * &
+    ( beta(1) * beta(3) - beta(0) * beta(4) ) + 2 * arg**2 * (  beta(1)**4 - 3 * beta(0) * beta(1)**2 * beta(2) &
+    + 2 * beta(0)**2 * beta(1) * beta(3) + beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  ) + &
+    3 * arg * (  beta(1)**4 - 4 * beta(0) * beta(1)**2 * beta(2) + 3 * beta(0)**2 * beta(1) * beta(3) + &
+    2 * beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  )   ) + beta(1) * LG * (6 * arg * ( beta(1)**3 &
+    - beta(0) * beta(1) * beta(2)) + 6 * beta(0)**2 * beta(3) - 6 * beta(0) * beta(1) * beta(2) * LG +&
+    beta(1)**3 * LG * (2 * LG - 3))) * Pi**3
 
     alphaGenericReal = amZ/alphaGenericReal
 
@@ -337,7 +345,7 @@ module AlphaClass
     integer                  , intent(in) :: order
     real    (dp)             , intent(in) :: mZ, amZ
     complex (dp)             , intent(in) :: mu
-    real (dp), dimension(0:3), intent(in) :: beta
+    real (dp), dimension(0:4), intent(in) :: beta
     complex (dp)                          :: L, arg, LG, k1, k2, k3, k4
     real (dp)                             :: h, theta, mod
     integer                               :: n, i
@@ -362,6 +370,14 @@ module AlphaClass
      amZ**5 * L**2 * beta(1)**3/beta(0)/4/Pi2 - amZ**5 * L**2 * beta(1) * beta(2)/2/Pi2 + &
      2 * amZ**3 * LG * beta(1) * beta(2)/beta(0)**2 - amZ**4 * L * beta(1) * beta(2)/beta(0)/Pi + &
      amZ**4 * L * beta(3)/Pi + amZ**5 * L**2 * beta(0) * beta(3)/4/Pi2 )/32/Pi/( 2 * Pi + amZ * L * beta(0) )**2
+
+    if (order > 4) alphaGenericComplex = alphaGenericComplex + 4 * amZ**4 * ( - arg * (   6 * beta(0)**2 * &
+    ( beta(1) * beta(3) - beta(0) * beta(4) ) + 2 * arg**2 * (  beta(1)**4 - 3 * beta(0) * beta(1)**2 * beta(2) &
+    + 2 * beta(0)**2 * beta(1) * beta(3) + beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  ) + &
+    3 * arg * (  beta(1)**4 - 4 * beta(0) * beta(1)**2 * beta(2) + 3 * beta(0)**2 * beta(1) * beta(3) + &
+    2 * beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  )   ) + beta(1) * LG * (6 * arg * ( beta(1)**3 &
+    - beta(0) * beta(1) * beta(2)) + 6 * beta(0)**2 * beta(3) - 6 * beta(0) * beta(1) * beta(2) * LG +&
+    beta(1)**3 * LG * (2 * LG - 3))) * Pi**3
 
     alphaGenericComplex = amZ/alphaGenericComplex
 

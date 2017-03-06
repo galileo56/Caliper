@@ -27,7 +27,7 @@ module MatrixElementsClass
     real (dp), dimension(6)     :: NGlist, alphaList
     real (dp), dimension(0:4  ) :: ListFact
     real (dp), dimension(0:4,3) :: softExpT, softExpC, jetExp, HardExp, coefCusp, coefHard
-    real (dp), dimension(0:3)   :: beta
+    real (dp), dimension(0:4)   :: beta
     real (dp), dimension(3)     :: deltaT, sCoefT, CparamGammaR, deltaTHadron, &
     ThrustGammaR, sCoefC, deltaCHadron, deltaC
 
@@ -57,15 +57,18 @@ module MatrixElementsClass
     real (dp)                       :: Rmass, mm, muM
     integer                         :: nl
     real (dp), dimension(0:4,3)     :: BJetExp, softExpTNl, softExpCNl, HmExp
-    real (dp), dimension(0:3)       :: betaNl, jetMatching
+    real (dp), dimension(0:3)       :: jetMatching
+    real (dp), dimension(0:4)       :: betaNl
     real (dp), dimension(6)         :: NGlistNl
     real (dp), dimension(3)         :: sCoefTNl, sCoefCNl, sCoefbJet, alphaMMlist, &
-                                       CparamGammaRNl, ThrustGammaRNl, JetGammaR
+    CparamGammaRNl, ThrustGammaRNl, JetGammaR
+
     contains
 
-    procedure, pass(self), public   :: MassDeltaSet, DiffDeltaGapNl, sCoefNl, setMass, &
-                                       runNl, NonGlobalListNl, SetHardMass, HardMassVect, &
-                                       HardMassExp, HardMassVec, JetMass, mmFromJetMass
+    procedure, pass(self), public   :: MassDeltaSet, DiffDeltaGapNl, setMass, &
+    runNl, NonGlobalListNl, SetHardMass, HardMassVect, HardMassExp, HardMassVec,&
+    JetMass, mmFromJetMass, sCoefNl
+
   end type MatricesElementsMass
 
 !ccccccccccccccc
@@ -76,7 +79,8 @@ module MatrixElementsClass
     type (Running)                              :: alphaMassS
     real (dp)                                   :: MSMass, MSLow, alphaB
     real (dp), dimension(3)                     :: DeltamJet, DeltaMSR, deltaMSLow, &
-                                                   deltaMSRNatural, deltaMS
+    deltaMSRNatural, deltaMS
+
     contains
 
     procedure, pass(self), public :: MassDeltaScheme
@@ -117,8 +121,7 @@ module MatrixElementsClass
     real (dp)      , intent(in) :: s3T, s3C, j3, muLambda
     integer                     :: i
     type (Running)              :: alphaMass
-    real (dp), dimension(0:3)   :: beta, betaList
-    real (dp), dimension(0:4)   :: ListFact
+    real (dp), dimension(0:4)   :: ListFact, beta, betaList
     real (dp), dimension(0:4,3) :: coefCusp, coefSoft, coefJet, coefHard
     integer  , dimension(3)     :: TwoList
     type (AnomDim)              :: andim
@@ -180,8 +183,8 @@ module MatrixElementsClass
     InMatrices%ThrustGammaR = ExpEuler * andim%GammaRComputer( InMatrices%softExpT(1,:) )
     InMatrices%CparamGammaR = ExpEuler * andim%GammaRComputer( InMatrices%softExpC(1,:) )
 
-    InMatrices%sCoefT =  andim%sCoef( InMatrices%ThrustGammaR * betaList(1:) )
-    InMatrices%sCoefC =  andim%sCoef( InMatrices%CparamGammaR * betaList(1:) )
+    InMatrices%sCoefT =  andim%sCoef( InMatrices%ThrustGammaR * betaList(1:3) )
+    InMatrices%sCoefC =  andim%sCoef( InMatrices%CparamGammaR * betaList(1:3) )
 
  ! rescale jet logs because of their mass dimension
 
@@ -202,8 +205,7 @@ module MatrixElementsClass
     real (dp)      , intent(in)   :: s3T, s3C, j3, b3, muLambda, muLambdaNl
     integer                       :: i, nl
     type (Running)                :: alphaMass, alphaMassNl
-    real (dp), dimension(0:3)     :: beta, betaList, betaListNl
-    real (dp), dimension(0:4)     :: ListFact
+    real (dp), dimension(0:4)     :: ListFact, beta, betaList, betaListNl
     integer  , dimension(3)       :: TwoList
     type (AnomDim)                :: andim, andimNl
     real (dp)                     :: mm
@@ -296,11 +298,11 @@ module MatrixElementsClass
     InMatMass%ThrustGammaRNl = ExpEuler * andimNl%GammaRComputer( InMatMass%softExpTNl(1,:) )
     InMatMass%CparamGammaRNl = ExpEuler * andimNl%GammaRComputer( InMatMass%softExpCNl(1,:) )
 
-    InMatMass%sCoefT    =  andim%sCoef( InMatMass%ThrustGammaR * betaList(1:) )
-    InMatMass%sCoefC    =  andim%sCoef( InMatMass%CparamGammaR * betaList(1:) )
-    InMatMass%sCoefbJet = andimNl%sCoef( andimNl%GammaRComputer( InMatMass%BJetExp(1,:) ) * betaListNl(1:) ) * ExpEuler/2
-    InMatMass%sCoefTNl  =  andimNl%sCoef( InMatMass%ThrustGammaRNl * betaListNl(1:) )
-    InMatMass%sCoefCNl  =  andimNl%sCoef( InMatMass%CparamGammaRNl * betaListNl(1:) )
+    InMatMass%sCoefT    =  andim%sCoef( InMatMass%ThrustGammaR * betaList(1:3) )
+    InMatMass%sCoefC    =  andim%sCoef( InMatMass%CparamGammaR * betaList(1:3) )
+    InMatMass%sCoefbJet = andimNl%sCoef( andimNl%GammaRComputer( InMatMass%BJetExp(1,:) ) * betaListNl(1:3) ) * ExpEuler/2
+    InMatMass%sCoefTNl  =  andimNl%sCoef( InMatMass%ThrustGammaRNl * betaListNl(1:3) )
+    InMatMass%sCoefCNl  =  andimNl%sCoef( InMatMass%CparamGammaRNl * betaListNl(1:3) )
 
  ! rescale jet logs because of their mass dimension
 
@@ -331,7 +333,7 @@ module MatrixElementsClass
     real (dp), optional , intent(in) :: muJ, muS, R, Q, muH
     integer                          :: i
     type (Running)                   :: alphaMass
-    real (dp), dimension(0:3)        :: beta, betaList
+    real (dp), dimension(0:4)        :: beta, betaList
     real (dp), dimension(0:4)        :: ListFact
     real (dp), dimension(3)          :: alphaSList, alphaJList
     integer  , dimension(3)          :: TwoList
@@ -424,8 +426,8 @@ module MatrixElementsClass
     InMatEl%ThrustGammaR = ExpEuler * andim%GammaRComputer( InMatEl%softExpT(1,:) )
     InMatEl%CparamGammaR = ExpEuler * andim%GammaRComputer( InMatEl%softExpC(1,:) )
 
-    InMatEl%sCoefT =  andim%sCoef( InMatEl%ThrustGammaR * betaList(1:) )
-    InMatEl%sCoefC =  andim%sCoef( InMatEl%CparamGammaR * betaList(1:) )
+    InMatEl%sCoefT =  andim%sCoef( InMatEl%ThrustGammaR * betaList(1:3) )
+    InMatEl%sCoefC =  andim%sCoef( InMatEl%CparamGammaR * betaList(1:3) )
 
     TwoList = powList(2,4)
 
@@ -462,7 +464,7 @@ module MatrixElementsClass
     character (len = 5)             :: str
     integer                         :: i, nl, nS
     type (Running)                  :: alphaMass, alphaMassNl
-    real (dp), dimension(0:3)       :: betaS, betaList, betaListNl
+    real (dp), dimension(0:4)       :: betaS, betaList, betaListNl
     real (dp), dimension(3)         :: lgRList, lgRmassList, lgMSLowList, lgMSmassList
     real (dp), dimension(0:4)       :: ListFact
     real (dp), dimension(3)         :: alphaSList, alphaJList, a, b
@@ -671,8 +673,8 @@ module MatrixElementsClass
     InMatElMass%ThrustGammaR = ExpEuler * andimS%GammaRComputer( InMatElMass%softExpT(1,:) )
     InMatElMass%CparamGammaR = ExpEuler * andimS%GammaRComputer( InMatElMass%softExpC(1,:) )
 
-    InMatElMass%sCoefT =  andimS%sCoef( InMatElMass%ThrustGammaR * betaList(1:) )
-    InMatElMass%sCoefC =  andimS%sCoef( InMatElMass%CparamGammaR * betaList(1:) )
+    InMatElMass%sCoefT =  andimS%sCoef( InMatElMass%ThrustGammaR * betaList(1:3) )
+    InMatElMass%sCoefC =  andimS%sCoef( InMatElMass%CparamGammaR * betaList(1:3) )
 
     if (  muS >= muM .or. (.not. present(muS) )  ) then
 
@@ -684,8 +686,8 @@ module MatrixElementsClass
       InMatElMass%ThrustGammaRNl = ExpEuler * andimNl%GammaRComputer( InMatElMass%softExpTNl(1,:) )
       InMatElMass%CparamGammaRNl = ExpEuler * andimNl%GammaRComputer( InMatElMass%softExpCNl(1,:) )
 
-      InMatElMass%sCoefTNl = andimNl%sCoef( InMatElMass%ThrustGammaRNl * betaListNl(1:) )
-      InMatElMass%sCoefCNl = andimNl%sCoef( InMatElMass%CparamGammaRNl * betaListNl(1:) )
+      InMatElMass%sCoefTNl = andimNl%sCoef( InMatElMass%ThrustGammaRNl * betaListNl(1:3) )
+      InMatElMass%sCoefCNl = andimNl%sCoef( InMatElMass%CparamGammaRNl * betaListNl(1:3) )
 
     else if ( muS < muM .and. present(muS) ) then
 
@@ -1150,7 +1152,7 @@ module MatrixElementsClass
     class (MatricesElements), intent(in) :: self
     character (len = *)     , intent(in) :: str
     real (dp)             , dimension(3) :: bet
-    real (dp)           , dimension(0:3) :: aux
+    real (dp)           , dimension(0:4) :: aux
 
     bet = 0
 
@@ -1163,9 +1165,9 @@ module MatrixElementsClass
        if ( str(:4) == 'bJet'   ) bet = self%sCoefBJet
 
        if ( str(:3) == 'MSR' .and. str(:10) == 'MSRNatural' ) then
-         aux = self%andim%betaQCD('MSRsCoef')       ;  bet = aux(1:)
+         aux = self%andim%betaQCD('MSRsCoef')       ;  bet = aux(1:3)
        else if ( str(:3) == 'MSR' ) then
-         aux = self%andim%betaQCD('sCoefMSRNatural');  bet = aux(1:)
+         aux = self%andim%betaQCD('sCoefMSRNatural');  bet = aux(1:3)
        end if
 
     end select

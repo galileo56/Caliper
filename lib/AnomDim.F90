@@ -21,11 +21,12 @@ module AnomDimClass
     character (len = 5)           :: str
     real (dp)                     :: G4
     real (dp), dimension(0:3,0:3) :: gammaHm
-    real (dp), dimension(3)       :: sCoefMSR, sCoefMSRNatural, bHat, betaList,&
+    real (dp), dimension(4)       :: sCoefMSR, sCoefMSRNatural, bHat, betaList,&
     gammaR,  gammaRNatural
 
-    real (dp), dimension(0:3)     :: beta, cusp, gammaMass, gammaHard, gammaB, &
-    gammaJet, gammaSoft
+    real (dp), dimension(0:4)     :: beta
+    real (dp), dimension(0:4)     :: gammaMass
+    real (dp), dimension(0:3)     :: cusp, gammaHard, gammaB, gammaJet, gammaSoft
 
     contains
 
@@ -55,12 +56,15 @@ module AnomDimClass
     character (len = *), intent(in) :: str
     integer            , intent(in) :: nf         ! number of active flavors
     real (dp)          , intent(in) :: G4         ! cusp anomalous dimension
-    real (dp), dimension(3)         :: betaList
-    real (dp), dimension(0:3)       :: beta
+    real (dp), dimension(4)         :: betaList
+    real (dp), dimension(0:4)       :: beta
 
     beta = [ 11 - 2 * nf/3._dp, 102 - 38._dp * nf/3, 1428.5 - 5033 * nf/18._dp + &
     325 * nf**2/54._dp, 29242.964136194132_dp - 6946.289617003555_dp * nf + &
-    405.08904045986293_dp * nf**2 + 1.4993141289437586_dp * nf**3 ]
+    405.08904045986293_dp * nf**2 + 1.4993141289437586_dp * nf**3, &
+    537147.6740702358_dp - 186161.94951432804_dp * nf + &
+    17567.757653436835_dp * nf**2 - 231.27767265113647_dp * nf**3 - &
+    1.8424744081239026_dp * nf**4 ]
 
     InAdim%str = str ; InAdim%nf      = nf ;    InAdim%beta = beta
     InAdim%G4  = G4  ; InAdim%gammaHm = 0
@@ -69,9 +73,12 @@ module AnomDimClass
     1174.8982718294073_dp - 183.18743044213898_dp * nf - 0.7901234567901234_dp * nf**2, G4 ]
 
     InAdim%GammaMass = [ - 4._dp, - 16 * (101._dp/24 - 5._dp * nf/36), &
-     - 64 * (1249._dp/64 - 2.284121493373736_dp * nf - 35._dp/1296 * nf**2 ), &
-     - 256 * (98.9434142552029_dp - 19.1074619186354_dp * nf +  &
-       0.005793222354358382_dp * nf**3 + 0.27616255142989465_dp * nf**2 ) ]
+    - 64 * (1249._dp/64 - 2.284121493373736_dp * nf - 35._dp/1296 * nf**2 ), &
+    - 256 * (98.9434142552029_dp - 19.1074619186354_dp * nf +  &
+    0.005793222354358382_dp * nf**3 + 0.27616255142989465_dp * nf**2 ), &
+    573139.8612330721_dp - 147134.94237385172_dp * nf + &
+    7661.955304616065_dp * nf**2 + 110.91796496576201_dp * nf**3 - &
+    0.08740751602244723_dp * nf**4    ]
 
     InAdim%gammaJet = [ 8._dp, 11.643665868860921_dp - 17.79927174385542_dp * nf, &
     407.55606459953486_dp - 170.69272520622684_dp * nf + 1.4510585125043_dp * nf**2, 0._dp ]
@@ -93,9 +100,11 @@ module AnomDimClass
     end if
 
     InAdim%bHat = [ beta(1)/beta(0)**2, ( beta(1)**2 - beta(0) * beta(2) )/beta(0)**4/2,&
-     ( beta(1)**3 - 2 * beta(0) * beta(1) * beta(2) + beta(0)**2 * beta(3) )/beta(0)**6/4 ]/2
+    ( beta(1)**3 - 2 * beta(0) * beta(1) * beta(2) + beta(0)**2 * beta(3) )/beta(0)**6/4,&
+    (  beta(1)**4 - 3 * beta(0) * beta(1)**2 * beta(2) + 2 * beta(0)**2 * beta(1) * beta(3) &
+    + beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  )/8/beta(0)**8  ]/2
 
-    betaList = PowList( 1/beta(0)/2, 3 ); InAdim%betaList = betaList
+    betaList = PowList( 1/beta(0)/2, 4 ); InAdim%betaList = betaList
 
     InAdim%gammaR        = InAdim%GammaRComputer( InAdim%MSRDelta() )
     InAdim%gammaRNatural = InAdim%GammaRComputer( MSbarDelta(nf, 0) )
@@ -137,6 +146,7 @@ module AnomDimClass
      if (order >= 0) Gfun = t
      if (order >= 2) Gfun = Gfun - self%bHat(2)/t
      if (order >= 3) Gfun = Gfun - self%bHat(3)/2/t**2
+     if (order >= 4) Gfun = Gfun - self%bHat(4)/3/t**3
 
      Gfun = exp(Gfun);     if (order > 0) Gfun = (-t)**self%bHat(1) * Gfun
 
@@ -368,25 +378,25 @@ module AnomDimClass
   pure function betaQCD(self, str) result(bet)
     class (AnomDim)    , intent(in) :: self
     character (len = *), intent(in) :: str
-    real (dp)      , dimension(0:3) :: bet
+    real (dp)      , dimension(0:4) :: bet
 
     bet = 0
 
-    if ( str( :4) == 'beta'            ) bet      = self%beta
-    if ( str( :4) == 'cusp'            ) bet      = self%cusp
-    if ( str( :4) == 'mass'            ) bet      = self%gammaMass
-    if ( str( :4) == 'hard'            ) bet      = self%gammaHard
-    if ( str( :3) == 'jet'             ) bet      = self%gammaJet
-    if ( str( :4) == 'soft'            ) bet      = self%gammaSoft
-    if ( str( :4) == 'bJet'            ) bet      = self%gammaB
-    if ( str( :2) == 'Hm'              ) bet      = self%gammaHm(:,0)
-    if ( str( :4) == 'bHat'            ) bet(1:3) = self%bHat
-    if ( str( :8) == 'MSRdelta'        ) bet(1:3) = self%MSRDelta()
-    if ( str( :8) == 'sCoefMSR'        ) bet(1:3) = self%sCoefMSR
-    if ( str(:15) == 'sCoefMSRNatural' ) bet(1:3) = self%sCoefMSRNatural
-    if ( str( :8) == 'betaList'        ) bet(1:3) = self%betaList
-    if ( str( :9) == 'gammaRMSR'       ) bet(1:3) = self%betaList
-    if ( str(:13) == 'gammaRNatural'   ) bet(1:3) = self%betaList
+    if ( str( :4) == 'beta'            ) bet     = self%beta
+    if ( str( :4) == 'cusp'            ) bet(:3) = self%cusp
+    if ( str( :4) == 'mass'            ) bet     = self%gammaMass
+    if ( str( :4) == 'hard'            ) bet(:3) = self%gammaHard
+    if ( str( :3) == 'jet'             ) bet(:3) = self%gammaJet
+    if ( str( :4) == 'soft'            ) bet(:3) = self%gammaSoft
+    if ( str( :4) == 'bJet'            ) bet(:3) = self%gammaB
+    if ( str( :2) == 'Hm'              ) bet(:3) = self%gammaHm(:,0)
+    if ( str( :4) == 'bHat'            ) bet(1:) = self%bHat
+    if ( str( :8) == 'MSRdelta'        ) bet(1:) = self%MSRDelta()
+    if ( str( :8) == 'sCoefMSR'        ) bet(1:) = self%sCoefMSR
+    if ( str(:15) == 'sCoefMSRNatural' ) bet(1:) = self%sCoefMSRNatural
+    if ( str( :8) == 'betaList'        ) bet(1:) = self%betaList
+    ! if ( str( :9) == 'gammaRMSR'       ) bet(1:3) = self%betaList
+    ! if ( str(:13) == 'gammaRNatural'   ) bet(1:3) = self%betaList
 
   end function betaQCD
 
@@ -394,13 +404,26 @@ module AnomDimClass
 
   pure function sCoef(self, gamma) result(s)
     class (AnomDim)        , intent(in) :: self
-    real (dp), dimension(3), intent(in) :: gamma
-    real (dp), dimension(3)             :: s
+    real (dp), dimension(:), intent(in) :: gamma
+    real (dp), dimension( size(gamma) ) :: s
 
-    s(1) = gamma(1);  s(2:3) = gamma(2:3) - sum( self%bHat(:2) ) * gamma(:2)
+    if ( size(gamma) > 0 ) s(1) = gamma(1)
+    if ( size(gamma) > 1 ) s(2) = gamma(2) - sum( self%bHat(:2) ) * gamma(1)
 
-    s(3) = s(3) + (  ( 1 + self%bHat(1) ) * self%bHat(2) + &
-           ( self%bHat(2)**2 + self%bHat(3) )/2  ) * gamma(1)
+    if ( size(gamma) > 2 ) then
+      s(3) = gamma(3) - sum( self%bHat(:2) ) * gamma(2) + &
+      (  ( 1 + self%bHat(1) ) * self%bHat(2) + &
+      ( self%bHat(2)**2 + self%bHat(3) )/2  ) * gamma(1)
+    end if
+
+    if  ( size(gamma) > 3 ) then
+      s(4) = gamma(4) - sum( self%bHat(:2) ) * gamma(3) + &
+      (  ( 1 + self%bHat(1) ) * self%bHat(2) + &
+      ( self%bHat(2)**2 + self%bHat(3) )/2  ) * gamma(2) + &
+      ( - self%bHat(2)**2 - self%bHat(1) * self%bHat(2)**2/2 &
+      - self%bHat(2)**3/6 - self%bHat(3) - self%bHat(1) * self%bHat(3)/2 &
+      - self%bHat(2) * self%bHat(3)/2 - self%bHat(4)/3 ) * gamma(1)
+    end if
 
   end function sCoef
 
@@ -559,13 +582,12 @@ module AnomDimClass
 
  pure function MSRDelta(self) result(coef)
     class (AnomDim), intent(in)   :: self
-    real (dp), dimension(4)       :: coef2
-    real (dp), dimension(3)       :: coef, b
+    real (dp), dimension(4)       :: coef, b
     real (dp), dimension(0:3,0:3) :: tab
 
-    coef2 = MSbarDelta(self%nf, 1); coef = coef2(:3)
+    coef = MSbarDelta(self%nf, 1)
     tab = self%alphaMatchingInverse(self%nf)
-    b = tab(:2,0); call alphaReExpand(coef, b)
+    b = tab(:,0); call alphaReExpand(coef, b)
 
   end function MSRDelta
 
@@ -573,14 +595,14 @@ module AnomDimClass
 
   pure function GammaRComputer(self, gamma) result(gammaMSR)
     class (AnomDim)        , intent(in) :: self
-    real (dp), dimension(3), intent(in) :: gamma
-    real (dp), dimension(3)             :: gammaMSR
+    real (dp), dimension(:), intent(in) :: gamma
+    real (dp), dimension( size(gamma) ) :: gammaMSR
+    integer, dimension( size(gamma) )   :: List4
     integer                             :: i, j
-    integer, dimension(3)  ,  parameter :: List4 = [ (4**j,j = 1, 3) ]
 
-    gammaMSR = List4 * gamma
+    List4 = [  ( 4**j, j = 1, size(gamma) )  ] ; gammaMSR = List4 * gamma
 
-    do i = 1, 3
+    do i = 1, size(gamma)
       do j = 1, i - 1
 
         gammaMSR(i) = gammaMSR(i) - 2 * List4(j) * j * gamma(j) * self%beta(i - 1 - j)
