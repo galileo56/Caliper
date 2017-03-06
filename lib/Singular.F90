@@ -242,7 +242,7 @@ module SingularClass
 
     if (MatEl%scales('muH') < 0) then
 
-      muHC = dcmplx(0._dp, - muH)
+      muHC = cmplx(0._dp, - muH, dp)
 
       k = k + alpha%wTilde(run1, NonCusp, muHC, muH) - 2 * alpha%kTilde(run, cusp, muHC, muH)
 
@@ -498,7 +498,7 @@ module SingularClass
 
     if ( MatEl%scales('muH') < 0 ) then
 
-      muHC = dcmplx( 0._dp, - muH )
+      muHC = cmplx( 0._dp, - muH, dp )
 
       k = k + alpha%wTilde(run1, NonCusp, muHC, muH) &
         - 2 * alpha%kTilde(run , cusp, muHC, muH)
@@ -675,7 +675,7 @@ module SingularClass
 
       if (muH < 0) then
 
-        muHC = dcmplx(0._dp, muH)
+        muHC = cmplx(0._dp, muH, dp)
 
         self%k = self%alpha%wTilde( self%run1, self%NonCusp, muHC, self%muH ) &
            - 2 * self%alpha%kTilde( self%run , self%cusp   , muHC, self%muH )

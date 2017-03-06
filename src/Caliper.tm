@@ -3591,7 +3591,6 @@ double mC, double muC, double muR, double muI){
    f90alphacomplex_(str, method, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB,
    &muB, &mC, &muC, &muR, &muI, res);
 
-  //  MLPutRealList(stdlink, res, 2);
    MLPutFunction(stdlink,"Complex",2);
    MLPutReal(stdlink, res[0]);
    MLPutReal(stdlink, res[1]);

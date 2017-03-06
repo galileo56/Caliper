@@ -1,6 +1,6 @@
 
 module AlphaClass
-  use AnomDimClass;  use Constants, only: dp, Pi, d1mach; implicit none
+  use AnomDimClass;  use Constants, only: dp, Pi, Pi2, d1mach; implicit none
   private
 
   interface alphaGeneric
@@ -254,9 +254,22 @@ module AlphaClass
 
     PiBeta = 0; if ( size(beta) < 1 ) return;  a = alpha/4/Pi
 
-    PiBeta = 2 * alpha * dot_product(  beta, powList( a, size(beta) )  )
+    PiBeta = - 2 * alpha * dot_product(  beta, powList( a, size(beta) )  )
 
   end function PiBeta
+
+!ccccccccccccccc
+
+  pure complex (dp) function IPiBeta(beta, alpha)
+    real (dp), dimension(:), intent(in) :: beta
+    complex (dp)           , intent(in) :: alpha
+    complex (dp)                        :: a
+
+    IPiBeta = 0; if ( size(beta) < 1 ) return;  a = alpha/4/Pi
+
+    IPiBeta = - 2 * dcmplx(0,1) * alpha * dot_product(  beta, powList( a, size(beta) )  )
+
+  end function IPiBeta
 
 !ccccccccccccccc
 
@@ -280,29 +293,29 @@ module AlphaClass
     if (order > 0) alphaGenericReal = alphaGenericReal + arg
     if (order > 1) alphaGenericReal = alphaGenericReal + beta(1)/beta(0) * amZ * LG/4/Pi
 
-    if (order > 2) alphaGenericReal = alphaGenericReal + 1/( 16 * Pi**2 + &
+    if (order > 2) alphaGenericReal = alphaGenericReal + 1/( 16 * Pi2 + &
      8 * Pi * amZ * L * beta(0) ) * (  amZ**2 * LG * beta(1)**2/beta(0)**2 - &
      ( amZ**3 * L * beta(1)**2/2/Pi )/beta(0) + amZ**3 * L * beta(2)/2/Pi  )
 
     if (order > 3) alphaGenericReal = alphaGenericReal + ( -amZ**3 * LG**2 * beta(1)**3/beta(0)**3 + &
-     amZ**5 * L**2 * beta(1)**3/beta(0)/4/Pi**2 - amZ**5 * L**2 * beta(1) * beta(2)/2/Pi**2 + &
+     amZ**5 * L**2 * beta(1)**3/beta(0)/4/Pi2 - amZ**5 * L**2 * beta(1) * beta(2)/2/Pi2 + &
      2 * amZ**3 * LG * beta(1) * beta(2)/beta(0)**2 - amZ**4 * L * beta(1) * beta(2)/beta(0)/Pi + &
-     amZ**4 * L * beta(3)/Pi + amZ**5 * L**2 * beta(0) * beta(3)/4/Pi**2 )/32/Pi/( 2 * Pi + amZ * L * beta(0) )**2
+     amZ**4 * L * beta(3)/Pi + amZ**5 * L**2 * beta(0) * beta(3)/4/Pi2 )/32/Pi/( 2 * Pi + amZ * L * beta(0) )**2
 
     alphaGenericReal = amZ/alphaGenericReal
 
   else if ( method(:7) == 'numeric' ) then
 
-    h = 0.04_dp; n = max(   1, Abs(  Nint( Log(Mz/mu)/h )  )   )
+    L = Log(Mz/mu);  h = 0.04_dp; n = max(  1, Abs(  Nint(L/h)  )  )
 
-    h = - Log(Mz/mu)/n;  alphaGenericReal = amZ
+    h = - L/n;  alphaGenericReal = amZ
 
     do i = 1, n
 
-     k1 = - h * PiBeta( beta(:order-1), alphaGenericReal        )
-     k2 = - h * PiBeta( beta(:order-1), alphaGenericReal + k1/2 )
-     k3 = - h * PiBeta( beta(:order-1), alphaGenericReal + k2/2 )
-     k4 = - h * PiBeta( beta(:order-1), alphaGenericReal + k3   )
+     k1 = h * PiBeta( beta(:order-1), alphaGenericReal        )
+     k2 = h * PiBeta( beta(:order-1), alphaGenericReal + k1/2 )
+     k3 = h * PiBeta( beta(:order-1), alphaGenericReal + k2/2 )
+     k4 = h * PiBeta( beta(:order-1), alphaGenericReal + k3   )
 
      alphaGenericReal = alphaGenericReal + (k1 + k4)/6 + (k2 + k3)/3
 
@@ -320,11 +333,15 @@ module AlphaClass
     real    (dp)             , intent(in) :: mZ, amZ
     complex (dp)             , intent(in) :: mu
     real (dp), dimension(0:3), intent(in) :: beta
-    complex (dp)                          :: L, arg, LG
+    complex (dp)                          :: L, arg, LG, k1, k2, k3, k4
+    real (dp)                             :: h, theta, mod
+    integer                               :: n, i
 
     if ( max( amZ, mZ) <= d1mach(1) ) then
       alphaGenericComplex = 0; return
     end if
+
+    if ( method(:8) == 'analytic' ) then
 
     L = log(mu/mZ);  arg = amZ * L * beta(0)/2/Pi;  LG  = log(1 + arg)
     alphaGenericComplex = 1
@@ -332,16 +349,39 @@ module AlphaClass
     if (order > 0) alphaGenericComplex = alphaGenericComplex + arg
     if (order > 1) alphaGenericComplex = alphaGenericComplex + beta(1)/beta(0) * amZ * LG/4/Pi
 
-    if (order > 2) alphaGenericComplex = alphaGenericComplex + 1/( 16 * Pi**2 + &
+    if (order > 2) alphaGenericComplex = alphaGenericComplex + 1/( 16 * Pi2 + &
      8 * Pi * amZ * L * beta(0) ) * (  amZ**2 * LG * beta(1)**2/beta(0)**2 - &
      ( amZ**3 * L * beta(1)**2/2/Pi )/beta(0) + amZ**3 * L * beta(2)/2/Pi  )
 
     if (order > 3) alphaGenericComplex = alphaGenericComplex + ( -amZ**3 * LG**2 * beta(1)**3/beta(0)**3 + &
-     amZ**5 * L**2 * beta(1)**3/beta(0)/4/Pi**2 - amZ**5 * L**2 * beta(1) * beta(2)/2/Pi**2 + &
+     amZ**5 * L**2 * beta(1)**3/beta(0)/4/Pi2 - amZ**5 * L**2 * beta(1) * beta(2)/2/Pi2 + &
      2 * amZ**3 * LG * beta(1) * beta(2)/beta(0)**2 - amZ**4 * L * beta(1) * beta(2)/beta(0)/Pi + &
-     amZ**4 * L * beta(3)/Pi + amZ**5 * L**2 * beta(0) * beta(3)/4/Pi**2 )/32/Pi/( 2 * Pi + amZ * L * beta(0) )**2
+     amZ**4 * L * beta(3)/Pi + amZ**5 * L**2 * beta(0) * beta(3)/4/Pi2 )/32/Pi/( 2 * Pi + amZ * L * beta(0) )**2
 
     alphaGenericComplex = amZ/alphaGenericComplex
+
+    else if ( method(:7) == 'numeric' ) then
+
+      mod = abs(mu); theta = IMAGPART( log(mu) - log(mod) )
+
+      alphaGenericComplex = alphaGenericReal(method, order, beta, mZ, amZ, mod)
+
+      h = 0.04_dp; n = max(  1, Abs( Nint(theta/h) )  )
+
+      h = theta/n
+
+      do i = 1, n
+
+       k1 = h * IPiBeta( beta(:order-1), alphaGenericComplex        )
+       k2 = h * IPiBeta( beta(:order-1), alphaGenericComplex + k1/2 )
+       k3 = h * IPiBeta( beta(:order-1), alphaGenericComplex + k2/2 )
+       k4 = h * IPiBeta( beta(:order-1), alphaGenericComplex + k3   )
+
+       alphaGenericComplex = alphaGenericComplex + (k1 + k4)/6 + (k2 + k3)/3
+
+      end do
+
+    end if
 
   end function alphaGenericComplex
 
