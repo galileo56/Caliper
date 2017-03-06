@@ -14,7 +14,7 @@ module RunningClass
     real (dp), dimension(0:3)   :: beta, gamma
     real (dp), dimension(3)     :: sCoef, sCoefNatural
     real (dp)                   :: muLambda, mH, mL
-    real (dp), dimension(0:3,3) :: tab
+    real (dp), dimension(0:4,4) :: tab
 
     contains
 
@@ -266,11 +266,11 @@ module RunningClass
      real (dp)      , intent(in) :: mu
      class (Running), intent(in) :: self
 
-     real (dp), dimension(3)     :: alphaList, delta
-     real (dp), dimension(0:3)   :: logList
+     real (dp), dimension(4)     :: alphaList, delta
+     real (dp), dimension(0:4)   :: logList
 
-     alphaList = PowList( self%alphaQCD(mu)/Pi, 3 )
-     LogList(0) = 1; LogList(1:) = PowList(  log( mu/self%MSbarMass(mu) ), 3  )
+     alphaList = PowList( self%alphaQCD(mu)/Pi, 4 )
+     LogList(0) = 1; LogList(1:) = PowList(  log( mu/self%MSbarMass(mu) ), 4  )
 
      delta = alphaList * matmul( logList, self%tab )
 
@@ -384,13 +384,13 @@ module RunningClass
   function MSRMatching(self) result(a)
     class (Running), intent(in)     :: self
 
-    real (dp) , dimension(3)       :: a, b, c
+    real (dp) , dimension(4)       :: a, b, c
     real (dp) , dimension(0:3,0:3) :: tab
 
     c   = MSbarDelta(self%nf, 1); a = MSbarDelta(self%nf, 0)
     tab = self%andim%alphaMatching(self%nf + 1)
 
-    b = tab(:2,0); call alphaReExpand(a,b);  a = c - a
+    b = tab(:,0); call alphaReExpand(a,b);  a = c - a
 
   end function MSRMatching
 

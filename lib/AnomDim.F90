@@ -58,9 +58,9 @@ module AnomDimClass
     real (dp), dimension(3)         :: betaList
     real (dp), dimension(0:3)       :: beta
 
-    beta = [ 11 - 2 * nf/3._dp, 102 - 38._dp * nf/3, 1428.5 - 5033 * nf/18._dp            + &
-                    325 * nf**2/54._dp, 29242.964136194132_dp - 6946.289617003555_dp * nf + &
-                    405.08904045986293_dp * nf**2 + 1.4993141289437586_dp * nf**3 ]
+    beta = [ 11 - 2 * nf/3._dp, 102 - 38._dp * nf/3, 1428.5 - 5033 * nf/18._dp + &
+    325 * nf**2/54._dp, 29242.964136194132_dp - 6946.289617003555_dp * nf + &
+    405.08904045986293_dp * nf**2 + 1.4993141289437586_dp * nf**3 ]
 
     InAdim%str = str ; InAdim%nf      = nf ;    InAdim%beta = beta
     InAdim%G4  = G4  ; InAdim%gammaHm = 0
@@ -559,10 +559,12 @@ module AnomDimClass
 
  pure function MSRDelta(self) result(coef)
     class (AnomDim), intent(in)   :: self
+    real (dp), dimension(4)       :: coef2
     real (dp), dimension(3)       :: coef, b
     real (dp), dimension(0:3,0:3) :: tab
 
-    coef = MSbarDelta(self%nf, 1);  tab = self%alphaMatchingInverse(self%nf)
+    coef2 = MSbarDelta(self%nf, 1); coef = coef2(:3)
+    tab = self%alphaMatchingInverse(self%nf)
     b = tab(:2,0); call alphaReExpand(coef, b)
 
   end function MSRDelta
@@ -591,10 +593,13 @@ module AnomDimClass
 !ccccccccccccccc ! missing documentation
 
   pure subroutine alphaReExpand(a, b)
-    real (dp), dimension(3), intent(inout) :: a(3)
-    real (dp), dimension(3), intent(in)    :: b(3)
+    real (dp), dimension(3), intent(inout) :: a(:)
+    real (dp), dimension(3), intent(in)    :: b(:)
 
-    a(2) = a(2) + a(1) * b(2);   a(3) = a(3) + 2 * a(2) * b(2) + a(1) * b(3)
+    if ( size(a) > 1 ) a(2) = a(2) + a(1) * b(2)
+    if ( size(a) > 2 ) a(3) = a(3) + 2 * a(2) * b(2) + a(1) * b(3)
+    if ( size(a) > 3 ) a(4) = a(4) + a(4) + 3 * a(3) * b(2) + &
+    a(2) * b(2)**2 + 2 * a(2) * b(3) + a(1) * b(4)
 
   end
 
@@ -713,12 +718,17 @@ module AnomDimClass
 
   pure function MSbarDelta(nl, nh) result(coef)
     integer    , intent(in) :: nh, nl
-    real (dp), dimension(3) :: coef
+    real (dp), dimension(4) :: coef
 
-    coef = [4._dp/3, 13.33982910125516_dp + 0.10356715567659536_dp * nh           - &
+    coef = [ 4._dp/3, 13.33982910125516_dp + 0.10356715567659536_dp * nh          - &
     1.041366911171631_dp * nl, 188.67172035165487_dp + 1.8591544419385237_dp * nh + &
     0.06408045019609998_dp * nh**2 - 26.677375174269212_dp * nl                  + &
-    0.022243482163948114_dp * nh * nl + 0.6526907490815437_dp * nl**2 ]
+    0.022243482163948114_dp * nh * nl + 0.6526907490815437_dp * nl**2, &
+    3560.8519915203624_dp + 6.958064783286616_dp * nh  + 0.02484_dp * nh**3 - &
+    0.23497888797223965_dp * nh**2 - 744.8538175070678_dp * nl - &
+    0.9031405141668719_dp * nh * nl + 0.03617_dp * nh**2 * nl +  &
+    43.37904803138152_dp * nl**2 + 0.017202086604103457_dp * nh * nl**2 - &
+    0.6781410256045151_dp * nl**3 ]
 
   end function MSbarDelta
 
@@ -726,18 +736,40 @@ module AnomDimClass
 
   pure function MSbarDeltaPiece(nl, nh) result(coef)
     integer,        intent(in)  :: nh, nl
-    real (dp), dimension(0:3,3) :: coef
+    real (dp), dimension(0:4,4) :: coef
     integer                     :: nf, nf2
 
     coef = 0; nf = nl + nh; coef(0,:) = MSbarDelta(nl, nh); coef(1,1) = 2; nf2 = nf**2
 
-    coef(1:2,2) = [ ( 2076 - 104 * nf )/144._dp, 7.5 - nf/3._dp ]
+    coef(1:2,2) = [ ( 2076 - 104 * nf )/144._dp, 7.5_dp - nf/3._dp ]
 
     coef(1,3) = 195.00458387187263_dp - 12.596570845269987_dp * nh - &
     0.12305711613007586 * nh**2 - 27.480713714296932_dp * nl + &
     0.5171751456386657_dp * nh * nl + 0.6402322617687417 * nl**2
 
-    coef(2:,3) = [ 2696.625_dp - 288.75 * nf + 6.5 * nf2, 877.5_dp - 84 * nf + 2 * nf2 ]/27
+    coef(1,4) = 3662.906746512068_dp - 208.2564271686133_dp * nh       - &
+    0.14579554074757795_dp * nh**2 - 0.0524940054873832_dp * nh**3     - &
+    745.2462864310047_dp * nl + 28.702549327502872_dp * nh * nl        - &
+    0.05156459823389781_dp * nh**2 * nl + 41.69710763485379_dp * nl**2 - &
+    0.6401748971193416_dp * nh * nl**2 - 0.641104304372827_dp * nl**3
+
+    coef(2:3,3) = [ 2696.625_dp - 288.75 * nf + 6.5 * nf2, 877.5_dp - 84 * nf + 2 * nf2 ]/27
+
+    coef(2,4) = 1869.0719147037107_dp - 238.12527357476452_dp * nh + &
+    5.963826542876237_dp * nh**2 + 0.06152855806503793_dp  *nh**3  - &
+    375.8035951132638_dp * nl + 26.430151265830006_dp * nh * nl    - &
+    0.19705901475429488_dp * nh**2 * nl + 20.466324722953768_dp * nl**2 - &
+    0.5787037037037037_dp * nh * nl**2 - 0.32011613088437085_dp * nl**3
+
+    coef(3,4) = 635.6875_dp - 105.39814814814815_dp * nh &
+    + 5.283950617283951_dp * nh**2 - 0.08024691358024691_dp * nh**3 - &
+    105.39814814814815_dp * nl + 10.567901234567902_dp * nh * nl + &
+    5.283950617283951_dp * nl**2 - 13_dp * nh * nl**2/54 - &
+    0.08024691358024691_dp * nl**3 - 13_dp * nh**2 * nl/54
+
+    coef(4,4) = 150.3125_dp - 1621._dp * nh/72 + 121._dp * nh**2/108 - &
+    nh**3/54._dp - 1621_dp * nl/72 + 121_dp * nh * nl/54 - nh**2 * nl/18._dp + &
+    121_dp * nl**2/108 - nh * nl**2/18._dp - nl**3/54._dp
 
   end function MSbarDeltaPiece
 

@@ -20,8 +20,8 @@ module SigmaClass
 
    contains
 
-    procedure, pass(self), public :: Rhad, RhadMass, SetAlpha, SetMTop, SetMBottom, &
-                                     SetMCharm
+    procedure, pass(self), public :: RhadMass, SetAlpha, SetMTop, SetMBottom, &
+    Rhad, SetMCharm
 
   end type Sigma
 
@@ -30,7 +30,7 @@ module SigmaClass
   interface Sigma
     module procedure InitSigma
   end interface Sigma
-  
+
   contains
 
 !ccccccccccccccc
@@ -48,7 +48,7 @@ module SigmaClass
     InitSigma%RhadCoef = 0;  InitSigma%RhadCoef(0,1) = 1
     InitSigma%RhadCoef(0,2) = 1.985707398577798_dp   - 0.11529539789360388_dp * nf
     InitSigma%RhadCoef(0,3) = - 6.636935585488629_dp - 1.2001340534564595_dp * nf &
-                              - 0.0051783553199245685_dp * nf**2
+    - 0.0051783553199245685_dp * nf**2
 
     call InitSigma%andim%expandAlpha(InitSigma%RhadCoef)
 
@@ -57,9 +57,9 @@ module SigmaClass
 !ccccccccccccccc
 
   subroutine SetAlpha(self, alpha)
-    class (Sigma)  , intent(inout) :: self
-    real (dp)      , intent(in   ) :: alpha
-    
+    class (Sigma), intent(inout) :: self
+    real (dp)    , intent(in   ) :: alpha
+
     call self%run%setAlpha(alpha)
 
   end subroutine SetAlpha
@@ -67,9 +67,9 @@ module SigmaClass
 !ccccccccccccccc
 
   subroutine SetMtop(self, mT, muT)
-    class (Sigma)  , intent(inout) :: self
-    real (dp)      , intent(in   ) :: mT, muT
-    
+    class (Sigma), intent(inout) :: self
+    real (dp)    , intent(in   ) :: mT, muT
+
     call self%run%SetMtop(mT, muT)
 
   end subroutine SetMtop
@@ -77,9 +77,9 @@ module SigmaClass
 !ccccccccccccccc
 
   subroutine SetMBottom(self, mB, muB)
-    class (Sigma)  , intent(inout) :: self
-    real (dp)      , intent(in   ) :: mB, muB
-    
+    class (Sigma), intent(inout) :: self
+    real (dp)    , intent(in   ) :: mB, muB
+
     call self%run%SetMBottom(mB, muB)
 
   end subroutine SetMBottom
@@ -87,9 +87,9 @@ module SigmaClass
 !ccccccccccccccc
 
   subroutine SetMCharm(self, mC, muC)
-    class (Sigma)  , intent(inout) :: self
-    real (dp)      , intent(in   ) :: mC, muC
-    
+    class (Sigma), intent(inout) :: self
+    real (dp)    , intent(in   ) :: mC, muC
+
     call self%run%SetMCharm(mC, muC)
 
   end subroutine SetMCharm
@@ -97,9 +97,9 @@ module SigmaClass
 !ccccccccccccccc
 
   pure real (dp) function Rhad(self, order, mu, Q)
-    class (Sigma)  , intent(in) :: self
-    Integer        , intent(in) :: order
-    real (dp)      , intent(in) :: mu, Q
+    class (Sigma), intent(in) :: self
+    Integer      , intent(in) :: order
+    real (dp)    , intent(in) :: mu, Q
 
     real (dp), dimension(0:order)     :: alphaList, rQ
     real (dp), dimension(0:order - 1) :: logList
@@ -122,12 +122,11 @@ module SigmaClass
   real (dp) function RhadMass(self, current, order, mu, Q)
     class (Sigma)      , intent(in) :: self
     Integer            , intent(in) :: order
-    real (dp)    , intent(in) :: mu, Q
+    real (dp)          , intent(in) :: mu, Q
     character (len = *), intent(in) :: current
-
-    real (dp)                 :: v, mb, m, alphaRH
-    real (dp), dimension(3)   :: delta
-    real (dp), dimension(2)   :: EWfactors
+    real (dp)                       :: v, mb, m, alphaRH
+    real (dp), dimension(4)         :: delta
+    real (dp), dimension(2)         :: EWfactors
 
     if ( self%scheme(:4) == 'pole'  ) mb = self%m
     if ( self%scheme(:5) == 'MSbar' ) mb = self%run%MSbarMass(mu)
@@ -155,11 +154,11 @@ module SigmaClass
     end if
 
   end function RhadMass
-  
+
 !ccccccccccccccc
 
   pure recursive function Rtree(current, v) result(tree)
-    real (dp)    , intent(in) :: v
+    real (dp)          , intent(in) :: v
     character (len = *), intent(in) :: current
 
     real (dp) :: tree
@@ -179,13 +178,13 @@ module SigmaClass
 !ccccccccccccccc
 
   recursive function R1loop(current, v) result(tree)
-    real (dp)    , intent(in) :: v
+    real (dp)          , intent(in) :: v
     character (len = *), intent(in) :: current
 
     real (dp) :: tree, x, lx
 
     tree = 0
-    
+
     if ( current(:3) == 'all' ) then
       tree = EWfact(1) * R1loop('vector', v) + EWfact(2) * R1loop('axial', v)
     else
@@ -213,7 +212,7 @@ module SigmaClass
 !ccccccccccccccc
 
   pure real (dp) function PV(current, v)
-    real (dp)    , intent(in) :: v
+    real (dp)          , intent(in) :: v
     character (len = *), intent(in) :: current
 
     PV = 0
@@ -229,9 +228,9 @@ module SigmaClass
 !ccccccccccccccc
 
   pure real (dp) function QV(current, v)
-    real (dp)    , intent(in) :: v
+    real (dp)          , intent(in) :: v
     character (len = *), intent(in) :: current
-    
+
     QV = 0
 
     if (current(:6) == 'vector') then
@@ -245,10 +244,9 @@ module SigmaClass
 !ccccccccccccccc
 
   real (dp)  function KV(current, v)
-    real (dp)    , intent(in) :: v
+    real (dp)          , intent(in) :: v
     character (len = *), intent(in) :: current
-
-    real (dp) :: b, c, d
+    real (dp)                       :: b, c, d
 
     c = 1 + v;  b = (1 - v)/c
     if (current(:6) == 'vector') d = 1/(1 - v**2/3)
@@ -268,30 +266,29 @@ module SigmaClass
     c = 1 + v;  b = (1 - v)/c
 
     Amass = ( DiLog(b**2) + 2 * DiLog(b) - log(b) * log(c**3/8/v**2) ) * &
-            (1 + v**2) + 3 * v * log( (1 - v**2)/4/v ) - v * log(v)
+    (1 + v**2) + 3 * v * log( (1 - v**2)/4/v ) - v * log(v)
 
   end function Amass
 
 !ccccccccccccccc
 
   pure recursive function A0MS(current, m) result(A0)
-    real (dp)    , intent(in) :: m
+    real (dp)          , intent(in) :: m
     character (len = *), intent(in) :: current
-
-    real (dp) :: v, A0
+    real (dp)                       :: v, A0
 
     A0 = 0
-    
+
     if ( current(:3) == 'all' ) then
       A0 = EWfact(1) * A0MS('vector', m) + EWfact(2) * A0MS('axial', m)
     else
 
       if (m > 1e-3_dp) then
-      
+
         v = sqrt(1 - 4 * m**2)
         if (current(:6) == 'vector') A0 = - 24 * m**4 / v
         if (current(:5) == 'axial' ) A0 = - 12 * m**2 * v
-      
+
       else
         if (current(:6) == 'vector') A0 = -  24 * m**3 -    4 * m**5  - 144 * m**7 &
                                           - 480 * m**9 - 1680 * m**11
@@ -312,4 +309,3 @@ module SigmaClass
 !ccccccccccccccc
 
 end module SigmaClass
-
