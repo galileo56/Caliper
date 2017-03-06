@@ -7,6 +7,10 @@ module AlphaClass
     module procedure :: alphaGenericReal, alphaGenericComplex
   end interface alphaGeneric
 
+  interface PiBeta
+    module procedure :: PiBetaReal, PiBetaComplex
+  end interface PiBeta
+
 !ccccccccccccccc
 
   type, public :: Alpha
@@ -247,29 +251,29 @@ module AlphaClass
 
 !ccccccccccccccc
 
-  pure real (dp) function PiBeta(beta, alpha)
+  pure real (dp) function PiBetaReal(beta, alpha)
     real (dp), dimension(:), intent(in) :: beta
     real (dp)              , intent(in) :: alpha
     real (dp)                           :: a
 
-    PiBeta = 0; if ( size(beta) < 1 ) return;  a = alpha/4/Pi
+    PiBetaReal = 0; if ( size(beta) < 1 ) return;  a = alpha/4/Pi
 
-    PiBeta = - 2 * alpha * dot_product(  beta, powList( a, size(beta) )  )
+    PiBetaReal = - 2 * alpha * dot_product(  beta, powList( a, size(beta) )  )
 
-  end function PiBeta
+  end function PiBetaReal
 
 !ccccccccccccccc
 
-  pure complex (dp) function IPiBeta(beta, alpha)
+  pure complex (dp) function PiBetaComplex(beta, alpha)
     real (dp), dimension(:), intent(in) :: beta
     complex (dp)           , intent(in) :: alpha
     complex (dp)                        :: a
 
-    IPiBeta = 0; if ( size(beta) < 1 ) return;  a = alpha/4/Pi
+    PiBetaComplex = 0; if ( size(beta) < 1 ) return;  a = alpha/4/Pi
 
-    IPiBeta = - 2 * dcmplx(0,1) * alpha * dot_product(  beta, powList( a, size(beta) )  )
+    PiBetaComplex = - 2 * dcmplx(0,1) * alpha * dot_product(  beta, powList( a, size(beta) )  )
 
-  end function IPiBeta
+  end function PiBetaComplex
 
 !ccccccccccccccc
 
@@ -372,10 +376,10 @@ module AlphaClass
 
       do i = 1, n
 
-       k1 = h * IPiBeta( beta(:order-1), alphaGenericComplex        )
-       k2 = h * IPiBeta( beta(:order-1), alphaGenericComplex + k1/2 )
-       k3 = h * IPiBeta( beta(:order-1), alphaGenericComplex + k2/2 )
-       k4 = h * IPiBeta( beta(:order-1), alphaGenericComplex + k3   )
+       k1 = h * PiBeta( beta(:order-1), alphaGenericComplex        )
+       k2 = h * PiBeta( beta(:order-1), alphaGenericComplex + k1/2 )
+       k3 = h * PiBeta( beta(:order-1), alphaGenericComplex + k2/2 )
+       k4 = h * PiBeta( beta(:order-1), alphaGenericComplex + k3   )
 
        alphaGenericComplex = alphaGenericComplex + (k1 + k4)/6 + (k2 + k3)/3
 
