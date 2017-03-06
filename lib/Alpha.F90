@@ -293,9 +293,9 @@ module AlphaClass
 
   else if ( method(:7) == 'numeric' ) then
 
-    h = 0.04_dp; n =  Abs(  Nint( Log(Mz/mu)/h )  ); h = - Log(Mz/mu)/n
+    h = 0.04_dp; n = max(   1, Abs(  Nint( Log(Mz/mu)/h )  )   )
 
-    alphaGenericReal = amZ
+    h = - Log(Mz/mu)/n;  alphaGenericReal = amZ
 
     do i = 1, n
 
