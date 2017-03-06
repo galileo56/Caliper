@@ -24,7 +24,7 @@ module RunningClass
     SetMTop, SetMBottom, SetMCharm, SetLambda, mmFromMSRNatural
 
     procedure, pass(self), private :: MSRMatching, alphaQCDReal, alphaQCDComplex, &
-                     wTildeReal, wTildeComplex, kTildeReal, kTildeComplex, RunningMass
+    wTildeReal, wTildeComplex, kTildeReal, kTildeComplex, RunningMass
 
     generic, public :: alphaQCD => alphaQCDReal, alphaQCDComplex
     generic, public :: wTilde   => wTildeReal  , wTildeComplex
@@ -37,7 +37,7 @@ module RunningClass
   interface Running
     module procedure  InitRun
   end interface Running
-  
+
   contains
 
 !ccccccccccccccc
@@ -87,7 +87,7 @@ module RunningClass
   subroutine SetAlpha(self, alpha)
     class (Running), intent(inout) :: self
     real (dp)      , intent(in   ) :: alpha
-    
+
     call self%AlphaOb%SetAlpha(alpha)
 
   end subroutine SetAlpha
@@ -97,7 +97,7 @@ module RunningClass
   subroutine SetMTop(self, mT, muT)
     class (Running), intent(inout) :: self
     real (dp)      , intent(in   ) :: mT, muT
-    
+
     call self%AlphaOb%SetMTop(mT, muT)
     if (self%nf == 6) self%mL = mT; if (self%nf == 5) self%mH = mT
 
@@ -108,7 +108,7 @@ module RunningClass
   subroutine SetMBottom(self, mB, muB)
     class (Running), intent(inout) :: self
     real (dp)      , intent(in   ) :: mB, muB
-    
+
     call self%AlphaOb%SetMBottom(mB, muB)
     if (self%nf == 5) self%mL = mB; if (self%nf == 4) self%mH = mB
 
@@ -119,7 +119,7 @@ module RunningClass
   subroutine SetMCharm(self, mC, muC)
     class (Running), intent(inout) :: self
     real (dp)      , intent(in   ) :: mC, muC
-    
+
     call self%AlphaOb%SetMCharm(mC, muC)
     if (self%nf == 4) self%mL = mC; if (self%nf == 3) self%mH = mC
 
@@ -207,7 +207,7 @@ module RunningClass
    real (dp) function MSbarMass(self, mu)
      real (dp)      , intent(in) :: mu
      class (Running), intent(in) :: self
-     
+
      if ( self%str == 'MSbar') then
        MSbarMass = self%RunningMass(self%mL, mu)
      else
@@ -222,7 +222,7 @@ module RunningClass
      real (dp)      , intent(in)   :: mu
      integer        , intent(in)   :: order
      class (Running), intent(in)   :: self
-    
+
      real (dp)    , dimension(0:3) :: delta
 
      delta(0) = 1; delta(1:) = self%MSbarDeltaMu(mu)
@@ -290,7 +290,7 @@ module RunningClass
 
   real (dp) function mmFromMSR(self, mass, R)
     class (Running), intent(inout) :: self
-    real (dp)      , intent(in   ) :: R, mass  
+    real (dp)      , intent(in   ) :: R, mass
     integer                        :: IFLAG
     real (dp)                      :: a, b, c, rat, massOr
 
@@ -319,7 +319,7 @@ module RunningClass
 
 
    end function MSR
-  
+
   end function mmFromMSR
 
 !ccccccccccccccc
@@ -330,7 +330,7 @@ module RunningClass
     integer        , intent(in   ) :: order
     integer                        :: IFLAG
     real (dp)                      :: a, b, c, rat, massOr
-    
+
      a = mass/2; b = 2 * mass; massOr = self%mH
 
     if (self%nf == 5) rat = self%alphaOb%scales('muT')/self%mH
@@ -355,15 +355,15 @@ module RunningClass
      MSR = self%MSRNaturalMass(order, R) - mass
 
    end function MSR
-  
+
   end function mmFromMSRNatural
 
 !ccccccccccccccc
 
    real (dp) function MSRNaturalMass(self, order, R)
      class (Running), intent(in) :: self
-     real (dp)      , intent(in) :: R    
-     integer        , intent(in) :: order    
+     real (dp)      , intent(in) :: R
+     integer        , intent(in) :: order
      real (dp)    , dimension(3) :: a
      real (dp)                   :: alphaM, matching
      integer                     :: i
@@ -390,7 +390,7 @@ module RunningClass
     tab = self%andim%alphaMatching(self%nf + 1)
 
     b = tab(:2,0); call alphaReExpand(a,b);  a = c - a
-  
+
   end function MSRMatching
 
 !ccccccccccccccc
@@ -398,7 +398,7 @@ module RunningClass
    real (dp) function lambdaQCD(self, run)
     integer        , intent(in) :: run
     class (Running), intent(in) :: self
-    
+
     real (dp)                   :: t
 
     t = - 2 * pi/self%beta(0)/self%alphaQCD(self%muLambda)
@@ -414,7 +414,7 @@ module RunningClass
     integer                , intent(in) :: order
     real (dp)              , intent(in) :: r0, r1
     real (dp), dimension(3), intent(in) ::sCoef
-    
+
     DiffR = 0; if ( abs(r0 - r1) <= d1mach(1) ) return
 
     DiffR = self%andim%DeltaR( sCoef, order, self%alphaQCD(r0), self%alphaQCD(r1) )
@@ -431,7 +431,7 @@ module RunningClass
     real (dp)                   :: a0, a1
 
     DiffRMass = 0; if ( abs(r0 - r1) <= d1mach(1) .or. order < 2) return
-    
+
     a0 = self%alphaQCD(r0); a1 = self%alphaQCD(r1)
 
     DiffRMass = self%andim%DeltaRMass( order, self%lambdaQCD(order), m, a0, a1 )
@@ -449,7 +449,7 @@ module RunningClass
     real (dp)                           :: a, b, delta, a0, a1, abserr, tny
     real (dp), dimension(3)             :: gammaBet(3)
     integer                             :: neval, ier
-    
+
     gammaBet = gamma * PowList(1/( 2 * self%beta(0) ), 3); tny = tiny(1._dp)
 
     a = 6/self%beta(0) * log( self%alphaQCD(mu1)/self%alphaQCD(r1) )
@@ -464,7 +464,7 @@ module RunningClass
     0.8862269254527579_dp * ( dgamma(1 + a)/dgamma(1.5 + a) *               &
     self%DiffDeltaMu(order, R1, R1, mu1) + dgamma(1 + b)/dgamma(1.5 + b) * &
     self%DiffDeltaMu(order, R0, mu0, R0) )
-    
+
     contains
 
       real (dp) function inteHadron(r)
@@ -481,7 +481,7 @@ module RunningClass
     integer        , intent(in) :: order
     real (dp)      , intent(in) :: R, mu0, mu1
     class (Running), intent(in) :: self
-    
+
     DiffDeltaMu = 0; if ( abs(mu0 - mu1) <= d1mach(1) ) return
 
     DiffDeltaMu = self%andim%DeltaMu( order, R, self%alphaQCD(mu0), self%alphaQCD(mu1) )
@@ -516,7 +516,7 @@ module RunningClass
   pure real (dp) function scales(self, str)
     class (Running)    , intent(in) :: self
     character (len = *), intent(in) :: str
-    
+
     scales = 0
 
     if ( str(:2) == 'mZ'       ) scales = self%AlphaOb%scales('mZ')
