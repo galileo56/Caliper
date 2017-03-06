@@ -281,7 +281,7 @@ module AlphaClass
    real (dp)                             :: L, arg, LG, h, k1, k2, k3, k4
    integer                               :: n, i
 
-    if ( max( amZ, mZ, mu) <= d1mach(1) ) then
+    if ( max( amZ, mZ, mu ) <= d1mach(1) ) then
       alphaGenericReal = 0; return
     end if
 
@@ -337,7 +337,7 @@ module AlphaClass
     real (dp)                             :: h, theta, mod
     integer                               :: n, i
 
-    if ( max( amZ, mZ) <= d1mach(1) ) then
+    if ( max( amZ, mZ ) <= d1mach(1) ) then
       alphaGenericComplex = 0; return
     end if
 
