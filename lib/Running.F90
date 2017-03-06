@@ -18,10 +18,11 @@ module RunningClass
 
     contains
 
-    procedure, pass(self), public :: MSbarMass, MSRMass, lambdaQCD, DiffDeltaMu, scales, &
-    DiffDelta, orders, adim, DiffDeltaHadron, scheme, MSbarDeltaMu, MSbarMassLow, DiffR, &
-    AlphaAll, DeltaGapMatching, DiffRMass, MSRNaturalMass, mmFromMSR, PoleMass, SetAlpha,&
-    SetMTop, SetMBottom, SetMCharm, SetLambda, mmFromMSRNatural
+    procedure, pass(self), public :: MSbarMass, MSRMass, lambdaQCD, DiffDeltaMu,  &
+    DiffDelta, orders, adim, DiffDeltaHadron, scheme, MSbarDeltaMu, MSbarMassLow, &
+    AlphaAll, DeltaGapMatching, DiffRMass, MSRNaturalMass, mmFromMSR, PoleMass,   &
+    SetMTop, SetMBottom, SetMCharm, SetLambda, mmFromMSRNatural, SetAlpha, scales,&
+    DiffR
 
     procedure, pass(self), private :: MSRMatching, alphaQCDReal, alphaQCDComplex, &
     wTildeReal, wTildeComplex, kTildeReal, kTildeComplex, RunningMass

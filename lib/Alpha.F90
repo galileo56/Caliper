@@ -271,7 +271,8 @@ module AlphaClass
 
     PiBetaComplex = 0; if ( size(beta) < 1 ) return;  a = alpha/4/Pi
 
-    PiBetaComplex = - 2 * dcmplx(0,1) * alpha * dot_product(  beta, powList( a, size(beta) )  )
+    PiBetaComplex = - 2 * dcmplx(0,1) * alpha * &
+    dot_product(  beta, powList( a, size(beta) )  )
 
   end function PiBetaComplex
 
