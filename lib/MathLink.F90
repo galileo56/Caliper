@@ -2649,6 +2649,27 @@ end subroutine f90alphaQCD
 
 !ccccccccccccccc
 
+subroutine f90alphaComplex(str, method, order, run, nf, mZ, amZ, mT, muT, mB, muB, &
+mC, muC, muR, muI, res)
+  use AlphaClass;  use constants, only: dp; implicit none
+  character (len = *)    , intent(in ) :: str, method
+  integer                , intent(in ) :: order, run, nf
+  real (dp)              , intent(in ) :: mZ, amZ, muR, muI, mT, muT, mB, muB, mC, muC
+  real (dp), dimension(2), intent(out) :: res
+  type (Alpha)                         :: alphaOb
+  complex (dp)                         :: alp
+
+  alphaOb = alpha( str(:5), order, run, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, mB, &
+  muB, mC, muC, method(:8) )
+
+  alp = alphaOb%alphaQCD( nf, dcmplx(muR, muI) )
+
+  res = [ real(alp), aimag(alp) ]
+
+end subroutine f90alphaComplex
+
+!ccccccccccccccc
+
 subroutine f90MSbarMass(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, muB, mC, &
   muC, mu, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp; implicit none

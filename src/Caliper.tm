@@ -54,6 +54,7 @@
 :Evaluate:  wTilde::usage = "wTilde[order, nf, gamma, a0, a1] computes wTilde for a given anomalous dimension gamma"
 :Evaluate:  kTilde::usage = "kTilde[order, nf, gamma, a0, a1] computes kTilde for a given anomalous dimension gamma"
 :Evaluate:  AlphaQCD::usage = "AlphaQCD[scheme, method, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of alpha with flavor matching."
+:Evaluate:  AlphaComplex::usage = "AlphaComplex[scheme, method, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of alpha with flavor matching."
 :Evaluate:  MSbarMass::usage = "MSbarMass[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  PoleMass::usage = "PoleMass[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  MSbarMassLow::usage = "MSbarMassLow[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching below the mass."
@@ -1368,6 +1369,17 @@
 :ArgumentTypes: {String, String, Integer, Integer, Integer, Real, Real, Real, Real, Real, Real,
                  Real, Real, Real}
 :ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      alphacomplex
+:Pattern:       AlphaComplex[str_, method_, order_, run_, nf_, Mz_, aMz_, mT_,
+                muT_, mB_, muB_, mC_, muC_, mu_]
+:Arguments:     {str, method, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC,
+                muC, Re[mu], Im[mu]}
+:ArgumentTypes: {String, String, Integer, Integer, Integer, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Manual
 :End:
 
 :Begin:
@@ -3564,6 +3576,26 @@ aMz, double mT, double muT, double mB, double muB, double mC, double muC, double
    &mu, &res);
 
   return res;
+}
+
+extern double f90alphacomplex_(char const* str, char const* method, int* order,
+int* run, int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB,
+double* muB, double* mC, double* muC, double* muR, double* muI, double* res);
+
+static void alphacomplex(char const* str, char const* method, int order, int run,
+int nf, double Mz, double aMz, double mT, double muT, double mB, double muB,
+double mC, double muC, double muR, double muI){
+
+   double res[2];
+
+   f90alphacomplex_(str, method, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB,
+   &muB, &mC, &muC, &muR, &muI, res);
+
+  //  MLPutRealList(stdlink, res, 2);
+   MLPutFunction(stdlink,"Complex",2);
+   MLPutReal(stdlink, res[0]);
+   MLPutReal(stdlink, res[1]);
+   MLEndPacket(stdlink);
 }
 
 extern double f90lambdaqcd_(char const* str, int* order, int* runAlpha, int* run, int* nf,
