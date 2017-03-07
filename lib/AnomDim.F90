@@ -318,12 +318,29 @@ module AnomDimClass
 !ccccccccccccccc
 
    pure subroutine expandAlpha(self, coef)
-    class (AnomDim)            , intent(in   ) :: self
-    real (dp), dimension(0:4,3), intent(inout) :: coef
+    class (AnomDim)          , intent(in   ) :: self
+    real (dp), dimension(:,:), intent(inout) :: coef
 
-    coef(1:,:) = 0;  coef(1,2) = coef(0,1) * self%beta(0)/2
-    coef(1,3) = coef(0,2) * self%beta(0) + coef(0,1) * self%beta(1)/8
-    coef(2,3) = coef(0,1) * self%beta(0)**2/4
+    coef(2:,:) = 0
+
+    if ( size(coef,2) > 1 ) coef(2,2) = coef(1,1) * self%beta(0)/2
+
+    if ( size(coef,2) > 2 ) then
+      coef(2,3) = coef(1,2) * self%beta(0) + coef(1,1) * self%beta(1)/8
+      coef(3,3) = coef(1,1) * self%beta(0)**2/4
+    end if
+
+    if ( size(coef,2) > 3 ) then
+
+      coef(2,4) = self%beta(2) * coef(1,1)/32 + self%beta(1) * coef(1,2)/4 &
+      + 3 * self%beta(0) * coef(1,3)/2
+
+      coef(3,4) = 5 * self%beta(0) * self%beta(1) * coef(1,1)/32 &
+      + 3 * self%beta(0)**2 * coef(1,2)/4
+
+      coef(4,4) = coef(1,1) * self%beta(0)**3/8
+
+    end if
 
    end subroutine expandAlpha
 

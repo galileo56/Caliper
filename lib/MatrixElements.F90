@@ -5,7 +5,7 @@ module MatrixElementsClass
   implicit none;  private
 
   public :: expandExp, expandExpOrder, cuspConst, expandProd, expandExpVec, gapCons, &
-            posToMomMatrix, addAlpha, NGLSoft, NGLDoubleIntegral, factList
+  posToMomMatrix, addAlpha, NGLSoft, NGLDoubleIntegral, factList
 
   interface expandExpOrder
     module procedure :: expandExpComplexOrder, expandExpRealOrder
@@ -473,9 +473,9 @@ module MatrixElementsClass
     type (AnomDim)                  :: andim, andimNl, andimH, andimS
     real (dp)                       :: alphaJ, alphaS, mm, alphaR, EuR
     real (dp), dimension(0:3,0:3)   :: tab
+    real (dp), dimension(0:4,4)     :: coefMSR, coefMSRNatural
     real (dp), dimension(0:4,3)     :: coefCusp, coefSoft, coefJet, coefHard, &
-    coefMSR, coefHm, coefCuspnl, coefMass, coefCuspS, coefSoftNl, coefMSRNatural, &
-    coefMassLow, coefBjet
+    coefHm, coefCuspnl, coefMass, coefCuspS, coefSoftNl, coefMassLow, coefBjet
 
 ! Initialize everything to zero
 
@@ -543,7 +543,7 @@ module MatrixElementsClass
       call  andim%wTildeExpand( andim%betaQCD('jet'), coefJet  )
       InMatElMass%jetExp(0,:) = GenMat('jet', nf, j3)
       call andim%expandAlpha(InMatElMass%jetExp)
-      InMatElMass%jetExp = InMatElMass%jetExp + 2 * coefCusp  + coefJet/2
+      InMatElMass%jetExp = InMatElMass%jetExp + 2 * coefCusp + coefJet/2
 
  ! rescale jet logs because of their mass dimension
 
