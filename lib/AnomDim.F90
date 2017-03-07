@@ -388,8 +388,8 @@ module AnomDimClass
     if ( str( :8) == 'sCoefMSR'        ) bet(1:) = self%sCoefMSR
     if ( str(:15) == 'sCoefMSRNatural' ) bet(1:) = self%sCoefMSRNatural
     if ( str( :8) == 'betaList'        ) bet(1:) = self%betaList
-    ! if ( str( :9) == 'gammaRMSR'       ) bet(1:3) = self%betaList
-    ! if ( str(:13) == 'gammaRNatural'   ) bet(1:3) = self%betaList
+    if ( str( :6) == 'gammaR'          ) bet(1:) = self%gammaR
+    if ( str(:13) == 'gammaRNatural'   ) bet(1:) = self%gammaRNatural
 
   end function betaQCD
 
