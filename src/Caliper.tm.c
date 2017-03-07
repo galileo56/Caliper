@@ -2054,25 +2054,23 @@ double* mC, double* muC, double* mu, double* R, double* result);
 static void deltagap(char const* str, int orderAlpha, int runAlpha, int runMass, int nf,
 double mZ, double aMz, double mT, double muT, double mB, double muB, double mC,
 double muC, double mu, double R){
-  double result[3];
+  double result[4];
 
    f90deltagap_(str, &orderAlpha, &runAlpha, &runMass, &nf, &mZ, &aMz, &mT, &muT, &mB,
    &muB, &mC, &muC, &mu, &R, result);
 
-   MLPutRealList(stdlink, result, 3);
-
+   MLPutRealList(stdlink, result, 4);
    MLEndPacket(stdlink);
 }
 
 extern double f90delta_(char const* str, int* nf, double* mu, double* R, double* result);
 
 static void delta(char const* str, int nf, double mu, double R){
-  double result[3];
+  double result[4];
 
    f90delta_(str, &nf, &mu, &R, result);
 
-   MLPutRealList(stdlink, result, 3);
-
+   MLPutRealList(stdlink, result, 4);
    MLEndPacket(stdlink);
 }
 
@@ -2257,7 +2255,7 @@ static double taylorpiece(int c[], long clen, double lambda, int k){
 }
 
 extern double f90wtilde_(int* order, int* nf, double* gamma, double* a0, double* a1,
-                         double* res);
+double* res);
 
 static double wtilde(int order, int nf, double gamma[], long ngamma, double a0, double a1){
   double res;
@@ -2268,7 +2266,7 @@ static double wtilde(int order, int nf, double gamma[], long ngamma, double a0, 
 }
 
 extern double f90ktilde_(int* order, int* nf, double* gamma, double* a0, double* a1,
-                         double* res);
+double* res);
 
 static double ktilde(int order, int nf, double gamma[], long ngamma, double a0,
 double a1){
@@ -2476,13 +2474,12 @@ double* mu, double* res);
 static void deltamsbar(int order, int runAlpha, int run, int nf, double Mz, double aMz,
 double mT, double muT, double mB, double muB, double mC, double muC, double mu){
 
-   double res[3];
+   double res[4];
 
    f90deltamsbar_(&order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC,
    &muC, &mu, res);
 
-   MLPutRealList(stdlink, res, 3);
-
+   MLPutRealList(stdlink, res, 4);
    MLEndPacket(stdlink);
 }
 
@@ -2552,7 +2549,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 2556 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
+# line 2553 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
 
 
 void ewfactors P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5));

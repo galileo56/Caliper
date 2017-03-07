@@ -3411,7 +3411,7 @@ subroutine f90delta(str, nf, mu, R, res)
   character (len = *)    , intent(in ) :: str
   integer                , intent(in ) :: nf
   real (dp)              , intent(in ) :: mu, R
-  real (dp), dimension(3), intent(out) :: res
+  real (dp), dimension(4), intent(out) :: res
   type (Alpha)                         :: alphaAll
   type (MatrixElementsMass)            :: MatEl
 
@@ -3433,15 +3433,20 @@ mB, muB, mC, muC, mu, R, res)
   character (len = *)    , intent(in ) :: str
   integer                , intent(in ) :: nf, orderAlpha, runAlpha, runMass
   real (dp)              , intent(in ) :: mu, R, mZ, amZ, mT, muT, mB, muB, mC, muC
-  real (dp), dimension(3), intent(out) :: res
+  real (dp), dimension(4), intent(out) :: res
   type (Alpha)                         :: alphaAll
   type (MatrixElementsMass)            :: MatEl
+  real (dp)                            :: muM
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
-  mB, muB, mC, muC)
+  muM = tiny(1._dp)
 
-  MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, &
-  mu, tiny(1._dp), mu, R, R, 0._dp, 0._dp)
+  if ( str(:3) == 'MSR' .or. str(:8) == 'MSbarLow' .or. str(:7) == 'JetMass' ) muM = 2 * mu
+
+  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
+
+  MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, &
+  0._dp, mu, mu, mu, muM, mu, R, R, 0._dp, 0._dp)
 
   res       = MatEl%delta( str(:12) )
 
@@ -3449,20 +3454,21 @@ end subroutine f90deltaGap
 
 !ccccccccccccccc
 
-subroutine f90deltaMSbar(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, muB, mC, &
-                         muC, mu, res)
+subroutine f90deltaMSbar(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, &
+muB, mC, muC, mu, res)
   use RunningClass; use AlphaClass;  use MatrixElementsClass
   use constants, only: dp; implicit none
   integer                , intent(in ) :: orderAlpha, runAlpha, run, nf
   real (dp)              , intent(in ) :: mZ, amZ, mu, mT, muT, muB, mB, mC, muC
-  real (dp), dimension(3), intent(out) :: res
+  real (dp), dimension(4), intent(out) :: res
   type (Alpha)                         :: alphaAll
   type (MatrixElementsMass)            :: MatEl
 
   alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  mB, muB, mC, muC)
+
   MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, mu, &
-                             tiny(1._dp), mu, mu, mu, muC, muC)
+  tiny(1._dp), mu, mu, mu, muC, muC)
 
   res       = MatEl%delta('MSbar')
 

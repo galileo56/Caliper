@@ -3337,25 +3337,23 @@ double* mC, double* muC, double* mu, double* R, double* result);
 static void deltagap(char const* str, int orderAlpha, int runAlpha, int runMass, int nf,
 double mZ, double aMz, double mT, double muT, double mB, double muB, double mC,
 double muC, double mu, double R){
-  double result[3];
+  double result[4];
 
    f90deltagap_(str, &orderAlpha, &runAlpha, &runMass, &nf, &mZ, &aMz, &mT, &muT, &mB,
    &muB, &mC, &muC, &mu, &R, result);
 
-   MLPutRealList(stdlink, result, 3);
-
+   MLPutRealList(stdlink, result, 4);
    MLEndPacket(stdlink);
 }
 
 extern double f90delta_(char const* str, int* nf, double* mu, double* R, double* result);
 
 static void delta(char const* str, int nf, double mu, double R){
-  double result[3];
+  double result[4];
 
    f90delta_(str, &nf, &mu, &R, result);
 
-   MLPutRealList(stdlink, result, 3);
-
+   MLPutRealList(stdlink, result, 4);
    MLEndPacket(stdlink);
 }
 
@@ -3759,13 +3757,12 @@ double* mu, double* res);
 static void deltamsbar(int order, int runAlpha, int run, int nf, double Mz, double aMz,
 double mT, double muT, double mB, double muB, double mC, double muC, double mu){
 
-   double res[3];
+   double res[4];
 
    f90deltamsbar_(&order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC,
    &muC, &mu, res);
 
-   MLPutRealList(stdlink, res, 3);
-
+   MLPutRealList(stdlink, res, 4);
    MLEndPacket(stdlink);
 }
 
