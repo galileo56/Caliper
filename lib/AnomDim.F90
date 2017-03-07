@@ -99,10 +99,10 @@ module AnomDimClass
 
     end if
 
-    InAdim%bHat = [ beta(1)/beta(0)**2, ( beta(1)**2 - beta(0) * beta(2) )/beta(0)**4/2,&
-    ( beta(1)**3 - 2 * beta(0) * beta(1) * beta(2) + beta(0)**2 * beta(3) )/beta(0)**6/4,&
-    (  beta(1)**4 - 3 * beta(0) * beta(1)**2 * beta(2) + 2 * beta(0)**2 * beta(1) * beta(3) &
-    + beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  )/8/beta(0)**8  ]/2
+    InAdim%bHat = [ beta(1), beta(1)**2 - beta(0) * beta(2), &
+    beta(1)**3 - 2 * beta(0) * beta(1) * beta(2) + beta(0)**2 * beta(3), &
+    beta(1)**4 - 3 * beta(0) * beta(1)**2 * beta(2) + 2 * beta(0)**2 * beta(1) * beta(3) &
+    + beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  ]/PowList(2 * beta(0)**2,4)
 
     betaList = PowList( 1/beta(0)/2, 4 ); InAdim%betaList = betaList
 
