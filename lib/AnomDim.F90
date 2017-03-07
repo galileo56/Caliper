@@ -580,7 +580,7 @@ module AnomDimClass
     real (dp), dimension(0:3,0:3) :: tab
 
     coef = MSbarDelta(self%nf, 1)
-    tab = self%alphaMatchingInverse(self%nf)
+    tab = self%alphaMatchingInverse(self%nf + 1)
     b = tab(:,0); call alphaReExpand(coef, b)
 
   end function MSRDelta
@@ -591,10 +591,10 @@ module AnomDimClass
     class (AnomDim)        , intent(in) :: self
     real (dp), dimension(:), intent(in) :: gamma
     real (dp), dimension( size(gamma) ) :: gammaMSR
-    integer, dimension( size(gamma) )   :: List4
+    integer  , dimension( size(gamma) ) :: List4
     integer                             :: i, j
 
-    List4 = powList(4, size(gamma) ) ; gammaMSR = List4 * gamma
+    List4 = powList( 4, size(gamma) ) ; gammaMSR = List4 * gamma
 
     do i = 1, size(gamma)
       do j = 1, i - 1
@@ -612,7 +612,7 @@ module AnomDimClass
 
     if ( size(a) > 1 ) a(2) = a(2) + a(1) * b(2)
     if ( size(a) > 2 ) a(3) = a(3) + 2 * a(2) * b(2) + a(1) * b(3)
-    if ( size(a) > 3 ) a(4) = a(4) + a(4) + 3 * a(3) * b(2) + &
+    if ( size(a) > 3 ) a(4) = a(4) + 3 * a(3) * b(2) + &
     a(2) * b(2)**2 + 2 * a(2) * b(3) + a(1) * b(4)
 
   end
@@ -675,7 +675,7 @@ module AnomDimClass
     lx = log(x); lx = 160 * lx/9 - 448._dp/27 - 32 * lx**2/3
 
     deltaMass = (  32 * L**2/3 + 160 * L/9 + 224._dp/27 + lx + ( exp(-x**(-bet) * al) * &
-                (  8 * Pi2/9 - lx + gam/x) )/(1 + ep/x**2 + del/x)  )/12
+    (  8 * Pi2/9 - lx + gam/x) )/(1 + ep/x**2 + del/x)  )/12
 
   end function DeltaMass
 
@@ -716,7 +716,7 @@ module AnomDimClass
 !ccccccccccccccc
 
   pure function PowListInt(alpha, n) result(list)
-    integer    , intent(in) :: alpha, n
+    integer  , intent(in) :: alpha, n
     integer               :: i, a
     integer, dimension(n) :: list
 
@@ -736,7 +736,7 @@ module AnomDimClass
 
     coef = [ 4._dp/3, 13.33982910125516_dp + 0.10356715567659536_dp * nh          - &
     1.041366911171631_dp * nl, 188.67172035165487_dp + 1.8591544419385237_dp * nh + &
-    0.06408045019609998_dp * nh**2 - 26.677375174269212_dp * nl                  + &
+    0.06408045019609998_dp * nh**2 - 26.677375174269212_dp * nl                   + &
     0.022243482163948114_dp * nh * nl + 0.6526907490815437_dp * nl**2, &
     3560.8519915203624_dp + 6.958064783286616_dp * nh  + 0.02484_dp * nh**3 - &
     0.23497888797223965_dp * nh**2 - 744.8538175070678_dp * nl - &
