@@ -284,6 +284,8 @@ module RunningClass
      MSRmass = self%mH + self%lambdaQCD(self%runMass) * &
      self%DiffR( self%sCoef, self%runMass, self%mH, R )
 
+    !  MSRmass = self%sCoef(4)
+
    end function MSRmass
 
 !ccccccccccccccc

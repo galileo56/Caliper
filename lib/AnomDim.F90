@@ -385,6 +385,7 @@ module AnomDimClass
     if ( str( :2) == 'Hm'              ) bet(:3) = self%gammaHm(:,0)
     if ( str( :4) == 'bHat'            ) bet(1:) = self%bHat
     if ( str( :8) == 'MSRdelta'        ) bet(1:) = self%MSRDelta()
+    if ( str(:15) == 'MSRNaturaldelta' ) bet(1:) = MSbarDelta(self%nf, 0)
     if ( str( :8) == 'sCoefMSR'        ) bet(1:) = self%sCoefMSR
     if ( str(:15) == 'sCoefMSRNatural' ) bet(1:) = self%sCoefMSRNatural
     if ( str( :8) == 'betaList'        ) bet(1:) = self%betaList
@@ -597,9 +598,7 @@ module AnomDimClass
 
     do i = 1, size(gamma)
       do j = 1, i - 1
-
         gammaMSR(i) = gammaMSR(i) - 2 * List4(j) * j * gamma(j) * self%beta(i - 1 - j)
-
       enddo
     end do
 
