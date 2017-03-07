@@ -157,7 +157,7 @@ module AnomDimClass
     class(AnomDim)           , intent(in) :: self
     integer                  , intent(in) :: order
     real (dp)                , intent(in) :: a0, a1
-    real (dp), dimension(0:3), intent(in) :: gamma
+    real (dp), dimension(0:order), intent(in) :: gamma
 
     wTildeReal = 0
 
@@ -176,6 +176,15 @@ module AnomDimClass
     ( self%beta(1)/self%beta(0) )**2 * gamma(1) + self%beta(2) * gamma(1)/self%beta(0) + &
     self%beta(1) * gamma(2)/self%beta(0) - gamma(3)  )
 
+    if (order > 3) wTildeReal = wTildeReal + (a1**4 - a0**4)/1024/Pi2**2/self%beta(0) * &
+    ( self%beta(1) * gamma(3)/self%beta(0) - gamma(4) - ( self%beta(0)**2 * self%beta(1)**2 &
+    - self%beta(0)**3 *  self%beta(2) ) * gamma(2)/self%beta(0)**4 - &
+    ( 2 * self%beta(0)**2 * self%beta(1) * self%beta(2) - self%beta(0) * self%beta(1)**3 - &
+    self%beta(0)**3 * self%beta(3) ) * gamma(1)/self%beta(0)**4 - &
+    ( self%beta(1)**4 - 3 * self%beta(0) * self%beta(1)**2 * self%beta(2) + &
+    self%beta(0)**2 * self%beta(2)**2 + 2 * self%beta(0)**2 * self%beta(1) * &
+    self%beta(3) - self%beta(0)**3 * self%beta(4) ) * gamma(0)/self%beta(0)**4 )
+
    end function wTildeReal
 
 !ccccccccccccccc
@@ -185,7 +194,7 @@ module AnomDimClass
     integer                  , intent(in) :: order
     real (dp)                , intent(in) :: a1
     complex (dp)             , intent(in) :: a0
-    real (dp), dimension(0:3), intent(in) :: gamma
+    real (dp), dimension(0:order), intent(in) :: gamma
     complex (dp)                          :: wTilde
 
     wTilde = 0
@@ -241,7 +250,7 @@ module AnomDimClass
     class(AnomDim)           , intent(in) :: self
     integer                  , intent(in) :: order
     real (dp)                , intent(in) :: a0, a1
-    real (dp), dimension(0:3), intent(in) :: gamma
+    real (dp), dimension(0:order), intent(in) :: gamma
     real (dp)                             :: lg
 
     lg = log(a1/a0); kTildeReal = 0
@@ -256,7 +265,7 @@ module AnomDimClass
    + 2 * a0 * lg) + self%beta(0) * self%beta(1) * gamma(1) * (4 * a1 - 3 * a0 - a1**2/a0  &
    - 2 * a1 * lg) + self%beta(0)**2 * gamma(2) * (a0 - 2 * a1 + a1**2/a0) )/16/Pi/self%beta(0)**4
 
-   if (order > 2) kTildeReal = kTildeReal + ( self%beta(1)**3 * gamma(0) * (12 * a0 * a1 -        &
+   if (order > 2) kTildeReal = kTildeReal + ( self%beta(1)**3 * gamma(0) * (12 * a0 * a1 -&
    8 * a0**2 - 4 * a1**3/a0 + 6 * a0**2 * lg - 6 * a1**2 * lg) + self%beta(0) *           &
    self%beta(1) * self%beta(2) * gamma(0) * (7 * a0**2 - 12 * a0 * a1 - 3 * a1**2 +       &
    8 * a1**3/a0 - 12 * a0**2 * lg + 6 * a1**2 * lg) + self%beta(0)**2 * self%beta(3) *    &
@@ -276,7 +285,7 @@ module AnomDimClass
     integer                  , intent(in) :: order
     real (dp)                , intent(in) :: a1
     complex (dp)             , intent(in) :: a0
-    real (dp), dimension(0:3), intent(in) :: gamma
+    real (dp), dimension(0:order), intent(in) :: gamma
     complex (dp)                          :: lg, kTilde
 
     lg = log(a1/a0); kTilde = 0
