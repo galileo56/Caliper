@@ -3415,10 +3415,11 @@ subroutine f90delta(str, nf, mu, R, res)
   type (Alpha)                         :: alphaAll
   type (MatrixElementsMass)            :: MatEl
 
-  alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, &
-                     0._dp, 0._dp, 0._dp)
-  MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, mu, &
-              tiny(1._dp), mu, R, R, 0._dp, 0._dp)
+  alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, 0._dp, &
+  0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+
+  MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, &
+  mu, mu, mu, tiny(1._dp), mu, R, R, 0._dp, 0._dp)
 
   res       = MatEl%delta( str(:12) )
 
@@ -3426,8 +3427,8 @@ end subroutine f90delta
 
 !ccccccccccccccc
 
-subroutine f90deltaGap(str, orderAlpha, runAlpha, runMass, nf, mZ, amZ, mT, muT, mB, muB, &
-                       mC, muC, mu, R, res)
+subroutine f90deltaGap(str, orderAlpha, runAlpha, runMass, nf, mZ, amZ, mT, muT, &
+mB, muB, mC, muC, mu, R, res)
   use AlphaClass;  use MatrixElementsClass;  use constants, only: dp; implicit none
   character (len = *)    , intent(in ) :: str
   integer                , intent(in ) :: nf, orderAlpha, runAlpha, runMass
@@ -3437,10 +3438,10 @@ subroutine f90deltaGap(str, orderAlpha, runAlpha, runMass, nf, mZ, amZ, mT, muT,
   type (MatrixElementsMass)            :: MatEl
 
   alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  mB, muB, mC, muC)
 
   MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, &
-              mu, tiny(1._dp), mu, R, R, 0._dp, 0._dp)
+  mu, tiny(1._dp), mu, R, R, 0._dp, 0._dp)
 
   res       = MatEl%delta( str(:12) )
 

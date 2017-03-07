@@ -3540,7 +3540,7 @@ static double taylorpiece(int c[], long clen, double lambda, int k){
 }
 
 extern double f90wtilde_(int* order, int* nf, double* gamma, double* a0, double* a1,
-                         double* res);
+double* res);
 
 static double wtilde(int order, int nf, double gamma[], long ngamma, double a0, double a1){
   double res;
@@ -3551,7 +3551,7 @@ static double wtilde(int order, int nf, double gamma[], long ngamma, double a0, 
 }
 
 extern double f90ktilde_(int* order, int* nf, double* gamma, double* a0, double* a1,
-                         double* res);
+double* res);
 
 static double ktilde(int order, int nf, double gamma[], long ngamma, double a0,
 double a1){

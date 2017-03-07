@@ -78,7 +78,7 @@ module MatrixElementsClass
     type (AnomDim)                              :: andimS
     type (Running)                              :: alphaMassS
     real (dp)                                   :: MSMass, MSLow, alphaB
-    real (dp), dimension(3)                     :: DeltamJet, DeltaMSR, deltaMSLow, &
+    real (dp), dimension(3)                     :: DeltaMJet, DeltaMSR, deltaMSLow, &
     deltaMSRNatural, deltaMS
 
     contains
@@ -456,7 +456,7 @@ module MatrixElementsClass
 !ccccccccccccccc
 
   type (MatrixElementsMass) function InMatElMass(AlphaAll, nf, runMass, s3T, &
-      s3C, j3, b3, Q, muH, muJ, muM, muS, R, Rmass, muLambda, muLambdaNl)
+  s3C, j3, b3, Q, muH, muJ, muM, muS, R, Rmass, muLambda, muLambdaNl)
     type (Alpha)       , intent(in) :: AlphaAll
     integer            , intent(in) :: nf, runMass
     real (dp)          , intent(in) :: s3T, s3C, b3, j3, muLambda, muLambdaNl
@@ -1119,7 +1119,7 @@ module MatrixElementsClass
     end if
 
     select type (self)
-     class is (MatrixElementsMass)
+    class is (MatrixElementsMass)
        if ( str(:7 ) == 'JetMass'    ) bet = self%deltamJet
        if ( str(:5 ) == 'MSbar'      ) bet = self%deltaMS
        if ( str(:3 ) == 'MSR'        ) bet = self%deltaMSR
