@@ -1,6 +1,6 @@
 /*
  * This file automatically produced by /Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mprep from:
- *	/Users/vmateu/GitHub/Caliper/src/Caliper.tm
+ *	/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm
  * mprep Revision 18 Copyright (c) Wolfram Research, Inc. 1990-2013
  */
 
@@ -289,7 +289,7 @@ MLYDEFN( devyield_result, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
-# line 1576 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
+# line 1576 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm"
 #include "mathlink.h"
 #include "ftypes.h"
 #include <stdio.h>
@@ -1851,12 +1851,11 @@ return res;
 extern double f90anomdim_(char const* str, int* nf, double* G4, double* result);
 
 static void anomdim(char const* str, int nf, double G4){
-  double result[4];
+  double result[5];
 
    f90anomdim_(str, &nf, &G4, result);
 
-   MLPutRealList(stdlink, result, 4);
-
+   MLPutRealList(stdlink, result, 5);
    MLEndPacket(stdlink);
 }
 
@@ -2553,7 +2552,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 2557 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
+# line 2556 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm.c"
 
 
 void ewfactors P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5));

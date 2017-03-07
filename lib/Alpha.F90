@@ -284,7 +284,7 @@ module AlphaClass
    real (dp)                , intent(in) :: mZ, amZ, mu
    real (dp), dimension(0:4), intent(in) :: beta
    real (dp)                             :: L, arg, LG, h, k1, k2, k3, k4
-   integer                               :: n, i
+   integer                               :: n, i, ord
 
     if ( max( amZ, mZ, mu ) <= d1mach(1) ) then
       alphaGenericReal = 0; return
@@ -313,7 +313,7 @@ module AlphaClass
     3 * arg * (  beta(1)**4 - 4 * beta(0) * beta(1)**2 * beta(2) + 3 * beta(0)**2 * beta(1) * beta(3) + &
     2 * beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  )   ) + beta(1) * LG * (6 * arg * ( beta(1)**3 &
     - beta(0) * beta(1) * beta(2)) + 6 * beta(0)**2 * beta(3) - 6 * beta(0) * beta(1) * beta(2) * LG +&
-    beta(1)**3 * LG * (2 * LG - 3))) * Pi**3
+    beta(1)**3 * LG * (2 * LG - 3)))/(6144 * (1 + arg)**3 * beta(0)**4 * Pi2**2)
 
     alphaGenericReal = amZ/alphaGenericReal
 
@@ -321,14 +321,14 @@ module AlphaClass
 
     L = Log(Mz/mu);  h = 0.04_dp; n = max(  1, Abs(  Nint(L/h)  )  )
 
-    h = - L/n;  alphaGenericReal = amZ
+    h = - L/n;  alphaGenericReal = amZ; ord = min(order,5)
 
     do i = 1, n
 
-     k1 = h * PiBeta( beta(:order-1), alphaGenericReal        )
-     k2 = h * PiBeta( beta(:order-1), alphaGenericReal + k1/2 )
-     k3 = h * PiBeta( beta(:order-1), alphaGenericReal + k2/2 )
-     k4 = h * PiBeta( beta(:order-1), alphaGenericReal + k3   )
+     k1 = h * PiBeta( beta(:ord-1), alphaGenericReal        )
+     k2 = h * PiBeta( beta(:ord-1), alphaGenericReal + k1/2 )
+     k3 = h * PiBeta( beta(:ord-1), alphaGenericReal + k2/2 )
+     k4 = h * PiBeta( beta(:ord-1), alphaGenericReal + k3   )
 
      alphaGenericReal = alphaGenericReal + (k1 + k4)/6 + (k2 + k3)/3
 
@@ -348,7 +348,7 @@ module AlphaClass
     real (dp), dimension(0:4), intent(in) :: beta
     complex (dp)                          :: L, arg, LG, k1, k2, k3, k4
     real (dp)                             :: h, theta, mod
-    integer                               :: n, i
+    integer                               :: n, i, ord
 
     if ( max( amZ, mZ ) <= d1mach(1) ) then
       alphaGenericComplex = 0; return
@@ -377,13 +377,13 @@ module AlphaClass
     3 * arg * (  beta(1)**4 - 4 * beta(0) * beta(1)**2 * beta(2) + 3 * beta(0)**2 * beta(1) * beta(3) + &
     2 * beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  )   ) + beta(1) * LG * (6 * arg * ( beta(1)**3 &
     - beta(0) * beta(1) * beta(2)) + 6 * beta(0)**2 * beta(3) - 6 * beta(0) * beta(1) * beta(2) * LG +&
-    beta(1)**3 * LG * (2 * LG - 3))) * Pi**3
+    beta(1)**3 * LG * (2 * LG - 3)))/(6144 * (1 + arg)**3 * beta(0)**4 * Pi2**2)
 
     alphaGenericComplex = amZ/alphaGenericComplex
 
     else if ( method(:7) == 'numeric' ) then
 
-      mod = abs(mu); theta = IMAGPART( log(mu) - log(mod) )
+      mod = abs(mu); theta = IMAGPART( log(mu) - log(mod) ); ord = min(order,5)
 
       alphaGenericComplex = alphaGenericReal(method, order, beta, mZ, amZ, mod)
 
@@ -393,10 +393,10 @@ module AlphaClass
 
       do i = 1, n
 
-       k1 = h * PiBeta( beta(:order-1), alphaGenericComplex        )
-       k2 = h * PiBeta( beta(:order-1), alphaGenericComplex + k1/2 )
-       k3 = h * PiBeta( beta(:order-1), alphaGenericComplex + k2/2 )
-       k4 = h * PiBeta( beta(:order-1), alphaGenericComplex + k3   )
+       k1 = h * PiBeta( beta(:ord-1), alphaGenericComplex        )
+       k2 = h * PiBeta( beta(:ord-1), alphaGenericComplex + k1/2 )
+       k3 = h * PiBeta( beta(:ord-1), alphaGenericComplex + k2/2 )
+       k4 = h * PiBeta( beta(:ord-1), alphaGenericComplex + k3   )
 
        alphaGenericComplex = alphaGenericComplex + (k1 + k4)/6 + (k2 + k3)/3
 

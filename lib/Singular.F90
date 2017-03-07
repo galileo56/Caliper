@@ -16,7 +16,8 @@ module SingularClass
     integer                       :: run, run1, nf
     Type (AnomDim)                :: andim
     character (len = 6)           :: shape, EShape
-    real (dp), dimension(0:3)     :: beta, cusp, noncusp, HardExp, HardMassExp, ExpHard
+    real (dp), dimension(0:3)     :: HardMassExp, ExpHard, HardExp
+    real (dp), dimension(0:4)     :: cusp, noncusp, beta
     real (dp), dimension(3)       :: alphaList
     real (dp), dimension(0:4,3)   :: MatExp, MatHard
     real (dp), dimension(6)       :: NGL2loop, NGLog2loop
@@ -43,7 +44,7 @@ module SingularClass
   type, extends (SingularMassless), public :: SingularScales
     private
     real (dp), dimension(0:4,3)  , private :: MatJet, MatSoft
-    real (dp), dimension(0:3)    , private :: Soft, Jet
+    real (dp), dimension(0:4)    , private :: Soft, Jet
 
   contains
 
@@ -81,7 +82,7 @@ module SingularClass
     real (dp), dimension(6)    , private :: NGLog2loopNl
     real (dp)                  , private :: Hmat, QoMpole
     type (Running)             , private :: alphaNl
-    real (dp), dimension(0:3)  , private :: cuspNl, Soft, SoftNl, Jet, bJet, Hm
+    real (dp), dimension(0:4)  , private :: Hm, bJet, Jet, cuspNl, Soft, SoftNl
     real (dp), dimension(0:4,3), private :: MatMassHard, MatJet, MatSoft, &
     MatSoftNl, MatBJet
 
@@ -195,7 +196,7 @@ module SingularClass
     character (len = *)          , intent(in) :: shape
     character (len = *), optional, intent(in) :: hard
     real (dp)                                 :: Q, muS, muJ, muH, k, wJet, QoMuH
-    real (dp), dimension(0:3)                 :: cusp, NonCusp, soft, jet
+    real (dp), dimension(0:4)                 :: cusp, NonCusp, soft, jet
     complex (dp)                              :: muHC
     integer                                   :: i, j, run1
     type (AnomDim)                            :: andim
@@ -277,7 +278,7 @@ module SingularClass
     integer                      , intent(in) :: run
     character (len = *), optional, intent(in) :: hard
     character (len = 6)                       :: shape, EShape
-    real (dp), dimension(0:3)                 :: cusp, cuspNl, jet, bJet, NonCusp, Hmass, &
+    real (dp), dimension(0:4)                 :: cusp, cuspNl, jet, bJet, NonCusp, Hmass, &
     Soft, SoftNl
     type (MatrixElementsMass)                 :: MatEl
     type (AnomDim)                            :: andim, andimNl
