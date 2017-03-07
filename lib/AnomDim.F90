@@ -439,12 +439,12 @@ module AnomDimClass
 !ccccccccccccccc
 
   real (dp) function DeltaR(self, sCoef, order, a0, a1)
-    integer                , intent(in) :: order
-    real (dp)              , intent(in) :: a0, a1
-    class (AnomDim)        , intent(in) :: self
-    real (dp), dimension(3), intent(in) :: sCoef
-    integer                             :: i
-    real (dp)                           :: t0, t1, Gcorre
+    integer                    , intent(in) :: order
+    real (dp)                  , intent(in) :: a0, a1
+    class (AnomDim)            , intent(in) :: self
+    real (dp), dimension(order), intent(in) :: sCoef
+    integer                                 :: i
+    real (dp)                               :: t0, t1, Gcorre
 
     t0 = - 2 * pi/self%beta(0);  t1 = t0/a1;  t0 = t0/a0;  DeltaR = 0
 
