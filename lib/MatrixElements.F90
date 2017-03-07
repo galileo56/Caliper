@@ -566,8 +566,8 @@ module MatrixElementsClass
           coefMSR = 0       ; coefMSR(0,:)        = Rmass * andimNl%MSRDelta()
           coefMSRNatural = 0; coefMSRNatural(0,:) = Rmass * MSbarDelta(nl, 0)
           call andimNl%expandAlpha(coefMSR); call andimNl%expandAlpha(coefMSRNatural)
-          lgRMassList = powList( log(muJ/Rmass), 3 )
-          call AddAlpha(coefMSR, alphaJList)
+          lgRMassList = powList( log(muJ/Rmass), 4 )
+          call AddAlpha(coefMSR       , alphaJList)
           call AddAlpha(coefMSRNatural, alphaJList)
         end if
 
@@ -969,14 +969,14 @@ module MatrixElementsClass
     b(1,3)   = a(0,1)**2 * a(1,1)/2 + a(0,2) * a(1,1) + a(0,1) * a(1,2) + a(1,3)
     b(2,1:2) = [ a(2,1), a(1,1)**2/2 + a(0,1) * a(2,1) + a(2,2) ]
     b(2,3)   = a(0,1) * a(1,1)**2/2 + a(1,1) * a(1,2) + a(0,1)**2 * a(2,1)/2 +  &
-               a(0,2) * a(2,1) + a(0,1) * a(2,2) + a(2,3)
+    a(0,2) * a(2,1) + a(0,1) * a(2,2) + a(2,3)
 
     b(3,2)   = a(1,1) * a(2,1) + a(3,2)
     b(3,3)   = a(1,1)**3/6 + a(0,1) * a(1,1) * a(2,1) + a(1,2) * a(2,1) + &
-               a(1,1) * a(2,2) + a(0,1) * a(3,2) + a(3,3)
+    a(1,1) * a(2,2) + a(0,1) * a(3,2) + a(3,3)
 
     b(4,3)   = a(1,1)**2 * a(2,1)/2 + a(0,1) * a(2,1)**2/2 + a(2,1) * a(2,2) + &
-               a(1,1) * a(3,2) + a(4,3)
+    a(1,1) * a(3,2) + a(4,3)
 
     b(5,3)   = a(1,1) * a(2,1)**2/2 + a(2,1) * a(3,2);  b(6,3) = a(2,1)**3/6
 
@@ -1217,7 +1217,7 @@ module MatrixElementsClass
     real (dp)                 , intent(in) :: R, mu
 
     JetMass = self%mm * sum(  self%jetMatching( :min(order,3) )  ) + &
-              self%DiffDeltaGapNl('bJet', run, self%mm, R, self%mm, mu)
+    self%DiffDeltaGapNl('bJet', run, self%mm, R, self%mm, mu)
 
   end function JetMass
 
@@ -1239,7 +1239,7 @@ module MatrixElementsClass
       del = self%delta(gap);  delta(1,:) = del(:order)
 
       shift = self%DiffDeltaGap(gap, run, R0, self%R, mu0, self%muS) &
-            + gapCons(gap) * delta0 + (1 - h) * Sum( delta(1,:) )
+      + gapCons(gap) * delta0 + (1 - h) * Sum( delta(1,:) )
 
       delta = h * delta
 
@@ -1269,14 +1269,17 @@ module MatrixElementsClass
 
     else
 
-    select type (self)
-     class is (MatricesElements)
-      DiffDeltaGap = self%alphaMass%DiffDelta( self%sCoef(str), cuspConst(str), order, &
-                                                r0, r1, mu0, mu1 )
-     class is (MatrixElementsMass)
-      DiffDeltaGap = self%alphaMassS%DiffDelta( self%sCoef(str), cuspConst(str), order, &
-                                                r0, r1, mu0, mu1 )
-    end select
+      select type (self)
+      class is (MatricesElements)
+        DiffDeltaGap = self%alphaMass%DiffDelta( self%sCoef(str), &
+        cuspConst(str), order, r0, r1, mu0, mu1 )
+
+       class is (MatrixElementsMass)
+
+        DiffDeltaGap = self%alphaMassS%DiffDelta( self%sCoef(str), &
+        cuspConst(str), order, r0, r1, mu0, mu1 )
+
+      end select
 
     end if
 
@@ -1290,8 +1293,9 @@ module MatrixElementsClass
     integer                     , intent(in) :: order
     real (dp)                   , intent(in) :: r0, r1, mu0, mu1
 
-    DiffDeltaGapNl = self%alphaMassNl%DiffDelta( self%sCoefNl(str), cuspConst(str), &
-                                                 order, r0, r1, mu0, mu1 )
+    DiffDeltaGapNl = self%alphaMassNl%DiffDelta( self%sCoefNl(str), &
+    cuspConst(str), order, r0, r1, mu0, mu1 )
+
   end function DiffDeltaGapNl
 
 !ccccccccccccccc
@@ -1304,11 +1308,15 @@ module MatrixElementsClass
 
     select type (self)
      class is (MatricesElements)
-    DiffDeltaGapHadron = self%alphaMass%DiffDeltaHadron(  self%gammaR( str(:6) ),  &
-                                                           order,r0, r1, mu0, mu1  )
-     class is (MatrixElementsMass)
-    DiffDeltaGapHadron = self%alphaMassS%DiffDeltaHadron(  self%gammaR( str(:6) ),  &
-                                                           order,r0, r1, mu0, mu1  )
+
+      DiffDeltaGapHadron = self%alphaMass%DiffDeltaHadron(   &
+      self%gammaR( str(:6) ), order,r0, r1, mu0, mu1  )
+
+    class is (MatrixElementsMass)
+
+      DiffDeltaGapHadron = self%alphaMassS%DiffDeltaHadron(   &
+      self%gammaR( str(:6) ), order,r0, r1, mu0, mu1  )
+
     end select
 
   end function DiffDeltaGapHadron
@@ -1507,7 +1515,7 @@ module MatrixElementsClass
     real (dp)             :: abserr
 
     call qags( NGLDoubleintegrand, 0._dp, Pi, prec, prec, NGLDoubleIntegral, &
-               abserr, neval, ier )
+    abserr, neval, ier )
 
     NGLDoubleIntegral = NGLDoubleIntegral/Pi
 
@@ -1655,7 +1663,7 @@ module MatrixElementsClass
   pure function posToMomMatrix() result(PosToMom)
     real (dp), dimension(0:6,0:6) :: PosToMom
 
-    PosToMom = 0;   PosToMom(0,2) =  - 1.6449340668482262_dp;    PosToMom(0,0) =    1
+    PosToMom = 0;   PosToMom(0,2) = - 1.6449340668482262_dp;   PosToMom(0,0) = 1
     PosToMom(0,3) =  - 2.4041138063191885_dp;    PosToMom(1,1) =  - 1
     PosToMom(0,4) =    1.623484850566707_dp ;    PosToMom(2,2) =    2
     PosToMom(0,5) =   14.659820882505041_dp ;    PosToMom(3,3) =  - 3
@@ -1684,7 +1692,7 @@ module MatrixElementsClass
       sum_logs: do k = i + 1, n - 1
 
        Mat(i + 1,:) = Mat(i + 1,:) + Mat(k + 1,:) * lgList(k - i) * self%ListFact(k)/&
-                      self%ListFact(i)/self%ListFact(k - i)
+       self%ListFact(i)/self%ListFact(k - i)
 
       enddo sum_logs
     enddo non_dist_logs
@@ -1848,7 +1856,7 @@ module MatrixElementsClass
          sum_pi: do j = 0, i/2
 
            cumul = cumul + self%ListFact(i)/self%ListFact(2 * j)/self%ListFact(i - 2 * j) *  &
-                   (-1)**(i - j) * lgList(i - 2 * j) * PiList(2 * j)
+           (-1)**(i - j) * lgList(i - 2 * j) * PiList(2 * j)
 
          end do sum_pi
 
@@ -1865,7 +1873,7 @@ module MatrixElementsClass
          alpha_do: do j = 1, i/2
 
            cumul = cumul + self%ListFact(i)/self%ListFact(2 * j)/self%ListFact(i - 2 * j) &
-                           * (-1)**j * alphaIm**j
+           * (-1)**j * alphaIm**j
 
          end do alpha_do
 
@@ -1874,7 +1882,7 @@ module MatrixElementsClass
            log_loop: do j = 1, 4
 
            HardExp(i) = HardExp(i) + ( self%HardExp(j,i) + coefHard(j,i)/2 - &
-                                       coefCusp(j,i) ) * lgList(j)
+           coefCusp(j,i) ) * lgList(j)
 
          end do log_loop
 
