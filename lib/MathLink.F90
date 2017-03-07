@@ -2562,7 +2562,7 @@ subroutine f90AnomDim(str, nf, G4, beta)
   character (len = *), intent(in )         :: str
   integer            , intent(in )         :: nf
   real (dp)    , intent(in )               :: G4
-  real (dp)    , intent(out), dimension(4) :: beta
+  real (dp)    , intent(out), dimension(5) :: beta
   type (AnomDim)                           :: run
 
   run = AnomDim('MSbar', nf, G4);  beta = run%betaQCD(str)

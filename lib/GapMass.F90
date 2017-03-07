@@ -5,13 +5,13 @@ module GapMassClass
 
 !ccccccccccccccc
 
-  type, public                   ::  GapMass
+  type, public              ::  GapMass
     private
-    real      (dp)               :: mm, DeltaRef, rRef, muRef, lambda, muS, muM
-    real      (dp), dimension(3) :: sCoef
-    character (len = 12)         :: gap
-    type      (Running)          :: run
-    integer                      :: order
+    real (dp)               :: mm, DeltaRef, rRef, muRef, lambda, muS, muM
+    real (dp), dimension(3) :: sCoef
+    character (len = 12)    :: gap
+    type (Running)          :: run
+    integer                 :: order
     class (MatricesElementsMass), allocatable :: MatEl
 
     contains
@@ -31,16 +31,15 @@ module GapMassClass
 !ccccccccccccccc
 
    type (GapMass) function InitGapMass(order, gap, MatEl, R0, mu0)
-     character (len = *)      , intent(in) :: gap
-     integer                  , intent(in) :: order
+     character (len = *)         , intent(in) :: gap
+     integer                     , intent(in) :: order
      class (MatricesElementsMass), intent(in) :: MatEl
-     real (dp)                , intent(in) :: R0, mu0
-
-     real (dp)                                       :: mm
-     real (dp), dimension(3  )                       :: sCoef
-     real (dp), dimension(0:3)                       :: beta
-     type (Running)                                  :: run
-     type (AnomDim)                                  :: andim
+     real (dp)                   , intent(in) :: R0, mu0
+     real (dp)                                :: mm
+     real (dp), dimension(3  )                :: sCoef
+     real (dp), dimension(0:4)                :: beta
+     type (Running)                           :: run
+     type (AnomDim)                           :: andim
 
      mm = MatEl%scales('mm')  ;  InitGapMass%mm   = mm  ;  InitGapMass%DeltaRef = 0
      InitGapMass%gap = gap    ;  InitGapMass%rRef = R0  ;  InitGapMass%muRef    = mu0

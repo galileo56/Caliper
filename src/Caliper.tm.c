@@ -1851,12 +1851,11 @@ return res;
 extern double f90anomdim_(char const* str, int* nf, double* G4, double* result);
 
 static void anomdim(char const* str, int nf, double G4){
-  double result[4];
+  double result[5];
 
    f90anomdim_(str, &nf, &G4, result);
 
-   MLPutRealList(stdlink, result, 4);
-
+   MLPutRealList(stdlink, result, 5);
    MLEndPacket(stdlink);
 }
 
@@ -2308,7 +2307,6 @@ double mC, double muC, double muR, double muI){
    f90alphacomplex_(str, method, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB,
    &muB, &mC, &muC, &muR, &muI, res);
 
-  //  MLPutRealList(stdlink, res, 2);
    MLPutFunction(stdlink,"Complex",2);
    MLPutReal(stdlink, res[0]);
    MLPutReal(stdlink, res[1]);
@@ -2554,7 +2552,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 2558 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm.c"
+# line 2556 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm.c"
 
 
 void ewfactors P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5));

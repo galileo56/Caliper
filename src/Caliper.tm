@@ -3134,12 +3134,11 @@ return res;
 extern double f90anomdim_(char const* str, int* nf, double* G4, double* result);
 
 static void anomdim(char const* str, int nf, double G4){
-  double result[4];
+  double result[5];
 
    f90anomdim_(str, &nf, &G4, result);
 
-   MLPutRealList(stdlink, result, 4);
-
+   MLPutRealList(stdlink, result, 5);
    MLEndPacket(stdlink);
 }
 
