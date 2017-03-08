@@ -315,12 +315,12 @@ module RunningClass
 
      res = scoef
 
-     res(2) = res(2) - lg * res(1)
-     res(3) = res(3) - 2 * lg * res(2) + res(1) * (  lg**2 - ( 2 * self%bHat(1) &
+     res(2) = res(2) - lg * scoef(1)
+     res(3) = res(3) - 2 * lg * scoef(2) + scoef(1) * (  lg**2 - ( 2 * self%bHat(1) &
      + self%bHat(2) ) * lg  )
 
-     res(4) = res(4) - 2 * lg * res(3) + res(2) * (  lg**2 - ( 3 * self%bHat(1) &
-     + self%bHat(2) ) * lg  ) + res(1) * (  (self%bHat(3) - 3 * self%bHat(1)**2 +&
+     res(4) = res(4) - 3 * lg * scoef(3) + scoef(2) * (  3 * lg**2 - ( 3 * self%bHat(1) &
+     + self%bHat(2) ) * lg  ) + scoef(1) * (  (self%bHat(3) - 3 * self%bHat(1)**2 +&
      3 * self%bHat(2) - self%bHat(1) * self%bHat(2)) * lg + ( 9 * self%bHat(1)/2 &
      + 2 * self%bHat(2) ) * lg**2 - lg**3  )
 
