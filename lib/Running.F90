@@ -316,6 +316,7 @@ module RunningClass
      res = scoef
 
      res(2) = res(2) - lg * scoef(1)
+
      res(3) = res(3) - 2 * lg * scoef(2) + scoef(1) * (  lg**2 - ( 2 * self%bHat(1) &
      + self%bHat(2) ) * lg  )
 
