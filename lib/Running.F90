@@ -402,21 +402,28 @@ module RunningClass
 
 !ccccccccccccccc
 
-   real (dp) function MSRNaturalMass(self, order, R)
-     class (Running), intent(in) :: self
-     real (dp)      , intent(in) :: R
-     integer        , intent(in) :: order
-     real (dp)    , dimension(3) :: a
-     real (dp)                   :: alphaM, matching
-     integer                     :: i
+   real (dp) function MSRNaturalMass(self, order, R, lambda)
+     class (Running)    , intent(in) :: self
+     real (dp)          , intent(in) :: R
+     real (dp), optional, intent(in) :: lambda
+     integer            , intent(in) :: order
+     real (dp)        , dimension(3) :: a
+     real (dp)                       :: alphaM, matching, corr
+     integer                         :: i
+
+     if ( .not. present(lambda) ) then
+       corr = self%DiffR( self%sCoefNatural, self%runMass, self%mH, R )
+     else
+       corr = self%DiffR( self%sCoefLambda('Natural', lambda), &
+       self%runMass, self%mH/lambda, R/lambda )
+     end if
 
      if (self%runMass > 0) alphaM = self%AlphaOb%alphaQCD(self%nf + 1, self%mH)/Pi
      a = self%MSRMatching(); i = min(order, 4)
 
      matching = 1 + dot_product( a(:i), PowList(alphaM, i) )
 
-     MSRNaturalMass = self%mH * matching + self%lambdaQCD(self%runMass) * &
-     self%DiffR( self%sCoefNatural, self%runMass, self%mH, R )
+     MSRNaturalMass = self%mH * matching + self%lambdaQCD(self%runMass) * corr
 
    end function MSRNaturalMass
 
