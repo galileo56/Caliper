@@ -1,6 +1,6 @@
 /*
  * This file automatically produced by /Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mprep from:
- *	/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm
+ *	/Users/vmateu/GitHub/Caliper/src/Caliper.tm
  * mprep Revision 18 Copyright (c) Wolfram Research, Inc. 1990-2013
  */
 
@@ -289,7 +289,7 @@ MLYDEFN( devyield_result, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
-# line 1576 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm"
+# line 1576 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
 #include "mathlink.h"
 #include "ftypes.h"
 #include <stdio.h>
@@ -2375,15 +2375,16 @@ double mT, double muT, double mB, double muB, double mC, double muC, double mu){
 
 extern double f90msrmass_(int* order, int* runAlpha, int* run, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
-double* mu, double* R, double* res);
+double* lambda, double* mu, double* R, double* res);
 
 static double msrmass(int order, int runAlpha, int run, int nf, double Mz, double aMz,
-double mT, double muT, double mB, double muB, double mC, double muC, double mu, double R){
+double mT, double muT, double mB, double muB, double mC, double muC, double lambda,
+double mu, double R){
 
-   double res;
+  double res;
 
-   f90msrmass_(&order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
-               &mu, &R, &res);
+  f90msrmass_(&order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
+  &lambda, &mu, &R, &res);
 
   return res;
 }
@@ -2549,7 +2550,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 2553 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm.c"
+# line 2554 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
 
 
 void ewfactors P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5));
@@ -9755,7 +9756,7 @@ L0:	return res;
 } /* _tr94 */
 
 
-double msrmass P(( int _tp1, int _tp2, int _tp3, int _tp4, double _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14));
+double msrmass P(( int _tp1, int _tp2, int _tp3, int _tp4, double _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15));
 
 #if MLPROTOTYPES
 static int _tr95( MLINK mlp)
@@ -9778,6 +9779,7 @@ static int _tr95(mlp) MLINK mlp;
 	double _tp12;
 	double _tp13;
 	double _tp14;
+	double _tp15;
 	double _rp0;
 	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
@@ -9793,13 +9795,14 @@ static int _tr95(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp12) ) goto L11;
 	if ( ! MLGetReal( mlp, &_tp13) ) goto L12;
 	if ( ! MLGetReal( mlp, &_tp14) ) goto L13;
-	if ( ! MLNewPacket(mlp) ) goto L14;
+	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
+	if ( ! MLNewPacket(mlp) ) goto L15;
 
-	_rp0 = msrmass(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14);
+	_rp0 = msrmass(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1: 
+L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1: 
 L0:	return res;
 } /* _tr95 */
 
@@ -10542,7 +10545,7 @@ static struct func {
 		{13, 0, _tr92, "msbarmass" },
 		{14, 0, _tr93, "polemass" },
 		{13, 0, _tr94, "msbarmasslow" },
-		{14, 0, _tr95, "msrmass" },
+		{15, 0, _tr95, "msrmass" },
 		{14, 0, _tr96, "mmfrommsr" },
 		{15, 0, _tr97, "mmfrommsrnatural" },
 		{15, 0, _tr98, "msrnaturalmass" },
@@ -10806,8 +10809,9 @@ static const char* evalstrs[] = {
 	"e quark masses with flavor matching below the mass.\"",
 	(const char*)0,
 	"MSRMass::usage = \"MSRMass[order, runAlpha, run, nf, Mz, aMz, mT,",
-	" muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical ",
-	"definition running of the quark masses with flavor matching.\"",
+	" muT, mB, muB, mC, muC, muLambda, lambda, R] computes the MSR pr",
+	"actical definition running of the quark masses with flavor match",
+	"ing.\"",
 	(const char*)0,
 	"mmfromMSR::usage = \"mmfromMSR[order, runAlpha, run, nf, Mz, aMz,",
 	" mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practi",
@@ -11264,7 +11268,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"MSbarMass[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,                 mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 92);
 	if (_res) _res = _definepattern(mlp, (char *)"PoleMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_, muT_,                 mB_, muB_, mC_, muC_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC,                  mu}", 93);
 	if (_res) _res = _definepattern(mlp, (char *)"MSbarMassLow[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_,                 muB_, mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 94);
-	if (_res) _res = _definepattern(mlp, (char *)"MSRMass[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,                 mC_, muC_, mu_, R_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, R}", 95);
+	if (_res) _res = _definepattern(mlp, (char *)"MSRMass[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,                 mC_, muC_, lambda_, mu_, R_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, mu, R}", 95);
 	if (_res) _res = _definepattern(mlp, (char *)"mmfromMSR[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,                 mC_, muC_, mu_, R_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, R}", 96);
 	if (_res) _res = _definepattern(mlp, (char *)"mmfromMSRNatural[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_,                 mT_, muT_, mB_, muB_, mC_, muC_, mu_, R_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC,                  mu, R}", 97);
 	if (_res) _res = _definepattern(mlp, (char *)"MSRNaturalMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_,                 mT_, muT_, mB_, muB_, mC_, muC_, mu_, R_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC,                  mu, R}", 98);
