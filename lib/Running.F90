@@ -12,7 +12,7 @@ module RunningClass
     type (AnomDim)              :: andim
     type (Alpha)                :: AlphaOb
     real (dp), dimension(0:4)   :: beta, gamma
-    real (dp), dimension(4)     :: sCoef, sCoefNatural
+    real (dp), dimension(4)     :: bHat, sCoef, sCoefNatural
     real (dp)                   :: muLambda, mH, mL
     real (dp), dimension(0:4,4) :: tab
 
@@ -25,7 +25,7 @@ module RunningClass
     DiffR
 
     procedure, pass(self), private :: MSRMatching, alphaQCDReal, alphaQCDComplex, &
-    wTildeReal, wTildeComplex, kTildeReal, kTildeComplex, RunningMass
+    wTildeReal, wTildeComplex, kTildeReal, kTildeComplex, RunningMass, sCoefLambda
 
     generic, public :: alphaQCD => alphaQCDReal, alphaQCDComplex
     generic, public :: wTilde   => wTildeReal  , wTildeComplex
@@ -70,6 +70,8 @@ module RunningClass
     InitRun%sCoef = sCoef(1:); sCoef = 0;
     sCoef = InitRun%andim%betaQCD('sCoefMSRNatural')
     InitRun%sCoefNatural = sCoef(1:)
+    sCoef = 0; sCoef = InitRun%andim%betaQCD('bHat')
+    InitRun%bHat = sCoef(1:)
 
    end function InitRun
 
@@ -277,16 +279,54 @@ module RunningClass
 
 !ccccccccccccccc
 
-   real (dp) function MSRmass(self, R)
-     class (Running), intent(in) :: self
-     real (dp)      , intent(in) :: R
+   real (dp) function MSRmass(self, R, lambda)
+     class (Running)    , intent(in) :: self
+     real (dp)          , intent(in) :: R
+     real (dp), optional, intent(in) :: lambda
+     real (dp)                       :: corr
 
-     MSRmass = self%mH + self%lambdaQCD(self%runMass) * &
-     self%DiffR( self%sCoef, self%runMass, self%mH, R )
+     if ( .not. present(lambda) ) then
+       corr = self%DiffR( self%sCoef, self%runMass, self%mH, R )
+     else
+       corr = self%DiffR( self%sCoefLambda('Practical', lambda), &
+       self%runMass, self%mH/lambda, R/lambda )
+     end if
 
-    !  MSRmass = self%sCoef(4)
+     MSRmass = self%mH + self%lambdaQCD(self%runMass) * corr
 
    end function MSRmass
+
+!ccccccccccccccc
+
+  function sCoefLambda(self, type, lambda) result(res)
+     class (Running)      , intent(in) :: self
+     real (dp)            , intent(in) :: lambda
+     character (len = *)  , intent(in) :: type
+     real (dp)          , dimension(4) :: res, scoef
+     real (dp)                         :: lg
+
+     scoef = 0; lg = log(lambda)
+
+     if ( type(:7) == 'Natural' ) then
+       scoef = self%sCoefNatural
+     else if ( type(:9) == 'Practical' ) then
+       scoef = self%sCoef
+     end if
+
+     res = scoef
+
+     res(2) = res(2) - lg * res(1)
+     res(3) = res(3) - 2 * lg * res(2) + res(1) * (  lg**2 - ( 2 * self%bHat(1) &
+     + self%bHat(2) ) * lg  )
+
+     res(4) = res(4) - 2 * lg * res(3) + res(2) * (  lg**2 - ( 3 * self%bHat(1) &
+     + self%bHat(2) ) * lg  ) + res(1) * (  (self%bHat(3) - 3 * self%bHat(1)**2 +&
+     3 * self%bHat(2) - self%bHat(1) * self%bHat(2)) * lg + ( 9 * self%bHat(1)/2 &
+     + 2 * self%bHat(2) ) * lg**2 - lg**3  )
+
+     res = lambda * res
+
+  end function sCoefLambda
 
 !ccccccccccccccc
 
@@ -362,21 +402,28 @@ module RunningClass
 
 !ccccccccccccccc
 
-   real (dp) function MSRNaturalMass(self, order, R)
-     class (Running), intent(in) :: self
-     real (dp)      , intent(in) :: R
-     integer        , intent(in) :: order
-     real (dp)    , dimension(3) :: a
-     real (dp)                   :: alphaM, matching
-     integer                     :: i
+   real (dp) function MSRNaturalMass(self, order, R, lambda)
+     class (Running)    , intent(in) :: self
+     real (dp)          , intent(in) :: R
+     real (dp), optional, intent(in) :: lambda
+     integer            , intent(in) :: order
+     real (dp)        , dimension(3) :: a
+     real (dp)                       :: alphaM, matching, corr
+     integer                         :: i
+
+     if ( .not. present(lambda) ) then
+       corr = self%DiffR( self%sCoefNatural, self%runMass, self%mH, R )
+     else
+       corr = self%DiffR( self%sCoefLambda('Natural', lambda), &
+       self%runMass, self%mH/lambda, R/lambda )
+     end if
 
      if (self%runMass > 0) alphaM = self%AlphaOb%alphaQCD(self%nf + 1, self%mH)/Pi
      a = self%MSRMatching(); i = min(order, 4)
 
      matching = 1 + dot_product( a(:i), PowList(alphaM, i) )
 
-     MSRNaturalMass = self%mH * matching + self%lambdaQCD(self%runMass) * &
-     self%DiffR( self%sCoefNatural, self%runMass, self%mH, R )
+     MSRNaturalMass = self%mH * matching + self%lambdaQCD(self%runMass) * corr
 
    end function MSRNaturalMass
 

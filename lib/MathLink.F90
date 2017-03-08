@@ -2728,27 +2728,27 @@ end subroutine f90MSbarMassLow
 !ccccccccccccccc
 
 subroutine f90MSRMass(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, muB, &
-                      mC, muC, mu, R, res)
- use RunningClass;  use AlphaClass;  use constants, only: dp; implicit none
+mC, muC, lambda, mu, R, res)
+  use RunningClass;  use AlphaClass;  use constants, only: dp; implicit none
 
- integer  , intent(in ) :: orderAlpha, runAlpha, run, nf
- real (dp), intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R
- real (dp), intent(out) :: res
+  integer  , intent(in ) :: orderAlpha, runAlpha, run, nf
+  real (dp), intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R, lambda
+  real (dp), intent(out) :: res
 
   type (Running)        :: alphaMass
   type (Alpha)          :: alphaAll
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
 
-  alphaMass = Running(nf, run, alphaAll, mu);  res = alphaMass%MSRMass(R)
+  alphaMass = Running(nf, run, alphaAll, mu);  res = alphaMass%MSRMass(R, lambda)
 
 end subroutine f90MSRMass
 
 !ccccccccccccccc
 
 subroutine f90mmfromMSR(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, &
-                        muB, mC, muC, mu, R, res)
+muB, mC, muC, mu, R, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp; implicit none
 
   integer  , intent(in ) :: orderAlpha, runAlpha, run, nf
@@ -2759,8 +2759,8 @@ subroutine f90mmfromMSR(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, &
   type (Alpha)          :: alphaAll
   real (dp)             :: mass
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
 
   if (nf == 5) mass = mT; if (nf == 4) mass = mB; if (nf == 3) mass = mC
 
@@ -2770,8 +2770,8 @@ end subroutine f90mmfromMSR
 
 !ccccccccccccccc
 
-subroutine f90mmfromMSRNatural(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, &
-                                mB, muB, mC, muC, mu, R, res)
+subroutine f90mmfromMSRNatural(orderAlpha, runAlpha, order, run, nf, mZ, amZ, &
+mT, muT, mB, muB, mC, muC, mu, R, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp; implicit none
 
   integer  , intent(in ) :: orderAlpha, runAlpha, order, run, nf
@@ -2782,8 +2782,8 @@ subroutine f90mmfromMSRNatural(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT
   type (Alpha)          :: alphaAll
   real (dp)             :: mass
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
 
   if (nf == 5) mass = mT; if (nf == 4) mass = mB; if (nf == 3) mass = mC
 
@@ -2793,30 +2793,30 @@ end subroutine f90mmfromMSRNatural
 
 !ccccccccccccccc
 
-subroutine f90MSRNaturalMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, &
-                             mB, muB, mC, muC, mu, R, res)
- use RunningClass;  use AlphaClass;  use constants, only: dp; implicit none
+subroutine f90MSRNaturalMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, &
+muT, mB, muB, mC, muC, lambda, mu, R, res)
+  use RunningClass;  use AlphaClass;  use constants, only: dp; implicit none
 
- integer  , intent(in ) :: orderAlpha, runAlpha, order, run, nf
- real (dp), intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R
- real (dp), intent(out) :: res
+  integer  , intent(in ) :: orderAlpha, runAlpha, order, run, nf
+  real (dp), intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R, lambda
+  real (dp), intent(out) :: res
 
   type (Running)        :: alphaMass
   type (Alpha)          :: alphaAll
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, mu)
 
-  res       = alphaMass%MSRNaturalMass(order, R)
+  res       = alphaMass%MSRNaturalMass(order, R, lambda)
 
 end subroutine f90MSRNaturalMass
 
 !ccccccccccccccc
 
-subroutine f90JetMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, mB, &
-                             muB, mC, muC, muLambda, R, mu, res)
+subroutine f90JetMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, &
+mB, muB, mC, muC, muLambda, R, mu, res)
  use AlphaClass;  use MatrixElementsClass;  use constants, only: dp; implicit none
 
   integer  , intent(in )      :: orderAlpha, order, runAlpha, run, nf
@@ -2827,9 +2827,10 @@ subroutine f90JetMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, mB
   type (MatricesElementsMass) :: MatEl
 
   alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
-                     mB, muB, mC, muC)
+  mB, muB, mC, muC)
+
   MatEl     = MatricesElementsMass(alphaAll, nf, run, 0._dp, 0._dp, 0._dp, 0._dp,  &
-                                    muLambda, muLambda)
+  muLambda, muLambda)
 
   res = MatEl%JetMass(order, run, R, mu)
 
@@ -3188,9 +3189,9 @@ lambda, R0, mu0, delta0, h, tau, res)
   character (len = *)  , intent(in) :: shape, cum, space, hard, gap
   integer              , intent(in) :: orderAlpha, order, runAlpha, run, nf
   integer, dimension(2), intent(in) :: piece
-  real (dp)            , intent(in) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, muC, &
-                                      Q, muJ, muS, R, G3, lambda, tau, R0, mu0, delta0, &
-                                      j3, s3, muH, h
+  real (dp)            , intent(in) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, &
+  Q, muJ, muS, R, G3, lambda, tau, R0, mu0, delta0, j3, s3, muH, h, mC, muC
+
   real (dp)           , intent(out) :: res
   type (Alpha)                      :: alphaAll
   type (MatricesElements)           :: MatEl
@@ -3199,15 +3200,16 @@ lambda, R0, mu0, delta0, h, tau, res)
 
   Mod       = Model(lambda, [1._dp], piece, 'piece')
   alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+ mB, muB, mC, muC)
+
   MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
 
   call Sing%setHard(Q, muH); call sing%SetMat(muJ, muS)
   call Sing%SetRunning(muJ, muS, R, mu)
 
-  res = Sing%SingleSing(Mod, 'Model', gap(:12), space(:3), cum(:4), order, R0, mu0, &
-                        delta0, h, tau)
+  res = Sing%SingleSing(Mod, 'Model', gap(:12), space(:3), cum(:4), order, R0, &
+  mu0, delta0, h, tau)
 
 end subroutine f90SingularPiece
 
