@@ -371,7 +371,7 @@ module RunningClass
      integer                     :: i
 
      if (self%runMass > 0) alphaM = self%AlphaOb%alphaQCD(self%nf + 1, self%mH)/Pi
-     a = self%MSRMatching(); i = min(order, 3)
+     a = self%MSRMatching(); i = min(order, 4)
 
      matching = 1 + dot_product( a(:i), PowList(alphaM, i) )
 
