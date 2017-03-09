@@ -419,7 +419,7 @@ module RunningClass
        self%runMass, self%mH/lambda, R/lambda )
      end if
 
-     if (self%runMass > 0) alphaM = self%AlphaOb%alphaQCD(self%nf + 1, self%mH)/Pi
+     if (self%runMass > 0) alphaM = self%AlphaOb%alphaQCD(self%nf + 1, self%mH)/Pi ! note: perform matching with nl active flavors?
      a = self%MSRMatching(); i = min(order, 4)
 
      matching = 1 + dot_product( a(:i), PowList(alphaM, i) )
