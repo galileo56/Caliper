@@ -33,9 +33,10 @@ module AnomDimClass
     procedure, pass(self), public :: expandAlpha, wTildeExpand, kTildeExpand, &
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
     bHQETgamma, alphaMatching, alphaMatchingInverse, wTildeHm, GammaRComputer,&
-    sCoefHadron, scheme, MSRDelta
+    sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12
 
-   procedure, pass(self), public ::  wTildeReal, wTildeComplex, kTildeReal, kTildeComplex
+   procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
+   kTildeComplex
 
    generic, public   :: wTilde => wTildeReal, wTildeComplex
    generic, public   :: kTilde => kTildeReal, kTildeComplex
@@ -59,7 +60,7 @@ module AnomDimClass
     real (dp), dimension(4)         :: betaList
     real (dp), dimension(0:4)       :: beta
 
-    beta = [ 11 - 2 * nf/3._dp, 102 - 38._dp * nf/3, 1428.5 - 5033 * nf/18._dp + &
+    beta = [ 11 - 2 * nf/3._dp, 102 - 38._dp * nf/3, 1428.5_dp - 5033 * nf/18._dp + &
     325 * nf**2/54._dp, 29242.964136194132_dp - 6946.289617003555_dp * nf + &
     405.08904045986293_dp * nf**2 + 1.4993141289437586_dp * nf**3, &
     537147.6740702358_dp - 186161.94951432804_dp * nf + &
@@ -410,6 +411,71 @@ module AnomDimClass
     if ( str(:13) == 'gammaRNatural'   ) bet(1:) = self%gammaRNatural
 
   end function betaQCD
+
+!ccccccccccccccc
+
+  real (dp) function P12(self, order, type, lambda)
+     class (AnomDim)      , intent(in) :: self
+     real (dp)            , intent(in) :: lambda
+     character (len = *)  , intent(in) :: type
+     integer              , intent(in) :: order
+     real (dp)          , dimension(4) :: scoef
+     integer                           :: i
+
+     scoef = self%sCoefLambda(type, lambda)
+
+     P12 = 0
+
+     do i = 0, min(order, 3)
+       P12 = P12 + scoef(i + 1)/gamma( 1 + self%bHat(1) + i )
+     end do
+
+  end function P12
+
+!ccccccccccccccc
+
+  real (dp) function N12(self, order, type, lambda)
+     class (AnomDim)      , intent(in) :: self
+     real (dp)            , intent(in) :: lambda
+     character (len = *)  , intent(in) :: type
+     integer              , intent(in) :: order
+
+     N12 = self%beta(0) * gamma( 1 + self%bHat(1) ) /2/Pi * self%P12(order, type, lambda)
+
+  end function N12
+
+!ccccccccccccccc
+
+  function sCoefLambda(self, type, lambda) result(res)
+     class (AnomDim)      , intent(in) :: self
+     real (dp)            , intent(in) :: lambda
+     character (len = *)  , intent(in) :: type
+     real (dp)          , dimension(4) :: res, scoef
+     real (dp)                         :: lg
+
+     scoef = 0; lg = log(lambda)
+
+     if ( type(:7) == 'Natural' ) then
+       scoef = self%sCoefMSRNatural
+     else if ( type(:9) == 'Practical' ) then
+       scoef = self%sCoefMSR
+     end if
+
+     res = scoef
+
+     res(2) = res(2) - lg * scoef(1)
+
+     res(3) = res(3) - 2 * lg * scoef(2) + scoef(1) * (  lg**2 - ( 2 * self%bHat(1) &
+     + self%bHat(2) ) * lg  )
+
+     res(4) = res(4) - 3 * lg * scoef(3) + scoef(2) * (  3 * lg**2 - ( 3 * self%bHat(1) &
+     + self%bHat(2) ) * lg  ) + scoef(1) * (  (self%bHat(3) - 3 * self%bHat(1)**2 +&
+     3 * self%bHat(2) - self%bHat(1) * self%bHat(2)) * lg + ( 9 * self%bHat(1)/2 &
+     + 2 * self%bHat(2) ) * lg**2 - lg**3  )
+
+     res = lambda * res
+
+  end function sCoefLambda
 
 !ccccccccccccccc
 
