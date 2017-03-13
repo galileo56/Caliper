@@ -19,7 +19,7 @@ module AnomDimClass
     private
     integer                       :: nf
     character (len = 5)           :: str
-    real (dp)                     :: G4
+    real (dp)                     :: G4, err
     real (dp), dimension(0:3,0:3) :: gammaHm
     real (dp), dimension(4)       :: sCoefMSR, sCoefMSRNatural, bHat, betaList,&
     gammaR,  gammaRNatural
@@ -33,9 +33,10 @@ module AnomDimClass
     procedure, pass(self), public :: expandAlpha, wTildeExpand, kTildeExpand, &
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
     bHQETgamma, alphaMatching, alphaMatchingInverse, wTildeHm, GammaRComputer,&
-    sCoefHadron, scheme, MSRDelta
+    sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12
 
-   procedure, pass(self), public ::  wTildeReal, wTildeComplex, kTildeReal, kTildeComplex
+   procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
+   kTildeComplex
 
    generic, public   :: wTilde => wTildeReal, wTildeComplex
    generic, public   :: kTilde => kTildeReal, kTildeComplex
@@ -52,14 +53,17 @@ module AnomDimClass
 
 !ccccccccccccccc
 
-   type(AnomDim) function InAdim(str, nf, G4)
+   type(AnomDim) function InAdim(str, nf, G4, err)
     character (len = *), intent(in) :: str
     integer            , intent(in) :: nf         ! number of active flavors
     real (dp)          , intent(in) :: G4         ! cusp anomalous dimension
+    real (dp), optional, intent(in) :: err        ! 4-loop MS-bar to pole conversion error
     real (dp), dimension(4)         :: betaList
     real (dp), dimension(0:4)       :: beta
 
-    beta = [ 11 - 2 * nf/3._dp, 102 - 38._dp * nf/3, 1428.5 - 5033 * nf/18._dp + &
+    InAdim%err = 0; if ( present(err) ) InAdim%err = err
+
+    beta = [ 11 - 2 * nf/3._dp, 102 - 38._dp * nf/3, 1428.5_dp - 5033 * nf/18._dp + &
     325 * nf**2/54._dp, 29242.964136194132_dp - 6946.289617003555_dp * nf + &
     405.08904045986293_dp * nf**2 + 1.4993141289437586_dp * nf**3, &
     537147.6740702358_dp - 186161.94951432804_dp * nf + &
@@ -107,10 +111,10 @@ module AnomDimClass
     betaList = PowList( 1/beta(0)/2, 4 ); InAdim%betaList = betaList
 
     InAdim%gammaR        = InAdim%GammaRComputer( InAdim%MSRDelta() )
-    InAdim%gammaRNatural = InAdim%GammaRComputer( MSbarDelta(nf, 0) )
+    InAdim%gammaRNatural = InAdim%GammaRComputer( MSbarDelta(nf, 0, InAdim%err) )
 
     InAdim%sCoefMSR        = InAdim%sCoef(  betaList * InAdim%GammaRComputer( InAdim%MSRDelta() )  )
-    InAdim%sCoefMSRNatural = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf, 0) )  )
+    InAdim%sCoefMSRNatural = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf, 0, InAdim%err) )  )
 
    end function InAdim
 
@@ -402,7 +406,7 @@ module AnomDimClass
     if ( str( :2) == 'Hm'              ) bet(:3) = self%gammaHm(:,0)
     if ( str( :4) == 'bHat'            ) bet(1:) = self%bHat
     if ( str( :8) == 'MSRdelta'        ) bet(1:) = self%MSRDelta()
-    if ( str(:15) == 'MSRNaturaldelta' ) bet(1:) = MSbarDelta(self%nf, 0)
+    if ( str(:15) == 'MSRNaturaldelta' ) bet(1:) = MSbarDelta(self%nf, 0, self%err)
     if ( str( :8) == 'sCoefMSR'        ) bet(1:) = self%sCoefMSR
     if ( str(:15) == 'sCoefMSRNatural' ) bet(1:) = self%sCoefMSRNatural
     if ( str( :8) == 'betaList'        ) bet(1:) = self%betaList
@@ -410,6 +414,71 @@ module AnomDimClass
     if ( str(:13) == 'gammaRNatural'   ) bet(1:) = self%gammaRNatural
 
   end function betaQCD
+
+!ccccccccccccccc
+
+  real (dp) function P12(self, order, type, lambda)
+     class (AnomDim)      , intent(in) :: self
+     real (dp)            , intent(in) :: lambda
+     character (len = *)  , intent(in) :: type
+     integer              , intent(in) :: order
+     real (dp)          , dimension(4) :: scoef
+     integer                           :: i
+
+     scoef = self%sCoefLambda(type, lambda)
+
+     P12 = 0
+
+     do i = 0, min(order, 3)
+       P12 = P12 + scoef(i + 1)/gamma( 1 + self%bHat(1) + i )
+     end do
+
+  end function P12
+
+!ccccccccccccccc
+
+  real (dp) function N12(self, order, type, lambda)
+     class (AnomDim)      , intent(in) :: self
+     real (dp)            , intent(in) :: lambda
+     character (len = *)  , intent(in) :: type
+     integer              , intent(in) :: order
+
+     N12 = self%beta(0) * gamma( 1 + self%bHat(1) ) /2/Pi * self%P12(order, type, lambda)
+
+  end function N12
+
+!ccccccccccccccc
+
+  function sCoefLambda(self, type, lambda) result(res)
+     class (AnomDim)      , intent(in) :: self
+     real (dp)            , intent(in) :: lambda
+     character (len = *)  , intent(in) :: type
+     real (dp)          , dimension(4) :: res, scoef
+     real (dp)                         :: lg
+
+     scoef = 0; lg = log(lambda)
+
+     if ( type(:7) == 'Natural' ) then
+       scoef = self%sCoefMSRNatural
+     else if ( type(:9) == 'Practical' ) then
+       scoef = self%sCoefMSR
+     end if
+
+     res = scoef
+
+     res(2) = res(2) - lg * scoef(1)
+
+     res(3) = res(3) - 2 * lg * scoef(2) + scoef(1) * (  lg**2 - ( 2 * self%bHat(1) &
+     + self%bHat(2) ) * lg  )
+
+     res(4) = res(4) - 3 * lg * scoef(3) + scoef(2) * (  3 * lg**2 - ( 3 * self%bHat(1) &
+     + self%bHat(2) ) * lg  ) + scoef(1) * (  (self%bHat(3) - 3 * self%bHat(1)**2 +&
+     3 * self%bHat(2) - self%bHat(1) * self%bHat(2)) * lg + ( 9 * self%bHat(1)/2 &
+     + 2 * self%bHat(2) ) * lg**2 - lg**3  )
+
+     res = lambda * res
+
+  end function sCoefLambda
 
 !ccccccccccccccc
 
@@ -596,7 +665,7 @@ module AnomDimClass
     real (dp), dimension(4)       :: coef, b
     real (dp), dimension(0:3,0:3) :: tab
 
-    coef = MSbarDelta(self%nf, 1)
+    coef = MSbarDelta(self%nf, 1, self%err)
     tab = self%alphaMatchingInverse(self%nf + 1)
     b = tab(:,0); call alphaReExpand(coef, b)
 
@@ -747,9 +816,10 @@ module AnomDimClass
 
 !ccccccccccccccc pole - MSbar mass with mu = m(m)
 
-  pure function MSbarDelta(nl, nh) result(coef)
-    integer    , intent(in) :: nh, nl
-    real (dp), dimension(4) :: coef
+  pure function MSbarDelta(nl, nh, err) result(coef)
+    integer            , intent(in) :: nh, nl
+    real (dp), optional, intent(in) :: err
+    real (dp)        , dimension(4) :: coef
 
     coef = [ 4._dp/3, 13.33982910125516_dp + 0.10356715567659536_dp * nh          - &
     1.041366911171631_dp * nl, 188.67172035165487_dp + 1.8591544419385237_dp * nh + &
@@ -760,6 +830,9 @@ module AnomDimClass
     0.9031405141668719_dp * nh * nl + 0.03617_dp * nh**2 * nl +  &
     43.37904803138152_dp * nl**2 + 0.017202086604103457_dp * nh * nl**2 - &
     0.6781410256045151_dp * nl**3 ]
+
+    if ( present(err) ) coef(4) = coef(4) + err * (1.63_dp + 0.12_dp * nh + &
+    0.0027_dp * nh**2 + 0.04_dp * nl**2 + 0.0004_dp * nh * nl)
 
   end function MSbarDelta
 

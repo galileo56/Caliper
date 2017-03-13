@@ -2559,15 +2559,29 @@ end subroutine f90ModelPiece
 
 subroutine f90AnomDim(str, nf, G4, beta)
   use AnomDimClass;  use constants, only: dp; implicit none
-  character (len = *), intent(in )         :: str
-  integer            , intent(in )         :: nf
-  real (dp)    , intent(in )               :: G4
-  real (dp)    , intent(out), dimension(5) :: beta
+  character (len = *)    , intent(in )  :: str
+  integer                , intent(in )  :: nf
+  real (dp)              , intent(in )  :: G4
+  real (dp), dimension(5), intent(out) :: beta
   type (AnomDim)                           :: run
 
   run = AnomDim('MSbar', nf, G4);  beta = run%betaQCD(str)
 
 end subroutine f90AnomDim
+
+!ccccccccccccccc
+
+subroutine f90N12(str, order, nf, lambda, err, res)
+  use AnomDimClass;  use constants, only: dp; implicit none
+  character (len = *), intent(in ) :: str
+  integer            , intent(in ) :: nf, order
+  real (dp)          , intent(in ) :: lambda, err
+  real (dp)          , intent(out) :: res
+  type (AnomDim)                   :: run
+
+  run = AnomDim('MSbar', nf, 0._dp, err);  res = run%N12(order, str, lambda)
+
+end subroutine f90N12
 
 !ccccccccccccccc
 
@@ -2580,10 +2594,11 @@ subroutine f90Scoef(str, nf, beta)
   type (Alpha)                         :: alphaAll
   type (MatrixElementsMass)            :: MatEl
 
-  alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, &
-                     0._dp, 0._dp, 0._dp)
-  MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, mu, 0._dp, mu, mu, &
-                            tiny(1._dp), mu, mu, mu, 0._dp, 0._dp)
+  alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, 0._dp, &
+  0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+
+  MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, mu, &
+  0._dp, mu, mu, tiny(1._dp), mu, mu, mu, 0._dp, 0._dp)
 
   beta = MatEl%Scoef(str)
 
