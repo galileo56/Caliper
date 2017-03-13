@@ -1861,12 +1861,12 @@ static void anomdim(char const* str, int nf, double G4){
 
 
 extern double f90n12_(char const* str, int* nf, int* order, double* labmda,
-  double* result);
+  double* err, double* result);
 
-static double n12(char const* str, int nf, int order, double lambda){
+static double n12(char const* str, int nf, int order, double lambda, double err){
   double result;
 
-   f90n12_(str, &nf, &order, &lambda, &result);
+   f90n12_(str, &nf, &order, &lambda, &err, &result);
    return result;
 
 }
@@ -9019,7 +9019,7 @@ L0:	return res;
 } /* _tr71 */
 
 
-double n12 P(( const char * _tp1, int _tp2, int _tp3, double _tp4));
+double n12 P(( const char * _tp1, int _tp2, int _tp3, double _tp4, double _tp5));
 
 #if MLPROTOTYPES
 static int _tr72( MLINK mlp)
@@ -9032,18 +9032,20 @@ static int _tr72(mlp) MLINK mlp;
 	int _tp2;
 	int _tp3;
 	double _tp4;
+	double _tp5;
 	double _rp0;
 	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
 	if ( ! MLGetReal( mlp, &_tp4) ) goto L3;
-	if ( ! MLNewPacket(mlp) ) goto L4;
+	if ( ! MLGetReal( mlp, &_tp5) ) goto L4;
+	if ( ! MLNewPacket(mlp) ) goto L5;
 
-	_rp0 = n12(_tp1, _tp2, _tp3, _tp4);
+	_rp0 = n12(_tp1, _tp2, _tp3, _tp4, _tp5);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
+L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
 } /* _tr72 */
@@ -10566,7 +10568,7 @@ static struct func {
 		{ 4, 0, _tr69, "hyper2f1" },
 		{ 3, 0, _tr70, "intecorre" },
 		{ 3, 0, _tr71, "anomdim" },
-		{ 4, 0, _tr72, "n12" },
+		{ 5, 0, _tr72, "n12" },
 		{ 2, 0, _tr73, "scoef" },
 		{ 2, 0, _tr74, "polylog" },
 		{ 1, 0, _tr75, "dilog" },
@@ -10817,8 +10819,8 @@ static const char* evalstrs[] = {
 	"AnomDim::usage = \"AnomDim[str, nf, G4] computes the QCD anomalou",
 	"s function\"",
 	(const char*)0,
-	"N12::usage = \"N12[str, order, nf, lambda] computes the QCD anoma",
-	"lous function\"",
+	"N12::usage = \"N12[str, order, nf, lambda, err] computes the QCD ",
+	"anomalous function\"",
 	(const char*)0,
 	"Delta::usage = \"Delta[str, nf, mu, R] computes the soft renormal",
 	"on subtractions\"",
@@ -11294,7 +11296,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"Hyper2F1[a_, b_, c_, x_]", (char *)"{a, b, c, x}", 69);
 	if (_res) _res = _definepattern(mlp, (char *)"InteCorre[b_, x0_, x1_]", (char *)"{b, x0, x1}", 70);
 	if (_res) _res = _definepattern(mlp, (char *)"AnomDim[str_, nf_, G4_]", (char *)"{str, nf, G4}", 71);
-	if (_res) _res = _definepattern(mlp, (char *)"N12[str_, order_, nf_, Lambda_]", (char *)"{str, order, nf, Lambda}", 72);
+	if (_res) _res = _definepattern(mlp, (char *)"N12[str_, order_, nf_, Lambda_, err_]", (char *)"{str, order, nf, Lambda, err}", 72);
 	if (_res) _res = _definepattern(mlp, (char *)"Scoef[str_, nf_]", (char *)"{str, nf}", 73);
 	if (_res) _res = _definepattern(mlp, (char *)"Polylog[n_, z_]", (char *)"{n, z}", 74);
 	if (_res) _res = _definepattern(mlp, (char *)"DiLog[z_]", (char *)"{z}", 75);

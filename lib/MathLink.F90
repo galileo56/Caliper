@@ -2571,15 +2571,15 @@ end subroutine f90AnomDim
 
 !ccccccccccccccc
 
-subroutine f90N12(str, order, nf, lambda, res)
+subroutine f90N12(str, order, nf, lambda, err, res)
   use AnomDimClass;  use constants, only: dp; implicit none
   character (len = *), intent(in ) :: str
   integer            , intent(in ) :: nf, order
-  real (dp)          , intent(in ) :: lambda
+  real (dp)          , intent(in ) :: lambda, err
   real (dp)          , intent(out) :: res
   type (AnomDim)                   :: run
 
-  run = AnomDim('MSbar', nf, 0._dp);  res = run%N12(order, str, lambda)
+  run = AnomDim('MSbar', nf, 0._dp, err);  res = run%N12(order, str, lambda)
 
 end subroutine f90N12
 

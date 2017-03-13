@@ -48,7 +48,7 @@
 :Evaluate:  CLi3::usage = "Cli3[z] computes the complex trilogarithm"
 :Evaluate:  Scoef::usage = "Scoef[str, nf] computes the soft R anomalous Dimension"
 :Evaluate:  AnomDim::usage = "AnomDim[str, nf, G4] computes the QCD anomalous function"
-:Evaluate:  N12::usage = "N12[str, order, nf, lambda] computes the QCD anomalous function"
+:Evaluate:  N12::usage = "N12[str, order, nf, lambda, err] computes the QCD anomalous function"
 :Evaluate:  Delta::usage = "Delta[str, nf, mu, R] computes the soft renormalon subtractions"
 :Evaluate:  DeltaGap::usage = "DeltaGap[str, orderAlpha, runAlpha, runMass, nf, mZ, aMz, mT, muT, mB, muB, mC, muC, mu, R] computes the soft renormalon subtractions"
 :Evaluate:  CoefMat::usage = "CoefMat[str, nf, s3] computes the hard, soft and jet matrix elements"
@@ -1217,9 +1217,9 @@
 
 :Begin:
 :Function:      n12
-:Pattern:       N12[str_, order_, nf_, Lambda_]
-:Arguments:     {str, order, nf, Lambda}
-:ArgumentTypes: {String, Integer, Integer, Real}
+:Pattern:       N12[str_, order_, nf_, Lambda_, err_]
+:Arguments:     {str, order, nf, Lambda, err}
+:ArgumentTypes: {String, Integer, Integer, Real, Real}
 :ReturnType:    Real
 :End:
 
@@ -3153,12 +3153,12 @@ static void anomdim(char const* str, int nf, double G4){
 
 
 extern double f90n12_(char const* str, int* nf, int* order, double* labmda,
-  double* result);
+  double* err, double* result);
 
-static double n12(char const* str, int nf, int order, double lambda){
+static double n12(char const* str, int nf, int order, double lambda, double err){
   double result;
 
-   f90n12_(str, &nf, &order, &lambda, &result);
+   f90n12_(str, &nf, &order, &lambda, &err, &result);
    return result;
 
 }
