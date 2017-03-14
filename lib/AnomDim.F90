@@ -34,7 +34,8 @@ module AnomDimClass
     procedure, pass(self), public :: expandAlpha, wTildeExpand, kTildeExpand, &
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
     bHQETgamma, alphaMatching, alphaMatchingInverse, wTildeHm, GammaRComputer,&
-    sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12
+    sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12, sCoefGeneric, &
+    P12Generic, N12Generic
 
    procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
    kTildeComplex
@@ -115,13 +116,13 @@ module AnomDimClass
     InAdim%gammaRNatural = InAdim%GammaRComputer( MSbarDelta(nf    , 0, InAdim%err) )
     InAdim%gammaRInc1    = InAdim%GammaRComputer( MSbarDelta(nf    , 1, InAdim%err) )
     InAdim%gammaRInc2    = InAdim%GammaRComputer( MSbarDelta(nf - 1, 1, InAdim%err) )
-    InAdim%gammaRInc3    = InAdim%GammaRComputer( MSbarDelta(nf - 2, 1, InAdim%err) )
+    InAdim%gammaRInc3    = InAdim%GammaRComputer( MSbarDelta(nf + 1, 1, InAdim%err) )
 
     InAdim%sCoefMSR        = InAdim%sCoef(  betaList * InAdim%GammaRComputer( InAdim%MSRDelta() )  )
     InAdim%sCoefMSRNatural = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf    , 0, InAdim%err) )  )
     InAdim%sCoefMSRInc1    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf    , 1, InAdim%err) )  )
     InAdim%sCoefMSRInc2    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf - 1, 1, InAdim%err) )  )
-    InAdim%sCoefMSRInc2    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf - 2, 1, InAdim%err) )  )
+    InAdim%sCoefMSRInc3    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf + 1, 1, InAdim%err) )  )
 
    end function InAdim
 
@@ -430,6 +431,39 @@ module AnomDimClass
 
 !ccccccccccccccc
 
+  real (dp) function P12Generic(self, order, a, lambda)
+     class (AnomDim)        , intent(in) :: self
+     real (dp)              , intent(in) :: lambda
+     integer                , intent(in) :: order
+     real (dp), dimension(4), intent(in) :: a
+     real (dp), dimension(4)             :: sCoef
+     integer                             :: i
+
+     sCoef = self%sCoef( self%betaList * self%GammaRComputer(a) )
+     sCoef = self%sCoefGeneric(sCoef, lambda)
+
+     P12Generic = 0
+
+     do i = 0, min(order, 3)
+       P12Generic = P12Generic + sCoef(i + 1)/gamma( 1 + self%bHat(1) + i )
+     end do
+
+  end function P12Generic
+
+!ccccccccccccccc
+
+  real (dp) function N12Generic(self, order, a, lambda)
+     class (AnomDim)        , intent(in) :: self
+     real (dp)              , intent(in) :: lambda
+     real (dp), dimension(4), intent(in) :: a
+     integer                , intent(in) :: order
+
+     N12Generic = self%beta(0) * gamma( 1 + self%bHat(1) )/2/Pi * self%P12Generic(order, a, lambda)
+
+  end function N12Generic
+
+!ccccccccccccccc
+
   real (dp) function P12(self, order, type, lambda)
      class (AnomDim)      , intent(in) :: self
      real (dp)            , intent(in) :: lambda
@@ -456,7 +490,7 @@ module AnomDimClass
      character (len = *)  , intent(in) :: type
      integer              , intent(in) :: order
 
-     N12 = self%beta(0) * gamma( 1 + self%bHat(1) ) /2/Pi * self%P12(order, type, lambda)
+     N12 = self%beta(0) * gamma( 1 + self%bHat(1) )/2/Pi * self%P12(order, type, lambda)
 
   end function N12
 
@@ -483,7 +517,20 @@ module AnomDimClass
        sCoef = self%sCoefMSR
      end if
 
-     res = sCoef
+     res = self%sCoefGeneric(sCoef, lambda)
+
+  end function sCoefLambda
+
+!ccccccccccccccc
+
+  function sCoefGeneric(self, sCoef, lambda) result(res)
+     class (AnomDim)        , intent(in) :: self
+     real (dp)              , intent(in) :: lambda
+     real (dp), dimension(4), intent(in) :: sCoef
+     real (dp)            , dimension(4) :: res
+     real (dp)                           :: lg
+
+     res = sCoef; lg = log(lambda)
 
      res(2) = res(2) - lg * sCoef(1)
 
@@ -497,7 +544,7 @@ module AnomDimClass
 
      res = lambda * res
 
-  end function sCoefLambda
+  end function sCoefGeneric
 
 !ccccccccccccccc
 
@@ -844,11 +891,16 @@ module AnomDimClass
     1.041366911171631_dp * nl, 188.67172035165487_dp + 1.8591544419385237_dp * nh + &
     0.06408045019609998_dp * nh**2 - 26.677375174269212_dp * nl                   + &
     0.022243482163948114_dp * nh * nl + 0.6526907490815437_dp * nl**2, &
-    3560.8519915203624_dp + 6.958064783286616_dp * nh  + 0.02484_dp * nh**3 - &
-    0.23497888797223965_dp * nh**2 - 744.8538175070678_dp * nl - &
-    0.9031405141668719_dp * nh * nl + 0.03617_dp * nh**2 * nl +  &
-    43.37904803138152_dp * nl**2 + 0.017202086604103457_dp * nh * nl**2 - &
-    0.6781410256045151_dp * nl**3 ]
+    !3560.8519915203624_dp + 6.958064783286616_dp * nh  + 0.02484_dp * nh**3 - &
+    !0.23497888797223965_dp * nh**2 - 744.8538175070678_dp * nl - &
+    !0.9031405141668719_dp * nh * nl + 0.03617_dp * nh**2 * nl +  &
+    !43.37904803138152_dp * nl**2 + 0.017202086604103457_dp * nh * nl**2 - &
+    !0.6781410256045151_dp * nl**3 ]
+    3560.8898310265354_dp + 6.959412931434764_dp * nh - &
+    0.2350144435277955_dp * nh**2 + 0.024836666666666663_dp * nh**3 - &
+    744.8539586181788_dp * nl - 0.9031271808335385_dp * nh * nl + &
+    0.03617166666666667_dp * nh**2 * nl + 43.37905086931079_dp * nl**2 + &
+    0.017201666666666664_dp * nh * nl**2 - 0.6781416666666666_dp * nl**3 ]
 
     if ( present(err) ) coef(4) = coef(4) + err * (1.63_dp + 0.12_dp * nh + &
     0.0027_dp * nh**2 + 0.04_dp * nl**2 + 0.0004_dp * nh * nl)
