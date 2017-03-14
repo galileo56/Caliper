@@ -21,8 +21,9 @@ module AnomDimClass
     character (len = 5)           :: str
     real (dp)                     :: G4, err
     real (dp), dimension(0:3,0:3) :: gammaHm
-    real (dp), dimension(4)       :: sCoefMSR, sCoefMSRNatural, bHat, betaList,&
-    gammaR,  gammaRNatural, sCoefMSRInc, gammaRInc, sCoefMSRInc2, gammaRInc2
+    real (dp), dimension(4)       :: sCoefMSR, sCoefMSRNatural, bHat, betaList, &
+    gammaR,  gammaRNatural, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, &
+    sCoefMSRInc3, gammaRInc3
 
     real (dp), dimension(0:4)     :: beta
     real (dp), dimension(0:4)     :: gammaMass
@@ -111,14 +112,16 @@ module AnomDimClass
     betaList = PowList( 1/beta(0)/2, 4 ); InAdim%betaList = betaList
 
     InAdim%gammaR        = InAdim%GammaRComputer( InAdim%MSRDelta() )
-    InAdim%gammaRNatural = InAdim%GammaRComputer( MSbarDelta(nf, 0, InAdim%err) )
-    InAdim%gammaRInc     = InAdim%GammaRComputer( MSbarDelta(nf - 1, 0, InAdim%err) )
-    InAdim%gammaRInc2    = InAdim%GammaRComputer( MSbarDelta(nf + 1, 0, InAdim%err) )
+    InAdim%gammaRNatural = InAdim%GammaRComputer( MSbarDelta(nf    , 0, InAdim%err) )
+    InAdim%gammaRInc1    = InAdim%GammaRComputer( MSbarDelta(nf    , 1, InAdim%err) )
+    InAdim%gammaRInc2    = InAdim%GammaRComputer( MSbarDelta(nf - 1, 1, InAdim%err) )
+    InAdim%gammaRInc3    = InAdim%GammaRComputer( MSbarDelta(nf - 2, 1, InAdim%err) )
 
     InAdim%sCoefMSR        = InAdim%sCoef(  betaList * InAdim%GammaRComputer( InAdim%MSRDelta() )  )
-    InAdim%sCoefMSRNatural = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf, 0, InAdim%err) )  )
-    InAdim%sCoefMSRInc     = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf - 1, 0, InAdim%err) )  )
-    InAdim%sCoefMSRInc2    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf + 1, 0, InAdim%err) )  )
+    InAdim%sCoefMSRNatural = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf    , 0, InAdim%err) )  )
+    InAdim%sCoefMSRInc1    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf    , 1, InAdim%err) )  )
+    InAdim%sCoefMSRInc2    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf - 1, 1, InAdim%err) )  )
+    InAdim%sCoefMSRInc2    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf - 2, 1, InAdim%err) )  )
 
    end function InAdim
 
@@ -412,12 +415,14 @@ module AnomDimClass
     if ( str( :8) == 'MSRdelta'        ) bet(1:) = self%MSRDelta()
     if ( str(:15) == 'MSRNaturaldelta' ) bet(1:) = MSbarDelta(self%nf, 0, self%err)
     if ( str( :8) == 'sCoefMSR'        ) bet(1:) = self%sCoefMSR
-    if ( str(:11) == 'sCoefMSRInc'     ) bet(1:) = self%sCoefMSRInc
+    if ( str(:12) == 'sCoefMSRInc1'    ) bet(1:) = self%sCoefMSRInc1
     if ( str(:12) == 'sCoefMSRInc2'    ) bet(1:) = self%sCoefMSRInc2
+    if ( str(:12) == 'sCoefMSRInc3'    ) bet(1:) = self%sCoefMSRInc3
     if ( str(:15) == 'sCoefMSRNatural' ) bet(1:) = self%sCoefMSRNatural
     if ( str( :8) == 'betaList'        ) bet(1:) = self%betaList
-    if ( str( :9) == 'gammaRInc'       ) bet(1:) = self%gammaRInc
+    if ( str( :9) == 'gammaRInc1'      ) bet(1:) = self%gammaRInc1
     if ( str(:10) == 'gammaRInc2'      ) bet(1:) = self%gammaRInc2
+    if ( str(:10) == 'gammaRInc3'      ) bet(1:) = self%gammaRInc3
     if ( str( :6) == 'gammaR'          ) bet(1:) = self%gammaR
     if ( str(:13) == 'gammaRNatural'   ) bet(1:) = self%gammaRNatural
 
@@ -466,10 +471,12 @@ module AnomDimClass
 
      sCoef = 0; lg = log(lambda)
 
-     if ( type(:4) == 'Inc2' ) then
+     if ( type(:4) == 'Inc1' ) then
+       sCoef = self%sCoefMSRInc1
+     else if ( type(:4) == 'Inc2' ) then
        sCoef = self%sCoefMSRInc2
-     else if ( type(:3) == 'Inc' ) then
-       sCoef = self%sCoefMSRInc
+     else if ( type(:4) == 'Inc3' ) then
+       sCoef = self%sCoefMSRInc3
      else if ( type(:7) == 'Natural' ) then
        sCoef = self%sCoefMSRNatural
      else if ( type(:9) == 'Practical' ) then
