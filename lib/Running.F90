@@ -507,8 +507,8 @@ module RunningClass
     call qags( inteHadron, 0._dp, 1._dp, tny, tny, DiffDeltaHadron, abserr, neval, ier )
 
     DiffDeltaHadron = self%lambdaQCD(order) * DiffDeltaHadron +            &
-    0.8862269254527579_dp * ( gamma(1 + a)/gamma(1.5_dp + a) *              &
-    self%DiffDeltaMu(order, R1, R1, mu1) + gamma(1 + b)/gamma(1.5_dp + b) * &
+    0.8862269254527579_dp * ( dgamma(1 + a)/dgamma(1.5_dp + a) *              &
+    self%DiffDeltaMu(order, R1, R1, mu1) + dgamma(1 + b)/dgamma(1.5_dp + b) * &
     self%DiffDeltaMu(order, R0, mu0, R0) )
 
     contains
