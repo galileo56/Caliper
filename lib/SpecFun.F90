@@ -67,7 +67,7 @@ contains
 
       do i = 2, n
         list(i) = ( (2 * i - 1) * ( k * list2(i - 1) + x * list(i - 1) ) - &
-                  (i - 1) * list(i - 2) )/i
+        (i - 1) * list(i - 2) )/i
       end do
 
     end if
@@ -86,7 +86,7 @@ contains
 
     do i = 2, n
       list(i) = (  (2 * i - 1) * ( x * list(i - 1) - (-1)**i ) - &
-                   (i - 1) * list(i - 2)  )/i
+      (i - 1) * list(i - 2)  )/i
     end do
 
   end function QLegendreList
