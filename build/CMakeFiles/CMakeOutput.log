@@ -1,0 +1,435 @@
+The system is: Darwin - 16.4.0 - x86_64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc 
+Build flags: 
+Id flags: 
+
+The output was:
+0
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
+
+The C compiler identification is AppleClang, found in "/Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/3.7.2/CompilerIdC/a.out"
+
+Compiling the Fortran compiler identification source file "CMakeFortranCompilerId.F" succeeded.
+Compiler: /usr/local/bin/gfortran 
+Build flags: 
+Id flags: -v
+
+The output was:
+0
+Driving: /usr/local/bin/gfortran -v CMakeFortranCompilerId.F -mmacosx-version-min=10.12.4 -asm_macosx_version_min=10.12 -l gfortran -shared-libgcc
+Using built-in specs.
+COLLECT_GCC=/usr/local/bin/gfortran
+COLLECT_LTO_WRAPPER=/usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/6.3.0/lto-wrapper
+Target: x86_64-apple-darwin15.6.0
+Configured with: ../gcc-6.3.0/configure --enable-languages=c++,fortran
+Thread model: posix
+gcc version 6.3.0 (GCC) 
+COLLECT_GCC_OPTIONS='-v' '-mmacosx-version-min=10.12.4' '-asm_macosx_version_min=10.12' '-shared-libgcc' '-mtune=core2'
+ /usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/6.3.0/f951 CMakeFortranCompilerId.F -ffixed-form -cpp=/var/folders/wb/ffywj2ss12jgf8lsx94ghm800000gn/T//ccwWXpUq.f90 -quiet -v -D__DYNAMIC__ CMakeFortranCompilerId.F -fPIC -quiet -dumpbase CMakeFortranCompilerId.F -mmacosx-version-min=10.12.4 -mtune=core2 -auxbase CMakeFortranCompilerId -version -fintrinsic-modules-path /usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/finclude -o /var/folders/wb/ffywj2ss12jgf8lsx94ghm800000gn/T//ccinkU7D.s
+GNU Fortran (GCC) version 6.3.0 (x86_64-apple-darwin15.6.0)
+	compiled by GNU C version 6.3.0, GMP version 6.0.0, MPFR version 3.1.2-p10, MPC version 1.0.2, isl version none
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring nonexistent directory "/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/../../../../x86_64-apple-darwin15.6.0/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/finclude
+ /usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/include
+ /usr/local/include
+ /usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/include-fixed
+ /usr/include
+End of search list.
+GNU Fortran2008 (GCC) version 6.3.0 (x86_64-apple-darwin15.6.0)
+	compiled by GNU C version 6.3.0, GMP version 6.0.0, MPFR version 3.1.2-p10, MPC version 1.0.2, isl version none
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+COLLECT_GCC_OPTIONS='-v' '-mmacosx-version-min=10.12.4'  '-shared-libgcc' '-mtune=core2'
+ as -arch x86_64 -v -force_cpusubtype_ALL -mmacosx-version-min=10.12 -o /var/folders/wb/ffywj2ss12jgf8lsx94ghm800000gn/T//ccw8wN6E.o /var/folders/wb/ffywj2ss12jgf8lsx94ghm800000gn/T//ccinkU7D.s
+Apple LLVM version 8.0.0 (clang-800.0.42.1)
+Target: x86_64-apple-darwin16.4.0
+Thread model: posix
+InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -cc1as -triple x86_64-apple-macosx10.12.0 -filetype obj -main-file-name ccinkU7D.s -target-cpu penryn -fdebug-compilation-dir /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/3.7.2/CompilerIdFortran -dwarf-debug-producer Apple LLVM version 8.0.0 (clang-800.0.42.1) -dwarf-version=2 -mrelocation-model pic -o /var/folders/wb/ffywj2ss12jgf8lsx94ghm800000gn/T//ccw8wN6E.o /var/folders/wb/ffywj2ss12jgf8lsx94ghm800000gn/T//ccinkU7D.s
+Reading specs from /usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/../../../libgfortran.spec
+rename spec lib to liborig
+COLLECT_GCC_OPTIONS='-v' '-mmacosx-version-min=10.12.4'  '-shared-libgcc' '-mtune=core2'
+COMPILER_PATH=/usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/6.3.0/:/usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/6.3.0/:/usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/:/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/:/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/
+LIBRARY_PATH=/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/:/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/../../../
+COLLECT_GCC_OPTIONS='-v' '-mmacosx-version-min=10.12.4'  '-shared-libgcc' '-mtune=core2'
+ /usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/6.3.0/collect2 -dynamic -arch x86_64 -macosx_version_min 10.12.4 -weak_reference_mismatches non-weak -o a.out -L/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0 -L/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/../../.. /var/folders/wb/ffywj2ss12jgf8lsx94ghm800000gn/T//ccw8wN6E.o -lgfortran -no_compact_unwind -lSystem -lgcc_ext.10.5 -lgcc -lquadmath -lm -lgcc_ext.10.5 -lgcc -lSystem -v
+collect2 version 6.3.0
+/opt/local/bin/ld -dynamic -arch x86_64 -macosx_version_min 10.12.4 -weak_reference_mismatches non-weak -o a.out -L/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0 -L/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/../../.. /var/folders/wb/ffywj2ss12jgf8lsx94ghm800000gn/T//ccw8wN6E.o -lgfortran -no_compact_unwind -lSystem -lgcc_ext.10.5 -lgcc -lquadmath -lm -lgcc_ext.10.5 -lgcc -lSystem -v
+@(#)PROGRAM:ld  PROJECT:ld64-274.1
+configured to support archs: i386 x86_64 x86_64h armv6 armv7 armv7s armv7m armv7k arm64 (tvOS)
+Library search paths:
+	/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0
+	/usr/local/lib
+	/usr/lib
+	/usr/local/lib
+Framework search paths:
+	/Library/Frameworks/
+	/System/Library/Frameworks/
+
+
+Compilation of the Fortran compiler identification source "CMakeFortranCompilerId.F" produced "a.out"
+
+The Fortran compiler identification is GNU, found in "/Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/3.7.2/CompilerIdFortran/a.out"
+
+Determining if the C compiler works passed with the following output:
+Change Dir: /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_dce4d/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_dce4d.dir/build.make CMakeFiles/cmTC_dce4d.dir/build
+Building C object CMakeFiles/cmTC_dce4d.dir/testCCompiler.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc     -o CMakeFiles/cmTC_dce4d.dir/testCCompiler.c.o   -c /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp/testCCompiler.c
+Linking C executable cmTC_dce4d
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_dce4d.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_dce4d.dir/testCCompiler.c.o  -o cmTC_dce4d  
+
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_91976/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_91976.dir/build.make CMakeFiles/cmTC_91976.dir/build
+Building C object CMakeFiles/cmTC_91976.dir/CMakeCCompilerABI.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc     -o CMakeFiles/cmTC_91976.dir/CMakeCCompilerABI.c.o   -c /opt/local/share/cmake-3.7/Modules/CMakeCCompilerABI.c
+Linking C executable cmTC_91976
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_91976.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_91976.dir/CMakeCCompilerABI.c.o  -o cmTC_91976   
+Apple LLVM version 8.0.0 (clang-800.0.42.1)
+Target: x86_64-apple-darwin16.4.0
+Thread model: posix
+InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.12.0 -o cmTC_91976 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_91976.dir/CMakeCCompilerABI.c.o -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a
+@(#)PROGRAM:ld  PROJECT:ld64-274.2
+configured to support archs: armv6 armv7 armv7s arm64 i386 x86_64 x86_64h armv6m armv7k armv7m armv7em (tvOS)
+Library search paths:
+	/usr/lib
+	/usr/local/lib
+Framework search paths:
+	/Library/Frameworks/
+	/System/Library/Frameworks/
+
+
+Parsed C implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_91976/fast"]
+  ignore line: [/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_91976.dir/build.make CMakeFiles/cmTC_91976.dir/build]
+  ignore line: [Building C object CMakeFiles/cmTC_91976.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc     -o CMakeFiles/cmTC_91976.dir/CMakeCCompilerABI.c.o   -c /opt/local/share/cmake-3.7/Modules/CMakeCCompilerABI.c]
+  ignore line: [Linking C executable cmTC_91976]
+  ignore line: [/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_91976.dir/link.txt --verbose=1]
+  ignore line: [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_91976.dir/CMakeCCompilerABI.c.o  -o cmTC_91976   ]
+  ignore line: [Apple LLVM version 8.0.0 (clang-800.0.42.1)]
+  ignore line: [Target: x86_64-apple-darwin16.4.0]
+  ignore line: [Thread model: posix]
+  ignore line: [InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin]
+  link line: [ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.12.0 -o cmTC_91976 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_91976.dir/CMakeCCompilerABI.c.o -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a]
+    arg [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld] ==> ignore
+    arg [-demangle] ==> ignore
+    arg [-dynamic] ==> ignore
+    arg [-arch] ==> ignore
+    arg [x86_64] ==> ignore
+    arg [-macosx_version_min] ==> ignore
+    arg [10.12.0] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_91976] ==> ignore
+    arg [-search_paths_first] ==> ignore
+    arg [-headerpad_max_install_names] ==> ignore
+    arg [-v] ==> ignore
+    arg [CMakeFiles/cmTC_91976.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [-lSystem] ==> lib [System]
+    arg [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a] ==> lib [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a]
+  Library search paths: [;/usr/lib;/usr/local/lib]
+  Framework search paths: [;/Library/Frameworks/;/System/Library/Frameworks/]
+  remove lib [System]
+  remove lib [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a]
+  collapse library dir [/usr/lib] ==> [/usr/lib]
+  collapse library dir [/usr/local/lib] ==> [/usr/local/lib]
+  collapse framework dir [/Library/Frameworks/] ==> [/Library/Frameworks]
+  collapse framework dir [/System/Library/Frameworks/] ==> [/System/Library/Frameworks]
+  implicit libs: []
+  implicit dirs: [/usr/lib;/usr/local/lib]
+  implicit fwks: [/Library/Frameworks;/System/Library/Frameworks]
+
+
+
+
+Detecting C [-std=c11] compiler features compiled with the following output:
+Change Dir: /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_420fd/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_420fd.dir/build.make CMakeFiles/cmTC_420fd.dir/build
+Building C object CMakeFiles/cmTC_420fd.dir/feature_tests.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -std=c11 -o CMakeFiles/cmTC_420fd.dir/feature_tests.c.o   -c /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/feature_tests.c
+Linking C executable cmTC_420fd
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_420fd.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_420fd.dir/feature_tests.c.o  -o cmTC_420fd  
+
+
+    Feature record: C_FEATURE:1c_function_prototypes
+    Feature record: C_FEATURE:1c_restrict
+    Feature record: C_FEATURE:1c_static_assert
+    Feature record: C_FEATURE:1c_variadic_macros
+
+
+Detecting C [-std=c99] compiler features compiled with the following output:
+Change Dir: /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_17c41/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_17c41.dir/build.make CMakeFiles/cmTC_17c41.dir/build
+Building C object CMakeFiles/cmTC_17c41.dir/feature_tests.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -std=c99 -o CMakeFiles/cmTC_17c41.dir/feature_tests.c.o   -c /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/feature_tests.c
+Linking C executable cmTC_17c41
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_17c41.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_17c41.dir/feature_tests.c.o  -o cmTC_17c41  
+
+
+    Feature record: C_FEATURE:1c_function_prototypes
+    Feature record: C_FEATURE:1c_restrict
+    Feature record: C_FEATURE:0c_static_assert
+    Feature record: C_FEATURE:1c_variadic_macros
+
+
+Detecting C [-std=c90] compiler features compiled with the following output:
+Change Dir: /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_cfd2d/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_cfd2d.dir/build.make CMakeFiles/cmTC_cfd2d.dir/build
+Building C object CMakeFiles/cmTC_cfd2d.dir/feature_tests.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -std=c90 -o CMakeFiles/cmTC_cfd2d.dir/feature_tests.c.o   -c /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/feature_tests.c
+Linking C executable cmTC_cfd2d
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cfd2d.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_cfd2d.dir/feature_tests.c.o  -o cmTC_cfd2d  
+
+
+    Feature record: C_FEATURE:1c_function_prototypes
+    Feature record: C_FEATURE:0c_restrict
+    Feature record: C_FEATURE:0c_static_assert
+    Feature record: C_FEATURE:0c_variadic_macros
+Determining if the Fortran compiler works passed with the following output:
+Change Dir: /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_39f2f/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_39f2f.dir/build.make CMakeFiles/cmTC_39f2f.dir/build
+Building Fortran object CMakeFiles/cmTC_39f2f.dir/testFortranCompiler.f.o
+/usr/local/bin/gfortran     -c /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp/testFortranCompiler.f -o CMakeFiles/cmTC_39f2f.dir/testFortranCompiler.f.o
+Linking Fortran executable cmTC_39f2f
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_39f2f.dir/link.txt --verbose=1
+/usr/local/bin/gfortran       CMakeFiles/cmTC_39f2f.dir/testFortranCompiler.f.o  -o cmTC_39f2f  
+
+
+Detecting Fortran compiler ABI info compiled with the following output:
+Change Dir: /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_fc129/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_fc129.dir/build.make CMakeFiles/cmTC_fc129.dir/build
+Building Fortran object CMakeFiles/cmTC_fc129.dir/CMakeFortranCompilerABI.F.o
+/usr/local/bin/gfortran     -c /opt/local/share/cmake-3.7/Modules/CMakeFortranCompilerABI.F -o CMakeFiles/cmTC_fc129.dir/CMakeFortranCompilerABI.F.o
+Linking Fortran executable cmTC_fc129
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fc129.dir/link.txt --verbose=1
+/usr/local/bin/gfortran    -v -Wl,-v   CMakeFiles/cmTC_fc129.dir/CMakeFortranCompilerABI.F.o  -o cmTC_fc129   
+Driving: /usr/local/bin/gfortran -v -Wl,-v CMakeFiles/cmTC_fc129.dir/CMakeFortranCompilerABI.F.o -o cmTC_fc129 -mmacosx-version-min=10.12.4 -asm_macosx_version_min=10.12 -l gfortran -shared-libgcc
+Using built-in specs.
+COLLECT_GCC=/usr/local/bin/gfortran
+COLLECT_LTO_WRAPPER=/usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/6.3.0/lto-wrapper
+Target: x86_64-apple-darwin15.6.0
+Configured with: ../gcc-6.3.0/configure --enable-languages=c++,fortran
+Thread model: posix
+gcc version 6.3.0 (GCC) 
+Reading specs from /usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/../../../libgfortran.spec
+rename spec lib to liborig
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_fc129' '-mmacosx-version-min=10.12.4' '-asm_macosx_version_min=10.12' '-shared-libgcc' '-mtune=core2'
+COMPILER_PATH=/usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/6.3.0/:/usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/6.3.0/:/usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/:/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/:/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/
+LIBRARY_PATH=/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/:/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/../../../
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_fc129' '-mmacosx-version-min=10.12.4' '-asm_macosx_version_min=10.12' '-shared-libgcc' '-mtune=core2'
+ /usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/6.3.0/collect2 -dynamic -arch x86_64 -macosx_version_min 10.12.4 -weak_reference_mismatches non-weak -o cmTC_fc129 -L/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0 -L/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/../../.. -v CMakeFiles/cmTC_fc129.dir/CMakeFortranCompilerABI.F.o -lgfortran -no_compact_unwind -lSystem -lgcc_ext.10.5 -lgcc -lquadmath -lm -lgcc_ext.10.5 -lgcc -lSystem -v
+collect2 version 6.3.0
+/opt/local/bin/ld -dynamic -arch x86_64 -macosx_version_min 10.12.4 -weak_reference_mismatches non-weak -o cmTC_fc129 -L/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0 -L/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/../../.. -v CMakeFiles/cmTC_fc129.dir/CMakeFortranCompilerABI.F.o -lgfortran -no_compact_unwind -lSystem -lgcc_ext.10.5 -lgcc -lquadmath -lm -lgcc_ext.10.5 -lgcc -lSystem -v
+@(#)PROGRAM:ld  PROJECT:ld64-274.1
+configured to support archs: i386 x86_64 x86_64h armv6 armv7 armv7s armv7m armv7k arm64 (tvOS)
+@(#)PROGRAM:ld  PROJECT:ld64-274.1
+configured to support archs: i386 x86_64 x86_64h armv6 armv7 armv7s armv7m armv7k arm64 (tvOS)
+Library search paths:
+	/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0
+	/usr/local/lib
+	/usr/lib
+	/usr/local/lib
+Framework search paths:
+	/Library/Frameworks/
+	/System/Library/Frameworks/
+
+
+Parsed Fortran implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_fc129/fast"]
+  ignore line: [/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_fc129.dir/build.make CMakeFiles/cmTC_fc129.dir/build]
+  ignore line: [Building Fortran object CMakeFiles/cmTC_fc129.dir/CMakeFortranCompilerABI.F.o]
+  ignore line: [/usr/local/bin/gfortran     -c /opt/local/share/cmake-3.7/Modules/CMakeFortranCompilerABI.F -o CMakeFiles/cmTC_fc129.dir/CMakeFortranCompilerABI.F.o]
+  ignore line: [Linking Fortran executable cmTC_fc129]
+  ignore line: [/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fc129.dir/link.txt --verbose=1]
+  ignore line: [/usr/local/bin/gfortran    -v -Wl,-v   CMakeFiles/cmTC_fc129.dir/CMakeFortranCompilerABI.F.o  -o cmTC_fc129   ]
+  ignore line: [Driving: /usr/local/bin/gfortran -v -Wl,-v CMakeFiles/cmTC_fc129.dir/CMakeFortranCompilerABI.F.o -o cmTC_fc129 -mmacosx-version-min=10.12.4 -asm_macosx_version_min=10.12 -l gfortran -shared-libgcc]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/usr/local/bin/gfortran]
+  ignore line: [COLLECT_LTO_WRAPPER=/usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/6.3.0/lto-wrapper]
+  ignore line: [Target: x86_64-apple-darwin15.6.0]
+  ignore line: [Configured with: ../gcc-6.3.0/configure --enable-languages=c++,fortran]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 6.3.0 (GCC) ]
+  ignore line: [Reading specs from /usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/../../../libgfortran.spec]
+  ignore line: [rename spec lib to liborig]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_fc129' '-mmacosx-version-min=10.12.4' '-asm_macosx_version_min=10.12' '-shared-libgcc' '-mtune=core2']
+  ignore line: [COMPILER_PATH=/usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/6.3.0/:/usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/6.3.0/:/usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/:/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/:/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/]
+  ignore line: [LIBRARY_PATH=/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/:/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/../../../]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_fc129' '-mmacosx-version-min=10.12.4' '-asm_macosx_version_min=10.12' '-shared-libgcc' '-mtune=core2']
+  link line: [ /usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/6.3.0/collect2 -dynamic -arch x86_64 -macosx_version_min 10.12.4 -weak_reference_mismatches non-weak -o cmTC_fc129 -L/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0 -L/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/../../.. -v CMakeFiles/cmTC_fc129.dir/CMakeFortranCompilerABI.F.o -lgfortran -no_compact_unwind -lSystem -lgcc_ext.10.5 -lgcc -lquadmath -lm -lgcc_ext.10.5 -lgcc -lSystem -v]
+    arg [/usr/local/libexec/gcc/x86_64-apple-darwin15.6.0/6.3.0/collect2] ==> ignore
+    arg [-dynamic] ==> ignore
+    arg [-arch] ==> ignore
+    arg [x86_64] ==> ignore
+    arg [-macosx_version_min] ==> ignore
+    arg [10.12.4] ==> ignore
+    arg [-weak_reference_mismatches] ==> ignore
+    arg [non-weak] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_fc129] ==> ignore
+    arg [-L/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0] ==> dir [/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0]
+    arg [-L/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/../../..] ==> dir [/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/../../..]
+    arg [-v] ==> ignore
+    arg [CMakeFiles/cmTC_fc129.dir/CMakeFortranCompilerABI.F.o] ==> ignore
+    arg [-lgfortran] ==> lib [gfortran]
+    arg [-no_compact_unwind] ==> ignore
+    arg [-lSystem] ==> lib [System]
+    arg [-lgcc_ext.10.5] ==> lib [gcc_ext.10.5]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-lquadmath] ==> lib [quadmath]
+    arg [-lm] ==> lib [m]
+    arg [-lgcc_ext.10.5] ==> lib [gcc_ext.10.5]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-lSystem] ==> lib [System]
+    arg [-v] ==> ignore
+  Library search paths: [;/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0;/usr/local/lib;/usr/lib;/usr/local/lib]
+  Framework search paths: [;/Library/Frameworks/;/System/Library/Frameworks/]
+  remove lib [System]
+  remove lib [gcc_ext.10.5]
+  remove lib [gcc]
+  remove lib [gcc_ext.10.5]
+  remove lib [gcc]
+  remove lib [System]
+  collapse library dir [/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0] ==> [/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0]
+  collapse library dir [/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0/../../..] ==> [/usr/local/lib]
+  collapse library dir [/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0] ==> [/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0]
+  collapse library dir [/usr/local/lib] ==> [/usr/local/lib]
+  collapse library dir [/usr/lib] ==> [/usr/lib]
+  collapse library dir [/usr/local/lib] ==> [/usr/local/lib]
+  collapse framework dir [/Library/Frameworks/] ==> [/Library/Frameworks]
+  collapse framework dir [/System/Library/Frameworks/] ==> [/System/Library/Frameworks]
+  implicit libs: [gfortran;quadmath;m]
+  implicit dirs: [/usr/local/lib/gcc/x86_64-apple-darwin15.6.0/6.3.0;/usr/local/lib;/usr/lib]
+  implicit fwks: [/Library/Frameworks;/System/Library/Frameworks]
+
+
+Determining if the Fortran compiler supports Fortran 90 passed with the following output:
+Change Dir: /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_08d51/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_08d51.dir/build.make CMakeFiles/cmTC_08d51.dir/build
+Building Fortran object CMakeFiles/cmTC_08d51.dir/testFortranCompilerF90.f90.o
+/usr/local/bin/gfortran     -c /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp/testFortranCompilerF90.f90 -o CMakeFiles/cmTC_08d51.dir/testFortranCompilerF90.f90.o
+Linking Fortran executable cmTC_08d51
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_08d51.dir/link.txt --verbose=1
+/usr/local/bin/gfortran       CMakeFiles/cmTC_08d51.dir/testFortranCompilerF90.f90.o  -o cmTC_08d51  
+
+
+Determining if the include file sys/types.h exists passed with the following output:
+Change Dir: /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_b2069/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_b2069.dir/build.make CMakeFiles/cmTC_b2069.dir/build
+Building C object CMakeFiles/cmTC_b2069.dir/CheckIncludeFile.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc     -o CMakeFiles/cmTC_b2069.dir/CheckIncludeFile.c.o   -c /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_b2069
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b2069.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_b2069.dir/CheckIncludeFile.c.o  -o cmTC_b2069  
+
+
+Determining if the include file stdint.h exists passed with the following output:
+Change Dir: /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_d0561/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_d0561.dir/build.make CMakeFiles/cmTC_d0561.dir/build
+Building C object CMakeFiles/cmTC_d0561.dir/CheckIncludeFile.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc     -o CMakeFiles/cmTC_d0561.dir/CheckIncludeFile.c.o   -c /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_d0561
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d0561.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_d0561.dir/CheckIncludeFile.c.o  -o cmTC_d0561  
+
+
+Determining if the include file stddef.h exists passed with the following output:
+Change Dir: /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_f84b5/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_f84b5.dir/build.make CMakeFiles/cmTC_f84b5.dir/build
+Building C object CMakeFiles/cmTC_f84b5.dir/CheckIncludeFile.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc     -o CMakeFiles/cmTC_f84b5.dir/CheckIncludeFile.c.o   -c /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_f84b5
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f84b5.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_f84b5.dir/CheckIncludeFile.c.o  -o cmTC_f84b5  
+
+
+Determining size of unsigned short passed with the following output:
+Change Dir: /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_14684/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_14684.dir/build.make CMakeFiles/cmTC_14684.dir/build
+Building C object CMakeFiles/cmTC_14684.dir/CMAKE_SIZEOF_UNSIGNED_SHORT.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc     -o CMakeFiles/cmTC_14684.dir/CMAKE_SIZEOF_UNSIGNED_SHORT.c.o   -c /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CheckTypeSize/CMAKE_SIZEOF_UNSIGNED_SHORT.c
+Linking C executable cmTC_14684
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_14684.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_14684.dir/CMAKE_SIZEOF_UNSIGNED_SHORT.c.o  -o cmTC_14684  
+
+
+Determining if the system is big endian passed with the following output:
+Change Dir: /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_61f45/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_61f45.dir/build.make CMakeFiles/cmTC_61f45.dir/build
+Building C object CMakeFiles/cmTC_61f45.dir/TestEndianess.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc     -o CMakeFiles/cmTC_61f45.dir/TestEndianess.c.o   -c /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/CMakeTmp/TestEndianess.c
+Linking C executable cmTC_61f45
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_61f45.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_61f45.dir/TestEndianess.c.o  -o cmTC_61f45  
+
+TestEndianess.c:
+/* A 16 bit integer is required. */
+typedef unsigned short cmakeint16;
+
+/* On a little endian machine, these 16bit ints will give "THIS IS LITTLE ENDIAN."
+   On a big endian machine the characters will be exchanged pairwise. */
+const cmakeint16 info_little[] =  {0x4854, 0x5349, 0x4920, 0x2053, 0x494c, 0x5454, 0x454c, 0x4520, 0x444e, 0x4149, 0x2e4e, 0x0000};
+
+/* on a big endian machine, these 16bit ints will give "THIS IS BIG ENDIAN."
+   On a little endian machine the characters will be exchanged pairwise. */
+const cmakeint16 info_big[] =     {0x5448, 0x4953, 0x2049, 0x5320, 0x4249, 0x4720, 0x454e, 0x4449, 0x414e, 0x2e2e, 0x0000};
+
+#ifdef __CLASSIC_C__
+int main(argc, argv) int argc; char *argv[];
+#else
+int main(int argc, char *argv[])
+#endif
+{
+  int require = 0;
+  require += info_little[argc];
+  require += info_big[argc];
+  (void)argv;
+  return require;
+}
+
+

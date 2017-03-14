@@ -22,7 +22,7 @@ module AnomDimClass
     real (dp)                     :: G4, err
     real (dp), dimension(0:3,0:3) :: gammaHm
     real (dp), dimension(4)       :: sCoefMSR, sCoefMSRNatural, bHat, betaList,&
-    gammaR,  gammaRNatural
+    gammaR,  gammaRNatural, sCoefMSRInc, gammaRInc, sCoefMSRInc2, gammaRInc2
 
     real (dp), dimension(0:4)     :: beta
     real (dp), dimension(0:4)     :: gammaMass
@@ -112,9 +112,13 @@ module AnomDimClass
 
     InAdim%gammaR        = InAdim%GammaRComputer( InAdim%MSRDelta() )
     InAdim%gammaRNatural = InAdim%GammaRComputer( MSbarDelta(nf, 0, InAdim%err) )
+    InAdim%gammaRInc     = InAdim%GammaRComputer( MSbarDelta(nf - 1, 0, InAdim%err) )
+    InAdim%gammaRInc2    = InAdim%GammaRComputer( MSbarDelta(nf + 1, 0, InAdim%err) )
 
     InAdim%sCoefMSR        = InAdim%sCoef(  betaList * InAdim%GammaRComputer( InAdim%MSRDelta() )  )
     InAdim%sCoefMSRNatural = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf, 0, InAdim%err) )  )
+    InAdim%sCoefMSRInc     = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf - 1, 0, InAdim%err) )  )
+    InAdim%sCoefMSRInc2    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf + 1, 0, InAdim%err) )  )
 
    end function InAdim
 
@@ -408,8 +412,12 @@ module AnomDimClass
     if ( str( :8) == 'MSRdelta'        ) bet(1:) = self%MSRDelta()
     if ( str(:15) == 'MSRNaturaldelta' ) bet(1:) = MSbarDelta(self%nf, 0, self%err)
     if ( str( :8) == 'sCoefMSR'        ) bet(1:) = self%sCoefMSR
+    if ( str(:11) == 'sCoefMSRInc'     ) bet(1:) = self%sCoefMSRInc
+    if ( str(:12) == 'sCoefMSRInc2'    ) bet(1:) = self%sCoefMSRInc2
     if ( str(:15) == 'sCoefMSRNatural' ) bet(1:) = self%sCoefMSRNatural
     if ( str( :8) == 'betaList'        ) bet(1:) = self%betaList
+    if ( str( :9) == 'gammaRInc'       ) bet(1:) = self%gammaRInc
+    if ( str(:10) == 'gammaRInc2'      ) bet(1:) = self%gammaRInc2
     if ( str( :6) == 'gammaR'          ) bet(1:) = self%gammaR
     if ( str(:13) == 'gammaRNatural'   ) bet(1:) = self%gammaRNatural
 
@@ -422,15 +430,15 @@ module AnomDimClass
      real (dp)            , intent(in) :: lambda
      character (len = *)  , intent(in) :: type
      integer              , intent(in) :: order
-     real (dp)          , dimension(4) :: scoef
+     real (dp)          , dimension(4) :: sCoef
      integer                           :: i
 
-     scoef = self%sCoefLambda(type, lambda)
+     sCoef = self%sCoefLambda(type, lambda)
 
      P12 = 0
 
      do i = 0, min(order, 3)
-       P12 = P12 + scoef(i + 1)/gamma( 1 + self%bHat(1) + i )
+       P12 = P12 + sCoef(i + 1)/gamma( 1 + self%bHat(1) + i )
      end do
 
   end function P12
@@ -453,26 +461,30 @@ module AnomDimClass
      class (AnomDim)      , intent(in) :: self
      real (dp)            , intent(in) :: lambda
      character (len = *)  , intent(in) :: type
-     real (dp)          , dimension(4) :: res, scoef
+     real (dp)          , dimension(4) :: res, sCoef
      real (dp)                         :: lg
 
-     scoef = 0; lg = log(lambda)
+     sCoef = 0; lg = log(lambda)
 
-     if ( type(:7) == 'Natural' ) then
-       scoef = self%sCoefMSRNatural
+     if ( type(:4) == 'Inc2' ) then
+       sCoef = self%sCoefMSRInc2
+     else if ( type(:3) == 'Inc' ) then
+       sCoef = self%sCoefMSRInc
+     else if ( type(:7) == 'Natural' ) then
+       sCoef = self%sCoefMSRNatural
      else if ( type(:9) == 'Practical' ) then
-       scoef = self%sCoefMSR
+       sCoef = self%sCoefMSR
      end if
 
-     res = scoef
+     res = sCoef
 
-     res(2) = res(2) - lg * scoef(1)
+     res(2) = res(2) - lg * sCoef(1)
 
-     res(3) = res(3) - 2 * lg * scoef(2) + scoef(1) * (  lg**2 - ( 2 * self%bHat(1) &
+     res(3) = res(3) - 2 * lg * sCoef(2) + sCoef(1) * (  lg**2 - ( 2 * self%bHat(1) &
      + self%bHat(2) ) * lg  )
 
-     res(4) = res(4) - 3 * lg * scoef(3) + scoef(2) * (  3 * lg**2 - ( 3 * self%bHat(1) &
-     + self%bHat(2) ) * lg  ) + scoef(1) * (  (self%bHat(3) - 3 * self%bHat(1)**2 +&
+     res(4) = res(4) - 3 * lg * sCoef(3) + sCoef(2) * (  3 * lg**2 - ( 3 * self%bHat(1) &
+     + self%bHat(2) ) * lg  ) + sCoef(1) * (  (self%bHat(3) - 3 * self%bHat(1)**2 +&
      3 * self%bHat(2) - self%bHat(1) * self%bHat(2)) * lg + ( 9 * self%bHat(1)/2 &
      + 2 * self%bHat(2) ) * lg**2 - lg**3  )
 
