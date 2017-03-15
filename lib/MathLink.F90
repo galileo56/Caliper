@@ -2585,6 +2585,20 @@ end subroutine f90N12
 
 !ccccccccccccccc
 
+subroutine f90N12Generic(a, order, nf, lambda, res)
+  use AnomDimClass;  use constants, only: dp; implicit none
+  real (dp), dimension(4), intent(in ) :: a
+  integer                , intent(in ) :: nf, order
+  real (dp)              , intent(in ) :: lambda
+  real (dp)              , intent(out) :: res
+  type (AnomDim)                       :: run
+
+  run = AnomDim('MSbar', nf, 0._dp, 0._dp);  res = run%N12Generic(order, a, lambda)
+
+end subroutine f90N12Generic
+
+!ccccccccccccccc
+
 subroutine f90Scoef(str, nf, beta)
   use AlphaClass;  use MatrixElementsClass;  use constants, only: dp; implicit none
   character (len = *)    , intent(in ) :: str
