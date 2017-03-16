@@ -2562,8 +2562,8 @@ subroutine f90AnomDim(str, nf, G4, beta)
   character (len = *)    , intent(in )  :: str
   integer                , intent(in )  :: nf
   real (dp)              , intent(in )  :: G4
-  real (dp), dimension(5), intent(out) :: beta
-  type (AnomDim)                           :: run
+  real (dp), dimension(5), intent(out)  :: beta
+  type (AnomDim)                        :: run
 
   run = AnomDim('MSbar', nf, G4);  beta = run%betaQCD(str)
 
@@ -2756,13 +2756,14 @@ end subroutine f90MSbarMassLow
 
 !ccccccccccccccc
 
-subroutine f90MSRMass(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, muB, &
-mC, muC, lambda, mu, R, res)
+subroutine f90MSRMass(method, orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, &
+mB, muB, mC, muC, lambda, mu, R, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp; implicit none
 
   integer  , intent(in ) :: orderAlpha, runAlpha, run, nf
   real (dp), intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R, lambda
   real (dp), intent(out) :: res
+  character (len = *), intent(in) :: method
 
   type (Running)        :: alphaMass
   type (Alpha)          :: alphaAll
@@ -2770,7 +2771,8 @@ mC, muC, lambda, mu, R, res)
   alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
-  alphaMass = Running(nf, run, alphaAll, mu);  res = alphaMass%MSRMass(R, lambda)
+  alphaMass = Running(nf, run, alphaAll, mu)
+  res = alphaMass%MSRMass( R, lambda, method(:8) )
 
 end subroutine f90MSRMass
 

@@ -1,6 +1,6 @@
 
 module RunningClass
-  use AnomDimClass;  use AlphaClass; use Constants, only: dp, Pi, ExpEuler, d1mach
+  use AnomDimClass;  use AlphaClass; use Constants, only: dp, Pi, ExpEuler, d1mach, prec
   use QuadPack, only: qags         ; implicit none   ;  private
 
 !ccccccccccccccc
@@ -12,7 +12,7 @@ module RunningClass
     type (AnomDim)              :: andim
     type (Alpha)                :: AlphaOb
     real (dp), dimension(0:4)   :: beta, gamma
-    real (dp), dimension(4)     :: bHat, sCoef, sCoefNatural
+    real (dp), dimension(4)     :: bHat, sCoef, sCoefNatural, gammaR, gammaRNatural
     real (dp)                   :: muLambda, mH, mL
     real (dp), dimension(0:4,4) :: tab
 
@@ -72,6 +72,10 @@ module RunningClass
     InitRun%sCoefNatural = sCoef(1:)
     sCoef = 0; sCoef = InitRun%andim%betaQCD('bHat')
     InitRun%bHat = sCoef(1:)
+    sCoef = 0; sCoef = InitRun%andim%betaQCD('MSRdelta')
+    InitRun%gammaR = sCoef(1:)
+    sCoef = 0; sCoef = InitRun%andim%betaQCD('MSRNaturaldelta')
+    InitRun%gammaRNatural = sCoef(1:)
 
    end function InitRun
 
@@ -279,20 +283,67 @@ module RunningClass
 
 !ccccccccccccccc
 
-   real (dp) function MSRmass(self, R, lambda)
-     class (Running)    , intent(in) :: self
-     real (dp)          , intent(in) :: R
-     real (dp), optional, intent(in) :: lambda
-     real (dp)                       :: corr
+   real (dp) function MSRmass(self, R, lambda, method)
+     class (Running)              , intent(in) :: self
+     real (dp)                    , intent(in) :: R
+     real (dp)          , optional, intent(in) :: lambda
+     character (len = *), optional, intent(in) :: method
+     real (dp), dimension(self%runMass,self%runMass) :: gammaLog
+     real (dp), dimension(self%runMass)        :: gamm
+     real (dp)                                 :: corr, abserr, lan
+     integer                                   :: neval, ier, i
 
-     if ( .not. present(lambda) ) then
-       corr = self%DiffR( self%sCoef, self%runMass, self%mH, R )
-     else
-       corr = self%DiffR( self%sCoefLambda('Practical', lambda), &
-       self%runMass, self%mH/lambda, R/lambda )
-     end if
+     if (  ( .not. present(method) ) .or. method(:8) == 'analytic' ) then
 
-     MSRmass = self%mH + self%lambdaQCD(self%runMass) * corr
+       if ( .not. present(lambda) ) then
+         corr = self%DiffR( self%sCoef, self%runMass, self%mH, R )
+       else
+         corr = self%DiffR( self%sCoefLambda('Practical', lambda), &
+         self%runMass, self%mH/lambda, R/lambda )
+       end if
+
+       corr = self%lambdaQCD(self%runMass) * corr
+
+    else if ( method(:7) == 'numeric' ) then
+
+      gammaLog(1,:) = self%gammaR(:self%runMass)
+
+      if ( present(lambda) ) then
+
+        gammaLog(1,:) = gammaLog(1,:)
+        call self%andim%expandAlpha( gammaLog )
+
+        do i = 1, self%runMass
+          gamm(i) = gammaLog(1,i) + dot_product( gammaLog(2:,i), powList(-log(lambda), self%runMass-1) )
+        end do
+
+        gamm = lambda * gamm; lan = lambda
+
+      else
+        gamm = gammaLog(1,:); lan = 1
+      end if
+
+        gamm = self%andim%GammaRComputer( gamm )
+
+      call qags( Integrand, R/lan, self%mH/lan, prec, prec, corr, abserr, neval, ier )
+
+    end if
+
+    MSRmass = self%mH + corr
+
+    contains
+
+!ccccccccccccccc
+
+   real (dp) function Integrand(R)
+     real (dp)             , intent(in) :: R
+     real (dp), dimension(self%runMass) :: aPi
+
+     aPi = powList( self%alphaQCD(R)/4/Pi, self%runMass )
+
+     Integrand = dot_product( gamm, aPi )
+
+   end function Integrand
 
    end function MSRmass
 
@@ -492,11 +543,11 @@ module RunningClass
     real (dp)              , intent(in) :: r0, r1, mu0, mu1
     class (Running)        , intent(in) :: self
     real (dp), dimension(3), intent(in) :: gamma
-    real (dp)                           :: a, b, delta, a0, a1, abserr, tny
+    real (dp)                           :: a, b, delta, a0, a1, abserr
     real (dp), dimension(3)             :: gammaBet(3)
     integer                             :: neval, ier
 
-    gammaBet = gamma * PowList(1/( 2 * self%beta(0) ), 3); tny = tiny(1._dp)
+    gammaBet = gamma * PowList(1/( 2 * self%beta(0) ), 3)
 
     a = 6/self%beta(0) * log( self%alphaQCD(mu1)/self%alphaQCD(r1) )
     b = 6/self%beta(0) * log( self%alphaQCD(mu1)/self%alphaQCD(r0) )
@@ -504,7 +555,7 @@ module RunningClass
     a0 = self%alphaQCD(r0);  a1 = self%alphaQCD(r1)
     delta = 6/self%beta(0) * log( self%beta(0)/2/Pi * self%alphaQCD(mu1) )
 
-    call qags( inteHadron, 0._dp, 1._dp, tny, tny, DiffDeltaHadron, abserr, neval, ier )
+    call qags( inteHadron, 0._dp, 1._dp, prec, prec, DiffDeltaHadron, abserr, neval, ier )
 
     DiffDeltaHadron = self%lambdaQCD(order) * DiffDeltaHadron +            &
     0.8862269254527579_dp * ( dgamma(1 + a)/dgamma(1.5_dp + a) *              &
