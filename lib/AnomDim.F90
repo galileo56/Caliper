@@ -35,7 +35,7 @@ module AnomDimClass
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
     bHQETgamma, alphaMatching, alphaMatchingInverse, wTildeHm, GammaRComputer,&
     sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12, sCoefGeneric, &
-    P12Generic, N12Generic
+    P12Generic, N12Generic, sCoefRecursive
 
    procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
    kTildeComplex
@@ -146,6 +146,7 @@ module AnomDimClass
     InAdim%gammaRInc3    = InAdim%GammaRComputer( MSbarDelta(nf + 1, 1, InAdim%err) )
 
     InAdim%sCoefMSR        = InAdim%sCoef(  betaList * InAdim%GammaRComputer( InAdim%MSRDelta() )  )
+    ! InAdim%sCoefMSR        = InAdim%sCoefRecursive( InAdim%MSRDelta() )
     InAdim%sCoefMSRNatural = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf    , 0, InAdim%err) )  )
     InAdim%sCoefMSRInc1    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf    , 1, InAdim%err) )  )
     InAdim%sCoefMSRInc2    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf - 1, 1, InAdim%err) )  )
@@ -582,7 +583,7 @@ module AnomDimClass
     real (dp), dimension( size(gamma) ) :: s
 
     if ( size(gamma) > 0 ) s(1) = gamma(1)
-    if ( size(gamma) > 1 ) s(2) = gamma(2) - sum( self%bHat(:2) ) * gamma(1)
+    if ( size(gamma) > 1 ) s(2) = gamma(2) - sum( self%bHat(1:2) ) * gamma(1)
 
     if ( size(gamma) > 2 ) then
       s(3) = gamma(3) - sum( self%bHat(:2) ) * gamma(2) + &
@@ -600,6 +601,55 @@ module AnomDimClass
     end if
 
   end function sCoef
+
+!ccccccccccccccc
+
+  pure function sCoefRecursive(self, a) result(s)
+    class (AnomDim)        , intent(in) :: self
+    real (dp), dimension(:), intent(in) :: a
+    real (dp), dimension( 0:size(a)-1 ) :: s
+    real (dp), dimension(size(a) )      :: tilA
+    integer                             :: k, n, l
+    real (dp)                           :: suma, suma2
+
+    tilA = a * self%betaList( :size(a) ) * powList(4,size(a))
+
+    do k = 0, size(a) - 1
+
+      suma = 0
+
+      do n = 0, k - 1
+
+        suma2 = 0
+
+        do l = 0, k - n
+          suma2 = suma2 + self%gl(l) * PochHammer(1 + self%bHat(1) + n, k - l - n)
+        end do
+
+        suma = suma + s(n) * suma2
+
+      end do
+
+      s(k) = tilA(k+1) - suma
+
+    end do
+
+  end function sCoefRecursive
+
+!ccccccccccccccc
+
+  pure real (dp) function PochHammer(a,n)
+    real (dp), intent(in) :: a
+    integer  , intent(in) :: n
+    integer               :: j
+
+    if (n == 0) then
+      PochHammer = 1
+    else
+      PochHammer = Product(  [ (a + j, j = 0, n - 1) ]  )
+    end if
+
+  end function PochHammer
 
 !ccccccccccccccc
 
