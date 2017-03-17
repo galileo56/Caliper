@@ -489,22 +489,93 @@ module RunningClass
      character (len = *), optional      , intent(in) :: method
      integer                            , intent(in) :: order
      real (dp)                        , dimension(3) :: a
-     real (dp)                                       :: alphaM, matching, corr
-     integer                                         :: i
+     real (dp), dimension(self%runMass,self%runMass) :: gammaLog
+     real (dp), dimension(self%runMass)              :: gamm, alphaList, lglist
+     integer                                         :: neval, ier, i
+     real (dp)                                       :: corr, abserr, lan, delta, &
+     alphaM, matching, mu, Rstep, delta1, delta2
 
-     if ( .not. present(lambda) ) then
-       corr = self%DiffR( self%sCoefNatural, self%runMass, self%mH, R )
+     if ( present(lambda) ) then
+
+       gammaLog(1,:) = self%gammaRNatural(:self%runMass) ; lan = lambda
+       call self%andim%expandAlpha( gammaLog )
+
+       gamm = lambda * (  gammaLog(1,:) + &
+       matmul( powList(-log(lambda), self%runMass-1), gammaLog(2:,:) )  )
+
      else
-       corr = self%DiffR( self%sCoefLambda('Natural', lambda), &
-       self%runMass, self%mH/lambda, R/lambda )
+
+       lan = 1
+
      end if
+
+     if (  ( .not. present(method) ) .or. method(:8) == 'analytic' ) then
+
+       if ( .not. present(lambda) ) then
+         corr = self%DiffR( self%sCoefNatural, self%runMass, self%mH, R )
+       else
+        corr = self%DiffR( self%andim%sCoefRecursive(gamm), &
+        self%runMass, self%mH/lambda, R/lambda )
+       end if
+
+       corr = self%lambdaQCD(self%runMass) * corr
+
+    else if ( method(:7) == 'numeric' ) then
+
+      gammaLog(1,:) = self%gammaRNatural(:self%runMass)
+
+      if ( .not. present(lambda) ) then
+        gamm = self%gammaRNatural(:self%runMass)
+      end if
+
+        gamm = self%andim%GammaRComputer( gamm )
+
+      call qags( Integrand, R/lan, self%mH/lan, prec, prec, corr, abserr, neval, ier )
+
+    else if ( method(:4) == 'diff' ) then
+
+      delta = 0.1_dp;   neval = abs(  Nint( ( self%mH - R )/delta )  )
+      delta = (self%mH - R)/neval; corr = 0; Rstep = self%mH + delta
+      gammaLog(1,:) = self%gammaRNatural(:self%runMass)
+      call self%andim%expandAlpha( gammaLog )
+
+      do ier = 1, neval
+
+        Rstep = Rstep - delta; mu = (Rstep - delta/2)/lan
+        alphaList = powList( self%alphaQCD(mu)/Pi, self%runMass )
+
+        lgList = powList( log(mu/Rstep), self%runMass )
+        delta1 = Rstep * dot_product( DeltaComputer(gammaLog, lgList, 0), alphaList )
+
+        lgList = powList( log(mu/(Rstep - delta) ), self%runMass )
+        delta2 = (Rstep - delta) * dot_product( DeltaComputer(gammaLog, lgList, 0), alphaList )
+
+        corr = corr + delta1 - delta2
+
+      end do
+
+    end if
 
      if (self%runMass > 0) alphaM = self%AlphaOb%alphaQCD(self%nf + 1, self%mH)/Pi ! note: perform matching with nl active flavors?
      a = self%MSRMatching(); i = min(order, 4)
 
      matching = 1 + dot_product( a(:i), PowList(alphaM, i) )
 
-     MSRNaturalMass = self%mH * matching + self%lambdaQCD(self%runMass) * corr
+     MSRNaturalMass = self%mH * matching + corr
+
+    contains
+
+!ccccccccccccccc
+
+   real (dp) function Integrand(R)
+     real (dp)             , intent(in) :: R
+     real (dp), dimension(self%runMass) :: aPi
+
+     aPi = powList( self%alphaQCD(R)/4/Pi, self%runMass )
+
+     Integrand = dot_product( gamm, aPi )
+
+   end function Integrand
 
    end function MSRNaturalMass
 
