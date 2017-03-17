@@ -3364,7 +3364,7 @@ end subroutine f90SingularDiffList
 !ccccccccccccccc
 
 subroutine f90Rhad(str, orderAlpha, runAlpha, order, nf, mZ, amZ, mT, muT, mB, &
-                   muB, mC, muC, mu, Q, res)
+muB, mC, muC, mu, Q, res)
 
   use RunningClass; use AlphaClass; use SigmaClass;  use ElectroWeakClass
   use constants, only: dp; implicit none
@@ -3378,8 +3378,8 @@ subroutine f90Rhad(str, orderAlpha, runAlpha, order, nf, mZ, amZ, mT, muT, mB, &
   type (Sigma)                     :: MatEl
   type (ElectroWeak)               :: EW
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
-                     mT, muT, mB, muB, mC, muC)
+  alphaAll  = Alpha(str, orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
   alphaMass = Running(nf, runAlpha, alphaAll, muC)
   EW = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
 
@@ -3389,8 +3389,31 @@ end subroutine f90Rhad
 
 !ccccccccccccccc
 
-subroutine f90RhadMass(str, curr, orderAlpha, runAlpha, runMass, order, nf, mZ, gammaZ, &
-                       sin2ThetaW, amZ, mT, muT, mB, muB, mC, muC, mu, Q, res)
+subroutine f90RhadCoefs(nf, res)
+
+  use RunningClass; use AlphaClass; use SigmaClass;  use ElectroWeakClass
+  use constants, only: dp; implicit none
+
+  integer                , intent(in ) :: nf
+  real (dp), dimension(4), intent(out) :: res
+  type (Running)                       :: alphaMass
+  type (Alpha)                         :: alphaAll
+  type (Sigma)                         :: MatEl
+  type (ElectroWeak)                   :: EW
+
+  alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, &
+  0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaMass = Running(nf, 0, alphaAll, 0._dp)
+  EW = ElectroWeak(0._dp, 2.4952_dp, 0.23119_dp)
+
+  MatEl = Sigma(alphaMass, EW);  res = MatEl%RhadCoefs()
+
+end subroutine f90RhadCoefs
+
+!ccccccccccccccc
+
+subroutine f90RhadMass(str, curr, orderAlpha, runAlpha, runMass, order, nf, mZ, &
+gammaZ, sin2ThetaW, amZ, mT, muT, mB, muB, mC, muC, mu, Q, res)
 
   use RunningClass; use AlphaClass; use SigmaClass; use ElectroWeakClass
   use constants, only: dp; implicit none
@@ -3398,7 +3421,7 @@ subroutine f90RhadMass(str, curr, orderAlpha, runAlpha, runMass, order, nf, mZ, 
   character (len = *), intent(in ) :: str, curr
   integer            , intent(in ) :: order, runAlpha, orderAlpha, nf, runMass
   real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, gammaZ, &
-                                      sin2ThetaW, Q
+  sin2ThetaW, Q
   real (dp)          , intent(out) :: res
   type (Running)                   :: alphaMass
   type (Alpha)                     :: alphaAll
@@ -3406,7 +3429,7 @@ subroutine f90RhadMass(str, curr, orderAlpha, runAlpha, runMass, order, nf, mZ, 
   type (ElectroWeak)               :: EW
 
   alphaAll  = Alpha(str(:5), orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  mB, muB, mC, muC)
   alphaMass = Running(nf, runMass, alphaAll, 0._dp)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   MatEl     = Sigma(alphaMass, EW)
