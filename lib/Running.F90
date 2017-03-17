@@ -291,7 +291,7 @@ module RunningClass
      real (dp), dimension(self%runMass,self%runMass) :: gammaLog
      real (dp), dimension(self%runMass)        :: gamm
      real (dp)                                 :: corr, abserr, lan
-     integer                                   :: neval, ier, i
+     integer                                   :: neval, ier
 
      if (  ( .not. present(method) ) .or. method(:8) == 'analytic' ) then
 
@@ -310,14 +310,11 @@ module RunningClass
 
       if ( present(lambda) ) then
 
-        gammaLog(1,:) = gammaLog(1,:)
+        gammaLog(1,:) = gammaLog(1,:); lan = lambda
         call self%andim%expandAlpha( gammaLog )
 
-        do i = 1, self%runMass
-          gamm(i) = gammaLog(1,i) + dot_product( gammaLog(2:,i), powList(-log(lambda), self%runMass-1) )
-        end do
-
-        gamm = lambda * gamm; lan = lambda
+        gamm = lambda * (  gammaLog(1,:) + &
+        matmul( powList(-log(lambda), self%runMass-1), gammaLog(2:,:) )  )
 
       else
         gamm = gammaLog(1,:); lan = 1
