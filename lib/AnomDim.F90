@@ -24,7 +24,8 @@ module AnomDimClass
     real (dp), dimension(0:4)     :: bHat
     real (dp), dimension(0:4)     :: beta
     real (dp), dimension(0:4)     :: gammaMass
-    real (dp), dimension(0:3)     :: cusp, gammaHard, gammaB, gammaJet, gammaSoft, gl
+    real (dp), dimension(0:3)     :: gammaHard, gammaB, gammaJet, gammaSoft,&
+                                     cusp, gtilde, gl
     real (dp), dimension(4)       :: sCoefMSR, sCoefMSRNatural, betaList, &
     gammaR,  gammaRNatural, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, &
     sCoefMSRInc3, gammaRInc3
@@ -125,10 +126,11 @@ module AnomDimClass
 
     end do
 
-    InAdim%gl(0) = 1
+    InAdim%gl(0) = 1; InAdim%gTilde(0) = 1
 
     do n = 0, 2
       InAdim%gl(n + 1) = - sum( powList(-1,n + 1) * InAdim%bHat(2:n+2) * InAdim%gl(n:0:-1) )/(n+1)
+      InAdim%gTilde(n + 1) = sum( powList(-1,n + 1) * InAdim%bHat(2:n+2) * InAdim%gTilde(n:0:-1) )/(n+1)
     end do
 
     InAdim%gammaR        = InAdim%GammaRComputer( InAdim%MSRDelta() )
@@ -433,6 +435,7 @@ module AnomDimClass
     if ( str( :2) == 'Hm'              ) bet(:3) = self%gammaHm(:,0)
     if ( str( :4) == 'bHat'            ) bet     = self%bHat
     if ( str( :2) == 'gl'              ) bet(:3) = self%gl
+    if ( str( :6) == 'gTilde'          ) bet(:3) = self%gTilde
     if ( str( :8) == 'MSRdelta'        ) bet(1:) = self%MSRDelta()
     if ( str(:15) == 'MSRNaturaldelta' ) bet(1:) = MSbarDelta(self%nf, 0, self%err)
     if ( str( :8) == 'sCoefMSR'        ) bet(1:) = self%sCoefMSR
