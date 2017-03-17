@@ -21,13 +21,13 @@ module AnomDimClass
     character (len = 5)           :: str
     real (dp)                     :: G4, err
     real (dp), dimension(0:3,0:3) :: gammaHm
-    real (dp), dimension(4)       :: sCoefMSR, sCoefMSRNatural, bHat, betaList, &
-    gammaR,  gammaRNatural, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, &
-    sCoefMSRInc3, gammaRInc3
-
+    real (dp), dimension(0:4)     :: bHat
     real (dp), dimension(0:4)     :: beta
     real (dp), dimension(0:4)     :: gammaMass
-    real (dp), dimension(0:3)     :: cusp, gammaHard, gammaB, gammaJet, gammaSoft
+    real (dp), dimension(0:3)     :: cusp, gammaHard, gammaB, gammaJet, gammaSoft, gl
+    real (dp), dimension(4)       :: sCoefMSR, sCoefMSRNatural, betaList, &
+    gammaR,  gammaRNatural, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, &
+    sCoefMSRInc3, gammaRInc3
 
     contains
 
@@ -35,7 +35,7 @@ module AnomDimClass
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
     bHQETgamma, alphaMatching, alphaMatchingInverse, wTildeHm, GammaRComputer,&
     sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12, sCoefGeneric, &
-    P12Generic, N12Generic
+    P12Generic, N12Generic, sCoefRecursive
 
    procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
    kTildeComplex
@@ -62,6 +62,7 @@ module AnomDimClass
     real (dp), optional, intent(in) :: err        ! 4-loop MS-bar to pole conversion error
     real (dp), dimension(4)         :: betaList
     real (dp), dimension(0:4)       :: beta
+    integer                         :: n, i
 
     InAdim%err = 0; if ( present(err) ) InAdim%err = err
 
@@ -105,12 +106,30 @@ module AnomDimClass
 
     end if
 
-    InAdim%bHat = [ beta(1), beta(1)**2 - beta(0) * beta(2), beta(1)**3   &
-    - 2 * beta(0) * beta(1) * beta(2) + beta(0)**2 * beta(3), beta(1)**4 &
-    - 3 * beta(0) * beta(1)**2 * beta(2) + 2 * beta(0)**2 * beta(1) * beta(3) &
-    + beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  ]/PowList(2 * beta(0)**2, 4)
-
     betaList = PowList( 1/beta(0)/2, 4 ); InAdim%betaList = betaList
+
+    InAdim%bHat(0) = 1
+
+    do n = 0, 3
+
+      InAdim%bHat(n+1) = 0
+
+      do i = 0, n
+
+        InAdim%bHat(n+1) = InAdim%bHat(n+1) + (-1)**i * (i + 1) * betaList(i+1) * &
+        beta(i+1) * dot_product( InAdim%bHat(:n-i), InAdim%bHat(n - i : 0 : -1) )
+
+      end do
+
+      InAdim%bHat(n+1) = InAdim%bHat(n+1)/(n + 1)/beta(0)
+
+    end do
+
+    InAdim%gl(0) = 1
+
+    do n = 0, 2
+      InAdim%gl(n + 1) = - sum( powList(-1,n + 1) * InAdim%bHat(2:n+2) * InAdim%gl(n:0:-1) )/(n+1)
+    end do
 
     InAdim%gammaR        = InAdim%GammaRComputer( InAdim%MSRDelta() )
     InAdim%gammaRNatural = InAdim%GammaRComputer( MSbarDelta(nf    , 0, InAdim%err) )
@@ -118,11 +137,11 @@ module AnomDimClass
     InAdim%gammaRInc2    = InAdim%GammaRComputer( MSbarDelta(nf - 1, 1, InAdim%err) )
     InAdim%gammaRInc3    = InAdim%GammaRComputer( MSbarDelta(nf + 1, 1, InAdim%err) )
 
-    InAdim%sCoefMSR        = InAdim%sCoef(  betaList * InAdim%GammaRComputer( InAdim%MSRDelta() )  )
-    InAdim%sCoefMSRNatural = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf    , 0, InAdim%err) )  )
-    InAdim%sCoefMSRInc1    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf    , 1, InAdim%err) )  )
-    InAdim%sCoefMSRInc2    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf - 1, 1, InAdim%err) )  )
-    InAdim%sCoefMSRInc3    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf + 1, 1, InAdim%err) )  )
+    InAdim%sCoefMSR        = InAdim%sCoefRecursive( InAdim%MSRDelta() )
+    InAdim%sCoefMSRNatural = InAdim%sCoefRecursive( MSbarDelta(nf   ,  0, InAdim%err) )
+    InAdim%sCoefMSRInc1    = InAdim%sCoefRecursive( MSbarDelta(nf   ,  1, InAdim%err) )
+    InAdim%sCoefMSRInc2    = InAdim%sCoefRecursive( MSbarDelta(nf - 1, 1, InAdim%err) )
+    InAdim%sCoefMSRInc3    = InAdim%sCoefRecursive( MSbarDelta(nf + 1, 1, InAdim%err) )
 
    end function InAdim
 
@@ -412,7 +431,8 @@ module AnomDimClass
     if ( str( :4) == 'soft'            ) bet(:3) = self%gammaSoft
     if ( str( :4) == 'bJet'            ) bet(:3) = self%gammaB
     if ( str( :2) == 'Hm'              ) bet(:3) = self%gammaHm(:,0)
-    if ( str( :4) == 'bHat'            ) bet(1:) = self%bHat
+    if ( str( :4) == 'bHat'            ) bet     = self%bHat
+    if ( str( :2) == 'gl'              ) bet(:3) = self%gl
     if ( str( :8) == 'MSRdelta'        ) bet(1:) = self%MSRDelta()
     if ( str(:15) == 'MSRNaturaldelta' ) bet(1:) = MSbarDelta(self%nf, 0, self%err)
     if ( str( :8) == 'sCoefMSR'        ) bet(1:) = self%sCoefMSR
@@ -439,7 +459,7 @@ module AnomDimClass
      real (dp), dimension(4)             :: sCoef
      integer                             :: i
 
-     sCoef = self%sCoef( self%betaList * self%GammaRComputer(a) )
+     sCoef = self%sCoefRecursive(a)
      sCoef = self%sCoefGeneric(sCoef, lambda)
 
      P12Generic = 0
@@ -554,16 +574,16 @@ module AnomDimClass
     real (dp), dimension( size(gamma) ) :: s
 
     if ( size(gamma) > 0 ) s(1) = gamma(1)
-    if ( size(gamma) > 1 ) s(2) = gamma(2) - sum( self%bHat(:2) ) * gamma(1)
+    if ( size(gamma) > 1 ) s(2) = gamma(2) - sum( self%bHat(1:2) ) * gamma(1)
 
     if ( size(gamma) > 2 ) then
-      s(3) = gamma(3) - sum( self%bHat(:2) ) * gamma(2) + &
+      s(3) = gamma(3) - sum( self%bHat(1:2) ) * gamma(2) + &
       (  ( 1 + self%bHat(1) ) * self%bHat(2) + &
       ( self%bHat(2)**2 + self%bHat(3) )/2  ) * gamma(1)
     end if
 
     if  ( size(gamma) > 3 ) then
-      s(4) = gamma(4) - sum( self%bHat(:2) ) * gamma(3) + &
+      s(4) = gamma(4) - sum( self%bHat(1:2) ) * gamma(3) + &
       (  ( 1 + self%bHat(1) ) * self%bHat(2) + &
       ( self%bHat(2)**2 + self%bHat(3) )/2  ) * gamma(2) + &
       ( - self%bHat(2)**2 - self%bHat(1) * self%bHat(2)**2/2 &
@@ -572,6 +592,52 @@ module AnomDimClass
     end if
 
   end function sCoef
+
+!ccccccccccccccc
+
+  pure function sCoefRecursive(self, a) result(s)
+    class (AnomDim)        , intent(in) :: self
+    real (dp), dimension(:), intent(in) :: a
+    real (dp), dimension( 0:size(a)-1 ) :: s
+    real (dp), dimension(size(a) )      :: tilA
+    integer                             :: k, n
+    real (dp)                           :: suma
+
+    tilA = a * self%betaList( :size(a) ) * powList(4,size(a))
+
+    do k = 0, size(a) - 1
+
+      suma = 0
+
+      do n = 0, k - 1
+
+        suma = suma + s(n) * dot_product( self%gl(k - n:0:-1), &
+        PochHammerList(1 + self%bHat(1) + n, k - n) )
+
+      end do
+
+      s(k) = tilA(k+1) - suma
+
+    end do
+
+  end function sCoefRecursive
+
+!ccccccccccccccc
+
+  pure function PochHammerList(a,n) result(poch)
+    real (dp), intent(in)     :: a
+    integer  , intent(in)     :: n
+    real (dp), dimension(0:n) :: poch
+    integer                   :: j
+
+    poch(0)  = 1
+    poch(1:) = [ (a + j, j = 0, n - 1) ]
+
+    do j = n, 1, -1
+      poch(j) = Product( poch(1:j) )
+    end do
+
+  end function PochHammerList
 
 !ccccccccccccccc
 

@@ -289,11 +289,7 @@ MLYDEFN( devyield_result, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
-<<<<<<< HEAD
-# line 1595 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
-=======
-# line 1594 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm"
->>>>>>> origin/master
+# line 1595 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm"
 #include "mathlink.h"
 #include "ftypes.h"
 #include <stdio.h>
