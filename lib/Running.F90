@@ -3,6 +3,8 @@ module RunningClass
   use AnomDimClass;  use AlphaClass; use Constants, only: dp, Pi, ExpEuler, d1mach, prec
   use QuadPack, only: qags         ; implicit none   ;  private
 
+  public                        :: DeltaComputer
+
 !ccccccccccccccc
 
   type, public                  :: Running
@@ -289,9 +291,10 @@ module RunningClass
      real (dp)          , optional      , intent(in) :: lambda
      character (len = *), optional      , intent(in) :: method
      real (dp), dimension(self%runMass,self%runMass) :: gammaLog
-     real (dp), dimension(self%runMass)              :: gamm
-     real (dp)                                       :: corr, abserr, lan
+     real (dp), dimension(self%runMass)              :: gamm, alphaList, lglist
      integer                                         :: neval, ier
+     real (dp)                                       :: corr, abserr, lan, delta, &
+     mu, Rstep, delta1, delta2
 
      if ( present(lambda) ) then
 
@@ -300,6 +303,10 @@ module RunningClass
 
        gamm = lambda * (  gammaLog(1,:) + &
        matmul( powList(-log(lambda), self%runMass-1), gammaLog(2:,:) )  )
+
+     else
+
+       lan = 1
 
      end if
 
@@ -319,12 +326,34 @@ module RunningClass
       gammaLog(1,:) = self%gammaR(:self%runMass)
 
       if ( .not. present(lambda) ) then
-        gamm = self%gammaR(:self%runMass); lan = 1
+        gamm = self%gammaR(:self%runMass)
       end if
 
         gamm = self%andim%GammaRComputer( gamm )
 
       call qags( Integrand, R/lan, self%mH/lan, prec, prec, corr, abserr, neval, ier )
+
+    else if ( method(:4) == 'diff' ) then
+
+      delta = 0.1_dp;   neval = abs(  Nint( ( self%mH - R )/delta )  )
+      delta = (self%mH - R)/neval; corr = 0; Rstep = self%mH + delta
+      gammaLog(1,:) = self%gammaR(:self%runMass)
+      call self%andim%expandAlpha( gammaLog )
+
+      do ier = 1, neval
+
+        Rstep = Rstep - delta; mu = (Rstep - delta/2)/lan
+        alphaList = powList( self%alphaQCD(mu)/Pi, self%runMass )
+
+        lgList = powList( log(mu/Rstep), self%runMass )
+        delta1 = Rstep * dot_product( DeltaComputer(gammaLog, lgList, 0), alphaList )
+
+        lgList = powList( log(mu/(Rstep - delta) ), self%runMass )
+        delta2 = (Rstep - delta) * dot_product( DeltaComputer(gammaLog, lgList, 0), alphaList )
+
+        corr = corr + delta1 - delta2
+
+      end do
 
     end if
 
@@ -649,6 +678,24 @@ module RunningClass
     class (Running), intent(in) :: self
     AlphaAll = self%AlphaOb
   end function
+
+!ccccccccccccccc
+
+  pure function DeltaComputer(Mat, logList, pow) result(delta)
+    real (dp), dimension(:  ), intent(in) :: logList
+    real (dp), dimension(:,:), intent(in) :: Mat
+    integer                  , intent(in) :: pow
+    real (dp), dimension( size(Mat,2) )   :: delta
+    integer                               :: i
+
+    delta = Mat(1,:)
+
+    do i = 1, min( size(logList), size(Mat,1) - 1 )
+      if (pow == 1) delta = delta + (i + 1) * logList(i) * Mat(i + 1, :)
+      if (pow == 0) delta = delta + logList(i) * Mat(i + 1, :)
+    enddo
+
+  end function DeltaComputer
 
 !ccccccccccccccc
 
