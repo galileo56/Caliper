@@ -482,14 +482,15 @@ module RunningClass
 
 !ccccccccccccccc
 
-   real (dp) function MSRNaturalMass(self, order, R, lambda)
-     class (Running)    , intent(in) :: self
-     real (dp)          , intent(in) :: R
-     real (dp), optional, intent(in) :: lambda
-     integer            , intent(in) :: order
-     real (dp)        , dimension(3) :: a
-     real (dp)                       :: alphaM, matching, corr
-     integer                         :: i
+   real (dp) function MSRNaturalMass(self, order, R, lambda, method)
+     class (Running)                    , intent(in) :: self
+     real (dp)                          , intent(in) :: R
+     real (dp), optional                , intent(in) :: lambda
+     character (len = *), optional      , intent(in) :: method
+     integer                            , intent(in) :: order
+     real (dp)                        , dimension(3) :: a
+     real (dp)                                       :: alphaM, matching, corr
+     integer                                         :: i
 
      if ( .not. present(lambda) ) then
        corr = self%DiffR( self%sCoefNatural, self%runMass, self%mH, R )
