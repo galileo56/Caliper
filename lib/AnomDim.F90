@@ -21,13 +21,13 @@ module AnomDimClass
     character (len = 5)           :: str
     real (dp)                     :: G4, err
     real (dp), dimension(0:3,0:3) :: gammaHm
-    real (dp), dimension(4)       :: sCoefMSR, sCoefMSRNatural, bHat, betaList, &
-    gammaR,  gammaRNatural, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, &
-    sCoefMSRInc3, gammaRInc3
-
+    real (dp), dimension(0:4)     :: bHat
     real (dp), dimension(0:4)     :: beta
     real (dp), dimension(0:4)     :: gammaMass
-    real (dp), dimension(0:3)     :: cusp, gammaHard, gammaB, gammaJet, gammaSoft
+    real (dp), dimension(0:3)     :: cusp, gammaHard, gammaB, gammaJet, gammaSoft, gl
+    real (dp), dimension(4)       :: sCoefMSR, sCoefMSRNatural, betaList, &
+    gammaR,  gammaRNatural, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, &
+    sCoefMSRInc3, gammaRInc3
 
     contains
 
@@ -62,6 +62,7 @@ module AnomDimClass
     real (dp), optional, intent(in) :: err        ! 4-loop MS-bar to pole conversion error
     real (dp), dimension(4)         :: betaList
     real (dp), dimension(0:4)       :: beta
+    integer                         :: n, i
 
     InAdim%err = 0; if ( present(err) ) InAdim%err = err
 
@@ -105,12 +106,38 @@ module AnomDimClass
 
     end if
 
-    InAdim%bHat = [ beta(1), beta(1)**2 - beta(0) * beta(2), beta(1)**3   &
-    - 2 * beta(0) * beta(1) * beta(2) + beta(0)**2 * beta(3), beta(1)**4 &
-    - 3 * beta(0) * beta(1)**2 * beta(2) + 2 * beta(0)**2 * beta(1) * beta(3) &
-    + beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  ]/PowList(2 * beta(0)**2, 4)
-
     betaList = PowList( 1/beta(0)/2, 4 ); InAdim%betaList = betaList
+
+    InAdim%bHat(0) = 1
+
+    do n = 0, 3
+
+      InAdim%bHat(n+1) = 0
+
+      do i = 0, n
+
+        InAdim%bHat(n+1) = InAdim%bHat(n+1) + (-1)**i * (i + 1) * betaList(i+1) * &
+        beta(i+1) * dot_product( InAdim%bHat(:n-i), InAdim%bHat(n - i : 0 : -1) )
+
+      end do
+
+      InAdim%bHat(n+1) = InAdim%bHat(n+1)/(n + 1)/beta(0)
+
+    end do
+
+    InAdim%gl(0) = 1
+
+    do n = 0, 2
+
+      InAdim%gl(n + 1) = 0
+
+      do i = 0, n
+        InAdim%gl(n + 1) = InAdim%gl(n + 1) + (-1)**i * InAdim%bHat(i+2) * InAdim%gl(n - i)
+      end do
+
+      InAdim%gl(n + 1) = InAdim%gl(n + 1)/(n+1)
+
+    end do
 
     InAdim%gammaR        = InAdim%GammaRComputer( InAdim%MSRDelta() )
     InAdim%gammaRNatural = InAdim%GammaRComputer( MSbarDelta(nf    , 0, InAdim%err) )
@@ -412,7 +439,8 @@ module AnomDimClass
     if ( str( :4) == 'soft'            ) bet(:3) = self%gammaSoft
     if ( str( :4) == 'bJet'            ) bet(:3) = self%gammaB
     if ( str( :2) == 'Hm'              ) bet(:3) = self%gammaHm(:,0)
-    if ( str( :4) == 'bHat'            ) bet(1:) = self%bHat
+    if ( str( :4) == 'bHat'            ) bet     = self%bHat
+    if ( str( :2) == 'gl'              ) bet(:3) = self%gl
     if ( str( :8) == 'MSRdelta'        ) bet(1:) = self%MSRDelta()
     if ( str(:15) == 'MSRNaturaldelta' ) bet(1:) = MSbarDelta(self%nf, 0, self%err)
     if ( str( :8) == 'sCoefMSR'        ) bet(1:) = self%sCoefMSR
