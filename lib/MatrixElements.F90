@@ -1715,24 +1715,6 @@ module MatrixElementsClass
 
 !ccccccccccccccc
 
-  pure function DeltaComputer(Mat, logList, pow) result(delta)
-    real (dp), dimension(:  ), intent(in) :: logList
-    real (dp), dimension(:,:), intent(in) :: Mat
-    integer                  , intent(in) :: pow
-    real (dp), dimension( size(Mat,2) )   :: delta
-    integer                               :: i
-
-    delta = Mat(1,:)
-
-    do i = 1, min( size(logList), size(Mat,1) - 1 )
-      if (pow == 1) delta = delta + (i + 1) * logList(i) * Mat(i + 1, :)
-      if (pow == 0) delta = delta + logList(i) * Mat(i + 1, :)
-    enddo
-
-  end function DeltaComputer
-
-!ccccccccccccccc
-
   function HardMassVect(self, mass) result(HmExp)
     class (MatricesElementsMass), intent(in) :: self
     real (dp)                   , intent(in) :: mass
