@@ -2760,13 +2760,12 @@ subroutine f90MSRMass(method, orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, &
 mB, muB, mC, muC, lambda, mu, R, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp; implicit none
 
+  character (len = *), intent(in) :: method
   integer  , intent(in ) :: orderAlpha, runAlpha, run, nf
   real (dp), intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R, lambda
   real (dp), intent(out) :: res
-  character (len = *), intent(in) :: method
-
-  type (Running)        :: alphaMass
-  type (Alpha)          :: alphaAll
+  type (Running)         :: alphaMass
+  type (Alpha)           :: alphaAll
 
   alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
@@ -2824,23 +2823,23 @@ end subroutine f90mmfromMSRNatural
 
 !ccccccccccccccc
 
-subroutine f90MSRNaturalMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, &
-muT, mB, muB, mC, muC, lambda, mu, R, res)
+subroutine f90MSRNaturalMass(method, orderAlpha, runAlpha, order, run, nf, mZ, &
+amZ, mT, muT, mB, muB, mC, muC, lambda, mu, R, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp; implicit none
 
+  character (len = *), intent(in) :: method
   integer  , intent(in ) :: orderAlpha, runAlpha, order, run, nf
   real (dp), intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R, lambda
   real (dp), intent(out) :: res
-
-  type (Running)        :: alphaMass
-  type (Alpha)          :: alphaAll
+  type (Running)         :: alphaMass
+  type (Alpha)           :: alphaAll
 
   alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, mu)
 
-  res       = alphaMass%MSRNaturalMass(order, R, lambda)
+  res       = alphaMass%MSRNaturalMass(order, R, lambda, method)
 
 end subroutine f90MSRNaturalMass
 

@@ -63,7 +63,7 @@
 :Evaluate:  MSRMass::usage = "MSRMass[method, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
 :Evaluate:  mmfromMSR::usage = "mmfromMSR[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
 :Evaluate:  mmfromMSRNatural::usage = "mmfromMSRNatural[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR natural definition running of the quark masses with flavor matching."
-:Evaluate:  MSRNaturalMass::usage = "MSRNaturalMass[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, muLambda, R] computes the MSR natural definition running of the quark masses with flavor matching."
+:Evaluate:  MSRNaturalMass::usage = "MSRNaturalMass[method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, muLambda, R] computes the MSR natural definition running of the quark masses with flavor matching."
 :Evaluate:  Rhad::usage = "Rhad[scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
 :Evaluate:  RhadMass::usage = "RhadMass[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
 :Evaluate:  LambdaQCD::usage = "LambdaQCD[scheme, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
@@ -1465,12 +1465,12 @@
 
 :Begin:
 :Function:      msrnaturalmass
-:Pattern:       MSRNaturalMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_,
-                mT_, muT_, mB_, muB_, mC_, muC_, lambda_, mu_, R_]
-:Arguments:     {orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB,
-                 mC, muC, lambda, mu, R}
-:ArgumentTypes: {Integer, Integer, Integer, Integer, Integer, Real, Real, Real,
-                 Real, Real, Real, Real, Real, Real, Real, Real}
+:Pattern:       MSRNaturalMass[method_, orderAlpha_, runAlpha_, order_, run_,
+                nf_, Mz_, aMz_,mT_, muT_, mB_, muB_, mC_, muC_, lambda_, mu_, R_]
+:Arguments:     {method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT,
+                 mB, muB, mC, muC, lambda, mu, R}
+:ArgumentTypes: {String, Integer, Integer, Integer, Integer, Integer, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real}
 :ReturnType:     Real
 :End:
 
@@ -3744,17 +3744,18 @@ double muC, double mu, double R){
   return res;
 }
 
-extern double f90msrnaturalmass_(int* orderAlpha, int* runAlpha, int* order, int* run,
-int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB,
-double* mC, double* muC, double* lambda, double* mu, double* R, double* res);
+extern double f90msrnaturalmass_(char const* method, int* orderAlpha, int* runAlpha,
+int* order, int* run, int* nf, double* Mz, double* aMz, double* mT, double* muT,
+double* mB, double* muB, double* mC, double* muC, double* lambda, double* mu,
+double* R, double* res);
 
-static double msrnaturalmass(int orderAlpha, int runAlpha, int order, int run, int nf,
-double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
-double muC, double lambda, double mu, double R){
+static double msrnaturalmass(char const* method, int orderAlpha, int runAlpha,
+int order, int run, int nf, double Mz, double aMz, double mT, double muT, double mB,
+double muB, double mC, double muC, double lambda, double mu, double R){
 
    double res;
 
-   f90msrnaturalmass_(&orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT,
+   f90msrnaturalmass_(method, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT,
    &mB, &muB, &mC, &muC, &lambda, &mu, &R, &res);
 
   return res;

@@ -2442,17 +2442,18 @@ double muC, double mu, double R){
   return res;
 }
 
-extern double f90msrnaturalmass_(int* orderAlpha, int* runAlpha, int* order, int* run,
-int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB,
-double* mC, double* muC, double* lambda, double* mu, double* R, double* res);
+extern double f90msrnaturalmass_(char const* method, int* orderAlpha, int* runAlpha,
+int* order, int* run, int* nf, double* Mz, double* aMz, double* mT, double* muT,
+double* mB, double* muB, double* mC, double* muC, double* lambda, double* mu,
+double* R, double* res);
 
-static double msrnaturalmass(int orderAlpha, int runAlpha, int order, int run, int nf,
-double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
-double muC, double lambda, double mu, double R){
+static double msrnaturalmass(char const* method, int orderAlpha, int runAlpha,
+int order, int run, int nf, double Mz, double aMz, double mT, double muT, double mB,
+double muB, double mC, double muC, double lambda, double mu, double R){
 
    double res;
 
-   f90msrnaturalmass_(&orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT,
+   f90msrnaturalmass_(method, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT,
    &mB, &muB, &mC, &muC, &lambda, &mu, &R, &res);
 
   return res;
@@ -2572,7 +2573,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 2576 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm.c"
+# line 2577 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm.c"
 
 
 void ewfactors P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5));
@@ -9995,7 +9996,7 @@ L0:	return res;
 } /* _tr99 */
 
 
-double msrnaturalmass P(( int _tp1, int _tp2, int _tp3, int _tp4, int _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16));
+double msrnaturalmass P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17));
 
 #if MLPROTOTYPES
 static int _tr100( MLINK mlp)
@@ -10004,12 +10005,12 @@ static int _tr100(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	const char * _tp1;
 	int _tp2;
 	int _tp3;
 	int _tp4;
 	int _tp5;
-	double _tp6;
+	int _tp6;
 	double _tp7;
 	double _tp8;
 	double _tp9;
@@ -10020,13 +10021,14 @@ static int _tr100(mlp) MLINK mlp;
 	double _tp14;
 	double _tp15;
 	double _tp16;
+	double _tp17;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
 	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
 	if ( ! MLGetInteger( mlp, &_tp5) ) goto L4;
-	if ( ! MLGetReal( mlp, &_tp6) ) goto L5;
+	if ( ! MLGetInteger( mlp, &_tp6) ) goto L5;
 	if ( ! MLGetReal( mlp, &_tp7) ) goto L6;
 	if ( ! MLGetReal( mlp, &_tp8) ) goto L7;
 	if ( ! MLGetReal( mlp, &_tp9) ) goto L8;
@@ -10037,13 +10039,15 @@ static int _tr100(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp14) ) goto L13;
 	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
 	if ( ! MLGetReal( mlp, &_tp16) ) goto L15;
-	if ( ! MLNewPacket(mlp) ) goto L16;
+	if ( ! MLGetReal( mlp, &_tp17) ) goto L16;
+	if ( ! MLNewPacket(mlp) ) goto L17;
 
-	_rp0 = msrnaturalmass(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16);
+	_rp0 = msrnaturalmass(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L16: L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1: 
+L17: L16: L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
+
 L0:	return res;
 } /* _tr100 */
 
@@ -10640,7 +10644,7 @@ static struct func {
 		{16, 0, _tr97, "msrmass" },
 		{14, 0, _tr98, "mmfrommsr" },
 		{15, 0, _tr99, "mmfrommsrnatural" },
-		{16, 0, _tr100, "msrnaturalmass" },
+		{17, 0, _tr100, "msrnaturalmass" },
 		{16, 0, _tr101, "jetmass" },
 		{16, 0, _tr102, "mmfromjetmass" },
 		{13, 0, _tr103, "deltamsbar" },
@@ -10921,10 +10925,10 @@ static const char* evalstrs[] = {
 	"R] computes the MSR natural definition running of the quark mass",
 	"es with flavor matching.\"",
 	(const char*)0,
-	"MSRNaturalMass::usage = \"MSRNaturalMass[orderAlpha, runAlpha, or",
-	"der, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, muLamb",
-	"da, R] computes the MSR natural definition running of the quark ",
-	"masses with flavor matching.\"",
+	"MSRNaturalMass::usage = \"MSRNaturalMass[method, orderAlpha, runA",
+	"lpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda",
+	", muLambda, R] computes the MSR natural definition running of th",
+	"e quark masses with flavor matching.\"",
 	(const char*)0,
 	"Rhad::usage = \"Rhad[scheme, orderAlpha, runAlpha, order, nf, Mz,",
 	" aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless to",
@@ -11373,7 +11377,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"MSRMass[method_, order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, lambda_, mu_, R_]", (char *)"{method, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB,                  mC, muC, lambda, mu, R}", 97);
 	if (_res) _res = _definepattern(mlp, (char *)"mmfromMSR[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,                 mC_, muC_, mu_, R_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, R}", 98);
 	if (_res) _res = _definepattern(mlp, (char *)"mmfromMSRNatural[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_,                 mT_, muT_, mB_, muB_, mC_, muC_, mu_, R_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC,                  mu, R}", 99);
-	if (_res) _res = _definepattern(mlp, (char *)"MSRNaturalMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_,                 mT_, muT_, mB_, muB_, mC_, muC_, lambda_, mu_, R_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB,                  mC, muC, lambda, mu, R}", 100);
+	if (_res) _res = _definepattern(mlp, (char *)"MSRNaturalMass[method_, orderAlpha_, runAlpha_, order_, run_,                 nf_, Mz_, aMz_,mT_, muT_, mB_, muB_, mC_, muC_, lambda_, mu_, R_]", (char *)"{method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT,                  mB, muB, mC, muC, lambda, mu, R}", 100);
 	if (_res) _res = _definepattern(mlp, (char *)"JetMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, muLambda_, R_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC,                  muC, muLambda, R, mu}", 101);
 	if (_res) _res = _definepattern(mlp, (char *)"mmFromJetMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, muLambda_, R_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC,                  muC, muLambda, R, mu}", 102);
 	if (_res) _res = _definepattern(mlp, (char *)"DeltaMSbar[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,                  mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 103);
