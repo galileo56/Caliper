@@ -284,22 +284,32 @@ module RunningClass
 !ccccccccccccccc
 
    real (dp) function MSRmass(self, R, lambda, method)
-     class (Running)              , intent(in) :: self
-     real (dp)                    , intent(in) :: R
-     real (dp)          , optional, intent(in) :: lambda
-     character (len = *), optional, intent(in) :: method
+     class (Running)                    , intent(in) :: self
+     real (dp)                          , intent(in) :: R
+     real (dp)          , optional      , intent(in) :: lambda
+     character (len = *), optional      , intent(in) :: method
      real (dp), dimension(self%runMass,self%runMass) :: gammaLog
-     real (dp), dimension(self%runMass)        :: gamm
-     real (dp)                                 :: corr, abserr, lan
-     integer                                   :: neval, ier
+     real (dp), dimension(self%runMass)              :: gamm
+     real (dp)                                       :: corr, abserr, lan
+     integer                                         :: neval, ier
+
+     if ( present(lambda) ) then
+
+       gammaLog(1,:) = self%gammaR(:self%runMass) ; lan = lambda
+       call self%andim%expandAlpha( gammaLog )
+
+       gamm = lambda * (  gammaLog(1,:) + &
+       matmul( powList(-log(lambda), self%runMass-1), gammaLog(2:,:) )  )
+
+     end if
 
      if (  ( .not. present(method) ) .or. method(:8) == 'analytic' ) then
 
        if ( .not. present(lambda) ) then
          corr = self%DiffR( self%sCoef, self%runMass, self%mH, R )
        else
-         corr = self%DiffR( self%sCoefLambda('Practical', lambda), &
-         self%runMass, self%mH/lambda, R/lambda )
+        corr = self%DiffR( self%andim%sCoefRecursive(gamm), &
+        self%runMass, self%mH/lambda, R/lambda )
        end if
 
        corr = self%lambdaQCD(self%runMass) * corr
@@ -308,16 +318,8 @@ module RunningClass
 
       gammaLog(1,:) = self%gammaR(:self%runMass)
 
-      if ( present(lambda) ) then
-
-        gammaLog(1,:) = gammaLog(1,:); lan = lambda
-        call self%andim%expandAlpha( gammaLog )
-
-        gamm = lambda * (  gammaLog(1,:) + &
-        matmul( powList(-log(lambda), self%runMass-1), gammaLog(2:,:) )  )
-
-      else
-        gamm = gammaLog(1,:); lan = 1
+      if ( .not. present(lambda) ) then
+        gamm = self%gammaR(:self%runMass); lan = 1
       end if
 
         gamm = self%andim%GammaRComputer( gamm )
