@@ -128,15 +128,7 @@ module AnomDimClass
     InAdim%gl(0) = 1
 
     do n = 0, 2
-
-      InAdim%gl(n + 1) = 0
-
-      do i = 0, n
-        InAdim%gl(n + 1) = InAdim%gl(n + 1) + (-1)**i * InAdim%bHat(i+2) * InAdim%gl(n - i)
-      end do
-
-      InAdim%gl(n + 1) = InAdim%gl(n + 1)/(n+1)
-
+      InAdim%gl(n + 1) = - sum( powList(-1,n + 1) * InAdim%bHat(2:n+2) * InAdim%gl(n:0:-1) )/(n+1)
     end do
 
     InAdim%gammaR        = InAdim%GammaRComputer( InAdim%MSRDelta() )
@@ -145,12 +137,11 @@ module AnomDimClass
     InAdim%gammaRInc2    = InAdim%GammaRComputer( MSbarDelta(nf - 1, 1, InAdim%err) )
     InAdim%gammaRInc3    = InAdim%GammaRComputer( MSbarDelta(nf + 1, 1, InAdim%err) )
 
-    InAdim%sCoefMSR        = InAdim%sCoef(  betaList * InAdim%GammaRComputer( InAdim%MSRDelta() )  )
-    ! InAdim%sCoefMSR        = InAdim%sCoefRecursive( InAdim%MSRDelta() )
-    InAdim%sCoefMSRNatural = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf    , 0, InAdim%err) )  )
-    InAdim%sCoefMSRInc1    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf    , 1, InAdim%err) )  )
-    InAdim%sCoefMSRInc2    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf - 1, 1, InAdim%err) )  )
-    InAdim%sCoefMSRInc3    = InAdim%sCoef(  betaList * InAdim%GammaRComputer( MSbarDelta(nf + 1, 1, InAdim%err) )  )
+    InAdim%sCoefMSR        = InAdim%sCoefRecursive( InAdim%MSRDelta() )
+    InAdim%sCoefMSRNatural = InAdim%sCoefRecursive( MSbarDelta(nf   ,  0, InAdim%err) )
+    InAdim%sCoefMSRInc1    = InAdim%sCoefRecursive( MSbarDelta(nf   ,  1, InAdim%err) )
+    InAdim%sCoefMSRInc2    = InAdim%sCoefRecursive( MSbarDelta(nf - 1, 1, InAdim%err) )
+    InAdim%sCoefMSRInc3    = InAdim%sCoefRecursive( MSbarDelta(nf + 1, 1, InAdim%err) )
 
    end function InAdim
 
@@ -468,7 +459,7 @@ module AnomDimClass
      real (dp), dimension(4)             :: sCoef
      integer                             :: i
 
-     sCoef = self%sCoef( self%betaList * self%GammaRComputer(a) )
+     sCoef = self%sCoefRecursive(a)
      sCoef = self%sCoefGeneric(sCoef, lambda)
 
      P12Generic = 0
@@ -586,13 +577,13 @@ module AnomDimClass
     if ( size(gamma) > 1 ) s(2) = gamma(2) - sum( self%bHat(1:2) ) * gamma(1)
 
     if ( size(gamma) > 2 ) then
-      s(3) = gamma(3) - sum( self%bHat(:2) ) * gamma(2) + &
+      s(3) = gamma(3) - sum( self%bHat(1:2) ) * gamma(2) + &
       (  ( 1 + self%bHat(1) ) * self%bHat(2) + &
       ( self%bHat(2)**2 + self%bHat(3) )/2  ) * gamma(1)
     end if
 
     if  ( size(gamma) > 3 ) then
-      s(4) = gamma(4) - sum( self%bHat(:2) ) * gamma(3) + &
+      s(4) = gamma(4) - sum( self%bHat(1:2) ) * gamma(3) + &
       (  ( 1 + self%bHat(1) ) * self%bHat(2) + &
       ( self%bHat(2)**2 + self%bHat(3) )/2  ) * gamma(2) + &
       ( - self%bHat(2)**2 - self%bHat(1) * self%bHat(2)**2/2 &
@@ -609,8 +600,8 @@ module AnomDimClass
     real (dp), dimension(:), intent(in) :: a
     real (dp), dimension( 0:size(a)-1 ) :: s
     real (dp), dimension(size(a) )      :: tilA
-    integer                             :: k, n, l
-    real (dp)                           :: suma, suma2
+    integer                             :: k, n
+    real (dp)                           :: suma
 
     tilA = a * self%betaList( :size(a) ) * powList(4,size(a))
 
@@ -620,13 +611,8 @@ module AnomDimClass
 
       do n = 0, k - 1
 
-        suma2 = 0
-
-        do l = 0, k - n
-          suma2 = suma2 + self%gl(l) * PochHammer(1 + self%bHat(1) + n, k - l - n)
-        end do
-
-        suma = suma + s(n) * suma2
+        suma = suma + s(n) * dot_product( self%gl(k - n:0:-1), &
+        PochHammerList(1 + self%bHat(1) + n, k - n) )
 
       end do
 
@@ -638,18 +624,20 @@ module AnomDimClass
 
 !ccccccccccccccc
 
-  pure real (dp) function PochHammer(a,n)
-    real (dp), intent(in) :: a
-    integer  , intent(in) :: n
-    integer               :: j
+  pure function PochHammerList(a,n) result(poch)
+    real (dp), intent(in)     :: a
+    integer  , intent(in)     :: n
+    real (dp), dimension(0:n) :: poch
+    integer                   :: j
 
-    if (n == 0) then
-      PochHammer = 1
-    else
-      PochHammer = Product(  [ (a + j, j = 0, n - 1) ]  )
-    end if
+    poch(0)  = 1
+    poch(1:) = [ (a + j, j = 0, n - 1) ]
 
-  end function PochHammer
+    do j = n, 1, -1
+      poch(j) = Product( poch(1:j) )
+    end do
+
+  end function PochHammerList
 
 !ccccccccccccccc
 
