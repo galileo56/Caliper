@@ -11,7 +11,7 @@ module SigmaClass
   type, public :: Sigma
    private
    integer                        :: nf
-   real (dp), dimension(0:4,3)    :: RhadCoef
+   real (dp), dimension(0:3,4)    :: RhadCoef
    real (dp)                      :: m
    type (AnomDim)                 :: andim
    type (Running)                 :: run
@@ -21,7 +21,7 @@ module SigmaClass
    contains
 
     procedure, pass(self), public :: RhadMass, SetAlpha, SetMTop, SetMBottom, &
-    Rhad, SetMCharm
+    Rhad, SetMCharm, RHadCoefs
 
   end type Sigma
 
@@ -49,6 +49,9 @@ module SigmaClass
     InitSigma%RhadCoef(0,2) = 1.985707398577798_dp   - 0.11529539789360388_dp * nf
     InitSigma%RhadCoef(0,3) = - 6.636935585488629_dp - 1.2001340534564595_dp * nf &
     - 0.0051783553199245685_dp * nf**2
+
+    InitSigma%RhadCoef(0,4) = - 156.61_dp + 18.77_dp * nf - 0.7974_dp * nf**2 &
+    + 0.0215_dp * nf**3
 
     call InitSigma%andim%expandAlpha(InitSigma%RhadCoef)
 
@@ -96,20 +99,29 @@ module SigmaClass
 
 !ccccccccccccccc
 
-  pure real (dp) function Rhad(self, order, mu, Q)
+  function RHadCoefs(self) result(coefs)
     class (Sigma), intent(in) :: self
-    Integer      , intent(in) :: order
-    real (dp)    , intent(in) :: mu, Q
+    real (dp), dimension(4)   :: coefs
 
-    real (dp), dimension(0:order)     :: alphaList, rQ
-    real (dp), dimension(0:order - 1) :: logList
-    integer                                 :: i, n
+    coefs = self%RhadCoef(0,:)
 
-    rQ = 1;  logList(0) = 1; alphaList(0) = 1 ; n = order - 1
+  end function RHadCoefs
+
+!ccccccccccccccc
+
+  pure real (dp) function Rhad(self, order, mu, Q)
+    class (Sigma)               , intent(in) :: self
+    Integer                     , intent(in) :: order
+    real (dp)                   , intent(in) :: mu, Q
+    real (dp), dimension(0:min(order,4))     :: alphaList, rQ
+    real (dp), dimension(0:min(order,4) - 1) :: logList
+    integer                                  :: i, n
+
+    rQ = 1;  logList(0) = 1; alphaList(0) = 1 ; n = min(order,4) - 1
     if (order > 1)   logList(1:) = PowList( log(Q/mu)               , n     )
-    if (order > 0) alphaList(1:) = PowList( self%run%alphaQCD(mu)/Pi, order )
+    if (order > 0) alphaList(1:) = PowList( self%run%alphaQCD(mu)/Pi, min(order,4) )
 
-    alpha_loop: do i = 2, order
+    alpha_loop: do i = 2, min(order,4)
       rQ(i) = dot_product( self%RhadCoef(:n,i), logList )
     end do alpha_loop
 

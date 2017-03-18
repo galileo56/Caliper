@@ -65,6 +65,7 @@
 :Evaluate:  mmfromMSRNatural::usage = "mmfromMSRNatural[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR natural definition running of the quark masses with flavor matching."
 :Evaluate:  MSRNaturalMass::usage = "MSRNaturalMass[method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, muLambda, R] computes the MSR natural definition running of the quark masses with flavor matching."
 :Evaluate:  Rhad::usage = "Rhad[scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
+:Evaluate:  RhadCoefs::usage = "RhadCoefs[nf] computes the massless total hadronic cross section series coefficients."
 :Evaluate:  RhadMass::usage = "RhadMass[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
 :Evaluate:  LambdaQCD::usage = "LambdaQCD[scheme, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  Hyper2F1::usage="Hyper2F1[a, b, c, x] Hypergeometric Function in Fortran"
@@ -1515,6 +1516,14 @@
 :ArgumentTypes: {String, Integer, Integer, Integer, Integer, Real, Real, Real, Real, Real,
                 Real, Real, Real, Real, Real}
 :ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      rhadcoefs
+:Pattern:       RhadCoefs[nf_]
+:Arguments:     {nf}
+:ArgumentTypes: {Integer}
+:ReturnType:    Manual
 :End:
 
 :Begin:
@@ -3824,6 +3833,18 @@ double mu, double Q){
 
   return res;
 }
+
+extern double f90rhadcoefs_(int * nf, double* res);
+
+static void rhadcoefs(int nf){
+
+   double res[4];
+
+   f90rhadcoefs_(&nf, res);
+
+   MLPutRealList(stdlink, res, 4);
+   MLEndPacket(stdlink);
+ }
 
 extern double f90rhadmass_(char const* str, char const* curr, int* orderAlpha,
 int* runAlpha, int* runMass, int* order, int* nf, double* Mz, double* gammaZ,
