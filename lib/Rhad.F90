@@ -110,13 +110,12 @@ module SigmaClass
 !ccccccccccccccc
 
   pure real (dp) function Rhad(self, order, mu, Q)
-    class (Sigma), intent(in) :: self
-    Integer      , intent(in) :: order
-    real (dp)    , intent(in) :: mu, Q
-
+    class (Sigma)               , intent(in) :: self
+    Integer                     , intent(in) :: order
+    real (dp)                   , intent(in) :: mu, Q
     real (dp), dimension(0:min(order,4))     :: alphaList, rQ
     real (dp), dimension(0:min(order,4) - 1) :: logList
-    integer                           :: i, n
+    integer                                  :: i, n
 
     rQ = 1;  logList(0) = 1; alphaList(0) = 1 ; n = min(order,4) - 1
     if (order > 1)   logList(1:) = PowList( log(Q/mu)               , n     )
