@@ -11,11 +11,15 @@ module AlphaClass
     module procedure :: PiBetaReal, PiBetaComplex
   end interface PiBeta
 
+  interface Iter
+    module procedure :: IterReal, IterComplex
+  end interface Iter
+
 !ccccccccccccccc
 
   type, public :: Alpha
     private
-    character (len = 8)             :: str, method
+    character (len = 9)             :: str, method
     integer                         :: order, run, n
     type (AnomDim) , dimension(3:6) :: andim
     real (dp)      , dimension(3:6) :: alphaRef, muRef
@@ -283,8 +287,9 @@ module AlphaClass
    integer                  , intent(in) :: order
    real (dp)                , intent(in) :: mZ, amZ, mu
    real (dp), dimension(0:4), intent(in) :: beta
-   real (dp)                             :: L, arg, LG, h, k1, k2, k3, k4
+   real (dp)                             :: L, arg, LG, h, k1, k2, k3, k4, aLLInv
    integer                               :: n, i, ord
+   real (dp), dimension(0:4)             :: bCoef, cCoef
 
     if ( max( amZ, mZ, mu ) <= d1mach(1) ) then
       alphaGenericReal = 0; return
@@ -334,9 +339,83 @@ module AlphaClass
 
     end do
 
+  else if ( method(:9) == 'iterative' ) then
+
+    if (order <= 0) then
+      alphaGenericReal = aMz; return
+    end if
+
+    aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
+
+    bCoef = beta/beta(0)
+
+    cCoef(0) = 1
+
+    do n = 0, order - 1
+
+      cCoef(n+1) = 0
+
+      do i = 0, n
+
+        cCoef(n+1) = cCoef(n+1) - (i + 1) * bCoef(i+1) * &
+        dot_product( cCoef(:n-i), cCoef(n - i : 0 : -1) )
+
+      end do
+
+      cCoef(n+1) = cCoef(n+1)/(n + 1)
+
+    end do
+
+    cCoef(1:order) = cCoef(1:order)/PowList(4 * Pi,order)
+
+    alphaGenericReal = 1/aLLInv
+
+    if ( order <= 1) return
+
+    do i = 1, 100
+
+      alphaGenericReal = 1/iter(cCoef(1:order), alphaGenericReal, amZ, aLLInv)
+
+    end do
+
   end if
 
   end function alphaGenericReal
+
+!ccccccccccccccc
+
+  pure real (dp) function iterReal(cCoef, aMu, a0, aLLInv)
+    real (dp)              , intent(in) :: aMu, a0, aLLInv
+    real (dp), dimension(:), intent(in) :: cCoef
+    integer                             :: i
+
+    iterReal = aLLInv
+
+    if ( size(cCoef) > 0 ) iterReal = iterReal + cCoef(1) * Log(aMu/a0)
+
+    do i = 1, size(cCoef)
+      iterReal = iterReal + cCoef(i+1) * (aMu**i - a0**i)/i
+    end do
+
+  end function iterReal
+
+!ccccccccccccccc
+
+  pure complex (dp) function iterComplex(cCoef, aMu, a0, aLLInv)
+    complex (dp)           , intent(in) :: aMu, aLLInv
+    real (dp)              , intent(in) :: a0
+    real (dp), dimension(:), intent(in) :: cCoef
+    integer                             :: i
+
+    iterComplex = aLLInv
+
+    if ( size(cCoef) > 0 ) iterComplex = iterComplex + cCoef(1) * Log(aMu/a0)
+
+    do i = 1, size(cCoef)
+      iterComplex = iterComplex + cCoef(i+1) * (aMu**i - a0**i)/i
+    end do
+
+  end function iterComplex
 
 !ccccccccccccccc
 
@@ -346,9 +425,10 @@ module AlphaClass
     real    (dp)             , intent(in) :: mZ, amZ
     complex (dp)             , intent(in) :: mu
     real (dp), dimension(0:4), intent(in) :: beta
-    complex (dp)                          :: L, arg, LG, k1, k2, k3, k4
+    complex (dp)                          :: L, arg, LG, k1, k2, k3, k4, aLLinv
     real (dp)                             :: h, theta, mod
     integer                               :: n, i, ord
+    real (dp), dimension(0:4)             :: bCoef, cCoef
 
     if ( max( amZ, mZ ) <= d1mach(1) ) then
       alphaGenericComplex = 0; return
@@ -401,6 +481,45 @@ module AlphaClass
        alphaGenericComplex = alphaGenericComplex + (k1 + k4)/6 + (k2 + k3)/3
 
       end do
+
+  else if ( method(:9) == 'iterative' ) then
+
+    if (order <= 0) then
+      alphaGenericComplex = aMz; return
+    end if
+
+    aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
+
+    bCoef = beta/beta(0)
+
+    cCoef(0) = 1
+
+    do n = 0, order - 1
+
+      cCoef(n+1) = 0
+
+      do i = 0, n
+
+        cCoef(n+1) = cCoef(n+1) - (i + 1) * bCoef(i+1) * &
+        dot_product( cCoef(:n-i), cCoef(n - i : 0 : -1) )
+
+      end do
+
+      cCoef(n+1) = cCoef(n+1)/(n + 1)
+
+    end do
+
+    cCoef(1:order) = cCoef(1:order)/PowList(4 * Pi,order)
+
+    alphaGenericComplex = 1/aLLInv
+
+    if ( order <= 1) return
+
+    do i = 1, 100
+
+      alphaGenericComplex = 1/iter( cCoef(1:order), alphaGenericComplex, amZ, aLLInv)
+
+    end do
 
     end if
 
