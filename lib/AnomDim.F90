@@ -36,7 +36,7 @@ module AnomDimClass
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
     bHQETgamma, alphaMatching, alphaMatchingInverse, wTildeHm, GammaRComputer,&
     sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12, sCoefGeneric, &
-    P12Generic, N12Generic, sCoefRecursive
+    P12Generic, N12Generic, sCoefRecursive, PScoef
 
    procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
    kTildeComplex
@@ -933,6 +933,21 @@ module AnomDimClass
     end do
 
   end function PowListComp
+
+!ccccccccccccccc
+
+  pure function PScoef(self, lg) result(list)
+    class (AnomDim), intent (in) :: self
+    real (dp)      , intent (in) :: lg
+    real (dp), dimension(4)      :: list
+
+    list = [ 4._dp/3, 97._dp/9 - 22._dp * self%nf/9, 173.61795863880744_dp &
+    - 23.78877355147744_dp * self%nf + 0.6460905349794239_dp * self%nf**2, &
+    3567.7037988167936_dp - 701.2304086375466_dp * self%nf +               &
+    41.15507811732836 * self%nf**2 - 0.67466849565615_dp * self%nf**3 +    &
+    88.82643960980423_dp * lg ]
+
+  end function PScoef
 
 !ccccccccccccccc
 
