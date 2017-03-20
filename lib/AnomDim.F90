@@ -21,11 +21,11 @@ module AnomDimClass
     character (len = 5)           :: str
     real (dp)                     :: G4, err
     real (dp), dimension(0:3,0:3) :: gammaHm
-    real (dp), dimension(0:4)     :: bHat
+    real (dp), dimension(0:4)     :: bHat, bCoef, cCoef
     real (dp), dimension(0:4)     :: beta
     real (dp), dimension(0:4)     :: gammaMass
     real (dp), dimension(0:3)     :: gammaHard, gammaB, gammaJet, gammaSoft,&
-                                     cusp, gtilde, gl
+    cusp, gtilde, gl
     real (dp), dimension(4)       :: sCoefMSR, sCoefMSRNatural, betaList, &
     gammaR,  gammaRNatural, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, &
     sCoefMSRInc3, gammaRInc3
@@ -74,6 +74,8 @@ module AnomDimClass
     17567.757653436835_dp * nf**2 - 231.27767265113647_dp * nf**3 - &
     1.8424744081239026_dp * nf**4 ]
 
+    InAdim%bCoef = beta/beta(0)
+
     InAdim%str = str ; InAdim%nf      = nf ;    InAdim%beta = beta
     InAdim%G4  = G4  ; InAdim%gammaHm = 0
 
@@ -109,20 +111,24 @@ module AnomDimClass
 
     betaList = PowList( 1/beta(0)/2, 4 ); InAdim%betaList = betaList
 
-    InAdim%bHat(0) = 1
+    InAdim%bHat(0) = 1; InAdim%cCoef(0) = 1
 
     do n = 0, 3
 
-      InAdim%bHat(n+1) = 0
+      InAdim%bHat(n+1) = 0; InAdim%cCoef(n+1) = 0
 
       do i = 0, n
 
         InAdim%bHat(n+1) = InAdim%bHat(n+1) + (-1)**i * (i + 1) * betaList(i+1) * &
         beta(i+1) * dot_product( InAdim%bHat(:n-i), InAdim%bHat(n - i : 0 : -1) )
 
+          InAdim%cCoef(n+1) = InAdim%cCoef(n+1) - (i + 1) * InAdim%bCoef(i+1) * &
+          dot_product( InAdim%cCoef(:n-i), InAdim%cCoef(n - i : 0 : -1) )
+
       end do
 
-      InAdim%bHat(n+1) = InAdim%bHat(n+1)/(n + 1)/beta(0)
+      InAdim%bHat(n+1)  = InAdim%bHat(n+1)/(n + 1)/beta(0)
+      InAdim%cCoef(n+1) = InAdim%cCoef(n+1)/(n + 1)
 
     end do
 
@@ -434,6 +440,8 @@ module AnomDimClass
     if ( str( :4) == 'bJet'            ) bet(:3) = self%gammaB
     if ( str( :2) == 'Hm'              ) bet(:3) = self%gammaHm(:,0)
     if ( str( :4) == 'bHat'            ) bet     = self%bHat
+    if ( str( :5) == 'bCoef'           ) bet     = self%bCoef
+    if ( str( :5) == 'cCoef'           ) bet     = self%cCoef
     if ( str( :2) == 'gl'              ) bet(:3) = self%gl
     if ( str( :6) == 'gTilde'          ) bet(:3) = self%gTilde
     if ( str( :8) == 'MSRdelta'        ) bet(1:) = self%MSRDelta()

@@ -2683,7 +2683,7 @@ mC, muC, mu, res)
   type (Alpha)                     :: alphaOb
 
   alphaOb = alpha( str(:5), order, run, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, mB, &
-  muB, mC, muC, method(:8) )
+  muB, mC, muC, method(:9) )
 
   res     = alphaOb%alphaQCD(nf, mu)
 
@@ -2702,7 +2702,7 @@ mC, muC, muR, muI, res)
   complex (dp)                         :: alp
 
   alphaOb = alpha( str(:5), order, run, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, mB, &
-  muB, mC, muC, method(:8) )
+  muB, mC, muC, method(:9) )
 
   alp = alphaOb%alphaQCD( nf, cmplx(muR, muI, dp) )
 
