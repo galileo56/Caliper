@@ -3455,7 +3455,7 @@ end subroutine f90RhadMass
 !ccccccccccccccc
 
 subroutine f90lambdaQCD(str, order, runAlpha, run, nf, mZ, amZ, mT, muT, mB, &
-                        muB, mC, muC, mu, res)
+muB, mC, muC, mu, res)
 
   use RunningClass;  use AlphaClass;  use constants, only: dp; implicit none
 
@@ -3467,7 +3467,7 @@ subroutine f90lambdaQCD(str, order, runAlpha, run, nf, mZ, amZ, mT, muT, mB, &
   type (Alpha)                     :: alphaAll
 
   alphaAll  = Alpha(str(:5), order, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  mB, muB, mC, muC)
   alphaMass = Running(nf, run, alphaAll, mu)
   res       = alphaMass%lambdaQCD(run)
 
@@ -3493,6 +3493,26 @@ subroutine f90delta(str, nf, mu, R, res)
   res       = MatEl%delta( str(:12) )
 
 end subroutine f90delta
+
+!ccccccccccccccc
+
+subroutine f90PSdelta(orderAlpha, runAlpha, nf, mZ, amZ, mT, muT, &
+mB, muB, mC, muC, mu, R, lg, res)
+  use AlphaClass; use RunningClass;  use constants, only: dp; implicit none
+  integer                , intent(in ) :: nf, orderAlpha, runAlpha
+  real (dp)              , intent(in ) :: mu, R, mZ, amZ, mT, muT, mB, muB, mC, muC, lg
+  real (dp), dimension(4), intent(out) :: res
+  type (Alpha)                         :: alphaAll
+  type (Running)                       :: alphaMass
+
+  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
+
+  alphaMass = Running(nf, 0, alphaAll, 0._dp)
+
+  res       = alphaMass%PSdelta( R, mu, lg )
+
+end subroutine f90PSdelta
 
 !ccccccccccccccc
 

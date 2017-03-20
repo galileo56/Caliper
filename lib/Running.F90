@@ -3,7 +3,7 @@ module RunningClass
   use AnomDimClass;  use AlphaClass; use Constants, only: dp, Pi, ExpEuler, d1mach, prec
   use QuadPack, only: qags         ; implicit none   ;  private
 
-  public                        :: DeltaComputer
+  public                        :: DeltaComputer, AddAlpha
 
 !ccccccccccccccc
 
@@ -24,7 +24,7 @@ module RunningClass
     DiffDelta, orders, adim, DiffDeltaHadron, scheme, MSbarDeltaMu, MSbarMassLow, &
     AlphaAll, DeltaGapMatching, DiffRMass, MSRNaturalMass, mmFromMSR, PoleMass,   &
     SetMTop, SetMBottom, SetMCharm, SetLambda, mmFromMSRNatural, SetAlpha, scales,&
-    DiffR
+    DiffR, PSdelta
 
     procedure, pass(self), private :: MSRMatching, alphaQCDReal, alphaQCDComplex, &
     wTildeReal, wTildeComplex, kTildeReal, kTildeComplex, RunningMass, sCoefLambda
@@ -140,6 +140,22 @@ module RunningClass
     class (Running), intent(in) :: self
     scheme = self%str
    end function scheme
+
+!ccccccccccccccc
+
+  function PSdelta(self, R, mu, lg) result(res)
+    class (Running), intent(in) :: self
+    real (dp)      , intent(in) :: R, mu, lg
+    real (dp), dimension(4)     :: res
+    real (dp), dimension(0:4,4) :: coef
+
+    coef(0,:) = R * self%andim%PScoef(lg)
+    call self%andim%expandAlpha(coef)
+    call AddAlpha(  coef, powList( self%alphaQCD(mu)/Pi, 4 )  )
+
+    res = DeltaComputer(coef, powList( log(mu/R), 4 ), 0)
+
+  end function PSdelta
 
 !ccccccccccccccc
 
@@ -282,6 +298,19 @@ module RunningClass
      delta = alphaList * matmul( logList, self%tab )
 
    end function MSbarDeltaMu
+
+!ccccccccccccccc
+
+  pure subroutine AddAlpha(Mat, alphaList)
+    real (dp), dimension(:  ), intent(in   ) :: alphaList
+    real (dp), dimension(:,:), intent(inout) :: Mat
+    integer                                  :: i
+
+    do i = 1, Min( size(alphaList), size(Mat,2) )
+      Mat(:,i) = alphaList(i) * Mat(:,i)
+    enddo
+
+  end subroutine AddAlpha
 
 !ccccccccccccccc
 

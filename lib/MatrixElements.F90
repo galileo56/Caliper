@@ -5,7 +5,7 @@ module MatrixElementsClass
   implicit none;  private
 
   public :: expandExp, expandExpOrder, cuspConst, expandProd, expandExpVec, gapCons, &
-  posToMomMatrix, addAlpha, NGLSoft, NGLDoubleIntegral, factList
+  posToMomMatrix, NGLSoft, NGLDoubleIntegral, factList
 
   interface expandExpOrder
     module procedure :: expandExpComplexOrder, expandExpRealOrder
@@ -1699,19 +1699,6 @@ module MatrixElementsClass
     enddo non_dist_logs
 
   end subroutine AddLogs
-
-!ccccccccccccccc
-
-  pure subroutine AddAlpha(Mat, alphaList)
-    real (dp), dimension(:  ), intent(in   ) :: alphaList
-    real (dp), dimension(:,:), intent(inout) :: Mat
-    integer                                  :: i
-
-    do i = 1, Min( size(alphaList), size(Mat,2) )
-      Mat(:,i) = alphaList(i) * Mat(:,i)
-    enddo
-
-  end subroutine AddAlpha
 
 !ccccccccccccccc
 

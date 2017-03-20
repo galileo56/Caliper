@@ -53,6 +53,7 @@
 :Evaluate:  N12::usage = "N12[str, order, nf, lambda, err] computes the QCD anomalous function"
 :Evaluate:  Delta::usage = "Delta[str, nf, mu, R] computes the soft renormalon subtractions"
 :Evaluate:  DeltaGap::usage = "DeltaGap[str, orderAlpha, runAlpha, runMass, nf, mZ, aMz, mT, muT, mB, muB, mC, muC, mu, R] computes the soft renormalon subtractions"
+:Evaluate:  PSDelta::usage = "PSDelta[orderAlpha, runAlpha, nf, mZ, aMz, mT, muT, mB, muB, mC, muC, mu, R, lg] computes the PS mass subtractions"
 :Evaluate:  CoefMat::usage = "CoefMat[str, nf, s3] computes the hard, soft and jet matrix elements"
 :Evaluate:  wTilde::usage = "wTilde[order, nf, gamma, a0, a1] computes wTilde for a given anomalous dimension gamma"
 :Evaluate:  kTilde::usage = "kTilde[order, nf, gamma, a0, a1] computes kTilde for a given anomalous dimension gamma"
@@ -1362,6 +1363,17 @@
                  muC, mu, R}
 :ArgumentTypes: {String, Integer, Integer, Integer, Integer, Real, Real, Real, Real, Real,
                 Real, Real, Real, Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      psdelta
+:Pattern:       PSDelta[orderAlpha_, runAlpha_, nf_, mZ_, aMz_, mT_,
+                muT_, mB_, muB_, mC_, muC_, mu_, R_, lg_]
+:Arguments:     {orderAlpha, runAlpha, nf, mZ, aMz, mT, muT, mB, muB,
+                 mC, muC, mu, R, lg}
+:ArgumentTypes: {Integer, Integer, Integer, Real, Real, Real, Real,
+                Real, Real, Real, Real, Real, Real, Real}
 :ReturnType:    Manual
 :End:
 
@@ -3411,6 +3423,22 @@ double muC, double mu, double R){
 
    f90deltagap_(str, &orderAlpha, &runAlpha, &runMass, &nf, &mZ, &aMz, &mT, &muT, &mB,
    &muB, &mC, &muC, &mu, &R, result);
+
+   MLPutRealList(stdlink, result, 4);
+   MLEndPacket(stdlink);
+}
+
+extern double f90psdelta_(int* orderAlpha, int* runAlpha, int* nf, double* mZ,
+double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+double* muC, double* mu, double* R, double* lg, double* result);
+
+static void psdelta(int orderAlpha, int runAlpha, int nf, double mZ, double aMz,
+double mT, double muT, double mB, double muB, double mC, double muC, double mu,
+double R, double lg){
+  double result[4];
+
+   f90psdelta_(&orderAlpha, &runAlpha, &nf, &mZ, &aMz, &mT, &muT, &mB,
+   &muB, &mC, &muC, &mu, &R, &lg, result);
 
    MLPutRealList(stdlink, result, 4);
    MLEndPacket(stdlink);
