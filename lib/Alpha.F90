@@ -287,7 +287,7 @@ module AlphaClass
    integer                  , intent(in) :: order
    real (dp)                , intent(in) :: mZ, amZ, mu
    real (dp), dimension(0:4), intent(in) :: beta
-   real (dp)                             :: L, arg, LG, h, k1, k2, k3, k4, aLLInv
+   real (dp)                             :: L, arg, LG, h, k1, k2, k3, k4, aLLInv, corr
    integer                               :: n, i, ord
    real (dp), dimension(0:4)             :: bCoef, cCoef
 
@@ -373,14 +373,43 @@ module AlphaClass
     if ( order <= 1) return
 
     do i = 1, 100
+      corr = 1/iter(cCoef(1:order), alphaGenericReal, amZ, aLLInv)
+      if ( abs(corr - alphaGenericReal) < 1e-10_dp ) return
+      alphaGenericReal = corr
+    end do
 
-      alphaGenericReal = 1/iter(cCoef(1:order), alphaGenericReal, amZ, aLLInv)
+  else if ( method(:4) == 'root' ) then
 
+    if (order <= 0) then
+      alphaGenericReal = aMz; return
+    end if
+
+    aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
+
+    bCoef = beta/beta(0)
+
+    alphaGenericReal = 1/aLLInv
+
+    if ( order <= 1) return
+
+    do i = 1, 100
+      corr = 1/root(bCoef(1), alphaGenericReal, amZ, aLLInv)
+      if ( abs(corr - alphaGenericReal) < 1e-10_dp ) return
+      alphaGenericReal = corr
     end do
 
   end if
 
   end function alphaGenericReal
+
+!ccccccccccccccc
+
+  pure real (dp) function root(c, aMu, a0, aLLInv)
+    real (dp), intent(in) :: aMu, a0, aLLInv, c
+
+    root = aLLInv + c/4/Pi * log(  ( c + 4*Pi/aMu )/( c + 4*Pi/a0 )  )
+
+  end function root
 
 !ccccccccccccccc
 
@@ -393,7 +422,9 @@ module AlphaClass
 
     if ( size(cCoef) > 0 ) iterReal = iterReal + cCoef(1) * Log(aMu/a0)
 
-    do i = 1, size(cCoef)
+    if ( size(cCoef) < 2 ) return
+
+    do i = 1, size(cCoef) - 1
       iterReal = iterReal + cCoef(i+1) * (aMu**i - a0**i)/i
     end do
 
@@ -411,7 +442,9 @@ module AlphaClass
 
     if ( size(cCoef) > 0 ) iterComplex = iterComplex + cCoef(1) * Log(aMu/a0)
 
-    do i = 1, size(cCoef)
+    if ( size(cCoef) < 2 ) return
+
+    do i = 1, size(cCoef) - 1
       iterComplex = iterComplex + cCoef(i+1) * (aMu**i - a0**i)/i
     end do
 
