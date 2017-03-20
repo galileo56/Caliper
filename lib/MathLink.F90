@@ -2571,6 +2571,19 @@ end subroutine f90AnomDim
 
 !ccccccccccccccc
 
+subroutine f90PScoef(nf, lg, beta)
+  use AnomDimClass;  use constants, only: dp; implicit none
+  integer                , intent(in )  :: nf
+  real (dp)              , intent(in )  :: lg
+  real (dp), dimension(4), intent(out)  :: beta
+  type (AnomDim)                        :: run
+
+  run = AnomDim('MSbar', nf, 0._dp);  beta = run%PScoef(lg)
+
+end subroutine f90PScoef
+
+!ccccccccccccccc
+
 subroutine f90N12(str, order, nf, lambda, err, res)
   use AnomDimClass;  use constants, only: dp; implicit none
   character (len = *), intent(in ) :: str
@@ -2868,8 +2881,8 @@ end subroutine f90JetMass
 
 !ccccccccccccccc
 
-subroutine f90mmFromJetMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, mB, &
-                             muB, mC, muC, muLambda, R, mu, res)
+subroutine f90mmFromJetMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, &
+muT, mB, muB, mC, muC, muLambda, R, mu, res)
  use AlphaClass;  use MatrixElementsClass;  use constants, only: dp; implicit none
 
   integer  , intent(in )      :: orderAlpha, order, runAlpha, run, nf
@@ -2880,10 +2893,11 @@ subroutine f90mmFromJetMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, m
   type (MatricesElementsMass) :: MatEl
   real (dp)                   :: mass
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
-                     mB, muB, mC, muC)
+  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
+
   MatEl     = MatricesElementsMass(alphaAll, nf, run, 0._dp, 0._dp, 0._dp, 0._dp,  &
-                                    muLambda, muLambda)
+  muLambda, muLambda)
 
   if (nf == 6) mass = mT; if (nf == 5) mass = mB; if (nf == 4) mass = mC
 

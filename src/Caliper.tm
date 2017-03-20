@@ -48,6 +48,7 @@
 :Evaluate:  CLi3::usage = "Cli3[z] computes the complex trilogarithm"
 :Evaluate:  Scoef::usage = "Scoef[str, nf] computes the soft R anomalous Dimension"
 :Evaluate:  AnomDim::usage = "AnomDim[str, nf, G4] computes the QCD anomalous function"
+:Evaluate:  PSCoef::usage = "PSCoef[nf, lg] computes the PS mass series coefficients"
 :Evaluate:  N12Generic::usage = "N12Generic[aCoef, order, nf, lambda] computes the QCD anomalous function"
 :Evaluate:  N12::usage = "N12[str, order, nf, lambda, err] computes the QCD anomalous function"
 :Evaluate:  Delta::usage = "Delta[str, nf, mu, R] computes the soft renormalon subtractions"
@@ -1214,6 +1215,14 @@
 :Pattern:       AnomDim[str_, nf_, G4_]
 :Arguments:     {str, nf, G4}
 :ArgumentTypes: {String, Integer, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      pscoef
+:Pattern:       PSCoef[nf_, lg_]
+:Arguments:     {nf, lg}
+:ArgumentTypes: {Integer, Real}
 :ReturnType:    Manual
 :End:
 
@@ -3167,6 +3176,17 @@ static void anomdim(char const* str, int nf, double G4){
    f90anomdim_(str, &nf, &G4, result);
 
    MLPutRealList(stdlink, result, 5);
+   MLEndPacket(stdlink);
+}
+
+extern double f90pscoef_(int* nf, double* lg, double* result);
+
+static void pscoef(int nf, double lg){
+  double result[4];
+
+   f90pscoef_(&nf, &lg, result);
+
+   MLPutRealList(stdlink, result, 4);
    MLEndPacket(stdlink);
 }
 
