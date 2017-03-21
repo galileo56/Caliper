@@ -3,6 +3,8 @@ module AlphaClass
   use AnomDimClass;  use Constants, only: dp, Pi, Pi2, d1mach; implicit none
   private
 
+  real (dp), parameter :: fourPi = 4*Pi
+
   interface alphaGeneric
     module procedure :: alphaGenericReal, alphaGenericComplex
   end interface alphaGeneric
@@ -393,7 +395,7 @@ module AlphaClass
     if ( order <= 1) return
 
     do i = 1, 100
-      corr = 1/root(bCoef(1), alphaGenericReal, amZ, aLLInv)
+      corr = 1/root(bCoef(1:order-1), alphaGenericReal, amZ, aLLInv)
       if ( abs(corr - alphaGenericReal) < 1e-10_dp ) return
       alphaGenericReal = corr
     end do
@@ -405,9 +407,38 @@ module AlphaClass
 !ccccccccccccccc
 
   pure real (dp) function root(c, aMu, a0, aLLInv)
-    real (dp), intent(in) :: aMu, a0, aLLInv, c
+    real (dp)              , intent(in) :: aMu, a0, aLLInv
+    real (dp), dimension(:), intent(in) :: c
+    real (dp)                           :: radical, raiz, aSuPi, aSuPi0
 
-    root = aLLInv + c/4/Pi * log(  ( c + 4*Pi/aMu )/( c + 4*Pi/a0 )  )
+    aSuPi = aMu/fourPi; aSuPi0 = a0/fourPi
+
+    root = aLLInv - c(1)/fourPi * log(aMu/a0)
+
+    if ( size(c) == 1 ) then
+
+      root = root + c(1)/fourPi * log( (1 + c(1) * aSuPi)/(1 + c(1) * aSuPi0)  )
+
+    else if ( size(c) == 2 ) then
+
+      radical = c(1)**2 - 4 * c(2); raiz = sqrt( abs(radical) )
+
+      root = root + c(1)/fourPi/2 * log( (1 + c(1) * aSuPi + c(2) * aSuPi**2)/&
+      (1 + c(1) * aSuPi0 + c(2) * aSuPi0**2)  )
+
+      if (radical < 0) then
+
+        root = root + ( c(1)**2 - 2 * c(2) )/fourPi/raiz * &
+        (  atan( (c(1) + 2 * c(2) * aSuPi)/raiz ) - atan( (c(1) + 2 * c(2) * aSuPi0)/raiz )  )
+
+      else
+
+        root = root - ( c(1)**2 - 2 * c(2) )/fourPi/raiz * &
+        (  atanh( (c(1) + 2 * c(2) * aSuPi)/raiz ) - atanh( (c(1) + 2 * c(2) * aSuPi0)/raiz )  )
+
+      end if
+
+    end if
 
   end function root
 
