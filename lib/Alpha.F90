@@ -374,7 +374,8 @@ module AlphaClass
     if ( self%run <= 1) return
 
     do i = 1, 100
-      corr = 1/root(bCoef(1:self%run-1), alphaGenericReal, amZ, aLLInv)
+      ! corr = 1/root(bCoef(1:self%run-1), alphaGenericReal, amZ, aLLInv)
+      corr = 1/adim%root(self%run - 1, alphaGenericReal, amZ, aLLInv)
       if ( abs(corr - alphaGenericReal) < 1e-10_dp ) return
       alphaGenericReal = corr
     end do

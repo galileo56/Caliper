@@ -1,2 +1,2 @@
-/Users/vmateu/GitHub/Caliper/bin/Caliper
-/Users/vmateu/GitHub/Caliper/lib/../lib/liblibCaliper.a
+/Users/vicent/GitHubProjects/Caliper/bin/Caliper
+/Users/vicent/GitHubProjects/Caliper/lib/../lib/liblibCaliper.a
