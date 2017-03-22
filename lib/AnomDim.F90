@@ -161,16 +161,16 @@ module AnomDimClass
     real (dp)  , dimension(0:m) :: res
     integer                     :: n, i, ord
 
-    ord = min(order, 5)
+    ord = min(order, 5); res(0) = 1
 
-    res(:ord) = self%cCoef(:ord)
+    res(1:ord) = self%cCoef(1:ord)/powList(fourPi, ord)
 
     do n = ord, m
 
       res(n + 1) = 0
 
       do i = 0, ord - 1
-        res(n+1) = res(n+1) - (i + 1) * self%bCoef(i+1) * &
+        res(n+1) = res(n+1) - (i + 1) * self%bCoef(i+1)/fourPi**(i+1) * &
         dot_product( res(:n - i), res(n - i : 0 : -1) )
       end do
 
