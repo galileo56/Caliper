@@ -4,7 +4,8 @@ module AnomDimClass
   use adapt, only: dGauss; implicit none ;  private
 
   real (dp), parameter :: al = 0.634_dp, bet = 1.035_dp, gam = - 23.6_dp, &
-  ep = 1.19_dp, del = - 0.481_dp
+  ep = 1.19_dp, del = - 0.481_dp, fourPi = 4*Pi
+
 
   public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta, &
   MSbarDeltaPiece, PowList
@@ -35,7 +36,7 @@ module AnomDimClass
     procedure, pass(self), public :: expandAlpha, wTildeExpand, kTildeExpand, &
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
     bHQETgamma, alphaMatching, alphaMatchingInverse, wTildeHm, GammaRComputer,&
-    sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12, sCoefGeneric, &
+    sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12, sCoefGeneric, root, &
     P12Generic, N12Generic, sCoefRecursive, PScoef
 
    procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
@@ -159,6 +160,179 @@ module AnomDimClass
     class (AnomDim), intent(in) :: self
     scheme = self%str
    end function scheme
+
+!ccccccccccccccc
+
+   pure real (dp) function root(self, order, aMu, a0, aLLInv)
+    class (AnomDim), intent(in) :: self
+    integer        , intent(in) :: order
+    real (dp)      , intent(in) :: aMu, a0, aLLInv
+    real(dp)                    :: aSuPi, aSuPi0, radical, raiz
+
+    aSuPi = aMu/fourPi; aSuPi0 = a0/fourPi
+
+    root = aLLInv - self%bCoef(1)/fourPi * log(aMu/a0)
+
+    if ( order == 1 ) then
+
+      root = root + self%bCoef(1)/fourPi * log( (1 + self%bCoef(1) * aSuPi)/(1 + self%bCoef(1) * aSuPi0)  )
+
+    else if ( order == 2 ) then
+
+      radical = self%bCoef(1)**2 - 4 * self%bCoef(2); raiz = sqrt( abs(radical) )
+
+      root = root + self%bCoef(1)/fourPi/2 * &
+      log( (1 + self%bCoef(1) * aSuPi + self%bCoef(2) * aSuPi**2)/&
+      (1 + self%bCoef(1) * aSuPi0 + self%bCoef(2) * aSuPi0**2)  )
+
+      if (radical < 0) then
+
+        root = root + ( self%bCoef(1)**2 - 2 * self%bCoef(2) )/fourPi/raiz * &
+        (  atan( (self%bCoef(1) + 2 * self%bCoef(2) * aSuPi)/raiz ) - &
+        atan( (self%bCoef(1) + 2 * self%bCoef(2) * aSuPi0)/raiz )  )
+
+      else
+
+        root = root - ( self%bCoef(1)**2 - 2 * self%bCoef(2) )/fourPi/raiz * &
+        (  atanh( (self%bCoef(1) + 2 * self%bCoef(2) * aSuPi)/raiz ) - &
+        atanh( (self%bCoef(1) + 2 * self%bCoef(2) * aSuPi0)/raiz )  )
+
+      end if
+
+    else if ( order == 3 ) then
+      select case ( self%nf )
+      case (1)
+        root = root - 0.6404675122670069_dp * (  &
+        ATan( 0.5243427048805052_dp * (2 * aMu - 0.32585902383203375_dp) )   -  &
+        ATan( 0.5243427048805052_dp * (2 * a0  - 0.32585902383203375_dp) )  ) + &
+        0.44444989158991516_dp * log( (aMu + 0.9651061041938452_dp)/&
+        (a0 + 0.9651061041938452_dp) ) + 0.12175509250042996_dp * &
+        Log( (0.9358509616463481_dp - 0.32585902383203375_dp * aMu + aMu**2)/&
+        (0.9358509616463481_dp - 0.32585902383203375_dp * a0 + a0**2) )
+      case (2)
+        root = root - 0.5909374157641947_dp * (  &
+        ATan( 0.48547873662772983_dp * (2 * aMu - 0.37047299521078925_dp) )   -  &
+        ATan( 0.48547873662772983_dp * (2 * a0  - 0.37047299521078925_dp) )  ) + &
+        0.4177502777889539_dp * log( (aMu + 1.0315084572808646_dp)/&
+        (a0 + 1.0315084572808646_dp) ) + 0.10669069654635029_dp * &
+        Log( (1.0950296899338223_dp - 0.37047299521078925_dp * aMu + aMu**2)/&
+        (1.0950296899338223_dp - 0.37047299521078925_dp * a0 + a0**2) )
+      case (3)
+        root = root - 0.5342835587527397_dp * (  &
+        ATan( 0.44205618349190395_dp * (2 * aMu - 0.4428447212033426_dp) )   -  &
+        ATan( 0.44205618349190395_dp * (2 * a0  - 0.4428447212033426_dp) )  ) + &
+        0.3907037552748204_dp * log( (aMu + 1.1120254691513045_dp)/&
+        (a0 + 1.1120254691513045_dp) ) + 0.08759024341484811_dp * &
+        Log( (1.3283651814941193_dp - 0.4428447212033426_dp * aMu + aMu**2)/&
+        (1.3283651814941193_dp - 0.4428447212033426_dp * a0 + a0**2) )
+      case (4)
+        root = root - 0.46716448667125304_dp * (  &
+        ATan( 0.3928365460051735_dp * (2 * aMu - 0.5735173459270638_dp) )   -  &
+        ATan( 0.3928365460051735_dp * (2 * a0  - 0.5735173459270638_dp) )  ) + &
+        0.36500373291627086_dp * log( (aMu + 1.2090182171482846_dp)/&
+        (a0 + 1.2090182171482846_dp) ) + 0.06259674590338339_dp * &
+        Log( (1.7022351111458442_dp - 0.5735173459270638_dp * aMu + aMu**2)/&
+        (1.7022351111458442_dp - 0.5735173459270638_dp * a0 + a0**2) )
+      case (5)
+        root = root - 0.3836359569088666_dp * (  &
+        ATan( 0.3365914582110142_dp * (2 * aMu - 0.8495407965950523_dp) )   -  &
+        ATan( 0.3365914582110142_dp * (2 * a0  - 0.8495407965950523_dp) )  ) + &
+        0.3441107587583152_dp * log( (aMu + 1.320588432330028_dp)/&
+        (a0 + 1.320588432330028_dp) ) + 0.02861824451931911_dp * &
+        Log( (2.3870817866590763_dp - 0.8495407965950523_dp * aMu + aMu**2)/&
+        (2.3870817866590763_dp - 0.8495407965950523_dp * a0 + a0**2) )
+      case (6)
+        root = root - 0.27090635085432485_dp * (  &
+        ATan( 0.27520884668510553_dp * (2 * aMu - 1.5929881907058037_dp) )   -  &
+        ATan( 0.27520884668510553_dp * (2 * a0  - 1.5929881907058037_dp) )  ) + &
+        0.3341470572175008_dp * log( (aMu + 1.4277939462375213_dp)/&
+        (a0 + 1.4277939462375213_dp) ) - 0.01928679573770475_dp * &
+        Log( (3.9351725745955957_dp - 1.5929881907058037_dp * aMu + aMu**2)/&
+        (3.9351725745955957_dp - 1.5929881907058037_dp * a0 + a0**2) )
+      case default
+        root = 0
+      end select
+
+    else if ( order > 3 ) then
+      select case ( self%nf )
+      case (1)
+        root = root - 0.5489848787403228_dp * (  &
+        ATan( 0.6354705274484186_dp * (2 * aMu - 0.7677302261302864_dp) )   -  &
+        ATan( 0.6354705274484186_dp * (2 * a0  - 0.7677302261302864_dp) )  ) - &
+        0.23200408345167492_dp * (  &
+        ATan( 0.8864954614918331_dp * (2 * aMu + 1.542321166011278_dp) )    -  &
+        ATan( 0.8864954614918331_dp * (2 * a0  + 1.542321166011278_dp) )  ) + &
+        0.04040335124693508_dp * &
+        log( (0.7664358581916029_dp - 0.7677302261302864_dp * aMu + aMu**2)/&
+        (0.7664358581916029_dp - 0.7677302261302864_dp * a0 + a0**2) ) + &
+        0.30357668704845114_dp * &
+        Log( (0.9651061041938452_dp + 1.542321166011278_dp * aMu + aMu**2)/&
+        (0.9651061041938452_dp + 1.542321166011278_dp * a0 + a0**2) )
+      case (2)
+        root = root - 0.5088583673947228_dp * (  &
+        ATan( 0.5807020947660965_dp * (2 * aMu - 0.8268729922000535_dp) )   -  &
+        ATan( 0.5807020947660965_dp * (2 * a0  - 0.8268729922000535_dp) )  ) - &
+        0.1812488725394936_dp * (  &
+        ATan( 0.8171726383562911_dp * (2 * aMu + 1.7419567282921797_dp) )    -  &
+        ATan( 0.8171726383562911_dp * (2 * a0  + 1.7419567282921797_dp) )  ) + &
+        0.03843876906477947_dp * &
+        log( (0.9122966896897218_dp - 0.8268729922000535_dp * aMu + aMu**2)/&
+        (0.9122966896897218_dp - 0.8268729922000535_dp * a0 + a0**2) ) + &
+        0.2771270663760476_dp * &
+        Log( (1.1329830828367182_dp + 1.7419567282921797_dp * aMu + aMu**2)/&
+        (1.1329830828367182_dp + 1.7419567282921797_dp * a0 + a0**2) )
+      case (3)
+        root = root - 0.4648829323834203_dp * (  &
+        ATan( 0.5186296543090279_dp * (2 * aMu - 0.9045061008589117_dp) )   -  &
+        ATan( 0.5186296543090279_dp * (2 * a0  - 0.9045061008589117_dp) )  ) - &
+        0.10665133580718698_dp * (  &
+        ATan( 0.7478910571108373_dp * (2 * aMu + 2.069827558808925_dp) )    -  &
+        ATan( 0.7478910571108373_dp * (2 * a0  + 2.069827558808925_dp) )  ) + &
+        0.03534462037703361_dp * &
+        log( (1.1339812941648535_dp - 0.9045061008589117_dp * aMu + aMu**2)/&
+        (1.1339812941648535_dp - 0.9045061008589117_dp * a0 + a0**2) ) + &
+        0.24759750067522504_dp * &
+        Log( (1.5180010453345267_dp + 2.069827558808925_dp * aMu + aMu**2)/&
+        (1.5180010453345267_dp + 2.069827558808925_dp * a0 + a0**2) )
+      case (4)
+        root = root - 0.4162619666563603_dp * (  &
+        ATan( 0.4467310336890205_dp * (2 * aMu - 1.0104662655416288_dp) )   -  &
+        ATan( 0.4467310336890205_dp * (2 * a0  - 1.0104662655416288_dp) )  ) + &
+        0.03691444757280972_dp * (  &
+        ATan( 0.7190586675946767_dp * (2 * aMu + 2.742110429973893_dp) )    -  &
+        ATan( 0.7190586675946767_dp * (2 * a0  + 2.742110429973893_dp) )  ) + &
+        0.029930532499675307_dp * &
+        log( (1.507962493506846_dp - 1.0104662655416288_dp * aMu + aMu**2)/&
+        (1.507962493506846_dp - 1.0104662655416288_dp * a0 + a0**2) ) + &
+        0.21516807986184325_dp * &
+        Log( (2.3633089675134706_dp + 2.742110429973893_dp * aMu + aMu**2)/&
+        (2.3633089675134706_dp + 2.742110429973893_dp * a0 + a0**2) )
+      case (5)
+        root = root - 0.36091735121516355_dp * (  &
+        ATan( 0.3626874145171533_dp * (2 * aMu - 1.163068663777_dp) )   -  &
+        ATan( 0.3626874145171533_dp * (2 * a0  - 1.163068663777_dp) )  ) + &
+        0.3943399946498003_dp * log( (aMu + 1.5721862037478178_dp)/&
+        (a0 + 1.5721862037478178_dp) ) - &
+        0.027723547491953493_dp * log( (aMu + 3.511042056691402_dp)/&
+        (a0 + 3.511042056691402_dp) ) + 0.017365400319553415_dp * &
+        Log( (2.2387135279454564_dp - 1.163068663777_dp * aMu + aMu**2)/&
+        (2.2387135279454564_dp - 1.163068663777_dp * a0 + a0**2) )
+      case (6)
+        root = root - 0.2706517070577726_dp * (  &
+        ATan( 0.27659246828604006_dp * (2 * aMu - 1.6112137089692589_dp) )   -  &
+        ATan( 0.27659246828604006_dp * (2 * a0  - 1.6112137089692589_dp) )  ) + &
+        0.33463363709028904_dp * log( (aMu + 1.4322403491695925_dp)/&
+        (a0 + 1.4322403491695925_dp) ) - &
+        3.242619128589197e-8_dp * log( (aMu + 114.63875643838061_dp)/&
+        (a0 + 114.63875643838061_dp) ) - 0.019530069461003236_dp * &
+        Log( (3.916831300483894_dp - 1.6112137089692589_dp * aMu + aMu**2)/&
+        (3.916831300483894_dp - 1.6112137089692589_dp * a0 + a0**2) )
+      case default
+        root = 0
+      end select
+    end if
+
+   end function root
 
 !ccccccccccccccc
 
