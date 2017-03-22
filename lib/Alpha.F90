@@ -288,6 +288,7 @@ module AlphaClass
    real (dp)                             :: L, arg, LG, h, k1, k2, k3, k4, aLLInv, corr
    integer                               :: n, i, ord
    real (dp), dimension(0:4)             :: bCoef, cCoef
+   real (dp), dimension(0:20)            :: ExpandCoeff
 
     if ( max( amZ, mZ, mu ) <= d1mach(1) ) then
       alphaGenericReal = 0; return
@@ -298,129 +299,127 @@ module AlphaClass
 
     if ( self%method(:8) == 'analytic' ) then
 
-    L = log(mu/mZ);  arg = amZ * L * beta(0)/2/Pi;  LG  = log(1 + arg)
-    alphaGenericReal = 1
+      L = log(mu/mZ);  arg = amZ * L * beta(0)/2/Pi;  LG  = log(1 + arg)
+      alphaGenericReal = 1
 
-    if (self%run > 0) alphaGenericReal = alphaGenericReal + arg
-    if (self%run > 1) alphaGenericReal = alphaGenericReal + beta(1)/beta(0) * amZ * LG/4/Pi
+      if (self%run > 0) alphaGenericReal = alphaGenericReal + arg
+      if (self%run > 1) alphaGenericReal = alphaGenericReal + beta(1)/beta(0) * amZ * LG/4/Pi
 
-    if (self%run > 2) alphaGenericReal = alphaGenericReal + 1/( 16 * Pi2 + &
-     8 * Pi * amZ * L * beta(0) ) * (  amZ**2 * LG * beta(1)**2/beta(0)**2 - &
-     ( amZ**3 * L * beta(1)**2/2/Pi )/beta(0) + amZ**3 * L * beta(2)/2/Pi  )
+      if (self%run > 2) alphaGenericReal = alphaGenericReal + 1/( 16 * Pi2 + &
+       8 * Pi * amZ * L * beta(0) ) * (  amZ**2 * LG * beta(1)**2/beta(0)**2 - &
+       ( amZ**3 * L * beta(1)**2/2/Pi )/beta(0) + amZ**3 * L * beta(2)/2/Pi  )
 
-    if (self%run > 3) alphaGenericReal = alphaGenericReal + ( -amZ**3 * LG**2 * beta(1)**3/beta(0)**3 + &
-     amZ**5 * L**2 * beta(1)**3/beta(0)/4/Pi2 - amZ**5 * L**2 * beta(1) * beta(2)/2/Pi2 + &
-     2 * amZ**3 * LG * beta(1) * beta(2)/beta(0)**2 - amZ**4 * L * beta(1) * beta(2)/beta(0)/Pi + &
-     amZ**4 * L * beta(3)/Pi + amZ**5 * L**2 * beta(0) * beta(3)/4/Pi2 )/32/Pi/( 2 * Pi + amZ * L * beta(0) )**2
+      if (self%run > 3) alphaGenericReal = alphaGenericReal + ( -amZ**3 * LG**2 * beta(1)**3/beta(0)**3 + &
+       amZ**5 * L**2 * beta(1)**3/beta(0)/4/Pi2 - amZ**5 * L**2 * beta(1) * beta(2)/2/Pi2 + &
+       2 * amZ**3 * LG * beta(1) * beta(2)/beta(0)**2 - amZ**4 * L * beta(1) * beta(2)/beta(0)/Pi + &
+       amZ**4 * L * beta(3)/Pi + amZ**5 * L**2 * beta(0) * beta(3)/4/Pi2 )/32/Pi/( 2 * Pi + amZ * L * beta(0) )**2
 
-    if (self%run > 4) alphaGenericReal = alphaGenericReal + 4 * amZ**4 * ( - arg * (   6 * beta(0)**2 * &
-    ( beta(1) * beta(3) - beta(0) * beta(4) ) + 2 * arg**2 * (  beta(1)**4 - 3 * beta(0) * beta(1)**2 * beta(2) &
-    + 2 * beta(0)**2 * beta(1) * beta(3) + beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  ) + &
-    3 * arg * (  beta(1)**4 - 4 * beta(0) * beta(1)**2 * beta(2) + 3 * beta(0)**2 * beta(1) * beta(3) + &
-    2 * beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  )   ) + beta(1) * LG * (6 * arg * ( beta(1)**3 &
-    - beta(0) * beta(1) * beta(2)) + 6 * beta(0)**2 * beta(3) - 6 * beta(0) * beta(1) * beta(2) * LG +&
-    beta(1)**3 * LG * (2 * LG - 3)))/(6144 * (1 + arg)**3 * beta(0)**4 * Pi2**2)
+      if (self%run > 4) alphaGenericReal = alphaGenericReal + 4 * amZ**4 * ( - arg * (   6 * beta(0)**2 * &
+      ( beta(1) * beta(3) - beta(0) * beta(4) ) + 2 * arg**2 * (  beta(1)**4 - 3 * beta(0) * beta(1)**2 * beta(2) &
+      + 2 * beta(0)**2 * beta(1) * beta(3) + beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  ) + &
+      3 * arg * (  beta(1)**4 - 4 * beta(0) * beta(1)**2 * beta(2) + 3 * beta(0)**2 * beta(1) * beta(3) + &
+      2 * beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  )   ) + beta(1) * LG * (6 * arg * ( beta(1)**3 &
+      - beta(0) * beta(1) * beta(2)) + 6 * beta(0)**2 * beta(3) - 6 * beta(0) * beta(1) * beta(2) * LG +&
+      beta(1)**3 * LG * (2 * LG - 3)))/(6144 * (1 + arg)**3 * beta(0)**4 * Pi2**2)
 
-    alphaGenericReal = amZ/alphaGenericReal
+      alphaGenericReal = amZ/alphaGenericReal
 
-  else if ( self%method(:7) == 'numeric' ) then
+    else if ( self%method(:7) == 'numeric' ) then
 
-    L = Log(Mz/mu);  h = 0.04_dp; n = max(  1, Abs(  Nint(L/h)  )  )
+      L = Log(Mz/mu);  h = 0.04_dp; n = max(  1, Abs(  Nint(L/h)  )  )
 
-    h = - L/n;  alphaGenericReal = amZ; ord = min(self%run,5)
+      h = - L/n;  alphaGenericReal = amZ; ord = min(self%run,5)
 
-    do i = 1, n
+      do i = 1, n
 
-     k1 = h * PiBeta( beta(:ord-1), alphaGenericReal        )
-     k2 = h * PiBeta( beta(:ord-1), alphaGenericReal + k1/2 )
-     k3 = h * PiBeta( beta(:ord-1), alphaGenericReal + k2/2 )
-     k4 = h * PiBeta( beta(:ord-1), alphaGenericReal + k3   )
+       k1 = h * PiBeta( beta(:ord-1), alphaGenericReal        )
+       k2 = h * PiBeta( beta(:ord-1), alphaGenericReal + k1/2 )
+       k3 = h * PiBeta( beta(:ord-1), alphaGenericReal + k2/2 )
+       k4 = h * PiBeta( beta(:ord-1), alphaGenericReal + k3   )
 
-     alphaGenericReal = alphaGenericReal + (k1 + k4)/6 + (k2 + k3)/3
+       alphaGenericReal = alphaGenericReal + (k1 + k4)/6 + (k2 + k3)/3
 
-    end do
+      end do
 
-  else if ( self%method(:9) == 'iterative' ) then
+    else if ( self%method(:9) == 'iterative' ) then
 
-    if (self%run <= 0) then
-      alphaGenericReal = aMz; return
-    end if
-
-    aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
-
-    cCoef = adim%betaQCD('cCoef')
-    cCoef(1:self%run) = cCoef(1:self%run)/PowList(4 * Pi,self%run)
-
-    alphaGenericReal = 1/aLLInv
-
-    if ( self%run <= 1) return
-
-    do i = 1, 100
-      corr = 1/iter(cCoef(1:self%run), alphaGenericReal, amZ, aLLInv)
-      if ( abs(corr - alphaGenericReal) < 1e-10_dp ) return
-      alphaGenericReal = corr
-    end do
-
-  else if ( self%method(:4) == 'root' ) then
-
-    if (self%run <= 0) then
-      alphaGenericReal = aMz; return
-    end if
-
-    aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
-
-    alphaGenericReal = 1/aLLInv
-
-    if ( self%run <= 1) return
-
-    do i = 1, 100
-      ! corr = 1/root(bCoef(1:self%run-1), alphaGenericReal, amZ, aLLInv)
-      corr = 1/adim%root(self%run - 1, alphaGenericReal, amZ, aLLInv)
-      if ( abs(corr - alphaGenericReal) < 1e-10_dp ) return
-      alphaGenericReal = corr
-    end do
-
-  end if
-
-  end function alphaGenericReal
-
-!ccccccccccccccc
-
-  pure real (dp) function root(c, aMu, a0, aLLInv)
-    real (dp)              , intent(in) :: aMu, a0, aLLInv
-    real (dp), dimension(:), intent(in) :: c
-    real (dp)                           :: radical, raiz, aSuPi, aSuPi0
-
-    aSuPi = aMu/fourPi; aSuPi0 = a0/fourPi
-
-    root = aLLInv - c(1)/fourPi * log(aMu/a0)
-
-    if ( size(c) == 1 ) then
-
-      root = root + c(1)/fourPi * log( (1 + c(1) * aSuPi)/(1 + c(1) * aSuPi0)  )
-
-    else if ( size(c) == 2 ) then
-
-      radical = c(1)**2 - 4 * c(2); raiz = sqrt( abs(radical) )
-
-      root = root + c(1)/fourPi/2 * log( (1 + c(1) * aSuPi + c(2) * aSuPi**2)/&
-      (1 + c(1) * aSuPi0 + c(2) * aSuPi0**2)  )
-
-      if (radical < 0) then
-
-        root = root + ( c(1)**2 - 2 * c(2) )/fourPi/raiz * &
-        (  atan( (c(1) + 2 * c(2) * aSuPi)/raiz ) - atan( (c(1) + 2 * c(2) * aSuPi0)/raiz )  )
-
-      else
-
-        root = root - ( c(1)**2 - 2 * c(2) )/fourPi/raiz * &
-        (  atanh( (c(1) + 2 * c(2) * aSuPi)/raiz ) - atanh( (c(1) + 2 * c(2) * aSuPi0)/raiz )  )
-
+      if (self%run <= 0) then
+        alphaGenericReal = aMz; return
       end if
 
+      aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
+
+      cCoef = adim%betaQCD('cCoef')
+      cCoef(1:self%run) = cCoef(1:self%run)/PowList(4 * Pi,self%run)
+
+      alphaGenericReal = 1/aLLInv
+
+      if ( self%run <= 1) return
+
+      do i = 1, 100
+        corr = 1/iter(cCoef(1:self%run), alphaGenericReal, amZ, aLLInv)
+        if ( abs(corr - alphaGenericReal) < 1e-10_dp ) return
+        alphaGenericReal = corr
+      end do
+
+    else if ( self%method(:4) == 'root' ) then
+
+      if (self%run <= 0) then
+        alphaGenericReal = aMz; return
+      end if
+
+      aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
+
+      alphaGenericReal = 1/aLLInv
+
+      if ( self%run <= 1) return
+
+      do i = 1, 100
+        corr = 1/adim%root(self%run - 1, alphaGenericReal, amZ, aLLInv)
+        if ( abs(corr - alphaGenericReal) < 1e-10_dp ) return
+        alphaGenericReal = corr
+      end do
+
+    else if ( self%method(:6) == 'expand' ) then
+
+      if (self%run <= 0) then
+        alphaGenericReal = aMz; return
+      end if
+
+      aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
+
+      alphaGenericReal = 1/aLLInv
+
+      if ( self%run <= 1) return
+
+      ExpandCoeff = adim%cCoeff(self%run - 1, 20)
+
+      do i = 1, 100
+        corr = 1/expand(amZ, alphaGenericReal)
+        if ( abs(corr - alphaGenericReal) < 1e-10_dp ) return
+        alphaGenericReal = corr
+      end do
+
     end if
 
-  end function root
+  contains
+
+    pure real (dp) function expand(a0, aMu)
+      real (dp), intent(in) :: a0, aMu
+      real (dp)             :: corr
+      integer               :: i
+
+      expand = aLLInv + ExpandCoeff(1) * log(aMu/a0)
+
+      do i = 2, 20
+        corr = ExpandCoeff(i) * ( aMu**(i-1) - a0**(i-1) )/(i - 1)
+        if ( abs(corr) <= 1e-10_dp ) return
+        expand = expand + corr
+      end do
+
+    end function
+
+  end function alphaGenericReal
 
 !ccccccccccccccc
 
@@ -473,6 +472,7 @@ module AlphaClass
     integer                               :: n, i, ord
     real (dp), dimension(0:4)             :: bCoef, cCoef
     complex (dp)                          :: L, arg, LG, k1, k2, k3, k4, aLLinv, corr
+    real (dp), dimension(0:20)            :: ExpandCoeff
 
     if ( max( amZ, mZ ) <= d1mach(1) ) then
       alphaGenericComplex = 0; return
@@ -529,29 +529,85 @@ module AlphaClass
 
       end do
 
-  else if ( self%method(:9) == 'iterative' ) then
+    else if ( self%method(:9) == 'iterative' ) then
 
-    if (self%run <= 0) then
-      alphaGenericComplex = aMz; return
+      if (self%run <= 0) then
+        alphaGenericComplex = aMz; return
+      end if
+
+      aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
+      alphaGenericComplex = 1/aLLInv
+
+      cCoef = adim%betaQCD('cCoef')
+      cCoef(1:self%run) = cCoef(1:self%run)/PowList(4 * Pi,self%run)
+
+      if ( self%run <= 1) return
+
+      do i = 1, 100
+
+        corr = 1/iter( cCoef(1:self%run), alphaGenericComplex, amZ, aLLInv)
+        if ( abs(corr - alphaGenericComplex) < 1e-10_dp ) return
+        alphaGenericComplex = corr
+
+      end do
+
+    else if ( self%method(:4) == 'root' ) then
+
+      if (self%run <= 0) then
+        alphaGenericComplex = aMz; return
+      end if
+
+      aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
+
+      alphaGenericComplex = 1/aLLInv
+
+      if ( self%run <= 1) return
+
+      do i = 1, 100
+        corr = 1/adim%root(self%run - 1, alphaGenericComplex, amZ, aLLInv)
+        if ( abs(corr - alphaGenericComplex) < 1e-10_dp ) return
+        alphaGenericComplex = corr
+      end do
+
+    else if ( self%method(:6) == 'expand' ) then
+
+      if (self%run <= 0) then
+        alphaGenericComplex = aMz; return
+      end if
+
+      aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
+
+      alphaGenericComplex = 1/aLLInv
+
+      if ( self%run <= 1) return
+
+      ExpandCoeff = adim%cCoeff(self%run - 1, 20)
+
+      do i = 1, 100
+        corr = 1/expand(amZ, alphaGenericComplex)
+        if ( abs(corr - alphaGenericComplex) < 1e-10_dp ) return
+        alphaGenericComplex = corr
+      end do
+
     end if
 
-    aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
-    alphaGenericComplex = 1/aLLInv
+  contains
 
-    cCoef = adim%betaQCD('cCoef')
-    cCoef(1:self%run) = cCoef(1:self%run)/PowList(4 * Pi,self%run)
+    pure complex (dp) function expand(a0, aMu)
+      complex (dp), intent(in) :: aMu
+      real (dp)   , intent(in) :: a0
+      complex (dp)             :: corr
+      integer                  :: i
 
-    if ( self%run <= 1) return
+      expand = aLLInv + ExpandCoeff(1) * log(aMu/a0)
 
-    do i = 1, 100
+      do i = 2, 20
+        corr = ExpandCoeff(i) * ( aMu**(i-1) - a0**(i-1) )/(i - 1)
+        if ( abs(corr) <= 1e-10_dp ) return
+        expand = expand + corr
+      end do
 
-      corr = 1/iter( cCoef(1:self%run), alphaGenericComplex, amZ, aLLInv)
-      if ( abs(corr - alphaGenericComplex) < 1e-10_dp ) return
-      alphaGenericComplex = corr
-
-    end do
-
-    end if
+    end function
 
   end function alphaGenericComplex
 
