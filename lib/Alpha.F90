@@ -472,6 +472,7 @@ module AlphaClass
     integer                               :: n, i, ord
     real (dp), dimension(0:4)             :: bCoef, cCoef
     complex (dp)                          :: L, arg, LG, k1, k2, k3, k4, aLLinv, corr
+    real (dp), dimension(0:20)            :: ExpandCoeff
 
     if ( max( amZ, mZ ) <= d1mach(1) ) then
       alphaGenericComplex = 0; return
@@ -528,29 +529,67 @@ module AlphaClass
 
       end do
 
-  else if ( self%method(:9) == 'iterative' ) then
+    else if ( self%method(:9) == 'iterative' ) then
 
-    if (self%run <= 0) then
-      alphaGenericComplex = aMz; return
+      if (self%run <= 0) then
+        alphaGenericComplex = aMz; return
+      end if
+
+      aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
+      alphaGenericComplex = 1/aLLInv
+
+      cCoef = adim%betaQCD('cCoef')
+      cCoef(1:self%run) = cCoef(1:self%run)/PowList(4 * Pi,self%run)
+
+      if ( self%run <= 1) return
+
+      do i = 1, 100
+
+        corr = 1/iter( cCoef(1:self%run), alphaGenericComplex, amZ, aLLInv)
+        if ( abs(corr - alphaGenericComplex) < 1e-10_dp ) return
+        alphaGenericComplex = corr
+
+      end do
+
+    else if ( self%method(:6) == 'expand' ) then
+
+      if (self%run <= 0) then
+        alphaGenericComplex = aMz; return
+      end if
+
+      aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
+
+      alphaGenericComplex = 1/aLLInv
+
+      if ( self%run <= 1) return
+
+      ExpandCoeff = adim%cCoeff(self%run - 1, 20)
+
+      do i = 1, 100
+        corr = 1/expand(amZ, alphaGenericComplex)
+        if ( abs(corr - alphaGenericComplex) < 1e-10_dp ) return
+        alphaGenericComplex = corr
+      end do
+
     end if
 
-    aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
-    alphaGenericComplex = 1/aLLInv
+  contains
 
-    cCoef = adim%betaQCD('cCoef')
-    cCoef(1:self%run) = cCoef(1:self%run)/PowList(4 * Pi,self%run)
+    pure complex (dp) function expand(a0, aMu)
+      complex (dp), intent(in) :: aMu
+      real (dp)   , intent(in) :: a0
+      complex (dp)             :: corr
+      integer                  :: i
 
-    if ( self%run <= 1) return
+      expand = aLLInv + ExpandCoeff(1) * log(aMu/a0)
 
-    do i = 1, 100
+      do i = 2, 20
+        corr = ExpandCoeff(i) * ( aMu**(i-1) - a0**(i-1) )/(i - 1)
+        if ( abs(corr) <= 1e-10_dp ) return
+        expand = expand + corr
+      end do
 
-      corr = 1/iter( cCoef(1:self%run), alphaGenericComplex, amZ, aLLInv)
-      if ( abs(corr - alphaGenericComplex) < 1e-10_dp ) return
-      alphaGenericComplex = corr
-
-    end do
-
-    end if
+    end function
 
   end function alphaGenericComplex
 
