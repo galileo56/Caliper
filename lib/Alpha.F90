@@ -551,6 +551,24 @@ module AlphaClass
 
       end do
 
+    else if ( self%method(:4) == 'root' ) then
+
+      if (self%run <= 0) then
+        alphaGenericComplex = aMz; return
+      end if
+
+      aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
+
+      alphaGenericComplex = 1/aLLInv
+
+      if ( self%run <= 1) return
+
+      do i = 1, 100
+        corr = 1/adim%root(self%run - 1, alphaGenericComplex, amZ, aLLInv)
+        if ( abs(corr - alphaGenericComplex) < 1e-10_dp ) return
+        alphaGenericComplex = corr
+      end do
+
     else if ( self%method(:6) == 'expand' ) then
 
       if (self%run <= 0) then
