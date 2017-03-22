@@ -423,44 +423,6 @@ module AlphaClass
 
 !ccccccccccccccc
 
-  pure real (dp) function root(c, aMu, a0, aLLInv)
-    real (dp)              , intent(in) :: aMu, a0, aLLInv
-    real (dp), dimension(:), intent(in) :: c
-    real (dp)                           :: radical, raiz, aSuPi, aSuPi0
-
-    aSuPi = aMu/fourPi; aSuPi0 = a0/fourPi
-
-    root = aLLInv - c(1)/fourPi * log(aMu/a0)
-
-    if ( size(c) == 1 ) then
-
-      root = root + c(1)/fourPi * log( (1 + c(1) * aSuPi)/(1 + c(1) * aSuPi0)  )
-
-    else if ( size(c) == 2 ) then
-
-      radical = c(1)**2 - 4 * c(2); raiz = sqrt( abs(radical) )
-
-      root = root + c(1)/fourPi/2 * log( (1 + c(1) * aSuPi + c(2) * aSuPi**2)/&
-      (1 + c(1) * aSuPi0 + c(2) * aSuPi0**2)  )
-
-      if (radical < 0) then
-
-        root = root + ( c(1)**2 - 2 * c(2) )/fourPi/raiz * &
-        (  atan( (c(1) + 2 * c(2) * aSuPi)/raiz ) - atan( (c(1) + 2 * c(2) * aSuPi0)/raiz )  )
-
-      else
-
-        root = root - ( c(1)**2 - 2 * c(2) )/fourPi/raiz * &
-        (  atanh( (c(1) + 2 * c(2) * aSuPi)/raiz ) - atanh( (c(1) + 2 * c(2) * aSuPi0)/raiz )  )
-
-      end if
-
-    end if
-
-  end function root
-
-!ccccccccccccccc
-
   pure real (dp) function iterReal(cCoef, aMu, a0, aLLInv)
     real (dp)              , intent(in) :: aMu, a0, aLLInv
     real (dp), dimension(:), intent(in) :: cCoef
