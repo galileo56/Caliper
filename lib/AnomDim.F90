@@ -155,7 +155,7 @@ module AnomDimClass
 
 !ccccccccccccccc
 
-  function cCoeff(self, order, m) result(res)
+  pure function cCoeff(self, order, m) result(res)
     class (AnomDim), intent(in) :: self
     integer        , intent(in) :: order, m
     real (dp)  , dimension(0:m) :: res, ListPow
