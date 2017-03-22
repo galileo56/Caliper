@@ -2571,6 +2571,18 @@ end subroutine f90AnomDim
 
 !ccccccccccccccc
 
+subroutine f90cCoef(nf, order, n, beta)
+  use AnomDimClass;  use constants, only: dp; implicit none
+  integer                  , intent(in ) :: nf, order, n
+  real (dp), dimension(0:n), intent(out) :: beta
+  type (AnomDim)                         :: run
+
+  run = AnomDim('MSbar', nf, 0._dp);  beta = run%cCoeff(order, n)
+
+end subroutine f90cCoef
+
+!ccccccccccccccc
+
 subroutine f90PScoef(nf, lg, beta)
   use AnomDimClass;  use constants, only: dp; implicit none
   integer                , intent(in )  :: nf

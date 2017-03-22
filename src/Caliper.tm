@@ -47,10 +47,11 @@
 :Evaluate:  CLi2::usage = "Cli2[z] computes the complex dilogarithm"
 :Evaluate:  CLi3::usage = "Cli3[z] computes the complex trilogarithm"
 :Evaluate:  Scoef::usage = "Scoef[str, nf] computes the soft R anomalous Dimension"
-:Evaluate:  AnomDim::usage = "AnomDim[str, nf, G4] computes the QCD anomalous function"
+:Evaluate:  AnomDim::usage = "AnomDim[str, nf, G4] computes the QCD anomalous dimension"
+:Evaluate:  cCoef::usage = "cCoef[nf, order, m] computes the inverse of the QCD anomalous dimension"
 :Evaluate:  PSCoef::usage = "PSCoef[nf, lg] computes the PS mass series coefficients"
-:Evaluate:  N12Generic::usage = "N12Generic[aCoef, order, nf, lambda] computes the QCD anomalous function"
-:Evaluate:  N12::usage = "N12[str, order, nf, lambda, err] computes the QCD anomalous function"
+:Evaluate:  N12Generic::usage = "N12Generic[aCoef, order, nf, lambda] computes the renormalon sum rule"
+:Evaluate:  N12::usage = "N12[str, order, nf, lambda, err] computes the renormalon sum rule"
 :Evaluate:  Delta::usage = "Delta[str, nf, mu, R] computes the soft renormalon subtractions"
 :Evaluate:  DeltaGap::usage = "DeltaGap[str, orderAlpha, runAlpha, runMass, nf, mZ, aMz, mT, muT, mB, muB, mC, muC, mu, R] computes the soft renormalon subtractions"
 :Evaluate:  PSDelta::usage = "PSDelta[orderAlpha, runAlpha, nf, mZ, aMz, mT, muT, mB, muB, mC, muC, mu, R, lg] computes the PS mass subtractions"
@@ -1216,6 +1217,14 @@
 :Pattern:       AnomDim[str_, nf_, G4_]
 :Arguments:     {str, nf, G4}
 :ArgumentTypes: {String, Integer, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      ccoef
+:Pattern:       cCoef[nf_, order_, n_]
+:Arguments:     {nf, order, n}
+:ArgumentTypes: {Integer, Integer, Integer}
 :ReturnType:    Manual
 :End:
 
@@ -3188,6 +3197,17 @@ static void anomdim(char const* str, int nf, double G4){
    f90anomdim_(str, &nf, &G4, result);
 
    MLPutRealList(stdlink, result, 5);
+   MLEndPacket(stdlink);
+}
+
+extern double f90ccoef_(int* nf, int* order, int* n, double* result);
+
+static void ccoef(int nf, int order, int n){
+  double result[n+1];
+
+   f90ccoef_(&nf, &order, &n, result);
+
+   MLPutRealList(stdlink, result, n+1);
    MLEndPacket(stdlink);
 }
 

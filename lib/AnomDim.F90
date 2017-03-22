@@ -6,7 +6,6 @@ module AnomDimClass
   real (dp), parameter :: al = 0.634_dp, bet = 1.035_dp, gam = - 23.6_dp, &
   ep = 1.19_dp, del = - 0.481_dp, fourPi = 4*Pi
 
-
   public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta, &
   MSbarDeltaPiece, PowList
 
@@ -37,7 +36,7 @@ module AnomDimClass
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
     bHQETgamma, alphaMatching, alphaMatchingInverse, wTildeHm, GammaRComputer,&
     sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12, sCoefGeneric, root, &
-    P12Generic, N12Generic, sCoefRecursive, PScoef
+    P12Generic, N12Generic, sCoefRecursive, PScoef, cCoeff
 
    procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
    kTildeComplex
@@ -123,8 +122,8 @@ module AnomDimClass
         InAdim%bHat(n+1) = InAdim%bHat(n+1) + (-1)**i * (i + 1) * betaList(i+1) * &
         beta(i+1) * dot_product( InAdim%bHat(:n-i), InAdim%bHat(n - i : 0 : -1) )
 
-          InAdim%cCoef(n+1) = InAdim%cCoef(n+1) - (i + 1) * InAdim%bCoef(i+1) * &
-          dot_product( InAdim%cCoef(:n-i), InAdim%cCoef(n - i : 0 : -1) )
+        InAdim%cCoef(n+1) = InAdim%cCoef(n+1) - (i + 1) * InAdim%bCoef(i+1) * &
+        dot_product( InAdim%cCoef(:n - i), InAdim%cCoef(n - i : 0 : -1) )
 
       end do
 
@@ -153,6 +152,33 @@ module AnomDimClass
     InAdim%sCoefMSRInc3    = InAdim%sCoefRecursive( MSbarDelta(nf + 1, 1, InAdim%err) )
 
    end function InAdim
+
+!ccccccccccccccc
+
+  function cCoeff(self, order, m) result(res)
+    class (AnomDim), intent(in) :: self
+    integer        , intent(in) :: order, m
+    real (dp)  , dimension(0:m) :: res
+    integer                     :: n, i, ord
+
+    ord = min(order, 5)
+
+    res(:ord) = self%cCoef(:ord)
+
+    do n = ord, m
+
+      res(n + 1) = 0
+
+      do i = 0, ord - 1
+        res(n+1) = res(n+1) - (i + 1) * self%bCoef(i+1) * &
+        dot_product( res(:n - i), res(n - i : 0 : -1) )
+      end do
+
+      res(n+1) = res(n+1)/(n + 1)
+
+    end do
+
+  end function cCoeff
 
 !ccccccccccccccc
 
