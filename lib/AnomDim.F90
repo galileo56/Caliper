@@ -158,19 +158,19 @@ module AnomDimClass
   function cCoeff(self, order, m) result(res)
     class (AnomDim), intent(in) :: self
     integer        , intent(in) :: order, m
-    real (dp)  , dimension(0:m) :: res
+    real (dp)  , dimension(0:m) :: res, ListPow
     integer                     :: n, i, ord
 
-    ord = min(order, 5); res(0) = 1
+    ord = min(order, 4); ListPow(0) = 1; ListPow(1:) = powList(1/fourPi, ord)
 
-    res(1:ord) = self%cCoef(1:ord)/powList(fourPi, ord)
+    res(:ord) = self%cCoef(:ord) * ListPow
 
     do n = ord, m
 
       res(n + 1) = 0
 
       do i = 0, ord - 1
-        res(n+1) = res(n+1) - (i + 1) * self%bCoef(i+1)/fourPi**(i+1) * &
+        res(n+1) = res(n+1) - (i + 1) * self%bCoef(i+1) * ListPow(i+1) * &
         dot_product( res(:n - i), res(n - i : 0 : -1) )
       end do
 
