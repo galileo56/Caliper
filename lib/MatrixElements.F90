@@ -1054,14 +1054,10 @@ module MatrixElementsClass
  pure function expandProd(a, b) result(c)
    real (dp), dimension(:), intent(in)               :: a, b
    real (dp), dimension(  min( size(a), size(b) )  ) :: c
-   integer                                           :: i, j
-
-   c = 0
+   integer                                           :: i
 
    do i = 1, min( size(a), size(b) )
-     do j = 1, i
-       c(i) = c(i) + a(1 + i - j) * b(j)
-     end do
+     c(i) = dot_product( b(:i), a(i:1:-1) )
    end do
 
   end function expandProd

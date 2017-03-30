@@ -2325,12 +2325,12 @@ module SingularClass
     type (Kernels)  :: ker
     logical         :: same
     type (Model)    :: ShapeFun
-    real (dp)       :: p1, p2, p, w1, w2, w, shift, NGL0, NGL1, NGL2, SumTerm, lg, facw, &
-                       Gammaw1w2, rat, lp1, lp2, ratinv
+    real (dp)       :: p1, p2, p, w1, w2, w, shift, NGL0, NGL1, NGL2, SumTerm, &
+    lg, facw, Gammaw1w2, rat, lp1, lp2, ratinv
 
     real (dp), dimension( 0:order, order, 0:2*(order - 1) ) :: deltaAdd
     real (dp), dimension( 0:order, 0:order, 0:2*order )     :: kerMatrix1, &
-                                                               kerMatrix2, kerMatrix
+    kerMatrix2, kerMatrix
 
     real (dp), dimension(2*order)            :: logList
     real (dp), dimension(0:2*isoft)          :: lgList, NGLdelta1, NGLdelta2
@@ -2342,8 +2342,8 @@ module SingularClass
     real (dp), dimension(:,:)  , allocatable :: list1, list2
     real (dp), dimension(:)    , allocatable :: list
     real (dp), dimension(:)    , allocatable :: NGLPert
-    real (dp), dimension(:,:,:), allocatable :: resul1, resul2, resulNGL1, resulNGL2, &
-                                                resulNGL1Delta, resulNGL2Delta
+    real (dp), dimension(:,:,:), allocatable :: resul1, resul2, resulNGL1, &
+    resulNGL2, resulNGL1Delta, resulNGL2Delta
 
     lgList = 0  ; NGLdelta1 = 0; NGLdelta2 = 0; l1List = 0     ; NG3loop    = 0; delt = 0
     SumKer1 = 0 ; SumKer2   = 0; shift = 0    ; sumkerProd = 0 ; kerMatrix  = 0
@@ -2362,8 +2362,9 @@ module SingularClass
     select type (self)
     class is (SingularMassless)
 
-      call self%MatEl%setGammaShift( order, self%run, gap, self%shape, delta0, R0, mu0, &
-                                     h, shift, delt )
+      call self%MatEl%setGammaShift( order, self%run, gap, self%shape, delta0, &
+      R0, mu0, h, shift, delt )
+
       do i = 1, order
         delt(i,:) = delt(i,:)/2**i
       end do
@@ -2377,7 +2378,7 @@ module SingularClass
     end select
 
       call GapMassive%setGammaShift( order, self%shape, delta0, h, self%R, &
-                                     self%muS, shift, delt(1,:) )
+      self%muS, shift, delt(1,:) )
 
       delt(1,:) = delt(1,:)/2 + self%Q * self%deltaM(:order)
 
@@ -2396,7 +2397,7 @@ module SingularClass
           do k = 0, 2 * (i - j)     ! log power
 
              deltaAdd(j,i,k) = sum(   self%MatExpandedHJM( k, i - j: ceiling(k/2.): -1 ) &
-                                       * delt( j, j:i - ceiling(k/2.) )   )
+             * delt( j, j:i - ceiling(k/2.) )   )
 
           end do
         end do
