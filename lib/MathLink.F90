@@ -3029,8 +3029,8 @@ end subroutine f90MSbarMass
 
 !ccccccccccccccc
 
-subroutine f90PoleMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, mB, muB, &
-                       mC, muC, mu, res)
+subroutine f90PoleMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, &
+mB, muB, mC, muC, mu, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
   integer            , intent(in ) :: orderAlpha, runAlpha, run, order, nf
