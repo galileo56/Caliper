@@ -2396,10 +2396,11 @@ subroutine f90HJMNSMass(setup, gap, cum, scheme, abs, current, orderAlpha, runAl
   real (dp), dimension(clen, clen), intent(in) :: c
   character (len = *), intent(in ) :: current, cum, setup, gap, abs, scheme
   integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nf, clen, &
-                                      orderMass, runMass
-  real (dp)    , intent(in ) :: t, mT, muT, mC, muC, Q, mZ, gammaZ, sin2ThetaW, mu, &
-                                      muS, Rmass, R0, mu0, muLambda1, amZ, lambda, muB, &
-                                      delta0, R, width, mB, muJ, muM, muLambda2, h
+  orderMass, runMass
+
+  real (dp)          , intent(in ) :: t, mT, muT, mC, muC, Q, mZ, sin2ThetaW, &
+  mu, muS, Rmass, R0, mu0, muLambda1, amZ, lambda, muB, delta0, R, width, mB, &
+  muJ, muM, muLambda2, h, gammaZ
 
   real (dp)             , intent(out) :: res
   integer                             :: i, j
@@ -2418,12 +2419,12 @@ subroutine f90HJMNSMass(setup, gap, cum, scheme, abs, current, orderAlpha, runAl
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
-  MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, Q, mu,  &
-                             muJ, muM, muS, R, Rmass, muLambda1, muLambda2)
-  nonSing = MassiveNS('HJM', 'Q', scheme(:7), abs(:3), current(:6), orderMass, matEl, EW, &
-                       width, mu)
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp,  &
+  0._dp, Q, mu, muJ, muM, muS, R, Rmass, muLambda1, muLambda2)
+
+  nonSing = MassiveNS('HJM', 'Q', scheme(:7), abs(:3), current(:6), orderMass, &
+  matEl, EW, width, mu)
 
   do i = 1, clen
     do j = 1, i
@@ -2438,7 +2439,7 @@ subroutine f90HJMNSMass(setup, gap, cum, scheme, abs, current, orderAlpha, runAl
   end do
 
   res = nonSing%HJMNSMass(c, Mod, setup(:15), gap(:12), cum(:4), &
-                          order, run, R0, mu0, delta0, h, t)
+  order, run, R0, mu0, delta0, h, t)
 
 end subroutine f90HJMNSMass
 
@@ -2455,11 +2456,12 @@ subroutine f90HJMNSMassDiff(setup, gap, cum, scheme, abs, current, orderAlpha, r
 
   real (dp), dimension(clen, clen), intent(in) :: c
   character (len = *), intent(in ) :: current, cum, setup, gap, abs, scheme
-  integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nf, clen, &
-                                      orderMass, runMass
-  real (dp)          , intent(in ) :: t, mT, muT, mC, muC, Q, mZ, gammaZ, sin2ThetaW, mu, &
-                                      muS, Rmass, R0, mu0, muLambda1, amZ, lambda, muB, h,&
-                                      delta0, R, width, mB, muJ, muM, muLambda2, t2
+  integer            , intent(in ) :: orderAlpha, runAlpha, order, run, clen, &
+  orderMass, runMass, nf
+
+  real (dp)          , intent(in ) :: t, mT, muT, mC, muC, Q, mZ, gammaZ, mu, &
+  muS, Rmass, R0, mu0, muLambda1, amZ, lambda, muB, h, delta0, R, width, mB, &
+  muJ, muM, muLambda2, t2, sin2ThetaW
 
   real (dp)             , intent(out) :: res
   type (AnomDim), dimension(3:6)      :: AnDim
@@ -2478,12 +2480,12 @@ subroutine f90HJMNSMassDiff(setup, gap, cum, scheme, abs, current, orderAlpha, r
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
-  MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, Q, mu,  &
-                             muJ, muM, muS, R, Rmass, muLambda1, muLambda2)
-  nonSing = MassiveNS('HJM', 'Q', scheme(:7), abs(:3), current(:6), orderMass, matEl, EW, &
-                       width, mu)
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, &
+  0._dp, Q, mu, muJ, muM, muS, R, Rmass, muLambda1, muLambda2)
+
+  nonSing = MassiveNS('HJM', 'Q', scheme(:7), abs(:3), current(:6), orderMass,  &
+  matEl, EW,width, mu)
 
   do i = 1, clen
     do j = 1, i
@@ -2498,7 +2500,7 @@ subroutine f90HJMNSMassDiff(setup, gap, cum, scheme, abs, current, orderAlpha, r
   end do
 
   res = nonSing%HJMNSMass(c, Mod, setup(:15), gap(:12), cum(:4), &
-                          order, run, R0, mu0, delta0, h, t, t2)
+  order, run, R0, mu0, delta0, h, t, t2)
 
 end subroutine f90HJMNSMassDiff
 
@@ -2526,11 +2528,11 @@ subroutine f90FOMass(shape, current, m, Q, mZ, gammaZ, sin2ThetaW, t, res)
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, m, m, m, m, m, m)
-  MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, Q, Q, Q, &
-  tiny(1._dp), Q, Q, Q, 0._dp, 0._dp)
+  MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, Q, &
+  Q, Q, tiny(1._dp), Q, Q, Q, 0._dp, 0._dp)
 
-  nonSing   = MassiveNS( shape(:6), 'Q', 'pole', 'noAbs', current(:6), 0, matEl, EW,  &
-  0._dp, Q)
+  nonSing   = MassiveNS( shape(:6), 'Q', 'pole', 'noAbs', current(:6), 0, matEl, &
+  EW, 0._dp, Q)
 
   res = nonSing%FOMass(t)
 
@@ -2538,7 +2540,7 @@ end subroutine f90FOMass
 
 !ccccccccccccccc
 
-subroutine f90DiffDeltaGapMass(gap, order, R0, R, mu0, mu, muM, muLambda1, muLambda2,    &
+subroutine f90DiffDeltaGapMass(gap, order, R0, R, mu0, mu, muM, muLambda1, muLambda2, &
   orderAlpha, runAlpha, runMass, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, res)
 
   use MatrixElementsClass; use AlphaClass  ; use GapMassClass
@@ -2546,8 +2548,8 @@ subroutine f90DiffDeltaGapMass(gap, order, R0, R, mu0, mu, muM, muLambda1, muLam
 
   character (len = *), intent(in ) :: gap
   integer            , intent(in ) :: order, nf, orderAlpha, runAlpha, runMass
-  real (dp)          , intent(in ) :: R0, R, mu0, mu, muLambda1, mZ, amZ, mT, muT, mB, &
-                                      muB, mC, muC, muLambda2, muM
+  real (dp)          , intent(in ) :: R0, R, mu0, mu, muLambda1, mZ, amZ, mT, muT, &
+  mB, muB, mC, muC, muLambda2, muM
   real (dp)          , intent(out) :: res
   type (Alpha)                     :: alphaAll
   type (MatrixElementsMass)        :: MatEl
@@ -2559,11 +2561,10 @@ subroutine f90DiffDeltaGapMass(gap, order, R0, R, mu0, mu, muM, muLambda1, muLam
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, mB, muB, mC, muC)
 
-  MatEl    = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, &
-                              mu, muM, mu, mu, mu, muLambda1, muLambda2)
+  MatEl    = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp,  &
+  0._dp, mu, mu, mu, muM, mu, mu, mu, muLambda1, muLambda2)
 
   MassGap = GapMass(order, gap(:12), MatEl, R0, mu0)
 
@@ -2600,11 +2601,9 @@ subroutine f90ThrustNS2loop(er, t, res)
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, &
-                     0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = Running(5, 0, alphaAll, 0._dp)
   nonSing   = NonSingular('thrust', alphaMass, 0._dp, 0._dp, 0)
-
   res       = nonSing%NS2loop(er, t)
 
 end subroutine f90ThrustNS2loop
@@ -2616,7 +2615,6 @@ subroutine f90EWfactors(nf, Q, mZ, gammaZ, sin2ThetaW, res)
   integer                , intent(in ) :: nf
   real (dp)              , intent(in ) :: Q, mZ, gammaZ, sin2ThetaW
   real (dp), dimension(2), intent(out) :: res
-
   type (ElectroWeak)                   :: EW
 
   EW = ElectroWeak(mZ, gammaZ, sin2ThetaW); res = EW%EWfactors(nf, Q)
@@ -2654,10 +2652,10 @@ subroutine f90ComplexPolyLog(n, zre, zim, res)
   integer  , intent(in ) :: n
   real (dp), intent(in ) :: zre, zim
   real (dp), intent(out) :: res(2)
-
   complex (dp)           :: pl
 
-  pl = ComplexPolyLog( n, cmplx(zre, zim, dp) );  res = [ RealPART(pl), IMAGPART(pl) ]
+  pl  = ComplexPolyLog( n, cmplx(zre, zim, dp) )
+  res = [ RealPART(pl), IMAGPART(pl) ]
 
 end subroutine f90ComplexPolyLog
 
@@ -2680,7 +2678,6 @@ subroutine f90CLi2(zre, zim, res)
   use Chaplin;  use constants, only: dp; implicit none
   real (dp), intent(in ) :: zre, zim
   real (dp), intent(out) :: res(2)
-
   complex (dp)           :: pl
 
   pl = Cli2( cmplx(zre, zim, dp) );  res = [ RealPART(pl), IMAGPART(pl) ]
@@ -2693,7 +2690,6 @@ subroutine f90CLi3(zre, zim, res)
   use Chaplin;  use constants, only: dp; implicit none
   real (dp), intent(in ) :: zre, zim
   real (dp), intent(out) :: res(2)
-
   complex (dp)           :: pl
 
   pl = Cli3( cmplx(zre, zim, dp) );  res = [ RealPART(pl), IMAGPART(pl) ]
@@ -2799,8 +2795,7 @@ subroutine f90ModelPiece(c, lambda, k, l, res)
   integer  , intent(in) :: k, c(2)
   real (dp), intent(in) :: lambda, l
   real(dp), intent(out) :: res
-
-  type (Model) :: Mod
+  type (Model)          :: Mod
 
   Mod = Model(lambda, [0._dp, 0._dp], c, 'piece');  res = Mod%ShapeFun(k, l)
 
@@ -3013,20 +3008,20 @@ subroutine f90MSbarMass(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, muB
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass; implicit none
 
-  integer  , intent(in ) :: orderAlpha, runAlpha, run, nf
-  real (dp), intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC
-  real (dp), intent(out) :: res
-  type (Running)         :: alphaMass
-  type (Alpha)           :: alphaAll
+  integer          , intent(in ) :: orderAlpha, runAlpha, run, nf
+  real (dp)        , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC
+  real (dp)        , intent(out) :: res
+  type (Running)                 :: alphaMass
+  type (Alpha)                   :: alphaAll
   type (AnomDim), dimension(3:6) :: AnDim
-  integer                :: i
+  integer                        :: i
 
   do i = 3, 6
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, muC);  res = alphaMass%MSbarMass(mu)
 
@@ -3038,20 +3033,20 @@ subroutine f90PoleMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, m
                        mC, muC, mu, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
-  integer  , intent(in ) :: orderAlpha, runAlpha, run, order, nf
-  real (dp), intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC
-  real (dp), intent(out) :: res
-  type (Running)         :: alphaMass
-  type (Alpha)           :: alphaAll
+  integer            , intent(in ) :: orderAlpha, runAlpha, run, order, nf
+  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC
+  real (dp)          , intent(out) :: res
+  type (Running)                   :: alphaMass
+  type (Alpha)                     :: alphaAll
   type (AnomDim), dimension(3:6)   :: AnDim
-  integer                :: i
+  integer                          :: i
 
   do i = 3, 6
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, muC);  res = alphaMass%PoleMass(order, mu)
 
@@ -3059,24 +3054,24 @@ end subroutine f90PoleMass
 
 !ccccccccccccccc
 
-subroutine f90MSbarMassLow(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, muB, mC, &
-                           muC, mu, res)
+subroutine f90MSbarMassLow(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, &
+mB, muB, mC, muC, mu, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
-  integer  , intent(in ) :: orderAlpha, runAlpha, run, nf
-  real (dp), intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC
-  real (dp), intent(out) :: res
-  type (Running)         :: alphaMass
-  type (Alpha)           :: alphaAll
-  type (AnomDim), dimension(3:6)   :: AnDim
-  integer                :: i
+  integer          , intent(in ) :: orderAlpha, runAlpha, run, nf
+  real (dp)        , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC
+  real (dp)        , intent(out) :: res
+  type (Running)                 :: alphaMass
+  type (Alpha)                   :: alphaAll
+  type (AnomDim), dimension(3:6) :: AnDim
+  integer                        :: i
 
   do i = 3, 6
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, muC); res = alphaMass%MSbarMassLow(mu)
 
@@ -3089,14 +3084,14 @@ mB, muB, mC, muC, lambda, mu, R, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
 
-  character (len = *), intent(in) :: method
-  integer  , intent(in ) :: orderAlpha, runAlpha, run, nf
-  real (dp), intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R, lambda
-  real (dp), intent(out) :: res
-  type (Running)         :: alphaMass
-  type (Alpha)           :: alphaAll
+  character (len = *), intent(in ) :: method
+  integer            , intent(in ) :: orderAlpha, runAlpha, run, nf
+  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R, lambda
+  real (dp)          , intent(out) :: res
+  type (Running)                   :: alphaMass
+  type (Alpha)                     :: alphaAll
   type (AnomDim), dimension(3:6)   :: AnDim
-  integer                :: i
+  integer                          :: i
 
   do i = 3, 6
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
