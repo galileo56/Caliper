@@ -1584,7 +1584,7 @@ module MatrixElementsClass
     if (pow == 0) NGLintegrand = NGLintegrand *   cdiff
     if (pow == 1) NGLintegrand = NGLintegrand * ( cdiff * ltheta + x * sdiff/2 )
     if (pow == 2) NGLintegrand = NGLintegrand * ( cdiff * (ltheta**2 - x**2/4) + &
-                                                      x * ltheta * sdiff )
+    x * ltheta * sdiff )
 
   end function NGLintegrand
 
@@ -1595,8 +1595,8 @@ module MatrixElementsClass
   real (dp) function NGLfunction(self, y)
     class (MatricesElements), intent(in) :: self
     real (dp)               , intent(in) :: y
-    real    (dp)                         :: x, ImPoly2, ImPoly22, ImPoly3, RePoly3
     complex (dp)                         :: expIx
+    real    (dp)                         :: x, ImPoly2, ImPoly22, ImPoly3, RePoly3
 
     x = abs(y)
 
