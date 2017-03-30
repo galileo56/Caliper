@@ -4,7 +4,7 @@ module AnomDimClass
   use adapt, only: dGauss; implicit none ;  private
 
   real (dp), parameter :: al = 0.634_dp, bet = 1.035_dp, gam = - 23.6_dp, &
-  ep = 1.19_dp, del = - 0.481_dp, fourPi = 4*Pi
+  ep = 1.19_dp, del = - 0.481_dp, fourPi = 4 * Pi
 
   public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta, &
   MSbarDeltaPiece, PowList
@@ -560,65 +560,59 @@ module AnomDimClass
 !ccccccccccccccc
 
    pure real (dp) function wTildeReal(self, order, gamma, a0, a1)
-    class(AnomDim)           , intent(in) :: self
-    integer                  , intent(in) :: order
-    real (dp)                , intent(in) :: a0, a1
+    class(AnomDim)               , intent(in) :: self
+    integer                      , intent(in) :: order
+    real (dp)                    , intent(in) :: a0, a1
     real (dp), dimension(0:order), intent(in) :: gamma
+    real (dp), dimension(0:order)             :: gam
+    integer                                   :: i
+    real (dp)                                 :: a0Pi, a1Pi
 
-    wTildeReal = 0
+    wTildeReal = 0; if (order < 0) return; gam = gamma/self%beta(0)
 
-    if (order > -1) wTildeReal = wTildeReal - gamma(0) * log(a1/a0)/self%beta(0)
+    if (order >= 0) wTildeReal = - gam(0) * log(a1/a0)
 
-    if (order > 0) wTildeReal = wTildeReal + (a1 - a0)/self%beta(0)/4/Pi * &
-    ( self%beta(1) * gamma(0)/self%beta(0) - gamma(1) )
+    if (order == 0) return
 
-    if (order > 1) wTildeReal = wTildeReal - (a1**2 - a0**2)/32/Pi2/self%beta(0) * &
-    ( ( self%beta(1)/self%beta(0) )**2 * gamma(0) - self%beta(2) * &
-    gamma(0)/self%beta(0) - self%beta(1) * gamma(1)/self%beta(0) + gamma(2) )
+    a0Pi = a0/fourPi; a1Pi = a1/fourPi
 
-    if (order > 2) wTildeReal = wTildeReal + (a1**3 - a0**3)/192/Pi/Pi2/self%beta(0) * &
-    (  ( self%beta(1)/self%beta(0) )**3 * gamma(0) - 2 * self%beta(1) * self%beta(2) * &
-    gamma(0)/self%beta(0)**2 + self%beta(3) * gamma(0)/self%beta(0) - &
-    ( self%beta(1)/self%beta(0) )**2 * gamma(1) + self%beta(2) * gamma(1)/self%beta(0) + &
-    self%beta(1) * gamma(2)/self%beta(0) - gamma(3)  )
+    do i = 1, order
 
-    if (order > 3) wTildeReal = wTildeReal + (a1**4 - a0**4)/1024/Pi2**2/self%beta(0) * &
-    ( self%beta(1) * gamma(3)/self%beta(0) - gamma(4) - ( self%beta(0)**2 * self%beta(1)**2 &
-    - self%beta(0)**3 *  self%beta(2) ) * gamma(2)/self%beta(0)**4 - &
-    ( 2 * self%beta(0)**2 * self%beta(1) * self%beta(2) - self%beta(0) * self%beta(1)**3 - &
-    self%beta(0)**3 * self%beta(3) ) * gamma(1)/self%beta(0)**4 - &
-    ( self%beta(1)**4 - 3 * self%beta(0) * self%beta(1)**2 * self%beta(2) + &
-    self%beta(0)**2 * self%beta(2)**2 + 2 * self%beta(0)**2 * self%beta(1) * &
-    self%beta(3) - self%beta(0)**3 * self%beta(4) ) * gamma(0)/self%beta(0)**4 )
+      wTildeReal = wTildeReal - ( a1Pi**i - a0Pi**i)/i * &
+      (  gam(i) + dot_product( gam(:i-1), self%cCoef(i:1:-1) )  )
+
+    end do
 
    end function wTildeReal
 
 !ccccccccccccccc
 
    pure real (dp) function wTildeComplex(self, order, gamma, a0, a1)
-    class(AnomDim)           , intent(in) :: self
-    integer                  , intent(in) :: order
-    real (dp)                , intent(in) :: a1
-    complex (dp)             , intent(in) :: a0
+    class(AnomDim)               , intent(in) :: self
+    integer                      , intent(in) :: order
+    real (dp)                    , intent(in) :: a1
+    complex (dp)                 , intent(in) :: a0
     real (dp), dimension(0:order), intent(in) :: gamma
-    complex (dp)                          :: wTilde
+    real (dp), dimension(0:order)             :: gam
+    complex (dp)                              :: wTilde
+    integer                                   :: i
+    real (dp)                                 :: a1Pi
+    complex (dp)                              :: a0Pi
 
-    wTilde = 0
+    wTilde = 0; if (order < 0) return; gam = gamma/self%beta(0)
 
-    if (order > -1) wTilde = wTilde - gamma(0) * log(a1/a0)/self%beta(0)
+    if (order >= 0) wTilde = - gam(0) * log(a1/a0)
 
-    if (order > 0) wTilde = wTilde + (a1 - a0)/self%beta(0)/4/Pi * &
-    ( self%beta(1) * gamma(0)/self%beta(0) - gamma(1) )
+    if (order == 0) then
+      a0Pi = a0/fourPi; a1Pi = a1/fourPi
+    end if
 
-    if (order > 1) wTilde = wTilde - (a1**2 - a0**2)/32/Pi2/self%beta(0) * &
-    ( ( self%beta(1)/self%beta(0) )**2 * gamma(0) - self%beta(2) * &
-    gamma(0)/self%beta(0) - self%beta(1) * gamma(1)/self%beta(0) + gamma(2) )
+    do i = 1, order
 
-    if (order > 2) wTilde = wTilde + (a1**3 - a0**3)/192/Pi/Pi2/self%beta(0) * &
-     (  ( self%beta(1)/self%beta(0) )**3 * gamma(0) - 2 * self%beta(1) * self%beta(2) * &
-     gamma(0)/self%beta(0)**2 + self%beta(3) * gamma(0)/self%beta(0) - &
-    ( self%beta(1)/self%beta(0) )**2 * gamma(1) + self%beta(2) * gamma(1)/self%beta(0) + &
-    self%beta(1) * gamma(2)/self%beta(0) - gamma(3)  )
+      wTilde = wTilde - ( a1Pi**i - a0Pi**i)/i * &
+      (  gam(i) + dot_product( gam(:i-1), self%cCoef(i:1:-1) )  )
+
+    end do
 
     wTildeComplex = realpart(wTilde)
 
