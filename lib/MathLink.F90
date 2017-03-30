@@ -260,7 +260,7 @@ subroutine f90MassiveProfPieceList(terms, hard, shape, EShape, setup, gap, space
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -327,7 +327,7 @@ subroutine f90MassivePieceBin(terms, hard, shape, EShape, setup, gap, space, cum
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -354,27 +354,27 @@ subroutine f90MassiveBinList(terms, hard, shape, EShape, setup, gap, space, cum,
   use CumulantClass, only: CumulantMass; use MassiveNSClass; use AnomDimClass; implicit none
 
   real (dp), dimension (clen), intent(in) :: c
-  character (len = *), intent(in)    :: shape, scheme, setup, space, gap, hard, &
-  cum, abs, current, Eshape, terms
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, ns, &
-  runMass, orderMass, n, clen
-  real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC,&
+  character (len = *)        , intent(in) :: shape, scheme, setup, space, gap, &
+  cum, abs, current, Eshape, terms, hard
+  integer                    , intent(in) :: orderAlpha, order, runAlpha, run, &
+  runMass, orderMass, n, clen, nf, ns
+  real (dp)                  , intent(in) :: mZ, amZ, muLambda1, mT, muT, mB,   &
   muC, Q, G3, lambda, R0, mu0, delta0, h, s3, muR0, j3, Rat0, n0, n1, t2, cnt,  &
-  slope, eH, eJ, width, ts, xi, xiB, muLambda2, beta, deltaLambda, del0, delta1,&
-  muM, mass, gammaZ, sin2ThetaW, eS
+  slope, eH, eJ, width, ts, xiB, muLambda2, beta, deltaLambda, del0, delta1,&
+  muM, mass, gammaZ, sin2ThetaW, muB, mC, eS, xi
   real (dp), dimension(2,n), intent(in) :: tauList
-  real (dp), dimension(n), intent(out)  :: res
-
-  type (AnomDim), dimension(3:6)     :: AnDim
-  type (ElectroWeak)                 :: EW
-  type (Alpha)                       :: alphaAll
-  type (MatricesElementsMass)        :: MatEl
-  type (SingularMassScales)          :: Sing
-  type (Model)                       :: Mod
-  type (MassiveScales)               :: nonSing
-  type (ProfilesPythia)              :: Prof
-  type (CumulantMass)                :: Cumul
-  character (len = 5)                :: alphaScheme
+  real (dp), dimension(n) , intent(out) :: res
+  integer                               :: i
+  type (AnomDim), dimension(3:6)        :: AnDim
+  type (ElectroWeak)                    :: EW
+  type (Alpha)                          :: alphaAll
+  type (MatricesElementsMass)           :: MatEl
+  type (SingularMassScales)             :: Sing
+  type (Model)                          :: Mod
+  type (MassiveScales)                  :: nonSing
+  type (ProfilesPythia)                 :: Prof
+  type (CumulantMass)                   :: Cumul
+  character (len = 5)                   :: alphaScheme
 
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
@@ -385,7 +385,7 @@ subroutine f90MassiveBinList(terms, hard, shape, EShape, setup, gap, space, cum,
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
   ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
   muLambda1, muLambda2 )
@@ -433,6 +433,7 @@ subroutine f90MassiveProf(terms, hard, shape, EShape, setup, gap, space, cum, sc
   type (CumulantMass)                :: Cumul
   character (len = 5)                :: alphaScheme
   type (AnomDim), dimension(3:6)     :: AnDim
+  integer                            :: i
 
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
@@ -443,7 +444,7 @@ subroutine f90MassiveProf(terms, hard, shape, EShape, setup, gap, space, cum, sc
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -485,17 +486,18 @@ subroutine f90MassOrigin(shape, EShape, gap, scheme, orderAlpha, runAlpha, order
   character (len = 5)                :: alphaScheme
   type (MatricesElementsMass)        :: MatEl
   type (AnomDim), dimension(3:6)     :: AnDim
+  integer                            :: i
 
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
   end do
 
   EW        = ElectroWeak(mZ, 0._dp, 0._dp)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, 0, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
                                     muLambda1, muLambda2 )
@@ -560,7 +562,7 @@ subroutine f90MassiveProfPiece(terms, hard, shape, EShape, setup, gap, space, cu
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -626,7 +628,7 @@ subroutine f90MassiveProfDiffPiece(terms, hard, shape, EShape, setup, gap, space
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -673,6 +675,7 @@ subroutine f90MassiveProfDiff(terms, hard, shape, EShape, setup, gap, space, cum
   type (CumulantMass)                :: Cumul
   character (len = 5)                :: alphaScheme
   type (AnomDim), dimension(3:6)     :: AnDim
+  integer                            :: i
 
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
@@ -683,7 +686,7 @@ subroutine f90MassiveProfDiff(terms, hard, shape, EShape, setup, gap, space, cum
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -731,6 +734,7 @@ subroutine f90MassiveMoment(terms, hard, shape, EShape, setup, gap, space, schem
   type (CumulantMass)                :: Cumul
   character (len = 5)                :: alphaScheme
   type (AnomDim), dimension(3:6)     :: AnDim
+  integer                            :: i
 
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
@@ -741,7 +745,7 @@ subroutine f90MassiveMoment(terms, hard, shape, EShape, setup, gap, space, schem
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -782,21 +786,25 @@ subroutine f90MasslessProfList(terms, hard, shape, setup, gap, space, cum, order
   type (ProfilesMassless)             :: Prof
   type (CumulantMassless)             :: Cumul
   type (AnomDim), dimension(3:6)      :: AnDim
+  integer                             :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
-  Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
-  alphaAll = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, &
+  eS, eJ, eR, ns)
+
+  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  mB, muB, mC, muC)
+
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Mod      = Model(lambda, c, [0,0], 'sum')
   Cumul    = CumulantMassless(Prof, Sing)
 
-  res = Cumul%ListDist( terms(:7), cum(:4), Mod, setup(:15), gap(:12), space(:6), order, R0, &
-                  muR0, delta0, h, tauList )
+  res = Cumul%ListDist( terms(:7), cum(:4), Mod, setup(:15), gap(:12), space(:6), &
+  order, R0, muR0, delta0, h, tauList )
 
 end subroutine f90MasslessProfList
 
@@ -837,11 +845,11 @@ subroutine f90MasslessProfPieceList(terms, hard, shape, setup, gap, space, cum, 
   end do
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
-  alphaAll = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -889,11 +897,11 @@ subroutine f90MasslessPieceBin(terms, hard, shape, setup, gap, space, cum, order
   end do
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
-  alphaAll = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -918,9 +926,9 @@ subroutine f90MasslessBinList(terms, hard, shape, setup, gap, space, cum, orderA
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in)    :: shape, cum, setup, space, gap, hard, terms
   integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, n, ns
-  real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, muC, j3,&
-                                        Q, G3, lambda, ts, R0, mu0, delta0, h, s3, muR0, &
-                                        Rat0, n0, n1, t2, cnt, eS, eR, tR, slope, eH, eJ
+  real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC,&
+  Q, G3, lambda, ts, R0, mu0, delta0, h, s3, muR0, Rat0, n0, n1, t2, cnt, eS, &
+  eR, tR, slope, eH, eJ, muC, j3
   real (dp), dimension(2,n), intent(in ) :: tauList
   real (dp), dimension(n)  , intent(out) :: res
   type (Alpha)                           :: alphaAll
@@ -930,14 +938,18 @@ subroutine f90MasslessBinList(terms, hard, shape, setup, gap, space, cum, orderA
   type (ProfilesMassless)                :: Prof
   type (CumulantMassless)                :: Cumul
   type (AnomDim), dimension(3:6)         :: AnDim
+  integer                                :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
-  Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
-  alphaAll = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, &
+  eS, eJ, eR, ns)
+
+  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  mB, muB, mC, muC)
+
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Mod      = Model(lambda, c, [0,0], 'sum')
@@ -973,15 +985,16 @@ subroutine f90MasslessProf(terms, hard, shape, setup, gap, space, cum, orderAlph
   type (ProfilesMassless)            :: Prof
   type (CumulantMassless)            :: Cumul
   type (AnomDim), dimension(3:6)     :: AnDim
+  integer                            :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, &
   eS, eJ, eR, ns)
 
-  alphaAll = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, &
+  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, &
   muT, mB, muB, mC, muC)
 
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
@@ -1031,11 +1044,11 @@ subroutine f90MasslessProfPiece(terms, hard, shape, setup, gap, space, cum, orde
   end do
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
-  alphaAll = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
 
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
@@ -1084,11 +1097,11 @@ subroutine f90MasslessProfDiffPiece(terms, hard, shape, setup, gap, space, cum, 
   end do
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
-  alphaAll = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -1124,13 +1137,14 @@ subroutine f90MasslessProfDiff(terms, hard, shape, setup, gap, space, cum, order
   type (ProfilesMassless)            :: Prof
   type (CumulantMassless)            :: Cumul
   type (AnomDim), dimension(3:6)     :: AnDim
+  integer                            :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
-  alphaAll = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -1171,11 +1185,11 @@ subroutine f90MasslessMoment(terms, hard, shape, setup, gap, space, orderAlpha, 
   integer                            :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
-  alphaAll = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -1212,11 +1226,11 @@ subroutine f90FindOrigin(shape, gap, orderAlpha, runAlpha, order, run, nf, mZ, a
   integer                            :: i
 
   do i = 3, 6
-    AnDim = AnomDim(alphaScheme, i, G3)
+    AnDim = AnomDim('MSbar', i, 0._dp)
   end do
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, 0._dp, eR, 0)
-  alphaAll = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl    = MatricesElements(alphaAll, nf, 0._dp, 0._dp, 0._dp, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), 'expand' )
@@ -1317,7 +1331,7 @@ subroutine f90SingularMass(hard, shape, Eshape, setup, gap, space, cum, scheme, 
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, &
+  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, &
   mT, muT, mB, muB, mC, muC )
 
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
@@ -1393,7 +1407,7 @@ subroutine f90SingularMassDiff(hard, shape, Eshape, setup, gap, space, cum, sche
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -1459,7 +1473,7 @@ subroutine f90SingularMassPiece(hard, shape, Eshape, setup, gap, space, cum, sch
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
   muT, mB, muB, mC, muC )
 
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
@@ -1537,7 +1551,7 @@ subroutine f90SingularMassList(hard, shape, Eshape, setup, gap, space, cum, sche
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -1611,7 +1625,7 @@ subroutine f90SingularMassDiffList(hard, shape, Eshape, setup, gap, space, cum, 
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -1673,7 +1687,7 @@ subroutine f90SingularMassDiffPiece(hard, shape, Eshape, setup, gap, space, cum,
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,    &
+  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,    &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -1743,7 +1757,7 @@ subroutine f90MassNonDist(hard, shape, Eshape, setup, gap, space, cum, scheme,  
   end do
 
   EW       = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
-  alphaAll = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,  &
+  alphaAll = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
                      muT, mB, muB, mC, muC )
   MatEl    = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
                                     muLambda1, muLambda2 )
@@ -1804,7 +1818,7 @@ subroutine f90MassNonDistDiff(hard, shape, Eshape, setup, gap, space, cum, schem
   end do
 
   EW        = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
-  alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
                                     muLambda1, muLambda2 )
@@ -1858,7 +1872,7 @@ subroutine f90MassNonDistPiece(hard, shape, Eshape, gap, space, cum, scheme, &
   end do
 
   EW        = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
-  alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,     &
+  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,     &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
                muLambda1, muLambda2 )
@@ -1920,7 +1934,7 @@ subroutine f90MassNonDistList(hard, shape, Eshape, gap, space, cum, scheme, &
   end do
 
   EW        = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
-  alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, &
+  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT, &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
                muLambda1, muLambda2 )
@@ -1981,7 +1995,7 @@ subroutine f90MassNonDistDiffList(hard, shape, Eshape, gap, space, cum, scheme, 
   end do
 
   EW        = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
-  alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,     &
+  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,     &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
                muLambda1, muLambda2 )
@@ -2033,7 +2047,7 @@ subroutine f90MassNonDistDiffPiece(hard, shape, Eshape, gap, space, cum, scheme,
   end do
 
   EW        = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
-  alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT,     &
+  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,     &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
                muLambda1, muLambda2 )
@@ -2082,12 +2096,12 @@ subroutine f90NSMass(shape, setup, gap, cum, scheme, abs, current, orderAlpha, r
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
   end do
 
   Mod       = Model(lambda, c, [0,0], 'sum')
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha(alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, &
                     muT, mB, muB, mC, muC)
   MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
                                     muLambda1, muLambda2)
@@ -2132,12 +2146,12 @@ subroutine f90NSMassDiff(shape, setup, gap, cum, scheme, abs, current, orderAlph
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
   end do
 
   Mod       = Model(lambda, c, [0,0], 'sum')
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha(alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, &
   muT, mB, muB, mC, muC)
   MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
   muLambda1, muLambda2)
@@ -2183,12 +2197,12 @@ subroutine f90NSMassPiece(shape, gap, cum, scheme, abs, current, orderAlpha, run
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
   end do
 
   Mod       = Model(lambda, [1._dp], piece, 'piece')
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
                     muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
                                     muLambda1, muLambda2)
@@ -2243,11 +2257,11 @@ delta0, h, gammaZ, sin2ThetaW, t, res)
   end do
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
                     muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
                                     muLambda1, muLambda2)
@@ -2301,11 +2315,11 @@ delta0, h, gammaZ, sin2ThetaW, t, t2, res)
   end do
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
                     muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
                                     muLambda1, muLambda2)
@@ -2350,12 +2364,12 @@ subroutine f90NSMassDiffPiece(shape, gap, cum, scheme, abs, current, orderAlpha,
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
   end do
 
   Mod       = Model(lambda, [1._dp], piece, 'piece')
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
                     muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
                                     muLambda1, muLambda2)
@@ -2400,11 +2414,11 @@ subroutine f90HJMNSMass(setup, gap, cum, scheme, abs, current, orderAlpha, runAl
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha(alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, Q, mu,  &
                              muJ, muM, muS, R, Rmass, muLambda1, muLambda2)
@@ -2460,11 +2474,11 @@ subroutine f90HJMNSMassDiff(setup, gap, cum, scheme, abs, current, orderAlpha, r
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha(alphaScheme, orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, Q, mu,  &
                              muJ, muM, muS, R, Rmass, muLambda1, muLambda2)
@@ -2507,11 +2521,11 @@ subroutine f90FOMass(shape, current, m, Q, mZ, gammaZ, sin2ThetaW, t, res)
   integer                          :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, m, m, m, m, m, m)
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, m, m, m, m, m, m)
   MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, Q, Q, Q, &
   tiny(1._dp), Q, Q, Q, 0._dp, 0._dp)
 
@@ -2542,10 +2556,10 @@ subroutine f90DiffDeltaGapMass(gap, order, R0, R, mu0, mu, muM, muLambda1, muLam
   integer                          :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
 
   MatEl    = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, &
@@ -2583,10 +2597,10 @@ subroutine f90ThrustNS2loop(er, t, res)
   integer                              :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, 0._dp, &
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, &
                      0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = Running(5, 0, alphaAll, 0._dp)
   nonSing   = NonSingular('thrust', alphaMass, 0._dp, 0._dp, 0)
@@ -2875,10 +2889,10 @@ subroutine f90Scoef(str, nf, beta)
   integer                              :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, 0._dp, &
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, &
   0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
 
   MatEl     = MatrixElementsMass(alphaAll, nf, 0, 0._dp, 0._dp, 0._dp, mu, &
@@ -2896,12 +2910,9 @@ subroutine f90sCoefLambda(str, nf, lambda, beta)
   integer                , intent(in ) :: nf
   real (dp)              , intent(in ) :: lambda
   real (dp), dimension(4), intent(out) :: beta
-  real (dp)                            :: mu = 20._dp
   type (AnomDim)                       :: run
 
-  run = AnomDim('MSbar', nf, 0._dp)
-
-  beta = run%sCoefLambda( str, lambda )
+  run = AnomDim('MSbar', nf, 0._dp);  beta = run%sCoefLambda( str, lambda )
 
 end subroutine f90sCoefLambda
 
@@ -2958,10 +2969,10 @@ mC, muC, mu, res)
   integer                          :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim(str(:5), i, 0._dp)
   end do
 
-  alphaOb = alpha( str(:5), order, run, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, mB, &
+  alphaOb = alpha( Andim, order, run, mZ, amZ, mT, muT, mB, &
   muB, mC, muC, method(:9) )
 
   res     = alphaOb%alphaQCD(nf, mu)
@@ -2983,10 +2994,10 @@ mC, muC, muR, muI, res)
   integer                              :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim(str(:5), i, 0._dp)
   end do
 
-  alphaOb = alpha( str(:5), order, run, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, mB, &
+  alphaOb = alpha( AnDim, order, run, mZ, amZ, mT, muT, mB, &
   muB, mC, muC, method(:9) )
 
   alp = alphaOb%alphaQCD( nf, cmplx(muR, muI, dp) )
@@ -3011,10 +3022,10 @@ subroutine f90MSbarMass(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, muB
   integer                :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, muC);  res = alphaMass%MSbarMass(mu)
@@ -3036,10 +3047,10 @@ subroutine f90PoleMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, m
   integer                :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, muC);  res = alphaMass%PoleMass(order, mu)
@@ -3061,10 +3072,10 @@ subroutine f90MSbarMassLow(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, 
   integer                :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, muC); res = alphaMass%MSbarMassLow(mu)
@@ -3088,10 +3099,10 @@ mB, muB, mC, muC, lambda, mu, R, res)
   integer                :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, mu)
@@ -3116,10 +3127,10 @@ muB, mC, muC, mu, R, res)
   integer                :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
   if (nf == 5) mass = mT; if (nf == 4) mass = mB; if (nf == 3) mass = mC
@@ -3145,10 +3156,10 @@ mT, muT, mB, muB, mC, muC, mu, R, res)
   integer                :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
   if (nf == 5) mass = mT; if (nf == 4) mass = mB; if (nf == 3) mass = mC
@@ -3174,10 +3185,10 @@ amZ, mT, muT, mB, muB, mC, muC, lambda, mu, R, res)
   integer                :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, mu)
@@ -3202,10 +3213,10 @@ mB, muB, mC, muC, muLambda, R, mu, res)
   integer                     :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
 
   MatEl     = MatricesElementsMass(alphaAll, nf, run, 0._dp, 0._dp, 0._dp, 0._dp,  &
@@ -3232,10 +3243,10 @@ muT, mB, muB, mC, muC, muLambda, R, mu, res)
   integer                     :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
   MatEl     = MatricesElementsMass(alphaAll, nf, run, 0._dp, 0._dp, 0._dp, 0._dp,  &
@@ -3274,10 +3285,10 @@ subroutine f90Singular(hard, shape, setup, gap, space, cum, orderAlpha, runAlpha
   end if
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -3319,10 +3330,10 @@ subroutine f90SingularDiff(hard, shape, setup, gap, space, cum, orderAlpha, runA
   end if
 
   do i = 3, 6
-    AnDim  = AnomDim(alphaScheme, i, G3)
+    AnDim  = AnomDim('MSbar', i, G3)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -3348,12 +3359,11 @@ subroutine f90SingularHJM(hard, setup, gap, space, cum, orderAlpha, runAlpha, or
   real (dp), dimension(clen, clen), intent(in) :: c
   character (len = *), intent(in) :: cum, setup, space, hard, gap
   integer            , intent(in) :: orderAlpha, order, runAlpha, run, nf, clen, isoft
-  real (dp)          , intent(in) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, muC, j3, &
-                                     Q, G3, lambda, tau, R0, mu0, delta0, h, s31, s32, s3
   real (dp)      ,  intent(inout) :: muH, muJ, muS, R
+  real (dp)          , intent(in) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC,&
+  muC, j3, Q, G3, lambda, tau, R0, mu0, delta0, h, s31, s32, s3
 
-  real (dp)      ,   intent(out)  :: res
-
+  real (dp)          ,   intent(out)  :: res
   type (Alpha)                        :: alphaAll
   type (MatrixElements)               :: MatEl
   type (SingularMassless)             :: Sing
@@ -3366,10 +3376,10 @@ subroutine f90SingularHJM(hard, setup, gap, space, cum, orderAlpha, runAlpha, or
   end if
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6))
@@ -3414,10 +3424,10 @@ subroutine f90SingularHJM1D(hard, gap, cum, orderAlpha, runAlpha, order, run, is
   integer                          :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6) )
@@ -3452,10 +3462,10 @@ subroutine f90SingularHJM1DPiece(hard, gap, cum, orderAlpha, runAlpha, order, ru
   integer                           :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6))
@@ -3491,10 +3501,10 @@ run, isoft, nf, j3, s3, s31, s32, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLamb
   integer                             :: i, j
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6))
@@ -3547,13 +3557,13 @@ subroutine f90SingularHJMPiece(hard, gap, space, cum, orderAlpha, runAlpha, orde
   integer                          :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
   ModList(1,1) = Model(lambda, [1._dp], c(:2), 'piece'); ModList(2,2) = ModList(1,1)
   ModList(1,2) = Model(lambda, [1._dp], c(3:), 'piece'); ModList(2,1) = ModList(1,2)
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6))
@@ -3588,13 +3598,13 @@ subroutine f90SingularDoublePiece(hard, gap, space, cum1, cum2, orderAlpha, runA
   integer                           :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
   ModList(1,1) = Model(lambda, [1._dp], c(:2), 'piece'); ModList(2,2) = ModList(1,1)
   ModList(1,2) = Model(lambda, [1._dp], c(3:), 'piece'); ModList(2,1) = ModList(1,2)
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6))
@@ -3628,11 +3638,11 @@ lambda, R0, mu0, delta0, h, tau, res)
   integer                           :: i
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
   Mod       = Model(lambda, [1._dp], piece, 'piece')
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
  mB, muB, mC, muC)
 
   MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
@@ -3678,10 +3688,10 @@ mu, clen, lambda, R0, mu0, delta0, h, tau, res)
   end do
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless( MatEl, run, mu, shape(:6), hard(:6) )
@@ -3714,11 +3724,11 @@ piece, lambda, R0, mu0, delta0, h, tau, tau2, res)
   integer                           :: i
 
  do i = 3, 6
-   AnDim(i) = AnomDim(alphaScheme, i, G3)
+   AnDim(i) = AnomDim('MSbar', i, G3)
  end do
 
  Mod       = Model(lambda, [1._dp], piece, 'piece')
- alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+ alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                    mB, muB, mC, muC)
  MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
  Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -3764,10 +3774,10 @@ subroutine f90SingularDiffList(hard, shape, gap, space, cum, orderAlpha, runAlph
   end do
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * G3, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -3800,11 +3810,10 @@ muB, mC, muC, mu, Q, res)
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim(str(:5), i, 0._dp)
   end do
 
-  alphaAll  = Alpha(str, orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, mB, muB, mC, muC)
   alphaMass = Running(nf, runAlpha, alphaAll, muC)
   EW = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
 
@@ -3829,10 +3838,10 @@ subroutine f90RhadCoefs(nf, res)
   type (AnomDim), dimension(3:6)       :: AnDim
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, &
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, &
   0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = Running(nf, 0, alphaAll, 0._dp)
   EW = ElectroWeak(0._dp, 2.4952_dp, 0.23119_dp)
@@ -3862,10 +3871,10 @@ gammaZ, sin2ThetaW, amZ, mT, muT, mB, muB, mC, muC, mu, Q, res)
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim(str(:5), i, 0._dp)
   end do
 
-  alphaAll  = Alpha(str(:5), orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
   alphaMass = Running(nf, runMass, alphaAll, 0._dp)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
@@ -3893,10 +3902,10 @@ muB, mC, muC, mu, res)
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim(str(:5), i, 0._dp)
   end do
 
-  alphaAll  = Alpha(str(:5), order, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, order, runAlpha, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
   alphaMass = Running(nf, run, alphaAll, mu)
   res       = alphaMass%lambdaQCD(run)
@@ -3918,10 +3927,10 @@ subroutine f90delta(str, nf, mu, R, res)
   type (AnomDim), dimension(3:6)       :: AnDim
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, 0._dp, &
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, &
   0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
 
   MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, &
@@ -3946,10 +3955,10 @@ mB, muB, mC, muC, mu, R, lg, res)
   type (AnomDim), dimension(3:6)       :: AnDim
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
   alphaMass = Running(nf, 0, alphaAll, 0._dp)
@@ -3979,10 +3988,10 @@ mB, muB, mC, muC, mu, R, res)
   if ( str(:3) == 'MSR' .or. str(:8) == 'MSbarLow' .or. str(:7) == 'JetMass' ) muM = 2 * mu
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
   MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, &
@@ -4007,10 +4016,10 @@ muB, mC, muC, mu, res)
   type (AnomDim), dimension(3:6)       :: AnDim
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
 
   MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, mu, &
@@ -4036,10 +4045,10 @@ subroutine f90CoefMat(str, nf, s3, res)
   type (AnomDim), dimension(3:6)           :: AnDim
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, &
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, &
                      0._dp, 0._dp, 0._dp)
   MatEl     = MatrixElementsMass(alphaAll, 5, 0, s3, s3, s3, s3, mu, mu, mu, tiny(1._dp),&
                              mu, mu, mu, 0._dp, 0._dp)
@@ -4062,10 +4071,10 @@ subroutine f90NGLintegral(nf, pow, w1, w2, res)
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, &
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, &
                      0._dp, 0._dp, 0._dp)
   MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, mu, &
                          tiny(1._dp), mu, mu, mu, 0._dp, 0._dp)
@@ -4101,10 +4110,10 @@ subroutine f90NGLfunction(nf, x, res)
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, &
+  alphaAll = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, &
                      0._dp, 0._dp, 0._dp)
   MatEl    = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, mu, &
                          tiny(1._dp), mu, mu, mu, 0._dp, 0._dp)
@@ -4129,13 +4138,12 @@ subroutine f90DiffDeltaGap(str, scheme, order, R0, R, mu0, mu, muLambda, orderAl
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim(scheme(:5), i, 0._dp)
   end do
 
-  alphaAll  = Alpha(scheme(:5), orderAlpha, runAlpha, [1,1,1,1] * 0._dp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
-  MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, mu, &
-                         tiny(1._dp), mu, mu, mu, muLambda, muLambda)
+  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, &
+  mu, mu, tiny(1._dp), mu, mu, mu, muLambda, muLambda)
 
   res       = MatEl%DiffDeltaGap( str(:12), order, R0, R, mu0, mu )
 
@@ -4226,10 +4234,10 @@ subroutine f90GammaR(str, nf, beta)
   type (AnomDim), dimension(3:6)       :: AnDim
 
   do i = 3, 6
-    AnDim(i) = AnomDim(alphaScheme, i, G3)
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, &
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, &
                     0._dp, 0._dp, 0._dp)
   MatEl     = MatrixElementsMass(alphaAll, nf, 0, 0._dp, 0._dp, 0._dp, mu, 0._dp, mu, mu, &
                             tiny(1._dp), mu, mu, mu, 0._dp, 0._dp)
