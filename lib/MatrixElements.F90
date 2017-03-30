@@ -7,6 +7,10 @@ module MatrixElementsClass
   public :: expandExp, expandExpOrder, cuspConst, expandProd, expandExpVec, gapCons, &
   posToMomMatrix, NGLSoft, NGLDoubleIntegral, factList
 
+  interface expandExpVec
+    module procedure :: expandExpVecReal, expandExpVecComplex
+  end interface expandExpVec
+
   interface expandExpOrder
     module procedure :: expandExpComplexOrder, expandExpRealOrder
   end interface expandExpOrder
@@ -995,47 +999,51 @@ module MatrixElementsClass
 
   !ccccccccccccccc
 
-    pure function expandExpVec(a) result(b)
+    pure function expandExpVecReal(a) result(b)
       real (dp), dimension(:), intent(in) :: a
       real (dp), dimension( 0:size(a) )   :: b
       real (dp), dimension( size(a) )     :: a2
       integer                             :: i
 
-      b(0) = 1; a2 = a * [ (i, i = 1, size(a))]
+      b(0) = 1; a2 = a * [  ( i, i = 1, size(a) )  ]
 
       do i = 0, size(a) - 1
         b(i + 1) = dot_product( a2(:i+1), b(i:0:-1) )
       end do
 
-      ! b = [ 1._dp, a(1), a(1)**2/2 + a(2), a(1)**3/6 + a(1) * a(2) + a(3) ]
+    end function expandExpVecReal
 
-    end function expandExpVec
+  !ccccccccccccccc
+
+    pure function expandExpVecComplex(a) result(b)
+      complex (dp), dimension(:), intent(in) :: a
+      complex (dp), dimension( 0:size(a) )   :: b
+      complex (dp), dimension( size(a) )     :: a2
+      integer                                :: i
+
+      b(0) = 1; a2 = a * [  ( i, i = 1, size(a) )  ]
+
+      do i = 0, size(a) - 1
+        b(i + 1) = dot_product( a2(:i+1), b(i:0:-1) )
+      end do
+
+    end function expandExpVecComplex
 
 !cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
   pure complex (dp) function expandExpComplex(a)
     complex (dp), dimension(:), intent(in) :: a
-    integer                                :: i, order
 
-    order = size(a); expandExpComplex = 0
-
-    do i = 0, min(order,3)
-      expandExpComplex = expandExpComplex + expandExpComplexOrder(i, a)
-    end do
+    expandExpComplex = sum( expandExpVec(a) )
 
  end function expandExpComplex
 
 !cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-  pure complex (dp) function expandExpReal(a)
+  pure real (dp) function expandExpReal(a)
     real (dp), dimension(:), intent(in) :: a
-    integer                             :: i, order
 
-    order = size(a); expandExpReal = 0
-
-    do i = 0, min(order,3)
-      expandExpReal = expandExpReal + expandExpRealOrder(i, a)
-    end do
+    expandExpReal = sum( expandExpVec(a) )
 
  end function expandExpReal
 
