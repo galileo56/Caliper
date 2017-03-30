@@ -530,14 +530,17 @@ module AnomDimClass
 !ccccccccccccccc
 
    pure real (dp) function Gfun(self, order, t)
-     class (AnomDim), intent(in) :: self
-     real (dp)      , intent(in) :: t
-     integer        , intent(in) :: order
+     class (AnomDim)    , intent(in) :: self
+     real (dp)          , intent(in) :: t
+     integer            , intent(in) :: order
+     real (dp), dimension( min(3,order - 1) ) :: listT
+     integer                         :: i, ord
 
-     if (order >= 0) Gfun = t
-     if (order >= 2) Gfun = Gfun - self%bHat(2)/t
-     if (order >= 3) Gfun = Gfun - self%bHat(3)/2/t**2
-     if (order >= 4) Gfun = Gfun - self%bHat(4)/3/t**3
+     ord = min(3,order - 1)
+
+     listT = 1 / powList(t,ord) / [ (i, i = 1, ord) ]
+
+     if (order >= 0) Gfun = t - dot_product( self%bHat(2:ord + 1), listT )
 
      Gfun = exp(Gfun);     if (order > 0) Gfun = (-t)**self%bHat(1) * Gfun
 
@@ -565,8 +568,8 @@ module AnomDimClass
     real (dp)                    , intent(in) :: a0, a1
     real (dp), dimension(0:order), intent(in) :: gamma
     real (dp), dimension(0:order)             :: gam
-    integer                                   :: i
     real (dp)                                 :: a0Pi, a1Pi
+    integer                                   :: i
 
     wTildeReal = 0; if (order < 0) return; gam = gamma/self%beta(0)
 
@@ -594,10 +597,9 @@ module AnomDimClass
     complex (dp)                 , intent(in) :: a0
     real (dp), dimension(0:order), intent(in) :: gamma
     real (dp), dimension(0:order)             :: gam
-    complex (dp)                              :: wTilde
-    integer                                   :: i
+    complex (dp)                              :: wTilde, a0Pi
     real (dp)                                 :: a1Pi
-    complex (dp)                              :: a0Pi
+    integer                                   :: i
 
     wTilde = 0; if (order < 0) return; gam = gamma/self%beta(0)
 
