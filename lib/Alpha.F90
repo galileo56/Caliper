@@ -17,7 +17,7 @@ module AlphaClass
 
   type, public :: Alpha
     private
-    character (len = 9)             :: str, method
+    character (len = 9)             :: method, str
     integer                         :: order, run, n
     type (AnomDim) , dimension(3:6) :: andim
     real (dp)      , dimension(3:6) :: alphaRef, muRef
@@ -46,15 +46,16 @@ module AlphaClass
 
 !ccccccccccccccc
 
-  type (Alpha) function InitAlpha(str, order, run, G4, mZ, amZ, mT, muT,&
+  type (Alpha) function InitAlpha(andimList, order, run, mZ, amZ, mT, muT,&
     mB, muB, mC, muC, method)
     character (len = *), optional, intent(in) :: method
-    character (len = *)      , intent(in) :: str
-    integer                  , intent(in) :: order
-    integer                  , intent(in) :: run
-    real (dp), optional      , intent(in) :: amZ
-    real (dp), optional      , intent(in) :: mZ, mT, muT, mB, muB, mC, muC
-    real (dp), dimension(3:6), intent(in) :: G4
+    real (dp)         , optional , intent(in) :: amZ
+    real (dp)         , optional , intent(in) :: mZ, mT, muT, mB, muB, mC, muC
+    type (AnomDim) , dimension(4), intent(in) :: andimlist
+    integer                      , intent(in) :: order
+    integer                      , intent(in) :: run
+
+    InitAlpha%andim = andimlist
 
     InitAlpha%muRef = 0; InitAlpha%run = run; InitAlpha%n = order - 1
     InitAlpha%muRef(5) = mZ
@@ -67,28 +68,24 @@ module AlphaClass
 
 ! initialising all Anomalous Dimension Objects
 
-    InitAlpha%andim(5) = AnomDim( str, 5, G4(5) )
-
     if ( present(mB) ) then; InitAlpha%mB = mB; InitAlpha%QmB = .true.; end if
     if ( present(mC) ) then; InitAlpha%mC = mC; InitAlpha%QmC = .true.; end if
     if ( present(mT) ) then; InitAlpha%mT = mT; InitAlpha%QmT = .true.; end if
 
     if ( present(muB) ) then
-      InitAlpha%muRef(4) = muB; InitAlpha%andim(4) = AnomDim( str, 4, G4(4) )
-      InitAlpha%QmuB = .true.
+      InitAlpha%muRef(4) = muB; InitAlpha%QmuB = .true.
     end if
 
     if ( present(muT) ) then
-      InitAlpha%muRef(6) = muT; InitAlpha%andim(6) = AnomDim( str, 6, G4(6) )
-      InitAlpha%QmuT = .true.
+      InitAlpha%muRef(6) = muT; InitAlpha%QmuT = .true.
     end if
 
     if ( present(muC) ) then
-      InitAlpha%muRef(3) = muC; InitAlpha%andim(3) = AnomDim( str, 3, G4(3) )
-      InitAlpha%QmuC = .true.
+      InitAlpha%muRef(3) = muC; InitAlpha%QmuC = .true.
     end if
 
-    InitAlpha%str = str  ;  InitAlpha%order = order ;  InitAlpha%alphaRef = 0
+    InitAlpha%str   = andimlist(3)%scheme()
+    InitAlpha%order = order ;  InitAlpha%alphaRef = 0
 
     if ( .not. present(mZ) .or. mZ <= d1mach(1) ) return
 
