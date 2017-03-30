@@ -2655,7 +2655,7 @@ subroutine f90ComplexPolyLog(n, zre, zim, res)
   complex (dp)           :: pl
 
   pl  = ComplexPolyLog( n, cmplx(zre, zim, dp) )
-  res = [ RealPART(pl), IMAGPART(pl) ]
+  res = [ RealPart(pl), ImagPart(pl) ]
 
 end subroutine f90ComplexPolyLog
 
@@ -2668,7 +2668,7 @@ subroutine f90NGLSoft(nf, zre, zim, res)
   real (dp), intent(out)     :: res(2)
   complex (dp)               :: pl
 
-  pl = NGLSoft( nf, cmplx(zre, zim, dp) );  res = [ RealPART(pl), IMAGPART(pl) ]
+  pl = NGLSoft( nf, cmplx(zre, zim, dp) );  res = [ RealPart(pl), ImagPart(pl) ]
 
 end subroutine f90NGLSoft
 
@@ -2680,7 +2680,7 @@ subroutine f90CLi2(zre, zim, res)
   real (dp), intent(out) :: res(2)
   complex (dp)           :: pl
 
-  pl = Cli2( cmplx(zre, zim, dp) );  res = [ RealPART(pl), IMAGPART(pl) ]
+  pl = Cli2( cmplx(zre, zim, dp) );  res = [ RealPart(pl), ImagPart(pl) ]
 
 end subroutine f90CLi2
 
@@ -2692,7 +2692,7 @@ subroutine f90CLi3(zre, zim, res)
   real (dp), intent(out) :: res(2)
   complex (dp)           :: pl
 
-  pl = Cli3( cmplx(zre, zim, dp) );  res = [ RealPART(pl), IMAGPART(pl) ]
+  pl = Cli3( cmplx(zre, zim, dp) );  res = [ RealPart(pl), ImagPart(pl) ]
 
 end subroutine f90CLi3
 
@@ -2997,7 +2997,7 @@ mC, muC, muR, muI, res)
 
   alp = alphaOb%alphaQCD( nf, cmplx(muR, muI, dp) )
 
-  res = [ RealPART(alp), IMAGPART(alp) ]
+  res = [ RealPart(alp), ImagPart(alp) ]
 
 end subroutine f90alphaComplex
 
