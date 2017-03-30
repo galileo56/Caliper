@@ -1052,12 +1052,9 @@ module MatrixElementsClass
   pure complex (dp) function expandExpComplexOrder(order, a)
     integer                       , intent(in) :: order
     complex (dp), dimension(order), intent(in) :: a
+    complex (dp), dimension(0:order)           :: b
 
-    expandExpComplexOrder = 0
-    if (order == 0) expandExpComplexOrder = (1._dp, 0._dp)
-    if (order == 1) expandExpComplexOrder = a(1)
-    if (order == 2) expandExpComplexOrder = a(1)**2/2 + a(2)
-    if (order == 3) expandExpComplexOrder = a(1)**3/6 + a(1) * a(2) + a(3)
+    b = expandExpVec(a); expandExpComplexOrder = b(order)
 
   end function expandExpComplexOrder
 
@@ -1066,12 +1063,9 @@ module MatrixElementsClass
   pure real (dp) function expandExpRealOrder(order, a)
     integer                    , intent(in) :: order
     real (dp), dimension(order), intent(in) :: a
+    real (dp), dimension(0:order)           :: b
 
-    expandExpRealOrder = 0
-    if (order == 0) expandExpRealOrder = 1
-    if (order == 1) expandExpRealOrder = a(1)
-    if (order == 2) expandExpRealOrder = a(1)**2/2 + a(2)
-    if (order == 3) expandExpRealOrder = a(1)**3/6 + a(1) * a(2) + a(3)
+    b = expandExpVec(a); expandExpRealOrder = b(order)
 
   end function expandExpRealOrder
 
