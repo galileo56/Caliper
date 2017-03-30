@@ -985,13 +985,31 @@ module MatrixElementsClass
 
 !ccccccccccccccc
 
-  pure function expandExpVec(a) result(b)
-    real (dp), dimension(3), intent(in) :: a
-    real (dp), dimension(0:3)           :: b
+  ! pure function expandExpVec(a) result(b)
+  !   real (dp), dimension(3), intent(in) :: a
+  !   real (dp), dimension(0:3)           :: b
+  !
+  !   b = [ 1._dp, a(1), a(1)**2/2 + a(2), a(1)**3/6 + a(1) * a(2) + a(3) ]
+  !
+  ! end function expandExpVec
 
-    b = [ 1._dp, a(1), a(1)**2/2 + a(2), a(1)**3/6 + a(1) * a(2) + a(3) ]
+  !ccccccccccccccc
 
-  end function expandExpVec
+    pure function expandExpVec(a) result(b)
+      real (dp), dimension(:), intent(in) :: a
+      real (dp), dimension( 0:size(a) )   :: b
+      real (dp), dimension( size(a) )     :: a2
+      integer                             :: i
+
+      b(0) = 1; a2 = a * [ (i, i = 1, size(a))]
+
+      do i = 0, size(a) - 1
+        b(i + 1) = dot_product( a2(:i+1), b(i:0:-1) )
+      end do
+
+      ! b = [ 1._dp, a(1), a(1)**2/2 + a(2), a(1)**3/6 + a(1) * a(2) + a(3) ]
+
+    end function expandExpVec
 
 !cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
