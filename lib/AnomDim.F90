@@ -562,22 +562,21 @@ module AnomDimClass
 
 !ccccccccccccccc
 
-   pure real (dp) function wTildeReal(self, order, gamma, a0, a1)
+   pure real (dp) function wTildeReal(self, order, gam, a0, a1)
     class(AnomDim)               , intent(in) :: self
     integer                      , intent(in) :: order
     real (dp)                    , intent(in) :: a0, a1
-    real (dp), dimension(0:order), intent(in) :: gamma
-    real (dp), dimension(0:order)             :: gam
+    real (dp), dimension(0:order), intent(in) :: gam
     real (dp)                                 :: a0Pi, a1Pi
     integer                                   :: i
 
-    wTildeReal = 0; if (order < 0) return; gam = gamma/self%beta(0)
+    wTildeReal = 0; if (order < 0) return
 
     if (order >= 0) wTildeReal = - gam(0) * log(a1/a0)
 
-    if (order == 0) return
-
-    a0Pi = a0/fourPi; a1Pi = a1/fourPi
+    if (order > 0) then
+      a0Pi = a0/fourPi; a1Pi = a1/fourPi
+    end if
 
     do i = 1, order
 
@@ -586,22 +585,23 @@ module AnomDimClass
 
     end do
 
+    wTildeReal = wTildeReal/self%beta(0)
+
    end function wTildeReal
 
 !ccccccccccccccc
 
-   pure real (dp) function wTildeComplex(self, order, gamma, a0, a1)
+   pure real (dp) function wTildeComplex(self, order, gam, a0, a1)
     class(AnomDim)               , intent(in) :: self
     integer                      , intent(in) :: order
     real (dp)                    , intent(in) :: a1
     complex (dp)                 , intent(in) :: a0
-    real (dp), dimension(0:order), intent(in) :: gamma
-    real (dp), dimension(0:order)             :: gam
+    real (dp), dimension(0:order), intent(in) :: gam
     complex (dp)                              :: wTilde, a0Pi
     real (dp)                                 :: a1Pi
     integer                                   :: i
 
-    wTilde = 0; if (order < 0) return; gam = gamma/self%beta(0)
+    wTilde = 0; if (order < 0) return
 
     if (order >= 0) wTilde = - gam(0) * log(a1/a0)
 
@@ -616,7 +616,7 @@ module AnomDimClass
 
     end do
 
-    wTildeComplex = realpart(wTilde)
+    wTildeComplex = realpart(wTilde)/self%beta(0)
 
    end function wTildeComplex
 
