@@ -1137,12 +1137,12 @@ module MatrixElementsClass
 
     select type (self)
     class is (MatrixElementsMass)
-       if ( str(:7 ) == 'JetMass'    ) bet(:3) = self%deltamJet
-       if ( str(:5 ) == 'MSbar'      ) bet = self%deltaMS
-       if ( str(:3 ) == 'MSR'        ) bet = self%deltaMSR
-       if ( str(:10) == 'MSRNatural' ) bet = self%deltaMSRNatural
-       if ( str(:8 ) == 'MSbarLow'   ) bet = self%deltaMSLow
-       if ( str(:8 ) == 'hardMass'   ) bet(:3) = self%HmExp(0,:)
+      if ( str(:7 ) == 'JetMass'    ) bet(:3) = self%deltamJet
+      if ( str(:5 ) == 'MSbar'      ) bet = self%deltaMS
+      if ( str(:3 ) == 'MSR'        ) bet = self%deltaMSR
+      if ( str(:10) == 'MSRNatural' ) bet = self%deltaMSRNatural
+      if ( str(:8 ) == 'MSbarLow'   ) bet = self%deltaMSLow
+      if ( str(:8 ) == 'hardMass'   ) bet(:3) = self%HmExp(0,:)
     end select
 
   end function delta
@@ -1179,6 +1179,7 @@ module MatrixElementsClass
 
     select type (self)
      class is (MatricesElementsMass)
+
        if ( str(:4) == 'bJet'   ) bet = self%sCoefBJet
 
        if ( str(:3) == 'MSR' .and. str(:10) == 'MSRNatural' ) then
