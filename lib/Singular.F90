@@ -1812,7 +1812,7 @@ module SingularClass
 
       do j = 1, order
         core = core + (-t)**j * (   sum(  deltaAdd( j, :2 * (order - j) ) &
-                                   * logTab( :2 * (order - j) )  )   )
+         * logTab( :2 * (order - j) )  )   )
       end do
     end if
 
