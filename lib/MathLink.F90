@@ -2636,12 +2636,29 @@ subroutine f90Scoef(str, nf, beta)
   alphaAll  = Alpha('MSbar', 0, 0, [1,1,1,1] * 0._dp, 0._dp, 0._dp, 0._dp, &
   0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
 
-  MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, mu, &
+  MatEl     = MatrixElementsMass(alphaAll, nf, 0, 0._dp, 0._dp, 0._dp, mu, &
   0._dp, mu, mu, tiny(1._dp), mu, mu, mu, 0._dp, 0._dp)
 
   beta = MatEl%Scoef(str)
 
 end subroutine f90Scoef
+
+!ccccccccccccccc
+
+subroutine f90sCoefLambda(str, nf, lambda, beta)
+  use AnomDimClass;  use constants, only: dp; implicit none
+  character (len = *)    , intent(in ) :: str
+  integer                , intent(in ) :: nf
+  real (dp)              , intent(in ) :: lambda
+  real (dp), dimension(4), intent(out) :: beta
+  real (dp)                            :: mu = 20._dp
+  type (AnomDim)                       :: run
+
+  run = AnomDim('MSbar', nf, 0._dp)
+
+  beta = run%sCoefLambda( str, lambda )
+
+end subroutine f90sCoefLambda
 
 !ccccccccccccccc
 

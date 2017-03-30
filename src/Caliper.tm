@@ -47,6 +47,7 @@
 :Evaluate:  CLi2::usage = "Cli2[z] computes the complex dilogarithm"
 :Evaluate:  CLi3::usage = "Cli3[z] computes the complex trilogarithm"
 :Evaluate:  Scoef::usage = "Scoef[str, nf] computes the soft R anomalous Dimension"
+:Evaluate:  sCoefLambda::usage = "sCoefLambda[str, nf, lambda] computes the MSR R-anomalous Dimension"
 :Evaluate:  AnomDim::usage = "AnomDim[str, nf, G4] computes the QCD anomalous dimension"
 :Evaluate:  cCoef::usage = "cCoef[nf, order, m] computes the inverse of the QCD anomalous dimension"
 :Evaluate:  PSCoef::usage = "PSCoef[nf, lg] computes the PS mass series coefficients"
@@ -1257,6 +1258,14 @@
 :Pattern:       Scoef[str_, nf_]
 :Arguments:     {str, nf}
 :ArgumentTypes: {String, Integer}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      scoeflambda
+:Pattern:       sCoefLambda[str_, nf_, lambda_]
+:Arguments:     {str, nf, lambda}
+:ArgumentTypes: {String, Integer, Real}
 :ReturnType:    Manual
 :End:
 
@@ -3256,11 +3265,23 @@ static void scoef(char const* str, int nf){
    MLEndPacket(stdlink);
 }
 
+extern double f90scoeflambda_(char const* str, int* nf, double* lambda, double* result);
+
+static void scoeflambda(char const* str, int nf, double lambda){
+  double result[4];
+
+   f90scoeflambda_(str, &nf, &lambda, result);
+
+   MLPutRealList(stdlink, result, 4);
+
+   MLEndPacket(stdlink);
+}
+
 extern double f90fomass_(char const* shape, char const* current, double* m, double* Q,
-          double* Mz, double* gammaZ, double* sin2ThetaW, double* tau, double* result);
+double* Mz, double* gammaZ, double* sin2ThetaW, double* tau, double* result);
 
 static double fomass(char const* shape, char const* current, double m, double Q,
-                     double Mz, double gammaZ, double sin2ThetaW, double tau){
+double Mz, double gammaZ, double sin2ThetaW, double tau){
   double result;
 
   f90fomass_(shape, current, &m, &Q, &Mz, &gammaZ, &sin2ThetaW, &tau, &result);
