@@ -580,8 +580,8 @@ module AnomDimClass
 
     do i = 1, order
 
-      wTildeReal = wTildeReal - ( a1Pi**i - a0Pi**i)/i * &
-      (  gam(i) + dot_product( gam(:i-1), self%cCoef(i:1:-1) )  )
+      wTildeReal = wTildeReal - (a1Pi**i - a0Pi**i)/i * &
+      dot_product( gam(:i), self%cCoef(i:0:-1) )
 
     end do
 
@@ -611,8 +611,8 @@ module AnomDimClass
 
     do i = 1, order
 
-      wTilde = wTilde - ( a1Pi**i - a0Pi**i)/i * &
-      (  gam(i) + dot_product( gam(:i-1), self%cCoef(i:1:-1) )  )
+      wTilde = wTilde - (a1Pi**i - a0Pi**i)/i * &
+      dot_product( gam(:i), self%cCoef(i:0:-1) )
 
     end do
 
