@@ -572,7 +572,7 @@ module AnomDimClass
 
     wTildeReal = 0; if (order < 0) return
 
-    if (order >= 0) wTildeReal = - gam(0) * log(a1/a0)
+    if (order >= 0) wTildeReal = gam(0) * log(a1/a0)
 
     if (order > 0) then
       a0Pi = a0/fourPi; a1Pi = a1/fourPi
@@ -580,12 +580,12 @@ module AnomDimClass
 
     do i = 1, order
 
-      wTildeReal = wTildeReal - (a1Pi**i - a0Pi**i)/i * &
+      wTildeReal = wTildeReal + (a1Pi**i - a0Pi**i)/i * &
       dot_product( gam(:i), self%cCoef(i:0:-1) )
 
     end do
 
-    wTildeReal = wTildeReal/self%beta(0)
+    wTildeReal = - wTildeReal/self%beta(0)
 
    end function wTildeReal
 
@@ -603,7 +603,7 @@ module AnomDimClass
 
     wTilde = 0; if (order < 0) return
 
-    if (order >= 0) wTilde = - gam(0) * log(a1/a0)
+    if (order >= 0) wTilde = gam(0) * log(a1/a0)
 
     if (order == 0) then
       a0Pi = a0/fourPi; a1Pi = a1/fourPi
@@ -611,12 +611,12 @@ module AnomDimClass
 
     do i = 1, order
 
-      wTilde = wTilde - (a1Pi**i - a0Pi**i)/i * &
+      wTilde = wTilde + (a1Pi**i - a0Pi**i)/i * &
       dot_product( gam(:i), self%cCoef(i:0:-1) )
 
     end do
 
-    wTildeComplex = realpart(wTilde)/self%beta(0)
+    wTildeComplex = - realpart(wTilde)/self%beta(0)
 
    end function wTildeComplex
 
