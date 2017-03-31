@@ -649,11 +649,11 @@ module AnomDimClass
 !ccccccccccccccc
 
    pure real (dp) function kTildeReal(self, order, gamma, a0, a1)
-    class(AnomDim)           , intent(in) :: self
-    integer                  , intent(in) :: order
-    real (dp)                , intent(in) :: a0, a1
+    class(AnomDim)               , intent(in) :: self
+    integer                      , intent(in) :: order
+    real (dp)                    , intent(in) :: a0, a1
     real (dp), dimension(0:order), intent(in) :: gamma
-    real (dp)                             :: lg
+    real (dp)                                 :: lg
 
     lg = log(a1/a0); kTildeReal = 0
 
@@ -683,12 +683,12 @@ module AnomDimClass
 !ccccccccccccccc
 
    pure real (dp) function kTildeComplex(self, order, gamma, a0, a1)
-    class(AnomDim)           , intent(in) :: self
-    integer                  , intent(in) :: order
-    real (dp)                , intent(in) :: a1
-    complex (dp)             , intent(in) :: a0
+    class(AnomDim)               , intent(in) :: self
+    integer                      , intent(in) :: order
+    real (dp)                    , intent(in) :: a1
+    complex (dp)                 , intent(in) :: a0
     real (dp), dimension(0:order), intent(in) :: gamma
-    complex (dp)                          :: lg, kTilde
+    complex (dp)                              :: lg, kTilde
 
     lg = log(a1/a0); kTilde = 0
 
