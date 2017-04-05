@@ -681,34 +681,13 @@ module AnomDimClass
         suma = suma + d(j - i) * self%cCoef(i) * ( a1j - a1Pi**(j-i) * a0Pi**(i-1) )/(i - 1)
       end do
 
-      kTildeReal = kTildeReal + suma + ( a1j - a0j ) * &
-        ( d(j) * a1/a0 + ( cd - sum( self%cCoef(:j-1) * d(j:1:-1) ) )/(j - 1) ) &
+      kTildeReal = kTildeReal + d(j) * a1j * (a1/a0 - 1) + suma              &
+      + ( a1j - a0j ) * ( cd - sum( self%cCoef(:j-1) * d(j:1:-1) ) )/(j - 1) &
       + ( d(j-1) * self%cCoef(1) * a1j - cd * a0j ) * lg
 
     end do
 
     kTildeReal = kTildeReal/self%beta(0)**2/2
-
-  !  if (order > -1) kTildeReal = 2 * Pi * gamma(0)/self%beta(0)**2 * (1/a1 - 1/a0 + lg/a0)
-   !
-  !  if (order > 0) kTildeReal = kTildeReal + ( self%beta(1) * gamma(0)/self%beta(0) * &
-  !  (1 + lg - a1/a0 - lg**2/2) - gamma(1) * (1 - a1/a0 + lg) )/self%beta(0)**2/2
-   !
-  !  if (order > 1) kTildeReal = kTildeReal + ( self%beta(1)**2 * gamma(0) * (a0 - 2 * a1 + a1**2/a0&
-  !  - 2 * a0 * lg + 2 * a1 * lg) + self%beta(0) * self%beta(2) * gamma(0) * (a0 - a1**2/a0 &
-  !  + 2 * a0 * lg) + self%beta(0) * self%beta(1) * gamma(1) * (4 * a1 - 3 * a0 - a1**2/a0  &
-  !  - 2 * a1 * lg) + self%beta(0)**2 * gamma(2) * (a0 - 2 * a1 + a1**2/a0) )/16/Pi/self%beta(0)**4
-   !
-  !  if (order > 2) kTildeReal = kTildeReal + ( self%beta(1)**3 * gamma(0) * (12 * a0 * a1 -&
-  !  8 * a0**2 - 4 * a1**3/a0 + 6 * a0**2 * lg - 6 * a1**2 * lg) + self%beta(0) *           &
-  !  self%beta(1) * self%beta(2) * gamma(0) * (7 * a0**2 - 12 * a0 * a1 - 3 * a1**2 +       &
-  !  8 * a1**3/a0 - 12 * a0**2 * lg + 6 * a1**2 * lg) + self%beta(0)**2 * self%beta(3) *    &
-  !  gamma(0) * (a0**2 + 3 * a1**2 - 4 * a1**3/a0 + 6 * a0**2 * lg) + self%beta(0) *        &
-  !  self%beta(1)**2 * gamma(1) * (11 * a0**2 - 12 * a0 * a1 - 3 * a1**2 + 4 * a1**3/a0 +   &
-  !  6 * a1**2 * lg) + self%beta(0)**2 * self%beta(2) * gamma(1) * (12 * a0 * a1 -          &
-  !  8 * a0**2 - 4 * a1**3/a0) + self%beta(0)**2 * self%beta(1) * gamma(2) * (9 * a1**2 -   &
-  !  5 * a0**2 - 4 * a1**3/a0 - 6 * a1**2 * lg) + self%beta(0)**3 * gamma(3) * (2 * a0**2 - &
-  !  6 * a1**2 + 4 * a1**3/a0) )/Pi2/self%beta(0)**5/384
 
    end function kTildeReal
 
