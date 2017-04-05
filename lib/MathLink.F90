@@ -2913,6 +2913,19 @@ end subroutine f90sCoefLambda
 
 !ccccccccccccccc
 
+subroutine f90sCoefGamma(gama, n, nf, beta)
+  use AnomDimClass;  use constants, only: dp; implicit none
+  integer                , intent(in ) :: nf, n
+  real (dp), dimension(n), intent(in ) :: gama
+  real (dp), dimension(n), intent(out) :: beta
+  type (AnomDim)                       :: run
+
+  run = AnomDim('MSbar', nf, 0._dp);  beta = run%sCoef( gama )
+
+end subroutine f90sCoefGamma
+
+!ccccccccccccccc
+
 subroutine f90wTilde(order, nf, gamma, a0, a1, res)
   use AnomDimClass;  use constants, only: dp; implicit none
   integer  , intent(in )                 :: order, nf

@@ -971,24 +971,31 @@ module AnomDimClass
     class (AnomDim)        , intent(in) :: self
     real (dp), dimension(:), intent(in) :: gamma
     real (dp), dimension( size(gamma) ) :: s
+    integer                             :: i, j, k
+    real (dp)                           :: sum1, sum2
 
-    if ( size(gamma) > 0 ) s(1) = gamma(1)
-    if ( size(gamma) > 1 ) s(2) = gamma(2) - sum( self%bHat(1:2) ) * gamma(1)
+    if ( size(gamma) > 0 ) s = gamma
 
-    if ( size(gamma) > 2 ) then
-      s(3) = gamma(3) - sum( self%bHat(1:2) ) * gamma(2) + &
-      (  ( 1 + self%bHat(1) ) * self%bHat(2) + &
-      ( self%bHat(2)**2 + self%bHat(3) )/2  ) * gamma(1)
-    end if
+    do i = 1, size(gamma)
 
-    if  ( size(gamma) > 3 ) then
-      s(4) = gamma(4) - sum( self%bHat(1:2) ) * gamma(3) + &
-      (  ( 1 + self%bHat(1) ) * self%bHat(2) + &
-      ( self%bHat(2)**2 + self%bHat(3) )/2  ) * gamma(2) + &
-      ( - self%bHat(2)**2 - self%bHat(1) * self%bHat(2)**2/2 &
-      - self%bHat(2)**3/6 - self%bHat(3) - self%bHat(1) * self%bHat(3)/2 &
-      - self%bHat(2) * self%bHat(3)/2 - self%bHat(4)/3 ) * gamma(1)
-    end if
+      sum1 = 0
+
+      do j = 0, i - 2
+
+        sum2 = 0
+
+        do k = 1, i - j - 1
+          sum2 = sum2 + (-1)**(i - j - k) * self%gTilde(k) * self%bHat(i - j - k)
+        end do
+
+        sum1 = sum1 + gamma(j+1) * &
+        ( self%gTilde(i - j) + (-1)**(i - j) * self%bHat(i - j) + sum2 )
+
+      end do
+
+      s(i + 1) = s(i + 1) + sum1 - sum( self%bHat(1:2) ) * gamma(i)
+
+    end do
 
   end function sCoef
 
