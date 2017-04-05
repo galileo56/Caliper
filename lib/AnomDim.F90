@@ -680,7 +680,7 @@ module AnomDimClass
 
       do i = 2, j - 1
         suma = suma + d(j - i) * self%cCoef(i) * &
-        ( a1j - a1Pi**(j-i) * a0Pi**(i-1) )/(i - 1)
+        ( a1j - a1Pi**(j - i) * a0Pi**(i - 1) )/(i - 1)
       end do
 
       kTildeReal = kTildeReal + d(j) * a1j * (a1/a0 - 1) + suma              &
@@ -703,7 +703,7 @@ module AnomDimClass
     real (dp), dimension(0:order), intent(in) :: gam
     real (dp), dimension(0:order)             :: d
     complex (dp)                              :: a0Pi, a0j, lg, kTilde, suma
-    real (dp)                                 :: cd, a1Pi, a1j 
+    real (dp)                                 :: cd, a1Pi, a1j
     integer                                   :: i, j
 
     kTilde = 0; if (order < 0) return
@@ -729,10 +729,10 @@ module AnomDimClass
 
       do i = 2, j - 1
         suma = suma + d(j - i) * self%cCoef(i) * &
-        ( a1j - a1Pi**(j-i) * a0Pi**(i-1) )/(i - 1)
+        ( a1j - a1Pi**(j - i) * a0Pi**(i - 1) )/(i - 1)
       end do
 
-      kTilde = kTilde + d(j) * a1j * (a1/a0 - 1) + suma              &
+      kTilde = kTilde + d(j) * a1j * (a1/a0 - 1) + suma                      &
       + ( a1j - a0j ) * ( cd - sum( self%cCoef(:j-1) * d(j:1:-1) ) )/(j - 1) &
       + ( d(j-1) * self%cCoef(1) * a1j - cd * a0j ) * lg
 
