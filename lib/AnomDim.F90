@@ -666,6 +666,7 @@ module AnomDimClass
     end do
 
     lg = log(a1/a0); a0Pi = a0/fourPi; a1Pi = a1/fourPi
+
     kTildeReal = d(0) * (1/a1Pi - 1/a0Pi + lg/a0Pi)
 
     if (order > 0) kTildeReal = kTildeReal + d(1) * (a1/a0 - 1 - lg) + &
@@ -678,7 +679,8 @@ module AnomDimClass
       suma = 0
 
       do i = 2, j - 1
-        suma = suma + d(j - i) * self%cCoef(i) * ( a1j - a1Pi**(j-i) * a0Pi**(i-1) )/(i - 1)
+        suma = suma + d(j - i) * self%cCoef(i) * &
+        ( a1j - a1Pi**(j-i) * a0Pi**(i-1) )/(i - 1)
       end do
 
       kTildeReal = kTildeReal + d(j) * a1j * (a1/a0 - 1) + suma              &
@@ -693,38 +695,50 @@ module AnomDimClass
 
 !ccccccccccccccc
 
-   pure real (dp) function kTildeComplex(self, order, gamma, a0, a1)
+   pure real (dp) function kTildeComplex(self, order, gam, a0, a1)
     class(AnomDim)               , intent(in) :: self
     integer                      , intent(in) :: order
     real (dp)                    , intent(in) :: a1
     complex (dp)                 , intent(in) :: a0
-    real (dp), dimension(0:order), intent(in) :: gamma
-    complex (dp)                              :: lg, kTilde
+    real (dp), dimension(0:order), intent(in) :: gam
+    real (dp), dimension(0:order)             :: d
+    complex (dp)                              :: a0Pi, a0j, lg, kTilde, suma
+    real (dp)                                 :: cd, a1Pi, a1j 
+    integer                                   :: i, j
 
-    lg = log(a1/a0); kTilde = 0
+    kTilde = 0; if (order < 0) return
 
-   if (order > -1) kTilde = 2 * Pi * gamma(0)/self%beta(0)**2 * (1/a1 - 1/a0 + lg/a0)
+    d(0) = gam(0)
 
-   if (order > 0) kTilde = kTilde + ( self%beta(1) * gamma(0)/self%beta(0) * &
-   (1 + lg - a1/a0 - lg**2/2) - gamma(1) * (1 - a1/a0 + lg) )/self%beta(0)**2/2
+    do i = 1, order
+      d(i) = dot_product( gam(:i), self%cCoef(i:0:-1) )/i
+    end do
 
-   if (order > 1) kTilde = kTilde + ( self%beta(1)**2 * gamma(0) * (a0 - 2 * a1 + a1**2/a0&
-   - 2 * a0 * lg + 2 * a1 * lg) + self%beta(0) * self%beta(2) * gamma(0) * (a0 - a1**2/a0 &
-   + 2 * a0 * lg) + self%beta(0) * self%beta(1) * gamma(1) * (4 * a1 - 3 * a0 - a1**2/a0  &
-   - 2 * a1 * lg) + self%beta(0)**2 * gamma(2) * (a0 - 2 * a1 + a1**2/a0) )/16/Pi/self%beta(0)**4
+    lg = log(a1/a0); a0Pi = a0/fourPi; a1Pi = a1/fourPi
 
-   if (order > 2) kTilde = kTilde + ( self%beta(1)**3 * gamma(0) * (12 * a0 * a1 -        &
-   8 * a0**2 - 4 * a1**3/a0 + 6 * a0**2 * lg - 6 * a1**2 * lg) + self%beta(0) *           &
-   self%beta(1) * self%beta(2) * gamma(0) * (7 * a0**2 - 12 * a0 * a1 - 3 * a1**2 +       &
-   8 * a1**3/a0 - 12 * a0**2 * lg + 6 * a1**2 * lg) + self%beta(0)**2 * self%beta(3) *    &
-   gamma(0) * (a0**2 + 3 * a1**2 - 4 * a1**3/a0 + 6 * a0**2 * lg) + self%beta(0) *        &
-   self%beta(1)**2 * gamma(1) * (11 * a0**2 - 12 * a0 * a1 - 3 * a1**2 + 4 * a1**3/a0 +   &
-   6 * a1**2 * lg) + self%beta(0)**2 * self%beta(2) * gamma(1) * (12 * a0 * a1 -          &
-   8 * a0**2 - 4 * a1**3/a0) + self%beta(0)**2 * self%beta(1) * gamma(2) * (9 * a1**2 -   &
-   5 * a0**2 - 4 * a1**3/a0 - 6 * a1**2 * lg) + self%beta(0)**3 * gamma(3) * (2 * a0**2 - &
-   6 * a1**2 + 4 * a1**3/a0) )/Pi2/self%beta(0)**5/384
+    kTilde = d(0) * (1/a1Pi - 1/a0Pi + lg/a0Pi)
 
-    kTildeComplex = realpart(kTilde)
+    if (order > 0) kTilde = kTilde + d(1) * (a1/a0 - 1 - lg) + &
+    d(0) * self%cCoef(1) * lg**2/2
+
+    do j = 2, order
+
+      a1j = a1Pi**(j-1); a0j = a0Pi**(j - 1); cd = d(0) * self%cCoef(j)/(j-1)
+
+      suma = 0
+
+      do i = 2, j - 1
+        suma = suma + d(j - i) * self%cCoef(i) * &
+        ( a1j - a1Pi**(j-i) * a0Pi**(i-1) )/(i - 1)
+      end do
+
+      kTilde = kTilde + d(j) * a1j * (a1/a0 - 1) + suma              &
+      + ( a1j - a0j ) * ( cd - sum( self%cCoef(:j-1) * d(j:1:-1) ) )/(j - 1) &
+      + ( d(j-1) * self%cCoef(1) * a1j - cd * a0j ) * lg
+
+    end do
+
+    kTildeComplex = realpart(kTilde)/self%beta(0)**2/2
 
    end function kTildeComplex
 
