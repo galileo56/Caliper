@@ -46,7 +46,8 @@
 :Evaluate:  NGLSoft::usage = "NGLSoft[nf,z] computes the NGL function in complex space"
 :Evaluate:  CLi2::usage = "Cli2[z] computes the complex dilogarithm"
 :Evaluate:  CLi3::usage = "Cli3[z] computes the complex trilogarithm"
-:Evaluate:  Scoef::usage = "Scoef[str, nf] computes the soft R anomalous Dimension"
+:Evaluate:  sCoef::usage = "sCoef[str, nf] computes the soft R anomalous Dimension"
+:Evaluate:  sCoefGamma::usage = "sCoefGamma[gamma, n, nf] computes the soft R anomalous Dimension"
 :Evaluate:  sCoefLambda::usage = "sCoefLambda[str, nf, lambda] computes the MSR R-anomalous Dimension"
 :Evaluate:  AnomDim::usage = "AnomDim[str, nf, G4] computes the QCD anomalous dimension"
 :Evaluate:  cCoef::usage = "cCoef[nf, order, m] computes the inverse of the QCD anomalous dimension"
@@ -1255,9 +1256,17 @@
 
 :Begin:
 :Function:      scoef
-:Pattern:       Scoef[str_, nf_]
+:Pattern:       sCoef[str_, nf_]
 :Arguments:     {str, nf}
 :ArgumentTypes: {String, Integer}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      scoefgamma
+:Pattern:       sCoefGamma[gama_, nf_]
+:Arguments:     {gama, nf}
+:ArgumentTypes: {RealList, Integer}
 :ReturnType:    Manual
 :End:
 
@@ -3250,7 +3259,6 @@ static double n12generic(double aCoef[], long len, int nf, int order, double lam
 
    f90n12generic_(aCoef, &nf, &order, &lambda, &result);
    return result;
-
 }
 
 extern double f90scoef_(char const* str, int* nf, double* result);
@@ -3261,6 +3269,19 @@ static void scoef(char const* str, int nf){
    f90scoef_(str, &nf, result);
 
    MLPutRealList(stdlink, result, 3);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90scoefgamma_(double* gama, int* n, int* nf, double* result);
+
+static void scoefgamma(double gama[], long n, int nf){
+  int len = n;
+  double result[len];
+
+   f90scoefgamma_(gama, &len, &nf, result);
+
+   MLPutRealList(stdlink, result, len);
 
    MLEndPacket(stdlink);
 }
