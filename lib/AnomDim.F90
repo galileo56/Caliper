@@ -64,7 +64,7 @@ module AnomDimClass
     real (dp), optional, intent(in) :: err        ! 4-loop MS-bar to pole conversion error
     real (dp), dimension(4)         :: betaList
     real (dp), dimension(0:4)       :: beta
-    integer                         :: n, i
+    integer                         :: n
 
     InAdim%err = 0; if ( present(err) ) InAdim%err = err
 
@@ -77,8 +77,8 @@ module AnomDimClass
 
     InAdim%bCoef = beta/beta(0)
 
-    InAdim%str = str ; InAdim%nf      = nf ;    InAdim%beta = beta
-    InAdim%G4  = G4  ; InAdim%gammaHm = 0
+    InAdim%str = str ; InAdim%nf   = nf   ; InAdim%gammaHm = 0
+    InAdim%G4  = G4  ; InAdim%beta = beta
 
     InAdim%cusp = [ 16._dp/3, 66.47322097196788_dp - 5.925925925925926_dp * nf, &
     1174.8982718294073_dp - 183.18743044213898_dp * nf - 0.7901234567901234_dp * nf**2, G4 ]
@@ -116,20 +116,8 @@ module AnomDimClass
 
     do n = 0, 3
 
-      InAdim%bHat(n+1) = 0; InAdim%cCoef(n+1) = 0
-
-      do i = 0, n
-
-        InAdim%bHat(n+1) = InAdim%bHat(n+1) + (-1)**i * (i + 1) * betaList(i+1) * &
-        beta(i+1) * dot_product( InAdim%bHat(:n-i), InAdim%bHat(n - i : 0 : -1) )
-
-        InAdim%cCoef(n+1) = InAdim%cCoef(n+1) - (i + 1) * InAdim%bCoef(i+1) * &
-        dot_product( InAdim%cCoef(:n - i), InAdim%cCoef(n - i : 0 : -1) )
-
-      end do
-
-      InAdim%bHat(n+1)  = InAdim%bHat(n+1)/(n + 1)/beta(0)
-      InAdim%cCoef(n+1) = InAdim%cCoef(n+1)/(n + 1)
+      InAdim%cCoef(n+1) = - sum( InAdim%cCoef(:n) * InAdim%bCoef(n+1:1:-1) )
+      InAdim%bHat(n+1)  = - (-1)**n * InAdim%cCoef(n+1) * betaList(n+1)
 
     end do
 
