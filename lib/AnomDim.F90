@@ -752,11 +752,26 @@ module AnomDimClass
     class (AnomDim), intent(in )             :: self
     real (dp), intent(in ), dimension(0:3)   :: gamma
     real (dp), intent(out), dimension(0:4,3) :: coef
+    integer                                  :: n, i, j
 
-    coef = 0;  coef(1,1) = gamma(0)/2;  coef(1,2) = gamma(1)/8
-    coef(1,3) = gamma(2)/32;            coef(2,2) = self%beta(0) * gamma(0)/8
-    coef(2,3) = self%beta(1) * gamma(0)/32 + self%beta(0) * gamma(1)/16
-    coef(3,3) = self%beta(0)**2 * gamma(0)/24
+    coef = 0
+
+    do n = 1, 3
+      coef(1,n) = gamma(n-1)/2**(2*n - 1)
+    end do
+
+    do n = 2, 3
+      do j = 2, n
+
+        do i = j - 1, n - 1
+          coef(j,n) = coef(j,n) + i * self%beta(n - i - 1) * &
+          coef(j-1,i)/2**( 2 * (n - i) )
+        end do
+
+      coef(j,n) = 2 * coef(j,n)/j
+
+      end do
+    end do
 
    end subroutine wTildeExpand
 
