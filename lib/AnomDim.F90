@@ -1216,8 +1216,8 @@ module AnomDimClass
 
     if ( size(a) > 1 ) a(2) = a(2) + a(1) * b(2)
     if ( size(a) > 2 ) a(3) = a(3) + 2 * a(2) * b(2) + a(1) * b(3)
-    if ( size(a) > 3 ) a(4) = a(4) + 3 * a(3) * b(2) + &
-    a(2) * b(2)**2 + 2 * a(2) * b(3) + a(1) * b(4)
+    if ( size(a) > 3 ) a(4) = a(4) + 3 * a(3) * b(2) + a(2) * b(2)**2 &
+    + 2 * a(2) * b(3) + a(1) * b(4)
 
   end
 
