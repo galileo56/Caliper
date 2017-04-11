@@ -148,13 +148,12 @@ module AnomDimClass
     class (AnomDim)              , intent(in) :: self
     integer                      , intent(in) :: order, m
     real (dp)  , dimension( 0:m )             :: res
-    real (dp)  , dimension( 0:min(order, 4) ) :: bCoef, ListPow
+    real (dp)  , dimension( min(order, 4) )   :: bCoef, ListPow
     integer                                   :: n, ord
 
-    ord = min(order, 4); ListPow(0) = 1; ListPow(1:) = powList(1/fourPi, ord)
+    ord = min(order, 4); ListPow = powList(1/fourPi, ord); res(0) = 1
 
-    res(:ord) = self%cCoef(:ord) * ListPow
-    bCoef     = self%bCoef(:ord) * ListPow
+    res(1:ord) = self%cCoef(1:ord) * ListPow; bCoef = self%bCoef(1:ord) * ListPow
 
     do n = ord, m - 1
       res(n + 1) = - sum( res(n + 1 - ord:n) * bCoef(ord:1:-1) )
