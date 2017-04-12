@@ -727,27 +727,22 @@ module AnomDimClass
    pure subroutine expandAlpha(self, coef)
     class (AnomDim)          , intent(in   ) :: self
     real (dp), dimension(:,:), intent(inout) :: coef
+    integer                                  :: n, j, i
 
     coef(2:,:) = 0
 
-    if ( size(coef,2) > 1 ) coef(2,2) = coef(1,1) * self%beta(0)/2
+    do n = 2, size(coef,2)
+      do j = 1, n - 1
 
-    if ( size(coef,2) > 2 ) then
-      coef(2,3) = coef(1,2) * self%beta(0) + coef(1,1) * self%beta(1)/8
-      coef(3,3) = coef(1,1) * self%beta(0)**2/4
-    end if
+        do i = j, n - 1
+          coef(j + 1,n) = coef(j + 1,n) + i * self%beta(n - i - 1) * &
+          coef(j,i)/2**( 2 * (n - i) )
+        end do
 
-    if ( size(coef,2) > 3 ) then
+      coef(j + 1,n) = 2 * coef(j+1,n)/j
 
-      coef(2,4) = self%beta(2) * coef(1,1)/32 + self%beta(1) * coef(1,2)/4 &
-      + 3 * self%beta(0) * coef(1,3)/2
-
-      coef(3,4) = 5 * self%beta(0) * self%beta(1) * coef(1,1)/32 &
-      + 3 * self%beta(0)**2 * coef(1,2)/4
-
-      coef(4,4) = coef(1,1) * self%beta(0)**3/8
-
-    end if
+      end do
+    end do
 
    end subroutine expandAlpha
 
@@ -757,25 +752,47 @@ module AnomDimClass
     class (AnomDim), intent(in )             :: self
     real (dp), intent(in ), dimension(0:3)   :: gamma
     real (dp), intent(out), dimension(0:4,3) :: coef
+    integer                                  :: n, i, j
 
-    coef = 0;  coef(1,1) = gamma(0)/2;  coef(1,2) = gamma(1)/8
-    coef(1,3) = gamma(2)/32;            coef(2,2) = self%beta(0) * gamma(0)/8
-    coef(2,3) = self%beta(1) * gamma(0)/32 + self%beta(0) * gamma(1)/16
-    coef(3,3) = self%beta(0)**2 * gamma(0)/24
+    coef = 0; coef(1,:) = 2 * gamma(:2)/powList(4,3)
+
+    do n = 2, 3
+      do j = 2, n
+
+        do i = j - 1, n - 1
+          coef(j,n) = coef(j,n) + i * self%beta(n - i - 1) * &
+          coef(j-1,i)/2**( 2 * (n - i) )
+        end do
+
+      coef(j,n) = 2 * coef(j,n)/j
+
+      end do
+    end do
 
    end subroutine wTildeExpand
 
 !ccccccccccccccc
 
    pure subroutine kTildeExpand(self, gamma, coef)
-    class (AnomDim)            , intent(in   ) :: self
-    real (dp),  dimension(0:3) , intent(in   ) :: gamma
-    real (dp), dimension(0:4,3), intent(inout) :: coef
+    class (AnomDim)            , intent(in ) :: self
+    real (dp), dimension(0:3)  , intent(in ) :: gamma
+    real (dp), dimension(0:4,3), intent(out) :: coef
+    integer                                  :: n, i, j
 
-    coef = 0;  coef(2,1) = gamma(0)/4;  coef(2,2) = gamma(1)/16
-    coef(2,3) = gamma(2)/64;            coef(3,2) = self%beta(0) * gamma(0)/24
-    coef(3,3) = ( self%beta(1) * gamma(0) + 2 * self%beta(0) * gamma(1) )/96
-    coef(4,3) = self%beta(0) * self%beta(0) * gamma(0)/96
+    coef = 0; coef(2,:) = gamma(:2)/powList(4,3)
+
+    do n = 2, 3
+      do j = 3, n + 1
+
+        do i = j - 2, n - 1
+          coef(j,n) = coef(j,n) + i * self%beta(n - i - 1) * &
+          coef(j-1,i)/2**( 2 * (n - i) )
+        end do
+
+      coef(j,n) = 2 * coef(j,n)/j
+
+      end do
+    end do
 
    end subroutine kTildeExpand
 
