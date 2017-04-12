@@ -754,11 +754,7 @@ module AnomDimClass
     real (dp), intent(out), dimension(0:4,3) :: coef
     integer                                  :: n, i, j
 
-    coef = 0
-
-    do n = 1, 3
-      coef(1,n) = gamma(n-1)/2**(2*n - 1)
-    end do
+    coef = 0; coef(1,:) = 2 * gamma(:2)/powList(4,3)
 
     do n = 2, 3
       do j = 2, n
@@ -778,14 +774,25 @@ module AnomDimClass
 !ccccccccccccccc
 
    pure subroutine kTildeExpand(self, gamma, coef)
-    class (AnomDim)            , intent(in   ) :: self
-    real (dp),  dimension(0:3) , intent(in   ) :: gamma
-    real (dp), dimension(0:4,3), intent(inout) :: coef
+    class (AnomDim)            , intent(in ) :: self
+    real (dp), dimension(0:3)  , intent(in ) :: gamma
+    real (dp), dimension(0:4,3), intent(out) :: coef
+    integer                                  :: n, i, j
 
-    coef = 0;  coef(2,1) = gamma(0)/4;  coef(2,2) = gamma(1)/16
-    coef(2,3) = gamma(2)/64;            coef(3,2) = self%beta(0) * gamma(0)/24
-    coef(3,3) = ( self%beta(1) * gamma(0) + 2 * self%beta(0) * gamma(1) )/96
-    coef(4,3) = self%beta(0) * self%beta(0) * gamma(0)/96
+    coef = 0; coef(2,:) = gamma(:2)/powList(4,3)
+
+    do n = 2, 3
+      do j = 3, n + 1
+
+        do i = j - 2, n - 1
+          coef(j,n) = coef(j,n) + i * self%beta(n - i - 1) * &
+          coef(j-1,i)/2**( 2 * (n - i) )
+        end do
+
+      coef(j,n) = 2 * coef(j,n)/j
+
+      end do
+    end do
 
    end subroutine kTildeExpand
 
