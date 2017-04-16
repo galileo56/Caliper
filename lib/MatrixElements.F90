@@ -984,7 +984,7 @@ module MatrixElementsClass
 
         end do
 
-        b(n,j+1) = b(n,j+1)/(j+1)
+        b(n,j+1) = b(n,j+1)/(j + 1)
 
       end do
     end do
