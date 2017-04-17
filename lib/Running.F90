@@ -27,7 +27,7 @@ module RunningClass
     DiffR, PSdelta
 
     procedure, pass(self), private :: MSRMatching, alphaQCDReal, alphaQCDComplex, &
-    wTildeReal, wTildeComplex, kTildeReal, kTildeComplex, RunningMass, sCoefLambda
+    wTildeReal, wTildeComplex, kTildeReal, kTildeComplex, RunningMass
 
     generic, public :: alphaQCD => alphaQCDReal, alphaQCDComplex
     generic, public :: wTilde   => wTildeReal  , wTildeComplex
@@ -403,39 +403,6 @@ module RunningClass
    end function Integrand
 
    end function MSRmass
-
-!ccccccccccccccc
-
-  function sCoefLambda(self, type, lambda) result(res)
-     class (Running)      , intent(in) :: self
-     real (dp)            , intent(in) :: lambda
-     character (len = *)  , intent(in) :: type
-     real (dp)          , dimension(4) :: res, scoef
-     real (dp)                         :: lg
-
-     scoef = 0; lg = log(lambda)
-
-     if ( type(:7) == 'Natural' ) then
-       scoef = self%sCoefNatural
-     else if ( type(:9) == 'Practical' ) then
-       scoef = self%sCoef
-     end if
-
-     res = scoef
-
-     res(2) = res(2) - lg * scoef(1)
-
-     res(3) = res(3) - 2 * lg * scoef(2) + scoef(1) * (  lg**2 - ( 2 * self%bHat(1) &
-     + self%bHat(2) ) * lg  )
-
-     res(4) = res(4) - 3 * lg * scoef(3) + scoef(2) * (  3 * lg**2 - ( 3 * self%bHat(1) &
-     + self%bHat(2) ) * lg  ) + scoef(1) * (  (self%bHat(3) - 3 * self%bHat(1)**2 +&
-     3 * self%bHat(2) - self%bHat(1) * self%bHat(2)) * lg + ( 9 * self%bHat(1)/2 &
-     + 2 * self%bHat(2) ) * lg**2 - lg**3  )
-
-     res = lambda * res
-
-  end function sCoefLambda
 
 !ccccccccccccccc
 
