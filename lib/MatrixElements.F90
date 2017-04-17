@@ -966,13 +966,13 @@ module MatrixElementsClass
 !ccccccccccccccc
 
   pure function expandExpMat(a) result(b)
-    real (dp), dimension(0:4,3), intent(in) :: a
-    real (dp), dimension(0:6,0:3)           :: b
-    integer                                 :: i, j, n, l, m
+    real (dp), dimension(:,:)            , intent(in) :: a
+    real (dp), dimension( 0:2*size(a,2),0:size(a,2) ) :: b
+    integer                                           :: i, j, n, l, m
 
     b = 0; b(0,0) = 1
 
-    do j = 0, 2
+    do j = 0, size(a,2) - 1
       do n = 0, 2 * (j + 1)
 
         b(n,j+1) = 0
@@ -980,7 +980,7 @@ module MatrixElementsClass
         do i = 0, j
 
           l = max( 0, n - 2 * (j - i) ); m = min(n, i + 2)
-          b(n,j+1) = b(n,j+1) + (i + 1) * sum( a(l:m,i+1) * b(n-l:n-m:-1,j-i) )
+          b(n,j+1) = b(n,j+1) + (i + 1) * sum( a(l+1:m+1,i+1) * b(n-l:n-m:-1,j-i) )
 
         end do
 
