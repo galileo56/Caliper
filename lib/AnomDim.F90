@@ -1228,13 +1228,22 @@ module AnomDimClass
 !ccccccccccccccc ! Expand series in alpha when alpha is another series in alpha' (e.g. flavor matching)
 
   pure subroutine alphaReExpand(a, b)
-    real (dp), dimension(3), intent(inout) :: a(:)
-    real (dp), dimension(3), intent(in)    :: b(:)
+    real (dp), dimension(:), intent(inout)   :: a
+    real (dp), dimension(:), intent(in)      :: b
+    real (dp), dimension( size(b), size(b) ) :: c
+    integer                                  :: n, j
 
-    if ( size(a) > 1 ) a(2) = a(2) + a(1) * b(2)
-    if ( size(a) > 2 ) a(3) = a(3) + 2 * a(2) * b(2) + a(1) * b(3)
-    if ( size(a) > 3 ) a(4) = a(4) + 3 * a(3) * b(2) + a(2) * b(2)**2 &
-    + 2 * a(2) * b(3) + a(1) * b(4)
+    c(1,:) = b
+
+    do n = 1, size(a) - 1
+
+      do j = n + 1, size(a)
+        c(n+1,j) = sum( b(:j-n) * c(n,j-1:n:-1) )
+      end do
+
+      a(n+1) = sum( a(:n+1) * c(:n+1,n+1) )
+
+    end do
 
   end
 
