@@ -1225,7 +1225,7 @@ module AnomDimClass
 
   end function GammaRComputer
 
-!ccccccccccccccc ! missing documentation
+!ccccccccccccccc ! Expand series in alpha when alpha is another series in alpha' (e.g. flavor matching)
 
   pure subroutine alphaReExpand(a, b)
     real (dp), dimension(3), intent(inout) :: a(:)
