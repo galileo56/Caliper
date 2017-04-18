@@ -57,7 +57,7 @@ module AlphaClass
 
     InitAlpha%andim = andimlist
 
-    InitAlpha%muRef = 0; InitAlpha%run = run; InitAlpha%n = order - 1
+    InitAlpha%muRef = 0; InitAlpha%run = run; InitAlpha%n = min(3,order - 1)
     InitAlpha%muRef(5) = mZ
 
     if ( present(method) ) then
@@ -123,10 +123,10 @@ module AlphaClass
 
     self%mT = mT; self%muRef(6) = muT; alphaList(0) = 1; lgList(0) = 1
 
-    tab = self%andim(6)%alphaMatchingInverse(6)
+    tab = self%andim(6)%alphaMatching(6)
     aS  = self%alphaGeneric(self%andim(5), self%muRef(5), self%alphaRef(5), muT)
     lgList(1:) = PowList(2 * log(muT/mT), self%n); alphaList(1:) = PowList(aS/Pi, self%n)
-    self%alphaRef(6) = aS * dot_product( alphaList, matmul(tab(:self%n,:self%n), lgList) )
+    self%alphaRef(6) = aS * dot_product(  alphaList, getInverse( matmul(tab(:self%n,:self%n), lgList) )  )
 
   end subroutine SetMTop
 
@@ -622,6 +622,29 @@ module AlphaClass
     class (Alpha), intent(in) :: self
     scheme = self%str
    end function scheme
+
+!ccccccccccccccc
+
+  pure function getInverse(c) result(d)
+    real (dp), dimension(:)         , intent(in) :: c
+    real (dp), dimension( size(c) )              :: d
+    real (dp), dimension( 0:size(c) - 1, 0:size(c) ) :: e
+    integer :: n, j
+
+    d(1) = 1; e = 0; e(0,0) = 1
+
+    do n = 2, size(c)
+
+      do j = n - 1, size(c)
+        e(n - 1,j) = sum( c(:j - n + 2) * e(n - 2,j - 1:n - 2:-1) )
+      end do
+
+      d(n) = - sum( d(:n-1) * e(1:n-1,n) )
+
+    end do
+
+  end function getInverse
+
 
 !ccccccccccccccc
 
