@@ -278,45 +278,62 @@ module AlphaClass
    class (Alpha)            , intent(in) :: self
    type (AnomDim)           , intent(in) :: adim
    real (dp)                , intent(in) :: mZ, amZ, mu
-   real (dp), dimension(0:4)             :: beta
-   real (dp)                             :: L, arg, LG, h, k1, k2, k3, k4, aLLInv, corr
    integer                               :: n, i, ord
-   real (dp), dimension(0:4)             :: bCoef, cCoef
+   real (dp), dimension(0:4)             :: bCoef, cCoef, beta, a0List, aLList
+   real (dp), dimension(-3:2,0:4)        :: b ! (:,2) corresponds to log expansion
    real (dp), dimension(0:20)            :: ExpandCoeff
+   real (dp)                             :: L, h, k1, k2, k3, k4, aLL, aLLInv, corr, a0
 
     if ( max( amZ, mZ, mu ) <= d1mach(1) ) then
-      alphaGenericReal = 0; return
+      alphaGenericReal = 0;  return
     end if
 
-    beta  = adim%betaQCD('beta')
-    bCoef = adim%betaQCD('bCoef')
+    beta  = adim%betaQCD('beta') ;  bCoef = adim%betaQCD('bCoef')
+    cCoef = adim%betaQCD('cCoef')
 
-    if ( self%method(:8) == 'analytic' ) then
+    if ( self%method(:8) == 'analytic' .or. self%method(:7) == 'inverse' ) then
 
-      L = log(mu/mZ);  arg = amZ * L * beta(0)/2/Pi;  LG  = log(1 + arg)
-      alphaGenericReal = 1
+      a0 = amZ/fourPi;  b = 0; b(:1,0) = 1
 
-      if (self%run > 0) alphaGenericReal = alphaGenericReal + arg
-      if (self%run > 1) alphaGenericReal = alphaGenericReal + beta(1)/beta(0) * amZ * LG/4/Pi
+      if (self%run > 0) then
+         aLL = 1/( 1/a0 + 2 * log(mu/mZ) * beta(0) ); b(1,0) = 1
+       end if
 
-      if (self%run > 2) alphaGenericReal = alphaGenericReal + 1/( 16 * Pi2 + &
-       8 * Pi * amZ * L * beta(0) ) * (  amZ**2 * LG * beta(1)**2/beta(0)**2 - &
-       ( amZ**3 * L * beta(1)**2/2/Pi )/beta(0) + amZ**3 * L * beta(2)/2/Pi  )
+      if (self%run > 1) b(1,1) = aLL * cCoef(1) * log(aLL/a0)
 
-      if (self%run > 3) alphaGenericReal = alphaGenericReal + ( -amZ**3 * LG**2 * beta(1)**3/beta(0)**3 + &
-       amZ**5 * L**2 * beta(1)**3/beta(0)/4/Pi2 - amZ**5 * L**2 * beta(1) * beta(2)/2/Pi2 + &
-       2 * amZ**3 * LG * beta(1) * beta(2)/beta(0)**2 - amZ**4 * L * beta(1) * beta(2)/beta(0)/Pi + &
-       amZ**4 * L * beta(3)/Pi + amZ**5 * L**2 * beta(0) * beta(3)/4/Pi2 )/32/Pi/( 2 * Pi + amZ * L * beta(0) )**2
+      if (self%run > 2) then
+        a0List(0) = 1; a0List(1:self%run - 1) = powList(a0 , self%run - 1)
+        aLList(0) = 1; aLList(1:self%run - 1) = powList(aLL, self%run - 1)
+      end if
 
-      if (self%run > 4) alphaGenericReal = alphaGenericReal + 4 * amZ**4 * ( - arg * (   6 * beta(0)**2 * &
-      ( beta(1) * beta(3) - beta(0) * beta(4) ) + 2 * arg**2 * (  beta(1)**4 - 3 * beta(0) * beta(1)**2 * beta(2) &
-      + 2 * beta(0)**2 * beta(1) * beta(3) + beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  ) + &
-      3 * arg * (  beta(1)**4 - 4 * beta(0) * beta(1)**2 * beta(2) + 3 * beta(0)**2 * beta(1) * beta(3) + &
-      2 * beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  )   ) + beta(1) * LG * (6 * arg * ( beta(1)**3 &
-      - beta(0) * beta(1) * beta(2)) + 6 * beta(0)**2 * beta(3) - 6 * beta(0) * beta(1) * beta(2) * LG +&
-      beta(1)**3 * LG * (2 * LG - 3)))/(6144 * (1 + arg)**3 * beta(0)**4 * Pi2**2)
+      do n = 2, self%run - 1
 
-      alphaGenericReal = amZ/alphaGenericReal
+        b(2, n - 1) = b(1, n - 1) - sum(  b(1,n-2:1:-1) * b(2,1:n-2) * &
+        [ (i, i = 1, n - 2) ]  )/(n - 1)
+
+        do i = 1, self%run - 2
+          b(-i, n - 1) = b(1 - i, n - 1) - Sum( b(1, n - 1:1:-1) * b(-i, :n-2) )
+        end do
+
+        do i = 2, n
+          b(1, n) = b(1, n) + cCoef(i) * aLList(i) * b(1 - i, n - i)/(i - 1)
+        end do
+
+        b(1, n) = b(1, n) - cCoef(n) * aLL * a0List(n - 1)/(n - 1) &
+        - cCoef(1) * aLL * b(2, n - 1)
+
+      end do
+
+      if ( self%method(:8) == 'analytic') then
+        alphaGenericReal = fourpi * aLL/Sum( b(1,:self%run-1) )
+      else
+
+        if (self%run > 1) b(-1, self%run - 1) = - sum( b(-1,:self%run - 2) * &
+        b(1,self%run - 1:1:-1) )
+
+        alphaGenericReal = fourpi * aLL * Sum( b(-1,:self%run-1) )
+
+      end if
 
     else if ( self%method(:7) == 'numeric' ) then
 
@@ -343,8 +360,7 @@ module AlphaClass
 
       aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
 
-      cCoef = adim%betaQCD('cCoef')
-      cCoef(1:self%run) = cCoef(1:self%run)/PowList(4 * Pi,self%run)
+      cCoef(1:self%run) = cCoef(1:self%run)/PowList(fourPi,self%run)
 
       alphaGenericReal = 1/aLLInv
 
@@ -461,46 +477,64 @@ module AlphaClass
     type (AnomDim)           , intent(in) :: adim
     real    (dp)             , intent(in) :: mZ, amZ
     complex (dp)             , intent(in) :: mu
-    real (dp), dimension(0:4)             :: beta
     real (dp)                             :: h, theta, mod
     integer                               :: n, i, ord
-    real (dp), dimension(0:4)             :: bCoef, cCoef
-    complex (dp)                          :: L, arg, LG, k1, k2, k3, k4, aLLinv, corr
-    real (dp), dimension(0:20)            :: ExpandCoeff
+    complex (dp), dimension(0:4)          :: a0List, aLList
+    real (dp)   , dimension(0:4)          :: bCoef, cCoef, beta
+    real (dp)   , dimension(0:20)         :: ExpandCoeff
+    complex (dp), dimension(-3:2,0:4)     :: b ! (:,2) corresponds to log expansion
+    complex (dp)                          :: a0, aLL, k1, k2, k3, k4, aLLinv, corr
 
     if ( max( amZ, mZ ) <= d1mach(1) ) then
       alphaGenericComplex = 0; return
     end if
 
-    beta  = adim%betaQCD('beta')
-    bCoef = adim%betaQCD('bCoef')
+    beta  = adim%betaQCD('beta'); bCoef = adim%betaQCD('bCoef')
+    cCoef = adim%betaQCD('cCoef')
 
-    if ( self%method(:8) == 'analytic' ) then
+    if ( self%method(:8) == 'analytic' .or. self%method(:7) == 'inverse' ) then
 
-    L = log(mu/mZ);  arg = amZ * L * beta(0)/2/Pi;  LG  = log(1 + arg)
-    alphaGenericComplex = 1
+      a0 = amZ/fourPi;  b = 0; b(:1,0) = 1
 
-    if (self%run > 0) alphaGenericComplex = alphaGenericComplex + arg
-    if (self%run > 1) alphaGenericComplex = alphaGenericComplex + beta(1)/beta(0) * amZ * LG/4/Pi
+      if (self%run > 0) then
+         aLL = 1/( 1/a0 + 2 * log(mu/mZ) * beta(0) ); b(1,0) = 1
+       end if
 
-    if (self%run > 2) alphaGenericComplex = alphaGenericComplex + 1/( 16 * Pi2 + &
-     8 * Pi * amZ * L * beta(0) ) * (  amZ**2 * LG * beta(1)**2/beta(0)**2 - &
-     ( amZ**3 * L * beta(1)**2/2/Pi )/beta(0) + amZ**3 * L * beta(2)/2/Pi  )
+      if (self%run > 1) b(1,1) = aLL * cCoef(1) * log(aLL/a0)
 
-    if (self%run > 3) alphaGenericComplex = alphaGenericComplex + ( -amZ**3 * LG**2 * beta(1)**3/beta(0)**3 + &
-     amZ**5 * L**2 * beta(1)**3/beta(0)/4/Pi2 - amZ**5 * L**2 * beta(1) * beta(2)/2/Pi2 + &
-     2 * amZ**3 * LG * beta(1) * beta(2)/beta(0)**2 - amZ**4 * L * beta(1) * beta(2)/beta(0)/Pi + &
-     amZ**4 * L * beta(3)/Pi + amZ**5 * L**2 * beta(0) * beta(3)/4/Pi2 )/32/Pi/( 2 * Pi + amZ * L * beta(0) )**2
+      if (self%run > 2) then
+        a0List(0) = 1; a0List(1:self%run - 1) = powList(a0 , self%run - 1)
+        aLList(0) = 1; aLList(1:self%run - 1) = powList(aLL, self%run - 1)
+      end if
 
-    if (self%run > 4) alphaGenericComplex = alphaGenericComplex + 4 * amZ**4 * ( - arg * (   6 * beta(0)**2 * &
-    ( beta(1) * beta(3) - beta(0) * beta(4) ) + 2 * arg**2 * (  beta(1)**4 - 3 * beta(0) * beta(1)**2 * beta(2) &
-    + 2 * beta(0)**2 * beta(1) * beta(3) + beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  ) + &
-    3 * arg * (  beta(1)**4 - 4 * beta(0) * beta(1)**2 * beta(2) + 3 * beta(0)**2 * beta(1) * beta(3) + &
-    2 * beta(0)**2 * ( beta(2)**2 - beta(0) * beta(4) )  )   ) + beta(1) * LG * (6 * arg * ( beta(1)**3 &
-    - beta(0) * beta(1) * beta(2)) + 6 * beta(0)**2 * beta(3) - 6 * beta(0) * beta(1) * beta(2) * LG +&
-    beta(1)**3 * LG * (2 * LG - 3)))/(6144 * (1 + arg)**3 * beta(0)**4 * Pi2**2)
+      do n = 2, self%run - 1
 
-    alphaGenericComplex = amZ/alphaGenericComplex
+        b(2, n - 1) = b(1, n - 1) - sum(  b(1,n-2:1:-1) * b(2,1:n-2) * &
+        [ (i, i = 1, n - 2) ]  )/(n - 1)
+
+        do i = 1, self%run - 2
+          b(-i, n - 1) = b(1 - i, n - 1) - Sum( b(1, n - 1:1:-1) * b(-i, :n-2) )
+        end do
+
+        do i = 2, n
+          b(1, n) = b(1, n) + cCoef(i) * aLList(i) * b(1 - i, n - i)/(i - 1)
+        end do
+
+        b(1, n) = b(1, n) - cCoef(n) * aLL * a0List(n - 1)/(n - 1) &
+        - cCoef(1) * aLL * b(2, n - 1)
+
+      end do
+
+      if ( self%method(:8) == 'analytic') then
+        alphaGenericComplex = fourpi * aLL/Sum( b(1,:self%run-1) )
+      else
+
+        if (self%run > 1) b(-1, self%run - 1) = - sum( b(-1,:self%run - 2) * &
+        b(1,self%run - 1:1:-1) )
+
+        alphaGenericComplex = fourpi * aLL * Sum( b(-1,:self%run-1) )
+
+      end if
 
     else if ( self%method(:7) == 'numeric' ) then
 
@@ -532,8 +566,7 @@ module AlphaClass
       aLLInv = 1/amZ + log(mu/mZ) * beta(0)/2/Pi
       alphaGenericComplex = 1/aLLInv
 
-      cCoef = adim%betaQCD('cCoef')
-      cCoef(1:self%run) = cCoef(1:self%run)/PowList(4 * Pi,self%run)
+      cCoef(1:self%run) = cCoef(1:self%run)/PowList(fourPi,self%run)
 
       if ( self%run <= 1) return
 
