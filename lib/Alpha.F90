@@ -115,12 +115,11 @@ module AlphaClass
 !ccccccccccccccc
 
   subroutine SetMTop(self, mT, muT)
-    class (Alpha), intent(inout) :: self
-    real (dp)    , intent(in   ) :: mT, muT
-
-    real (dp)                             :: aS
-    real (dp)        , dimension(0:3,0:3) :: tab
-    real (dp)      , dimension(0:self%n) :: lgList, alphaList
+    class (Alpha)  , intent(inout) :: self
+    real (dp)      , intent(in   ) :: mT, muT
+    real (dp)                      :: aS
+    real (dp), dimension(0:3,0:3)  :: tab
+    real (dp), dimension(0:self%n) :: lgList, alphaList
 
     self%mT = mT; self%muRef(6) = muT; alphaList(0) = 1; lgList(0) = 1
 
@@ -134,12 +133,11 @@ module AlphaClass
 !ccccccccccccccc
 
   subroutine SetMBottom(self, mB, muB)
-    class (Alpha), intent(inout) :: self
-    real (dp)    , intent(in   ) :: mB, muB
-
-    real (dp)                             :: aS
-    real (dp)        , dimension(0:3,0:3) :: tab
-    real (dp)      , dimension(0:self%n) :: lgList, alphaList
+    class (Alpha)  , intent(inout) :: self
+    real (dp)      , intent(in   ) :: mB, muB
+    real (dp)                      :: aS
+    real (dp), dimension(0:3,0:3)  :: tab
+    real (dp), dimension(0:self%n) :: lgList, alphaList
 
     self%mB = mB; self%muRef(4) = muB; alphaList(0) = 1; lgList(0) = 1
 
@@ -157,12 +155,11 @@ module AlphaClass
 !ccccccccccccccc
 
   subroutine SetMCharm(self, mC, muC)
-    class (Alpha), intent(inout) :: self
-    real (dp)    , intent(in   ) :: mC, muC
-
-    real (dp)                             :: aS
-    real (dp)        , dimension(0:3,0:3) :: tab
-    real (dp)       , dimension(0:self%n) :: lgList, alphaList
+    class (Alpha)  , intent(inout) :: self
+    real (dp)      , intent(in   ) :: mC, muC
+    real (dp)                      :: aS
+    real (dp), dimension(0:3,0:3)  :: tab
+    real (dp), dimension(0:self%n) :: lgList, alphaList
 
     self%mC = mC; self%muRef(3) = muC; alphaList(0) = 1; lgList(0) = 1
 
