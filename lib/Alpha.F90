@@ -33,7 +33,6 @@ module AlphaClass
    procedure, pass(self), public    :: scales, orders, scheme, SetAlpha, SetMTop, &
    SetMBottom, SetMCharm, adim
 
-
   end type Alpha
 
 !ccccccccccccccc
@@ -655,29 +654,6 @@ module AlphaClass
     class (Alpha), intent(in) :: self
     scheme = self%str
    end function scheme
-
-!ccccccccccccccc
-
-  pure function getInverse(c) result(d)
-    real (dp), dimension(:)         , intent(in) :: c
-    real (dp), dimension( size(c) )              :: d
-    real (dp), dimension( 0:size(c) - 1, 0:size(c) ) :: e
-    integer :: n, j
-
-    d(1) = 1; e = 0; e(0,0) = 1
-
-    do n = 2, size(c)
-
-      do j = n - 1, size(c)
-        e(n - 1,j) = sum( c(:j - n + 2) * e(n - 2,j - 1:n - 2:-1) )
-      end do
-
-      d(n) = - sum( d(:n-1) * e(1:n-1,n) )
-
-    end do
-
-  end function getInverse
-
 
 !ccccccccccccccc
 

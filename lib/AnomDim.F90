@@ -7,7 +7,7 @@ module AnomDimClass
   ep = 1.19_dp, del = - 0.481_dp, fourPi = 4 * Pi
 
   public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta, &
-  MSbarDeltaPiece, PowList
+  MSbarDeltaPiece, PowList, getInverse
 
   interface PowList
     module procedure   :: PowListDP, PowListInt, PowListComp
@@ -24,7 +24,7 @@ module AnomDimClass
     real (dp), dimension(0:4)     :: bHat, bCoef, cCoef
     real (dp), dimension(0:4)     :: beta
     real (dp), dimension(0:4)     :: gammaMass
-    real (dp), dimension(0:3)     :: gammaHard, gammaB, gammaJet, gammaSoft,&
+    real (dp), dimension(0:3)     :: gammaHard, gammaB, gammaJet, gammaSoft, &
     cusp, gtilde, gl
     real (dp), dimension(4)       :: sCoefMSR, sCoefMSRNatural, betaList, &
     gammaR,  gammaRNatural, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, &
@@ -34,16 +34,16 @@ module AnomDimClass
 
     procedure, pass(self), public :: expandAlpha, wTildeExpand, kTildeExpand, &
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
-    bHQETgamma, alphaMatching, alphaMatchingInverse, wTildeHm, GammaRComputer,&
+    bHQETgamma, alphaMatching, wTildeHm, GammaRComputer, sCoefRecursive, PScoef,&
     sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12, sCoefGeneric, cCoeff, &
-    P12Generic, N12Generic, sCoefRecursive, PScoef
+    P12Generic, N12Generic
 
    procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
    kTildeComplex, rootReal, rootComplex
 
-   generic, public   :: wTilde => wTildeReal, wTildeComplex
-   generic, public   :: kTilde => kTildeReal, kTildeComplex
-   generic, public   :: root   => rootReal, rootComplex
+   generic, public                :: wTilde => wTildeReal, wTildeComplex
+   generic, public                :: kTilde => kTildeReal, kTildeComplex
+   generic, public                :: root   => rootReal, rootComplex
 
   end type AnomDim
 
@@ -1168,31 +1168,6 @@ module AnomDimClass
 
   end function alphaMatching
 
-!ccccccccccccccc
-
-  pure function alphaMatchingInverse(self, nf) result(tab)
-    class (AnomDim), intent(in)   :: self
-    integer        , intent(in)   :: nf
-    real (dp), dimension(0:3,0:3) :: tab
-
-    tab = 0
-
-    if ( self%str(:5) == 'MSbar' ) then
-
-      tab(0,0)  = 1;  tab(1,1) = 1._dp/6;  tab(2,:2) = [ - 11._dp/72, 19._dp/24, 1._dp/36 ]
-      tab(3,1:) = [ 3427._dp/864 - 281._dp * nf/1728, 511._dp/576, 1._dp/216 ]
-      tab(3,0)  = - 1.0567081783962546_dp + 0.08465149176954732_dp * nf
-
-    else if ( self%str(:4) == 'pole' ) then
-
-      tab(0,0)  = 1;  tab(1,1) = 1._dp/6;  tab(2,:2) = [ 7._dp/24, 19._dp/24, 1._dp/36 ]
-      tab(3,1:) = [ ( 9350 - 409._dp * nf )/1728, 511._dp/576, 1._dp/216 ]
-      tab(3,0)  = 5.586361025786356_dp - 0.26247081195432964_dp * nf
-
-    end if
-
-  end function alphaMatchingInverse
-
 !ccccccccccccccc pole - MSR mass with mu = R
 
  pure function MSRDelta(self) result(coef)
@@ -1201,8 +1176,8 @@ module AnomDimClass
     real (dp), dimension(0:3,0:3) :: tab
 
     coef = MSbarDelta(self%nf, 1, self%err)
-    tab = self%alphaMatchingInverse(self%nf + 1)
-    b = tab(:,0); call alphaReExpand(coef, b)
+    tab = self%alphaMatching(self%nf + 1)
+    b = getInverse( tab(:,0) ); call alphaReExpand(coef, b)
 
   end function MSRDelta
 
@@ -1441,6 +1416,28 @@ module AnomDimClass
     121_dp * nl**2/108 - nh * nl**2/18._dp - nl**3/54._dp
 
   end function MSbarDeltaPiece
+
+!ccccccccccccccc
+
+  pure function getInverse(c) result(d)
+    real (dp), dimension(:)         , intent(in) :: c
+    real (dp), dimension( size(c) )              :: d
+    real (dp), dimension( 0:size(c) - 1, 0:size(c) ) :: e
+    integer :: n, j
+
+    d(1) = 1; e = 0; e(0,0) = 1
+
+    do n = 2, size(c)
+
+      do j = n - 1, size(c)
+        e(n - 1,j) = sum( c(:j - n + 2) * e(n - 2,j - 1:n - 2:-1) )
+      end do
+
+      d(n) = - sum( d(:n-1) * e(1:n-1,n) )
+
+    end do
+
+  end function getInverse
 
 !ccccccccccccccc
 
