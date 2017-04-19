@@ -118,7 +118,7 @@ module SigmaClass
     integer                                  :: i, n
 
     rQ = 1;  logList(0) = 1; alphaList(0) = 1 ; n = min(order,4) - 1
-    if (order > 1)   logList(1:) = PowList( log(Q/mu)               , n     )
+    if (order > 1)   logList(1:) = PowList( log(mu/Q), n)
     if (order > 0) alphaList(1:) = PowList( self%run%alphaQCD(mu)/Pi, min(order,4) )
 
     alpha_loop: do i = 2, min(order,4)

@@ -31,7 +31,7 @@ module AlphaClass
 
    procedure, pass(self)            :: alphaQCDReal, alphaQCDComplex, alphaGenericReal, alphaGenericComplex
    procedure, pass(self), public    :: scales, orders, scheme, SetAlpha, SetMTop, &
-   SetMBottom, SetMCharm, adim
+   SetMBottom, SetMCharm, adim, thresholdMatching
 
   end type Alpha
 
@@ -117,15 +117,18 @@ module AlphaClass
     class (Alpha)  , intent(inout) :: self
     real (dp)      , intent(in   ) :: mT, muT
     real (dp)                      :: aS
-    real (dp), dimension(0:3,0:3)  :: tab
+    ! real (dp), dimension(0:3,0:3)  :: tab
     real (dp), dimension(0:self%n) :: lgList, alphaList
 
     self%mT = mT; self%muRef(6) = muT; alphaList(0) = 1; lgList(0) = 1
 
-    tab = self%andim(6)%alphaMatchingLog(6)
+    ! tab = self%andim(6)%alphaMatchingLog(6)
     aS  = self%alphaGeneric(self%andim(5), self%muRef(5), self%alphaRef(5), muT)
-    lgList(1:) = PowList(2 * log(muT/mT), self%n); alphaList(1:) = PowList(aS/Pi, self%n)
-    self%alphaRef(6) = aS * dot_product(  alphaList, getInverse( matmul(tab(:self%n,:self%n), lgList) )  )
+    ! lgList(1:) = PowList(2 * log(muT/mT), self%n); alphaList(1:) = PowList(aS/Pi, self%n)
+    ! self%alphaRef(6) = aS * dot_product(  alphaList, getInverse( matmul(tab(:self%n,:self%n), lgList) )  )
+
+    self%alphaRef(6) = pi * sum(   PowList(aS/Pi, self%n+1) * &
+    getInverse(  self%thresholdMatching( 6,log(muT/mT) )  )   )
 
   end subroutine SetMTop
 
@@ -135,15 +138,18 @@ module AlphaClass
     class (Alpha)  , intent(inout) :: self
     real (dp)      , intent(in   ) :: mB, muB
     real (dp)                      :: aS
-    real (dp), dimension(0:3,0:3)  :: tab
+    ! real (dp), dimension(0:3,0:3)  :: tab
     real (dp), dimension(0:self%n) :: lgList, alphaList
 
     self%mB = mB; self%muRef(4) = muB; alphaList(0) = 1; lgList(0) = 1
 
     aS  = self%alphaGeneric(self%andim(5), self%muRef(5), self%alphaRef(5), muB )
-    tab = self%andim(5)%alphaMatchingLog(5)
-    lgList(1:) = PowList(2 * log(muB/mB), self%n); alphaList(1:) = PowList(aS/Pi, self%n)
-    self%alphaRef(4) = aS * dot_product( alphaList, matmul(tab(:self%n,:self%n), lgList) )
+    ! tab = self%andim(5)%alphaMatchingLog(5)
+    ! lgList(1:) = PowList(2 * log(muB/mB), self%n); alphaList(1:) = PowList(aS/Pi, self%n)
+    ! self%alphaRef(4) = aS * dot_product( alphaList, matmul(tab(:self%n,:self%n), lgList) )
+
+    self%alphaRef(4) = pi * sum(  self%thresholdMatching( 5,log(muB/mB) ) &
+    * PowList(aS/Pi, self%n+1)  )
 
 !   Running from mB to muC, with nf = 4 flavors, and matching
 
@@ -640,28 +646,27 @@ module AlphaClass
 !ccccccccccccccc
 
   function thresholdMatching(self, nf, lg) result(e)
-    class (Alpha)       , intent(in) :: self
-    integer             , intent(in) :: nf
-    real (dp)           , intent(in) :: lg
-    real (dp), dimension(self%n + 1) :: e
-    real (dp), dimension(0:self%n+1) :: lgList
-    real (dp), dimension(0:4,0:4)    :: b, c
-    real (dp), dimension(0:self%n + 1,0:self%n + 1) :: ePow
-    integer                          :: n, i
+    class (Alpha)                  , intent(in) :: self
+    integer                        , intent(in) :: nf
+    real (dp)                      , intent(in) :: lg
+    real (dp), dimension(self%n + 1)            :: e
+    real (dp), dimension(0:self%n  )            :: lgList
+    real (dp), dimension(0:3       , 0:4      ) :: b, c
+    real (dp), dimension(self%n + 1,self%n + 1) :: ePow
+    integer                                     :: n, i
 
-    lgList(0) = 1; lgList(1:) = powList(lg, self%n+1); e(1) = 1; ePow = 0
+    lgList(0) = 1; lgList(1:) = powList(lg, self%n); e = 0; e(1) = 1; ePow = 0
 
     b = 0; c = 0; c(0,1) = 1 ;  b(0,1:) = self%andim(nf)%alphaMatching(nf)
-    call self%andim(nf - 1)%expandAlpha(b); call self%andim(nf)%expandAlpha(c)
+    call self%andim(nf    )%expandAlpha( b(:,1:) )
+    call self%andim(nf - 1)%expandAlpha( c(:,1:) )
 
-    b(0,:self%n + 1) = matmul( lgList, b(:self%n + 1,:self%n + 1) ); b(1:,:) = 0
-    c(0,:self%n + 1) = matmul( lgList, c(:self%n + 1,:self%n + 1) ); c(1:,:) = 0
-
-    ePow(0,0) = 1
+    b(0,:self%n + 1) = matmul( lgList, b(:self%n,:self%n + 1) )
+    c(0,:self%n + 1) = matmul( lgList, c(:self%n,:self%n + 1) )
 
     do n = 2, self%n + 1
 
-      ePow(1,n - 1) = e(n - 1)!; ePow(n-1,n-1) = 1
+      ePow(1,n - 1) = e(n - 1)
 
       do i = 2, n
         ePow(i,n) = sum( e(:n + 1 - i) * ePow(i - 1,n - 1:i - 1:-1) )
