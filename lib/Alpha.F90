@@ -31,7 +31,7 @@ module AlphaClass
 
    procedure, pass(self)            :: alphaQCDReal, alphaQCDComplex, alphaGenericReal, alphaGenericComplex
    procedure, pass(self), public    :: scales, orders, scheme, SetAlpha, SetMTop, &
-   SetMBottom, SetMCharm, adim
+   SetMBottom, SetMCharm, adim, thresholdMatching
 
   end type Alpha
 
@@ -117,15 +117,14 @@ module AlphaClass
     class (Alpha)  , intent(inout) :: self
     real (dp)      , intent(in   ) :: mT, muT
     real (dp)                      :: aS
-    real (dp), dimension(0:3,0:3)  :: tab
-    real (dp), dimension(0:self%n) :: lgList, alphaList
+    real (dp), dimension(0:self%n) :: alphaList
 
-    self%mT = mT; self%muRef(6) = muT; alphaList(0) = 1; lgList(0) = 1
+    self%mT = mT; self%muRef(6) = muT; alphaList(0) = 1
 
-    tab = self%andim(6)%alphaMatching(6)
     aS  = self%alphaGeneric(self%andim(5), self%muRef(5), self%alphaRef(5), muT)
-    lgList(1:) = PowList(2 * log(muT/mT), self%n); alphaList(1:) = PowList(aS/Pi, self%n)
-    self%alphaRef(6) = aS * dot_product(  alphaList, getInverse( matmul(tab(:self%n,:self%n), lgList) )  )
+
+    self%alphaRef(6) = pi * sum(   PowList(aS/Pi, self%n+1) * &
+    getInverse(  self%thresholdMatching( 6, log(muT/mT) )  )   )
 
   end subroutine SetMTop
 
@@ -135,15 +134,14 @@ module AlphaClass
     class (Alpha)  , intent(inout) :: self
     real (dp)      , intent(in   ) :: mB, muB
     real (dp)                      :: aS
-    real (dp), dimension(0:3,0:3)  :: tab
-    real (dp), dimension(0:self%n) :: lgList, alphaList
+    real (dp), dimension(0:self%n) :: alphaList
 
-    self%mB = mB; self%muRef(4) = muB; alphaList(0) = 1; lgList(0) = 1
+    self%mB = mB; self%muRef(4) = muB; alphaList(0) = 1
 
     aS  = self%alphaGeneric(self%andim(5), self%muRef(5), self%alphaRef(5), muB )
-    tab = self%andim(5)%alphaMatching(5)
-    lgList(1:) = PowList(2 * log(muB/mB), self%n); alphaList(1:) = PowList(aS/Pi, self%n)
-    self%alphaRef(4) = aS * dot_product( alphaList, matmul(tab(:self%n,:self%n), lgList) )
+
+    self%alphaRef(4) = pi * sum(  self%thresholdMatching( 5, log(muB/mB) ) &
+    * PowList(aS/Pi, self%n+1)  )
 
 !   Running from mB to muC, with nf = 4 flavors, and matching
 
@@ -157,15 +155,14 @@ module AlphaClass
     class (Alpha)  , intent(inout) :: self
     real (dp)      , intent(in   ) :: mC, muC
     real (dp)                      :: aS
-    real (dp), dimension(0:3,0:3)  :: tab
-    real (dp), dimension(0:self%n) :: lgList, alphaList
+    real (dp), dimension(0:self%n) :: alphaList
 
-    self%mC = mC; self%muRef(3) = muC; alphaList(0) = 1; lgList(0) = 1
+    self%mC = mC; self%muRef(3) = muC; alphaList(0) = 1
 
-    tab = self%andim(4)%alphaMatching(4)
     aS  = self%alphaGeneric(self%andim(4), self%muRef(4), self%alphaRef(4), muC)
-    lgList(1:) = PowList(2 * log(muC/mC), self%n); alphaList(1:) = PowList(aS/Pi, self%n)
-    self%alphaRef(3) = aS * dot_product(  alphaList, matmul( tab(:self%n,:self%n), lgList )  )
+
+    self%alphaRef(3) = pi * sum(  self%thresholdMatching( 4, log(muC/mC) ) &
+    * PowList(aS/Pi, self%n+1)  )
 
   end subroutine SetMCharm
 
@@ -283,9 +280,7 @@ module AlphaClass
    real (dp), dimension(0:20)            :: ExpandCoeff
    real (dp)                             :: L, h, k1, k2, k3, k4, aLL, aLLInv, corr, a0
 
-    if ( max( amZ, mZ, mu ) <= d1mach(1) ) then
-      alphaGenericReal = 0;  return
-    end if
+    alphaGenericReal = 0;  if ( max( amZ, mZ, mu ) <= d1mach(1) ) return
 
     beta  = adim%betaQCD('beta') ;  bCoef = adim%betaQCD('bCoef')
     cCoef = adim%betaQCD('cCoef')
@@ -484,9 +479,7 @@ module AlphaClass
     complex (dp), dimension(-3:2,0:4)     :: b ! (:,2) corresponds to log expansion
     complex (dp)                          :: a0, aLL, k1, k2, k3, k4, aLLinv, corr
 
-    if ( max( amZ, mZ ) <= d1mach(1) ) then
-      alphaGenericComplex = 0; return
-    end if
+    alphaGenericComplex = 0; if ( max( amZ, mZ ) <= d1mach(1) ) return
 
     beta  = adim%betaQCD('beta'); bCoef = adim%betaQCD('bCoef')
     cCoef = adim%betaQCD('cCoef')
@@ -636,6 +629,41 @@ module AlphaClass
     end function
 
   end function alphaGenericComplex
+
+!ccccccccccccccc
+
+  function thresholdMatching(self, nf, lg) result(e)
+    class (Alpha)                  , intent(in) :: self
+    integer                        , intent(in) :: nf
+    real (dp)                      , intent(in) :: lg
+    real (dp), dimension(self%n + 1)            :: e
+    real (dp), dimension(0:self%n  )            :: lgList
+    real (dp), dimension(0:3       , 0:4      ) :: b, c
+    real (dp), dimension(self%n + 1,self%n + 1) :: ePow
+    integer                                     :: n, i
+
+    lgList(0) = 1; lgList(1:) = powList(lg, self%n); e = 0; e(1) = 1; ePow = 0
+
+    b = 0; c = 0; c(0,1) = 1 ;  b(0,1:) = self%andim(nf)%alphaMatching(nf)
+    call self%andim(nf    )%expandAlpha( b(:,1:) )
+    call self%andim(nf - 1)%expandAlpha( c(:,1:) )
+
+    b(0,:self%n + 1) = matmul( lgList, b(:self%n,:self%n + 1) )
+    c(0,:self%n + 1) = matmul( lgList, c(:self%n,:self%n + 1) )
+
+    do n = 2, self%n + 1
+
+      ePow(1,n - 1) = e(n - 1)
+
+      do i = 2, n
+        ePow(i,n) = sum( e(:n + 1 - i) * ePow(i - 1,n - 1:i - 1:-1) )
+      end do
+
+      e(n) = b(0,n) - sum( c(0,2:n) * ePow(2:n,n) )
+
+    end do
+
+  end function thresholdMatching
 
 !ccccccccccccccc
 

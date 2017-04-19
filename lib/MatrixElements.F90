@@ -214,7 +214,7 @@ module MatrixElementsClass
     integer  , dimension(3)       :: TwoList
     type (AnomDim)                :: andim, andimNl
     real (dp)                     :: mm
-    real (dp), dimension(0:3,0:3) :: tab
+    real (dp), dimension(0:3)     :: tab
     real (dp), dimension(3)       :: a, b
     real (dp), dimension(4)       :: c
     real (dp), dimension(0:4,3)   :: coefCusp, coefCuspNl, coefSoft, coefJet, &
@@ -321,7 +321,7 @@ module MatrixElementsClass
 
      a = ExpEuler * DeltaComputer(InMatMass%BJetExp(1:,:), [0,0,0] * 0._dp, 1)/2
      c = MSbarDelta(nf - 1, 1); tab = andim%alphaMatching(nf)
-     b = tab(:2,0); call alphaReExpand(a,b);  a = c(:3) - a
+     b = tab(:2); call alphaReExpand(a,b);  a = c(:3) - a
      a = a * InMatMass%alphaMMlist
 
      InMatMass%jetMatching(1:) = a
@@ -357,7 +357,7 @@ module MatrixElementsClass
 
     InMatEl%coefCusp = coefCusp
 
-! Assign all constants
+  ! Assign all constants
 
     if ( present(muS) ) then
       alphaS = alphaMass%alphaQCD(muS)/Pi; alphaSList = powList(alphaS, 3)
@@ -395,15 +395,15 @@ module MatrixElementsClass
 
     InMatEl%alphaMass = alphaMass ; InMatEl%andim = andim
 
-! Initialize everything to zero
+  ! Initialize everything to zero
 
     InMatEl%softExpT = 0; InMatEl%softExpC = 0;  InMatEl%HardExp = 0; InMatEl%jetExp = 0
 
-! Non-Global 2-loop soft function
+  ! Non-Global 2-loop soft function
 
     InMatEl%NGlist = alphaSList(2) * NGLOas2(nf)
 
-! Assign non-log matrix element terms
+  ! Assign non-log matrix element terms
 
     InMatEl%softExpT(0,:) = GenMat('SoftThrust', nf, s3T)
     InMatEl%softExpC(0,:) = GenMat('SoftCparam', nf, s3C)
@@ -477,7 +477,7 @@ module MatrixElementsClass
     integer  , dimension(3)         :: TwoList
     type (AnomDim)                  :: andim, andimNl, andimH, andimS
     real (dp)                       :: alphaJ, alphaS, mm, alphaR, EuR
-    real (dp), dimension(0:3,0:3)   :: tab
+    real (dp), dimension(0:3)       :: tab
     real (dp), dimension(0:4,4)     :: coefMSR, coefMassLow, coefMSRNatural, coefMass
     real (dp), dimension(0:4,3)     :: coefCusp, coefSoft, coefJet, coefHard, &
     coefHm, coefCuspnl, coefCuspS, coefSoftNl, coefBjet
@@ -537,7 +537,7 @@ module MatrixElementsClass
 
       a = ExpEuler * DeltaComputer(InMatElMass%BJetExp(1:,:), [0,0,0] * 0._dp, 1)/2
       c = MSbarDelta(nf - 1, 1); tab = andim%alphaMatching(nf)
-      b = tab(:2,0); call alphaReExpand(a,b);  a = c(:3) - a
+      b = tab(:2); call alphaReExpand(a,b);  a = c(:3) - a
       a = a * InMatElMass%alphaMMlist
 
       InMatElMass%jetMatching(1:) = a
