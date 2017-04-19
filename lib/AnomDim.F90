@@ -1180,7 +1180,7 @@ module AnomDimClass
 
     else if ( self%str(:4) == 'pole' ) then
 
-      tab(1,1) = - 1._dp/6;  tab(2,1:2) = [ - 11._dp/24, 1._dp/36 ]
+      tab(1,1) = - 1._dp/6;  tab(2,1:2) = [ - 19._dp/24, 1._dp/36 ]
       tab(3,1:) = - [ ( 8930 - 409._dp * nf )/1728, 131._dp/576, 1._dp/216 ]
 
     end if
