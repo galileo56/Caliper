@@ -36,7 +36,7 @@ module AnomDimClass
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
     bHQETgamma, alphaMatching, wTildeHm, GammaRComputer, sCoefRecursive, PScoef,&
     sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12, sCoefGeneric, cCoeff, &
-    P12Generic, N12Generic, alphaMatchingLog
+    P12Generic, N12Generic
 
    procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
    kTildeComplex, rootReal, rootComplex
@@ -1164,29 +1164,6 @@ module AnomDimClass
 
   end function alphaMatching
 
-!ccccccccccccccc
-
-  pure function alphaMatchingLog(self, nf) result(tab)
-    class (AnomDim), intent(in)   :: self
-    integer        , intent(in)   :: nf
-    real (dp), dimension(0:3,0:3) :: tab
-
-    tab = 0; tab(:,0) = self%alphaMatching(nf)
-
-    if ( self%str(:5) == 'MSbar' ) then
-
-      tab(1,1) = - 1._dp/6; tab(2,1:2) = [ - 19._dp/24, 1._dp/36 ]
-      tab(3,1:) = - [ ( 7074 - 281 * nf )/1728._dp, 131._dp/576, 1._dp/216 ]
-
-    else if ( self%str(:4) == 'pole' ) then
-
-      tab(1,1) = - 1._dp/6;  tab(2,1:2) = [ - 19._dp/24, 1._dp/36 ]
-      tab(3,1:) = - [ ( 8930 - 409._dp * nf )/1728, 131._dp/576, 1._dp/216 ]
-
-    end if
-
-  end function alphaMatchingLog
-
 !ccccccccccccccc pole - MSR mass with mu = R
 
  pure function MSRDelta(self) result(coef)
@@ -1194,7 +1171,6 @@ module AnomDimClass
     real (dp), dimension(4)       :: coef, b
 
     coef = MSbarDelta(self%nf, 1, self%err)
-    ! tab = self%alphaMatching(self%nf + 1)
     b = getInverse( self%alphaMatching(self%nf + 1) ); call alphaReExpand(coef, b)
 
   end function MSRDelta

@@ -29,9 +29,11 @@ module AlphaClass
    generic                          :: alphaQCD     => alphaQCDReal, alphaQCDComplex
    generic, public                  :: alphaGeneric => alphaGenericReal, alphaGenericComplex
 
-   procedure, pass(self)            :: alphaQCDReal, alphaQCDComplex, alphaGenericReal, alphaGenericComplex
+   procedure, pass(self)            :: alphaQCDReal, alphaQCDComplex, alphaGenericReal, &
+   alphaGenericComplex, thresholdMatching
+
    procedure, pass(self), public    :: scales, orders, scheme, SetAlpha, SetMTop, &
-   SetMBottom, SetMCharm, adim, thresholdMatching
+   SetMBottom, SetMCharm, adim
 
   end type Alpha
 
