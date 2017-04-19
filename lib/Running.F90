@@ -579,13 +579,10 @@ module RunningClass
 
   function MSRMatching(self) result(a)
     class (Running), intent(in)    :: self
-    real (dp) , dimension(4)       :: a, b, c
-    real (dp) , dimension(0:3,0:3) :: tab
+    real (dp) , dimension(4)       :: a, c
 
     c   = MSbarDelta(self%nf, 1); a = MSbarDelta(self%nf, 0)
-    tab = self%andim%alphaMatching(self%nf + 1)
-
-    b = tab(:,0); call alphaReExpand(a,b);  a = c - a
+    call alphaReExpand(a,self%andim%alphaMatching(self%nf + 1));  a = c - a
 
   end function MSRMatching
 

@@ -122,7 +122,7 @@ module AlphaClass
 
     self%mT = mT; self%muRef(6) = muT; alphaList(0) = 1; lgList(0) = 1
 
-    tab = self%andim(6)%alphaMatching(6)
+    tab = self%andim(6)%alphaMatchingLog(6)
     aS  = self%alphaGeneric(self%andim(5), self%muRef(5), self%alphaRef(5), muT)
     lgList(1:) = PowList(2 * log(muT/mT), self%n); alphaList(1:) = PowList(aS/Pi, self%n)
     self%alphaRef(6) = aS * dot_product(  alphaList, getInverse( matmul(tab(:self%n,:self%n), lgList) )  )
@@ -141,7 +141,7 @@ module AlphaClass
     self%mB = mB; self%muRef(4) = muB; alphaList(0) = 1; lgList(0) = 1
 
     aS  = self%alphaGeneric(self%andim(5), self%muRef(5), self%alphaRef(5), muB )
-    tab = self%andim(5)%alphaMatching(5)
+    tab = self%andim(5)%alphaMatchingLog(5)
     lgList(1:) = PowList(2 * log(muB/mB), self%n); alphaList(1:) = PowList(aS/Pi, self%n)
     self%alphaRef(4) = aS * dot_product( alphaList, matmul(tab(:self%n,:self%n), lgList) )
 
@@ -162,7 +162,7 @@ module AlphaClass
 
     self%mC = mC; self%muRef(3) = muC; alphaList(0) = 1; lgList(0) = 1
 
-    tab = self%andim(4)%alphaMatching(4)
+    tab = self%andim(4)%alphaMatchingLog(4)
     aS  = self%alphaGeneric(self%andim(4), self%muRef(4), self%alphaRef(4), muC)
     lgList(1:) = PowList(2 * log(muC/mC), self%n); alphaList(1:) = PowList(aS/Pi, self%n)
     self%alphaRef(3) = aS * dot_product(  alphaList, matmul( tab(:self%n,:self%n), lgList )  )
