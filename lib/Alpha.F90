@@ -639,6 +639,42 @@ module AlphaClass
 
 !ccccccccccccccc
 
+  function thresholdMatching(self, nf, lg) result(e)
+    class (Alpha)       , intent(in) :: self
+    integer             , intent(in) :: nf
+    real (dp)           , intent(in) :: lg
+    real (dp), dimension(self%n + 1) :: e
+    real (dp), dimension(0:self%n+1) :: lgList
+    real (dp), dimension(0:4,0:4)    :: b, c
+    real (dp), dimension(0:self%n + 1,0:self%n + 1) :: ePow
+    integer                          :: n, i
+
+    lgList(0) = 1; lgList(1:) = powList(lg, self%n+1); e(1) = 1; ePow = 0
+
+    b = 0; c = 0; c(0,1) = 1 ;  b(0,1:) = self%andim(nf)%alphaMatching(nf)
+    call self%andim(nf - 1)%expandAlpha(b); call self%andim(nf)%expandAlpha(c)
+
+    b(0,:self%n + 1) = matmul( lgList, b(:self%n + 1,:self%n + 1) ); b(1:,:) = 0
+    c(0,:self%n + 1) = matmul( lgList, c(:self%n + 1,:self%n + 1) ); c(1:,:) = 0
+
+    ePow(0,0) = 1
+
+    do n = 2, self%n + 1
+
+      ePow(1,n - 1) = e(n - 1)!; ePow(n-1,n-1) = 1
+
+      do i = 2, n
+        ePow(i,n) = sum( e(:n + 1 - i) * ePow(i - 1,n - 1:i - 1:-1) )
+      end do
+
+      e(n) = b(0,n) - sum( c(0,2:n) * ePow(2:n,n) )
+
+    end do
+
+  end function thresholdMatching
+
+!ccccccccccccccc
+
   pure type (AnomDim) function adim(self, nf)
     class (Alpha), intent(in) :: self
     integer      , intent(in) :: nf

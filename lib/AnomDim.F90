@@ -739,7 +739,7 @@ module AnomDimClass
           coef(j,i)/2**( 2 * (n - i) )
         end do
 
-      coef(j + 1,n) = 2 * coef(j+1,n)/j
+      coef(j + 1,n) = 2 * coef(j + 1,n)/j
 
       end do
     end do
@@ -1171,19 +1171,17 @@ module AnomDimClass
     integer        , intent(in)   :: nf
     real (dp), dimension(0:3,0:3) :: tab
 
-    tab = 0
+    tab = 0; tab(:,0) = self%alphaMatching(nf)
 
     if ( self%str(:5) == 'MSbar' ) then
 
-      tab(0,0)  = 1;  tab(1,1) = - 1._dp/6; tab(2,:2) = [ 11._dp/72, - 19._dp/24, 1._dp/36 ]
+      tab(1,1) = - 1._dp/6; tab(2,1:2) = [ - 19._dp/24, 1._dp/36 ]
       tab(3,1:) = - [ ( 7074 - 281 * nf )/1728._dp, 131._dp/576, 1._dp/216 ]
-      tab(3,0)  = 1.0567081783962546_dp - 0.08465149176954734_dp * nf
 
     else if ( self%str(:4) == 'pole' ) then
 
-      tab(0,0)  = 1;  tab(1,1) = - 1._dp/6;  tab(2,:2) = [ - 7._dp/24, - 11._dp/24, 1._dp/36 ]
+      tab(1,1) = - 1._dp/6;  tab(2,1:2) = [ - 11._dp/24, 1._dp/36 ]
       tab(3,1:) = - [ ( 8930 - 409._dp * nf )/1728, 131._dp/576, 1._dp/216 ]
-      tab(3,0)  = - 5.586361025786356_dp + 0.26247081195432964_dp * nf
 
     end if
 
