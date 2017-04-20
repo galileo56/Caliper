@@ -277,15 +277,59 @@ module AlphaClass
    type (AnomDim)           , intent(in) :: adim
    real (dp)                , intent(in) :: mZ, amZ, mu
    integer                               :: n, i, ord
-   real (dp), dimension(0:4)             :: bCoef, cCoef, beta, a0List, aLList
-   real (dp), dimension(-3:2,0:4)        :: b ! (:,2) corresponds to log expansion
-   real (dp), dimension(0:20)            :: ExpandCoeff
+   real (dp), dimension(0:4)             :: beta
+   real (dp), dimension(0:20)            :: a0List, aLList
+   real (dp), dimension(-20:2,0:20)      :: b ! (2,:) corresponds to log expansion
+   real (dp), dimension(0:20)            :: cCoef
    real (dp)                             :: L, h, k1, k2, k3, k4, aLL, aLLInv, corr, a0
 
     alphaGenericReal = 0;  if ( max( amZ, mZ, mu ) <= d1mach(1) ) return
 
-    beta  = adim%betaQCD('beta') ;  bCoef = adim%betaQCD('bCoef')
-    cCoef = adim%betaQCD('cCoef')
+    if (self%run == 0) then; alphaGenericReal = amZ; return; end if
+
+    beta  = adim%betaQCD('beta') ; cCoef(:4) = adim%betaQCD('cCoef')
+
+    if ( self%method(:6) == 'series' ) then
+      a0 = amZ/fourPi;  b = 0; b(:1,0) = 1
+      cCoef = adim%cCoeff(self%run - 1, 20)
+
+      if (self%run > 0) then
+         aLL = fourPi/( 1/a0 + 2 * log(mu/mZ) * beta(0) ); b(1,0) = 1
+         alphaGenericReal = 1; if ( self%run == 1) go to 20
+       end if
+
+      if (self%run > 1) then
+        b(1,1) = aLL * cCoef(1) * log(aLL/amZ)
+        alphaGenericReal = 1 + b(1,1)
+        a0List(0) = 1; a0List(1:) = powList(amZ , 20)
+        aLList(0) = 1; aLList(1:) = powList(aLL, 20)
+      end if
+
+      do n = 2, 20
+
+        b(2, n - 1) = b(1, n - 1) - sum(  b(1,n-2:1:-1) * b(2,1:n-2) * &
+        [ (i, i = 1, n - 2) ]  )/(n - 1)
+
+        do i = 1, 19
+          b(-i, n - 1) = b(1 - i, n - 1) - Sum( b(1, n - 1:1:-1) * b(-i, :n-2) )
+        end do
+
+        do i = 2, n
+          b(1, n) = b(1, n) + cCoef(i) * aLList(i) * b(1 - i, n - i)/(i - 1)
+        end do
+
+        b(1, n) = b(1, n) - cCoef(n) * aLL * a0List(n - 1)/(n - 1) &
+        - cCoef(1) * aLL * b(2, n - 1)
+
+        alphaGenericReal = alphaGenericReal + b(1,n)
+
+        if (  abs( b(1,n) ) <= 1e-10_dp  ) exit
+
+      end do
+
+  20    alphaGenericReal = aLL/alphaGenericReal
+
+    end if
 
     if ( self%method(:8) == 'analytic' .or. self%method(:7) == 'inverse' ) then
 
@@ -398,7 +442,7 @@ module AlphaClass
 
       if ( self%run <= 1) return
 
-      ExpandCoeff = adim%cCoeff(self%run - 1, 20)
+      cCoef = adim%cCoeff(self%run - 1, 20)
 
       do i = 1, 100
         corr = 1/expand(amZ, alphaGenericReal)
@@ -415,10 +459,10 @@ module AlphaClass
       real (dp)             :: corr
       integer               :: i
 
-      expand = aLLInv + ExpandCoeff(1) * log(aMu/a0)
+      expand = aLLInv + cCoef(1) * log(aMu/a0)
 
       do i = 2, 20
-        corr = ExpandCoeff(i) * ( aMu**(i-1) - a0**(i-1) )/(i - 1)
+        corr = cCoef(i) * ( aMu**(i-1) - a0**(i-1) )/(i - 1)
         if ( abs(corr) <= 1e-10_dp ) return
         expand = expand + corr
       end do
@@ -476,15 +520,14 @@ module AlphaClass
     real (dp)                             :: h, theta, mod
     integer                               :: n, i, ord
     complex (dp), dimension(0:4)          :: a0List, aLList
-    real (dp)   , dimension(0:4)          :: bCoef, cCoef, beta
+    real (dp)   , dimension(0:4)          :: cCoef, beta
     real (dp)   , dimension(0:20)         :: ExpandCoeff
     complex (dp), dimension(-3:2,0:4)     :: b ! (:,2) corresponds to log expansion
     complex (dp)                          :: a0, aLL, k1, k2, k3, k4, aLLinv, corr
 
     alphaGenericComplex = 0; if ( max( amZ, mZ ) <= d1mach(1) ) return
 
-    beta  = adim%betaQCD('beta'); bCoef = adim%betaQCD('bCoef')
-    cCoef = adim%betaQCD('cCoef')
+    beta  = adim%betaQCD('beta'); cCoef = adim%betaQCD('cCoef')
 
     if ( self%method(:8) == 'analytic' .or. self%method(:7) == 'inverse' ) then
 
