@@ -310,8 +310,12 @@ module AlphaClass
         b(2, n - 1) = b(1, n - 1) - sum(  b(1,n-2:1:-1) * b(2,1:n-2) * &
         [ (i, i = 1, n - 2) ]  )/(n - 1)
 
-        do i = 1, 19
-          b(-i, n - 1) = b(1 - i, n - 1) - Sum( b(1, n - 1:1:-1) * b(-i, :n-2) )
+        do i = 1, n
+          b(-i, n - 1) = b(1 - i, n - 1) - Sum( b(1, n - 1:1:-1) * b(-i, :n - 2) )
+        end do
+
+        do i = 1, n - 1
+          b(1 - n, i) = b(2 - n, i) - Sum( b(1, i:1:-1) * b(1 - n, :i - 1) )
         end do
 
         do i = 2, n
@@ -550,8 +554,12 @@ module AlphaClass
         b(2, n - 1) = b(1, n - 1) - sum(  b(1,n-2:1:-1) * b(2,1:n-2) * &
         [ (i, i = 1, n - 2) ]  )/(n - 1)
 
-        do i = 1, 19
-          b(-i, n - 1) = b(1 - i, n - 1) - Sum( b(1, n - 1:1:-1) * b(-i, :n-2) )
+        do i = 1, n
+          b(-i, n - 1) = b(1 - i, n - 1) - Sum( b(1, n - 1:1:-1) * b(-i, :n - 2) )
+        end do
+
+        do i = 1, n - 1
+          b(1 - n, i) = b(2 - n, i) - Sum( b(1, i:1:-1) * b(1 - n, :i - 1) )
         end do
 
         do i = 2, n
