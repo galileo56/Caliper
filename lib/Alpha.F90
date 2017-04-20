@@ -295,7 +295,7 @@ module AlphaClass
 
       if (self%run > 0) then
          aLL = fourPi/( 1/a0 + 2 * log(mu/mZ) * beta(0) ); b(1,0) = 1
-         alphaGenericReal = 1; if ( self%run == 1) go to 20
+         alphaGenericReal = 1; if ( self%run == 1 ) go to 20
        end if
 
       if (self%run > 1) then
@@ -527,7 +527,7 @@ module AlphaClass
 
     alphaGenericComplex = 0; if ( max( amZ, mZ ) <= d1mach(1) ) return
 
-    beta  = adim%betaQCD('beta'); cCoef(:4) = adim%betaQCD('cCoef')
+    beta = adim%betaQCD('beta'); cCoef(:4) = adim%betaQCD('cCoef')
 
     if ( self%method(:6) == 'series' ) then
       a0 = amZ/fourPi;  b = 0; b(:1,0) = 1
@@ -535,7 +535,7 @@ module AlphaClass
 
       if (self%run > 0) then
          aLL = fourPi/( 1/a0 + 2 * log(mu/mZ) * beta(0) ); b(1,0) = 1
-         alphaGenericComplex = 1; if ( self%run == 1) go to 20
+         alphaGenericComplex = 1; if ( self%run == 1 ) go to 30
        end if
 
       if (self%run > 1) then
@@ -567,7 +567,7 @@ module AlphaClass
 
       end do
 
-  20    alphaGenericComplex = aLL/alphaGenericComplex
+  30    alphaGenericComplex = aLL/alphaGenericComplex
 
     end if
 
