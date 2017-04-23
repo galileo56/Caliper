@@ -288,7 +288,6 @@ module RunningClass
    function MSbarDeltaMu(self, mu) result(delta)
      real (dp)      , intent(in) :: mu
      class (Running), intent(in) :: self
-
      real (dp), dimension(4)     :: alphaList, delta
      real (dp), dimension(0:4)   :: logList
 
