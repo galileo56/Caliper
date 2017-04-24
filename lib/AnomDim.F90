@@ -7,7 +7,7 @@ module AnomDimClass
   ep = 1.19_dp, del = - 0.481_dp, fourPi = 4 * Pi
 
   public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta, &
-  MSbarDeltaPiece, PowList, getInverse
+  PowList, getInverse, MSbarDeltaPiece
 
   interface PowList
     module procedure   :: PowListDP, PowListInt, PowListComp
@@ -68,28 +68,13 @@ module AnomDimClass
 
     InAdim%err = 0; if ( present(err) ) InAdim%err = err
 
-    beta = [ 11 - 2 * nf/3._dp, 102 - 38._dp * nf/3, 1428.5_dp - 5033 * nf/18._dp + &
-    325 * nf**2/54._dp, 29242.964136194132_dp - 6946.289617003555_dp * nf + &
-    405.08904045986293_dp * nf**2 + 1.4993141289437586_dp * nf**3, &
-    537147.6740702358_dp - 186161.94951432804_dp * nf + &
-    17567.757653436835_dp * nf**2 - 231.27767265113647_dp * nf**3 - &
-    1.8424744081239026_dp * nf**4 ]
-
-    InAdim%bCoef = beta/beta(0)
+    beta = betaFun(nf);    InAdim%bCoef = beta/beta(0); InAdim%beta = beta
 
     InAdim%str = str ; InAdim%nf   = nf   ; InAdim%gammaHm = 0
-    InAdim%G4  = G4  ; InAdim%beta = beta
+    InAdim%G4  = G4  ; InAdim%GammaMass = massAnomDim(nf)
 
     InAdim%cusp = [ 16._dp/3, 66.47322097196788_dp - 5.925925925925926_dp * nf, &
     1174.8982718294073_dp - 183.18743044213898_dp * nf - 0.7901234567901234_dp * nf**2, G4 ]
-
-    InAdim%GammaMass = [ - 4._dp, - 16 * (101._dp/24 - 5._dp * nf/36), &
-    - 64 * (1249._dp/64 - 2.284121493373736_dp * nf - 35._dp/1296 * nf**2 ), &
-    - 256 * (98.9434142552029_dp - 19.1074619186354_dp * nf +  &
-    0.005793222354358382_dp * nf**3 + 0.27616255142989465_dp * nf**2 ), &
-    573139.8612330721_dp - 147134.94237385172_dp * nf + &
-    7661.955304616065_dp * nf**2 + 110.91796496576201_dp * nf**3 - &
-    0.08740751602244723_dp * nf**4    ]
 
     InAdim%gammaJet = [ 8._dp, 11.643665868860921_dp - 17.79927174385542_dp * nf, &
     407.55606459953486_dp - 170.69272520622684_dp * nf + 1.4510585125043_dp * nf**2, 0._dp ]
@@ -1373,41 +1358,62 @@ module AnomDimClass
 !ccccccccccccccc pole - MSbar mass with m(mu)
 
   pure function MSbarDeltaPiece(nl, nh) result(coef)
-    integer,        intent(in)  :: nh, nl
-    real (dp), dimension(0:4,4) :: coef
-    integer                     :: nf, nf2
+    integer          , intent(in) :: nh, nl
+    real (dp), dimension(0:4,4)   :: coef
+    real (dp), dimension(0:4,0:4) :: b
+    real (dp), dimension(0:4    ) :: beta, gam
+    integer                       :: i, j, n, nf
 
-    coef = 0; nf = nl + nh; coef(0,:) = MSbarDelta(nl, nh); coef(1,1) = 2; nf2 = nf**2
+    coef = 0; nf = nl + nh; b = 0; b(0,1:) = MSbarDelta(nl, nh); b(0,0) = 1
+    beta = betaFun(nf); gam = massAnomDim(nf)
 
-    coef(1:2,2) = [ ( 2076 - 104 * nf )/144._dp, 7.5_dp - nf/3._dp ]
+    do i = 1, 4
+      do j = 0, i - 1
 
-    coef(1,3) = 195.00458387187263_dp - 12.596570845269987_dp * nh - &
-    0.12305711613007586 * nh**2 - 27.480713714296932_dp * nl + &
-    0.5171751456386657_dp * nh * nl + 0.6402322617687417 * nl**2
+        do n = 1, i - j - 1
+          b(j + 1,i) = b(j + 1,i) + (  ( (i - n) * beta(n - 1) - gam(n - 1) ) &
+          * b(j, i - n) + (j + 1) * gam(n - 1) * b(j + 1, i - n)  )/4**n
+        end do
 
-    coef(1,4) = 3662.906746512068_dp - 208.2564271686133_dp * nh       - &
-    0.14579554074757795_dp * nh**2 - 0.0524940054873832_dp * nh**3     - &
-    745.2462864310047_dp * nl + 28.702549327502872_dp * nh * nl        - &
-    0.05156459823389781_dp * nh**2 * nl + 41.69710763485379_dp * nl**2 - &
-    0.6401748971193416_dp * nh * nl**2 - 0.641104304372827_dp * nl**3
+        b(j + 1,i) = 2 * ( b(j + 1,i) + ( j * beta(i - j - 1) - gam(i - j - 1) ) &
+        * b(j, j)/4**(i - j) )/(j + 1)
 
-    coef(2:3,3) = [ 2696.625_dp - 288.75 * nf + 6.5 * nf2, 877.5_dp - 84 * nf + 2 * nf2 ]/27
+      end do
+    end do
 
-    coef(2,4) = 1869.0719147037107_dp - 238.12527357476452_dp * nh + &
-    5.963826542876237_dp * nh**2 + 0.06152855806503793_dp  *nh**3  - &
-    375.8035951132638_dp * nl + 26.430151265830006_dp * nh * nl    - &
-    0.19705901475429488_dp * nh**2 * nl + 20.466324722953768_dp * nl**2 - &
-    0.5787037037037037_dp * nh * nl**2 - 0.32011613088437085_dp * nl**3
+    coef = b(:,1:)
 
-    coef(3,4) = 635.6875_dp - 105.39814814814815_dp * nh &
-    + 5.283950617283951_dp * nh**2 - 0.08024691358024691_dp * nh**3 - &
-    105.39814814814815_dp * nl + 10.567901234567902_dp * nh * nl + &
-    5.283950617283951_dp * nl**2 - 13_dp * nh * nl**2/54 - &
-    0.08024691358024691_dp * nl**3 - 13_dp * nh**2 * nl/54
-
-    coef(4,4) = 150.3125_dp - 1621._dp * nh/72 + 121._dp * nh**2/108 - &
-    nh**3/54._dp - 1621_dp * nl/72 + 121_dp * nh * nl/54 - nh**2 * nl/18._dp + &
-    121_dp * nl**2/108 - nh * nl**2/18._dp - nl**3/54._dp
+    ! coef(1,1) = 2; nf2 = nf**2
+    !
+    ! coef(1:2,2) = [ ( 2076 - 104 * nf )/144._dp, 7.5_dp - nf/3._dp ]
+    !
+    ! coef(1,3) = 195.00458387187263_dp - 12.596570845269987_dp * nh - &
+    ! 0.12305711613007586 * nh**2 - 27.480713714296932_dp * nl + &
+    ! 0.5171751456386657_dp * nh * nl + 0.6402322617687417 * nl**2
+    !
+    ! coef(1,4) = 3662.906746512068_dp - 208.2564271686133_dp * nh       - &
+    ! 0.14579554074757795_dp * nh**2 - 0.0524940054873832_dp * nh**3     - &
+    ! 745.2462864310047_dp * nl + 28.702549327502872_dp * nh * nl        - &
+    ! 0.05156459823389781_dp * nh**2 * nl + 41.69710763485379_dp * nl**2 - &
+    ! 0.6401748971193416_dp * nh * nl**2 - 0.641104304372827_dp * nl**3
+    !
+    ! coef(2:3,3) = [ 2696.625_dp - 288.75 * nf + 6.5 * nf2, 877.5_dp - 84 * nf + 2 * nf2 ]/27
+    !
+    ! coef(2,4) = 1869.0719147037107_dp - 238.12527357476452_dp * nh + &
+    ! 5.963826542876237_dp * nh**2 + 0.06152855806503793_dp  *nh**3  - &
+    ! 375.8035951132638_dp * nl + 26.430151265830006_dp * nh * nl    - &
+    ! 0.19705901475429488_dp * nh**2 * nl + 20.466324722953768_dp * nl**2 - &
+    ! 0.5787037037037037_dp * nh * nl**2 - 0.32011613088437085_dp * nl**3
+    !
+    ! coef(3,4) = 635.6875_dp - 105.39814814814815_dp * nh &
+    ! + 5.283950617283951_dp * nh**2 - 0.08024691358024691_dp * nh**3 - &
+    ! 105.39814814814815_dp * nl + 10.567901234567902_dp * nh * nl + &
+    ! 5.283950617283951_dp * nl**2 - 13_dp * nh * nl**2/54 - &
+    ! 0.08024691358024691_dp * nl**3 - 13_dp * nh**2 * nl/54
+    !
+    ! coef(4,4) = 150.3125_dp - 1621._dp * nh/72 + 121._dp * nh**2/108 - &
+    ! nh**3/54._dp - 1621_dp * nl/72 + 121_dp * nh * nl/54 - nh**2 * nl/18._dp + &
+    ! 121_dp * nl**2/108 - nh * nl**2/18._dp - nl**3/54._dp
 
   end function MSbarDeltaPiece
 
@@ -1432,6 +1438,37 @@ module AnomDimClass
     end do
 
   end function getInverse
+
+!ccccccccccccccc
+
+  pure function massAnomDim(nf) result(gam)
+    integer    , intent(in) :: nf
+    real (dp), dimension(5) :: gam
+
+    gam = [ - 4._dp, - 16 * (101._dp/24 - 5._dp * nf/36), &
+    - 64 * (1249._dp/64 - 2.284121493373736_dp * nf - 35._dp/1296 * nf**2 ), &
+    - 256 * (98.9434142552029_dp - 19.1074619186354_dp * nf +  &
+    0.005793222354358382_dp * nf**3 + 0.27616255142989465_dp * nf**2 ), &
+    573139.8612330721_dp - 147134.94237385172_dp * nf + &
+    7661.955304616065_dp * nf**2 + 110.91796496576201_dp * nf**3 - &
+    0.08740751602244723_dp * nf**4    ]
+
+  end function massAnomDim
+
+!ccccccccccccccc
+
+  pure function betaFun(nf) result(gam)
+    integer    , intent(in) :: nf
+    real (dp), dimension(5) :: gam
+
+  gam = [ 11 - 2 * nf/3._dp, 102 - 38._dp * nf/3, 1428.5_dp - 5033 * nf/18._dp + &
+  325 * nf**2/54._dp, 29242.964136194132_dp - 6946.289617003555_dp * nf + &
+  405.08904045986293_dp * nf**2 + 1.4993141289437586_dp * nf**3, &
+  537147.6740702358_dp - 186161.94951432804_dp * nf + &
+  17567.757653436835_dp * nf**2 - 231.27767265113647_dp * nf**3 - &
+  1.8424744081239026_dp * nf**4 ]
+
+  end function betaFun
 
 !ccccccccccccccc
 
