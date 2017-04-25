@@ -50,6 +50,7 @@
 :Evaluate:  sCoefGamma::usage = "sCoefGamma[gamma, n, nf] computes the soft R anomalous Dimension"
 :Evaluate:  sCoefLambda::usage = "sCoefLambda[str, nf, lambda] computes the MSR R-anomalous Dimension"
 :Evaluate:  AnomDim::usage = "AnomDim[str, nf, G4] computes the QCD anomalous dimension"
+:Evaluate:  MSbarDeltaPiece::usage = "MSbarDeltaPiece[nl, nh] computes the pole to MS-bar relation"
 :Evaluate:  cCoef::usage = "cCoef[nf, order, m] computes the inverse of the QCD anomalous dimension"
 :Evaluate:  PSCoef::usage = "PSCoef[nf, lg] computes the PS mass series coefficients"
 :Evaluate:  N12Generic::usage = "N12Generic[aCoef, order, nf, lambda] computes the renormalon sum rule"
@@ -1219,6 +1220,14 @@
 :Pattern:       AnomDim[str_, nf_, G4_]
 :Arguments:     {str, nf, G4}
 :ArgumentTypes: {String, Integer, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      msbardeltapiece
+:Pattern:       MSbarDeltaPiece[nl_, nh_]
+:Arguments:     {nl, nh}
+:ArgumentTypes: {Integer, Integer}
 :ReturnType:    Manual
 :End:
 
@@ -3215,6 +3224,19 @@ static void anomdim(char const* str, int nf, double G4){
    f90anomdim_(str, &nf, &G4, result);
 
    MLPutRealList(stdlink, result, 5);
+   MLEndPacket(stdlink);
+}
+
+extern double f90msbardeltapiece_(int* nl, int* nh, double* result);
+
+static void msbardeltapiece(int nl, int nh){
+  double result[20];
+
+   f90msbardeltapiece_(&nl, &nh, result);
+
+   MLPutFunction(stdlink, "Partition", 2);
+   MLPutRealList(stdlink, result, 20);
+   MLPutInteger(stdlink, 5);
    MLEndPacket(stdlink);
 }
 
