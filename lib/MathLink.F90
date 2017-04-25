@@ -2803,6 +2803,17 @@ end subroutine f90ModelPiece
 
 !ccccccccccccccc
 
+subroutine f90MSbarDeltaPiece(nl, nh, beta)
+  use AnomDimClass;  use constants, only: dp; implicit none
+  integer                , intent(in )  :: nl, nh
+  real (dp), dimension(0:4,4), intent(out)  :: beta
+
+  beta = MSbarDeltaPiece(nl, nh)
+
+end subroutine f90MSbarDeltaPiece
+
+!ccccccccccccccc
+
 subroutine f90AnomDim(str, nf, G4, beta)
   use AnomDimClass;  use constants, only: dp; implicit none
   character (len = *)    , intent(in )  :: str
