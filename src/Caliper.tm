@@ -51,6 +51,7 @@
 :Evaluate:  sCoefLambda::usage = "sCoefLambda[str, nf, lambda] computes the MSR R-anomalous Dimension"
 :Evaluate:  AnomDim::usage = "AnomDim[str, nf, G4] computes the QCD anomalous dimension"
 :Evaluate:  MSbarDeltaPiece::usage = "MSbarDeltaPiece[nl, nh] computes the pole to MS-bar relation"
+:Evaluate:  AlphaMatchingLog::usage = "AlphaMatchingLog[str, nf] computes the alpha threshold matching"
 :Evaluate:  cCoef::usage = "cCoef[nf, order, m] computes the inverse of the QCD anomalous dimension"
 :Evaluate:  PSCoef::usage = "PSCoef[nf, lg] computes the PS mass series coefficients"
 :Evaluate:  N12Generic::usage = "N12Generic[aCoef, order, nf, lambda] computes the renormalon sum rule"
@@ -1228,6 +1229,14 @@
 :Pattern:       MSbarDeltaPiece[nl_, nh_]
 :Arguments:     {nl, nh}
 :ArgumentTypes: {Integer, Integer}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      alphamatchinglog
+:Pattern:       AlphaMatchingLog[str_, nf_]
+:Arguments:     {str, nf}
+:ArgumentTypes: {String, Integer}
 :ReturnType:    Manual
 :End:
 
@@ -3237,6 +3246,19 @@ static void msbardeltapiece(int nl, int nh){
    MLPutFunction(stdlink, "Partition", 2);
    MLPutRealList(stdlink, result, 20);
    MLPutInteger(stdlink, 5);
+   MLEndPacket(stdlink);
+}
+
+extern double f90alphamatchinglog_(char const* str, int* nf, double* result);
+
+static void alphamatchinglog(char const* str, int nf){
+  double result[16];
+
+   f90alphamatchinglog_(str, &nf, result);
+
+   MLPutFunction(stdlink, "Partition", 2);
+   MLPutRealList(stdlink, result, 16);
+   MLPutInteger(stdlink, 4);
    MLEndPacket(stdlink);
 }
 
