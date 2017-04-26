@@ -7,7 +7,7 @@ module AnomDimClass
   ep = 1.19_dp, del = - 0.481_dp, fourPi = 4 * Pi
 
   public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta, &
-  PowList, getInverse, MSbarDeltaPiece
+  PowList, getInverse, MSbarDeltaPiece, AlphaExpand
 
   interface PowList
     module procedure   :: PowListDP, PowListInt, PowListComp
@@ -36,7 +36,7 @@ module AnomDimClass
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
     bHQETgamma, alphaMatching, wTildeHm, GammaRComputer, sCoefRecursive, PScoef,&
     sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12, sCoefGeneric, cCoeff, &
-    P12Generic, N12Generic
+    P12Generic, N12Generic, alphaMatchingLog
 
    procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
    kTildeComplex, rootReal, rootComplex
@@ -712,6 +712,16 @@ module AnomDimClass
    pure subroutine expandAlpha(self, coef)
     class (AnomDim)          , intent(in   ) :: self
     real (dp), dimension(:,:), intent(inout) :: coef
+
+    call AlphaExpand(self%beta, coef)
+
+   end subroutine expandAlpha
+
+!ccccccccccccccc
+
+   pure subroutine AlphaExpand(beta, coef)
+    real (dp), dimension(0:4), intent(in)    :: beta
+    real (dp), dimension(:,:), intent(inout) :: coef
     integer                                  :: n, j, i
 
     coef(2:,:) = 0
@@ -720,7 +730,7 @@ module AnomDimClass
       do j = 1, n - 1
 
         do i = j, n - 1
-          coef(j + 1,n) = coef(j + 1,n) + i * self%beta(n - i - 1) * &
+          coef(j + 1,n) = coef(j + 1,n) + i * beta(n - i - 1) * &
           coef(j,i)/2**( 2 * (n - i) )
         end do
 
@@ -729,7 +739,7 @@ module AnomDimClass
       end do
     end do
 
-   end subroutine expandAlpha
+   end subroutine AlphaExpand
 
 !ccccccccccccccc
 
@@ -1148,6 +1158,51 @@ module AnomDimClass
     end if
 
   end function alphaMatching
+
+!ccccccccccccccc
+
+  pure function alphaMatchingLog(self, nf) result(tab)
+    class (AnomDim)    , intent(in) :: self
+    integer            , intent(in) :: nf
+    real (dp)  , dimension(0:3,0:3) :: tab  ! (log, alpha)
+    real (dp), dimension(0:3,0:4)   :: b, c ! (log, alpha)
+    real (dp), dimension(0:3,4,4)   :: ePow ! (log,alpha,power)
+    integer                         :: n, i, j, k, l, m
+
+    tab = 0; tab(0,1) = 1; ePow = 0
+
+    b = 0; c = 0; c(0,1) = 1 ;  b(0,1:) = self%alphaMatching(nf)
+    call AlphaExpand( betaFun(nf    ), b(:,1:) )
+    call AlphaExpand( betaFun(nf - 1), c(:,1:) )
+
+    do n = 2, 4
+
+      ePow(:,1,n - 1) = tab(:,n - 1)
+
+      do i = 2, n
+        do l = 0, n - i
+
+          do m = 1, n + 1 - i
+            j = max(0,l + i - 1 + m - n); k = min(l, m - 1)
+            ePow(l,n,i) = ePow(l,n,i) + sum( tab(j:k,m) * ePow(n-j:n-k:-1,n-m,i-1) )
+          end do
+
+        end do
+      end do
+
+      do l = 0, n - 1
+
+        tab(l,n) = b(l,n)
+
+        do i = 2, n
+          j = max(0,l + i - n); k = min(l, i - 1)
+          tab(l,n) = tab(l,n) - sum( c(j:k,i) * ePow(l - j:l - k:-1,n,i) )
+        end do
+
+      end do
+    end do
+
+  end function alphaMatchingLog
 
 !ccccccccccccccc pole - MSR mass with mu = R
 
