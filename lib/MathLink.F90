@@ -2821,7 +2821,8 @@ subroutine f90AlphaMatchingLog(str, nf, beta)
   real (dp), dimension(0:3,4), intent(out)    :: beta
   type (AnomDim)                              :: run
 
-  run = AnomDim(str, nf, 0._dp);  beta = run%alphaMatchingLog(nf)
+  run = AnomDim(str, nf, 0._dp)
+  beta = alphaMatchingLog(run%alphaMatching(nf), nf)
 
 end subroutine f90AlphaMatchingLog
 

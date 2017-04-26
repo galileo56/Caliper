@@ -7,7 +7,7 @@ module AnomDimClass
   ep = 1.19_dp, del = - 0.481_dp, fourPi = 4 * Pi
 
   public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta, &
-  PowList, getInverse, MSbarDeltaPiece, AlphaExpand
+  PowList, getInverse, MSbarDeltaPiece, AlphaExpand, alphaMatchingLog
 
   interface PowList
     module procedure   :: PowListDP, PowListInt, PowListComp
@@ -36,7 +36,7 @@ module AnomDimClass
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
     bHQETgamma, alphaMatching, wTildeHm, GammaRComputer, sCoefRecursive, PScoef,&
     sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12, sCoefGeneric, cCoeff, &
-    P12Generic, N12Generic, alphaMatchingLog
+    P12Generic, N12Generic
 
    procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
    kTildeComplex, rootReal, rootComplex
@@ -1141,19 +1141,50 @@ module AnomDimClass
 !ccccccccccccccc
 
   pure function alphaMatching(self, nf) result(tab)
-    class (AnomDim), intent(in) :: self
-    integer        , intent(in) :: nf
-    real (dp)  , dimension(0:3) :: tab
+    class (AnomDim), intent(in)     :: self
+    integer        , intent(in)     :: nf
+    real (dp)  , dimension(4)       :: tab, tab2
+    real (dp)  , dimension(4)       :: b
+    real (dp)  , dimension(0:3,0:3) :: d
+    real (dp)  , dimension(0:3,4)   :: c
+    integer                         :: i, j, k
 
-    tab = 0; tab(0) = 1
+    tab = 0; tab2 = 0; tab2(1) = 1
+    tab2(3:) = - [7._dp/24, 5.586361025786356_dp - 0.26247081195432964_dp * nf]
 
     if ( self%str(:5) == 'MSbar' ) then
 
-      tab(2:) = [11._dp/72, 1.0567081783962546_dp - 0.08465149176954734_dp * nf]
+      b = MSbarDelta(nf - 1, 1); d = 0; d(0,0) = 1
+
+      do i = 1, 3
+
+        do j = 1, i - 1
+          d(1,i) = d(1,i) + j * d(1,j) * b(i - j)
+        end do
+
+        d(1,i) = b(i) - d(1,i)/i
+
+      end do
+
+      c = alphaMatchingLog(tab2, nf)
+
+      do i = 1, 2
+        do j = i, 2
+          d(i + 1,j) = sum( d(1,1:j - i) * d(i,j - 1:i:-1) )
+        end do
+      end do
+
+      do k = 1, 4
+        do i = 1, k
+          do j = 0, min(i - 1,k - i)
+            tab(k) = tab(k) + (-1)**j * c(j,i) * d(j, k - i)
+          end do
+        end do
+      end do
 
     else if ( self%str(:4) == 'pole' ) then
 
-      tab(2:) = - [7._dp/24, 5.586361025786356_dp - 0.26247081195432964_dp * nf]
+      tab = tab2
 
     end if
 
@@ -1161,17 +1192,17 @@ module AnomDimClass
 
 !ccccccccccccccc
 
-  pure function alphaMatchingLog(self, nf) result(tab)
-    class (AnomDim)  , intent(in) :: self
-    integer          , intent(in) :: nf
-    real (dp), dimension(0:3,4)   :: tab  ! (log, alpha)
-    real (dp), dimension(0:3,0:4) :: b, c ! (log, alpha)
-    real (dp), dimension(0:3,4,4) :: ePow ! (log,alpha,power)
-    integer                       :: n, i, j, k, l, m
+  pure function alphaMatchingLog(d, nf) result(tab)
+    integer                , intent(in) :: nf
+    real (dp), dimension(4), intent(in) :: d
+    real (dp), dimension(0:3,4)         :: tab  ! (log, alpha)
+    real (dp), dimension(0:3,0:4)       :: b, c ! (log, alpha)
+    real (dp), dimension(0:3,4,4)       :: ePow ! (log,alpha,power)
+    integer                             :: n, i, j, k, l, m
 
     tab = 0; tab(0,1) = 1; ePow = 0
 
-    b = 0; c = 0; c(0,1) = 1 ;  b(0,1:) = self%alphaMatching(nf)
+    b = 0; c = 0; c(0,1) = 1 ;  b(0,1:) = d
     call AlphaExpand( betaFun(nf    ), b(:,1:) )
     call AlphaExpand( betaFun(nf - 1), c(:,1:) )
 
