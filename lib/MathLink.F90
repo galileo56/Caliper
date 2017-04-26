@@ -2805,12 +2805,25 @@ end subroutine f90ModelPiece
 
 subroutine f90MSbarDeltaPiece(nl, nh, beta)
   use AnomDimClass;  use constants, only: dp; implicit none
-  integer                , intent(in )  :: nl, nh
+  integer                    , intent(in )  :: nl, nh
   real (dp), dimension(0:4,4), intent(out)  :: beta
 
   beta = MSbarDeltaPiece(nl, nh)
 
 end subroutine f90MSbarDeltaPiece
+
+!ccccccccccccccc
+
+subroutine f90AlphaMatchingLog(str, nf, beta)
+  use AnomDimClass;  use constants, only: dp; implicit none
+  character (len = *)          , intent(in )  :: str
+  integer                      , intent(in )  :: nf
+  real (dp), dimension(0:3,4), intent(out)    :: beta
+  type (AnomDim)                              :: run
+
+  run = AnomDim(str, nf, 0._dp);  beta = run%alphaMatchingLog(nf)
+
+end subroutine f90AlphaMatchingLog
 
 !ccccccccccccccc
 

@@ -1162,12 +1162,12 @@ module AnomDimClass
 !ccccccccccccccc
 
   pure function alphaMatchingLog(self, nf) result(tab)
-    class (AnomDim)    , intent(in) :: self
-    integer            , intent(in) :: nf
-    real (dp)  , dimension(0:3,0:3) :: tab  ! (log, alpha)
-    real (dp), dimension(0:3,0:4)   :: b, c ! (log, alpha)
-    real (dp), dimension(0:3,4,4)   :: ePow ! (log,alpha,power)
-    integer                         :: n, i, j, k, l, m
+    class (AnomDim)  , intent(in) :: self
+    integer          , intent(in) :: nf
+    real (dp), dimension(0:3,4)   :: tab  ! (log, alpha)
+    real (dp), dimension(0:3,0:4) :: b, c ! (log, alpha)
+    real (dp), dimension(0:3,4,4) :: ePow ! (log,alpha,power)
+    integer                       :: n, i, j, k, l, m
 
     tab = 0; tab(0,1) = 1; ePow = 0
 
@@ -1177,14 +1177,14 @@ module AnomDimClass
 
     do n = 2, 4
 
-      ePow(:,1,n - 1) = tab(:,n - 1)
+      ePow(:,n - 1,1) = tab(:,n - 1)
 
       do i = 2, n
         do l = 0, n - i
 
           do m = 1, n + 1 - i
             j = max(0,l + i - 1 + m - n); k = min(l, m - 1)
-            ePow(l,n,i) = ePow(l,n,i) + sum( tab(j:k,m) * ePow(n-j:n-k:-1,n-m,i-1) )
+            ePow(l,n,i) = ePow(l,n,i) + sum( tab(j:k,m) * ePow(l-j:l-k:-1,n-m,i-1) )
           end do
 
         end do
@@ -1195,11 +1195,12 @@ module AnomDimClass
         tab(l,n) = b(l,n)
 
         do i = 2, n
-          j = max(0,l + i - n); k = min(l, i - 1)
+          j = max(0,l + i - n); k = min(l,i - 1)
           tab(l,n) = tab(l,n) - sum( c(j:k,i) * ePow(l - j:l - k:-1,n,i) )
         end do
 
       end do
+
     end do
 
   end function alphaMatchingLog
