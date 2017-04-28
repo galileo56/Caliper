@@ -58,7 +58,7 @@ module AlphaClass
 
     InitAlpha%andim = andimlist
 
-    InitAlpha%muRef = 0; InitAlpha%run = run; InitAlpha%n = min(3,order - 1)
+    InitAlpha%muRef = 0; InitAlpha%run = run; InitAlpha%n = min(4,order - 1)
     InitAlpha%muRef(5) = mZ
 
     if ( present(method) ) then
@@ -733,7 +733,7 @@ module AlphaClass
     real (dp)                      , intent(in) :: lg
     real (dp), dimension(self%n + 1)            :: e
     real (dp), dimension(0:self%n  )            :: lgList
-    real (dp), dimension(0:3       , 0:4      ) :: b, c
+    real (dp), dimension(0:4       , 0:5      ) :: b, c
     real (dp), dimension(self%n + 1,self%n + 1) :: ePow
     integer                                     :: n, i
 

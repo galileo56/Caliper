@@ -1,6 +1,6 @@
 /*
  * This file automatically produced by /Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mprep from:
- *	/Users/vmateu/GitHub/Caliper/src/Caliper.tm
+ *	/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm
  * mprep Revision 18 Copyright (c) Wolfram Research, Inc. 1990-2013
  */
 
@@ -289,7 +289,7 @@ MLYDEFN( devyield_result, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
-# line 1670 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
+# line 1670 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm"
 #include "mathlink.h"
 #include "ftypes.h"
 #include <stdio.h>
@@ -1875,13 +1875,13 @@ static void msbardeltapiece(int nl, int nh){
 extern double f90alphamatchinglog_(char const* str, int* nf, double* result);
 
 static void alphamatchinglog(char const* str, int nf){
-  double result[16];
+  double result[25];
 
    f90alphamatchinglog_(str, &nf, result);
 
    MLPutFunction(stdlink, "Partition", 2);
-   MLPutRealList(stdlink, result, 16);
-   MLPutInteger(stdlink, 4);
+   MLPutRealList(stdlink, result, 25);
+   MLPutInteger(stdlink, 5);
    MLEndPacket(stdlink);
 }
 
@@ -2673,7 +2673,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 2677 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
+# line 2677 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm.c"
 
 
 void ewfactors P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5));

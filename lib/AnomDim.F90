@@ -1143,20 +1143,21 @@ module AnomDimClass
   pure function alphaMatching(self, nf) result(tab)
     class (AnomDim), intent(in)     :: self
     integer        , intent(in)     :: nf
-    real (dp)  , dimension(4)       :: tab, tab2
+    real (dp)  , dimension(5)       :: tab, tab2
     real (dp)  , dimension(4)       :: b
-    real (dp)  , dimension(0:3,0:3) :: d
-    real (dp)  , dimension(0:3,4)   :: c
+    real (dp)  , dimension(0:4,0:4) :: d
+    real (dp)  , dimension(0:4,5)   :: c
     integer                         :: i, j, k
 
     tab = 0; tab2 = 0; tab2(1) = 1
-    tab2(3:) = - [7._dp/24, 5.586361025786356_dp - 0.26247081195432964_dp * nf]
+    tab2(3:) = - [7._dp/24, 5.586361025786356_dp - 0.26247081195432964_dp * nf,&
+    95.80685705811597_dp - 10.171370332526523_dp * nf + 0.23954195789610408_dp * nf**2]
 
     if ( self%str(:5) == 'MSbar' ) then
 
       b = MSbarDelta(nf - 1, 1); d = 0; d(0,0) = 1
 
-      do i = 1, 3
+      do i = 1, 4
 
         do j = 1, i - 1
           d(1,i) = d(1,i) + j * d(1,j) * b(i - j)
@@ -1168,13 +1169,13 @@ module AnomDimClass
 
       c = alphaMatchingLog(tab2, nf)
 
-      do i = 1, 2
-        do j = i, 2
+      do i = 1, 3
+        do j = i, 3
           d(i + 1,j) = sum( d(1,1:j - i) * d(i,j - 1:i:-1) )
         end do
       end do
 
-      do k = 1, 4
+      do k = 1, 5
         do i = 1, k
           do j = 0, min(i - 1,k - i)
             tab(k) = tab(k) + (-1)**j * c(j,i) * d(j, k - i)
@@ -1194,10 +1195,10 @@ module AnomDimClass
 
   pure function alphaMatchingLog(d, nf) result(tab)
     integer                , intent(in) :: nf
-    real (dp), dimension(4), intent(in) :: d
-    real (dp), dimension(0:3,4)         :: tab  ! (log, alpha)
-    real (dp), dimension(0:3,0:4)       :: b, c ! (log, alpha)
-    real (dp), dimension(0:3,4,4)       :: ePow ! (log,alpha,power)
+    real (dp), dimension(5), intent(in) :: d
+    real (dp), dimension(0:4,5)         :: tab  ! (log, alpha)
+    real (dp), dimension(0:4,0:5)       :: b, c ! (log, alpha)
+    real (dp), dimension(0:4,5,5)       :: ePow ! (log,alpha,power)
     integer                             :: n, i, j, k, l, m
 
     tab = 0; tab(0,1) = 1; ePow = 0
@@ -1206,7 +1207,7 @@ module AnomDimClass
     call AlphaExpand( betaFun(nf    ), b(:,1:) )
     call AlphaExpand( betaFun(nf - 1), c(:,1:) )
 
-    do n = 2, 4
+    do n = 2, 5
 
       ePow(:,n - 1,1) = tab(:,n - 1)
 
@@ -1514,11 +1515,11 @@ module AnomDimClass
 
 !ccccccccccccccc
 
-  pure function betaFun(nf) result(gam)
+  pure function betaFun(nf) result(bet)
     integer    , intent(in) :: nf
-    real (dp), dimension(5) :: gam
+    real (dp), dimension(5) :: bet
 
-  gam = [ 11 - 2 * nf/3._dp, 102 - 38._dp * nf/3, 1428.5_dp - 5033 * nf/18._dp + &
+  bet = [ 11 - 2 * nf/3._dp, 102 - 38._dp * nf/3, 1428.5_dp - 5033 * nf/18._dp + &
   325 * nf**2/54._dp, 29242.964136194132_dp - 6946.289617003555_dp * nf + &
   405.08904045986293_dp * nf**2 + 1.4993141289437586_dp * nf**3, &
   537147.6740702358_dp - 186161.94951432804_dp * nf + &

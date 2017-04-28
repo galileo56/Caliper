@@ -3252,13 +3252,13 @@ static void msbardeltapiece(int nl, int nh){
 extern double f90alphamatchinglog_(char const* str, int* nf, double* result);
 
 static void alphamatchinglog(char const* str, int nf){
-  double result[16];
+  double result[25];
 
    f90alphamatchinglog_(str, &nf, result);
 
    MLPutFunction(stdlink, "Partition", 2);
-   MLPutRealList(stdlink, result, 16);
-   MLPutInteger(stdlink, 4);
+   MLPutRealList(stdlink, result, 25);
+   MLPutInteger(stdlink, 5);
    MLEndPacket(stdlink);
 }
 

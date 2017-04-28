@@ -214,7 +214,7 @@ module MatrixElementsClass
     integer  , dimension(3)       :: TwoList
     type (AnomDim)                :: andim, andimNl
     real (dp)                     :: mm
-    real (dp), dimension(0:3)     :: tab
+    real (dp), dimension(0:4)     :: tab
     real (dp), dimension(3)       :: a, b
     real (dp), dimension(4)       :: c
     real (dp), dimension(0:4,3)   :: coefCusp, coefCuspNl, coefSoft, coefJet, &
@@ -477,7 +477,7 @@ module MatrixElementsClass
     integer  , dimension(3)         :: TwoList
     type (AnomDim)                  :: andim, andimNl, andimH, andimS
     real (dp)                       :: alphaJ, alphaS, mm, alphaR, EuR
-    real (dp), dimension(0:3)       :: tab
+    real (dp), dimension(0:4)       :: tab
     real (dp), dimension(0:4,4)     :: coefMSR, coefMassLow, coefMSRNatural, coefMass
     real (dp), dimension(0:4,3)     :: coefCusp, coefSoft, coefJet, coefHard, &
     coefHm, coefCuspnl, coefCuspS, coefSoftNl, coefBjet

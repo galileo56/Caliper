@@ -2818,7 +2818,7 @@ subroutine f90AlphaMatchingLog(str, nf, beta)
   use AnomDimClass;  use constants, only: dp; implicit none
   character (len = *)          , intent(in )  :: str
   integer                      , intent(in )  :: nf
-  real (dp), dimension(0:3,4), intent(out)    :: beta
+  real (dp), dimension(0:4,5), intent(out)    :: beta
   type (AnomDim)                              :: run
 
   run = AnomDim(str, nf, 0._dp)
