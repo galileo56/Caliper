@@ -320,7 +320,7 @@ module MatrixElementsClass
      InMatMass%alphaList = 0; InMatMass%jetMatching(0) = 1
 
      a = ExpEuler * DeltaComputer(InMatMass%BJetExp(1:,:), [0,0,0] * 0._dp, 1)/2
-     c = MSbarDelta(nf - 1, 1); tab = andim%alphaMatching(nf)
+     c = MSbarDelta(nf - 1, 1); tab = andim%MatchingAlpha()
      b = tab(:2); call alphaReExpand(a,b);  a = c(:3) - a
      a = a * InMatMass%alphaMMlist
 
@@ -536,7 +536,7 @@ module MatrixElementsClass
       InMatElMass%jetMatching(0) = 1
 
       a = ExpEuler * DeltaComputer(InMatElMass%BJetExp(1:,:), [0,0,0] * 0._dp, 1)/2
-      c = MSbarDelta(nf - 1, 1); tab = andim%alphaMatching(nf)
+      c = MSbarDelta(nf - 1, 1); tab = andim%MatchingAlpha()
       b = tab(:2); call alphaReExpand(a,b);  a = c(:3) - a
       a = a * InMatElMass%alphaMMlist
 

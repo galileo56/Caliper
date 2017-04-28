@@ -581,7 +581,7 @@ module RunningClass
     real (dp) , dimension(4)       :: a, c
 
     c   = MSbarDelta(self%nf, 1); a = MSbarDelta(self%nf, 0)
-    call alphaReExpand(a,self%andim%alphaMatching(self%nf + 1));  a = c - a
+    call alphaReExpand( a, self%andim%MatchingAlphaUp() );  a = c - a
 
   end function MSRMatching
 

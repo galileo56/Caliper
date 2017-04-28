@@ -733,32 +733,49 @@ module AlphaClass
     real (dp)                      , intent(in) :: lg
     real (dp), dimension(self%n + 1)            :: e
     real (dp), dimension(0:self%n  )            :: lgList
-    real (dp), dimension(0:4       , 0:5      ) :: b, c
-    real (dp), dimension(self%n + 1,self%n + 1) :: ePow
-    integer                                     :: n, i
+    real (dp), dimension(0:4, 5    )            :: b
 
-    lgList(0) = 1; lgList(1:) = powList(lg, self%n); e = 0; e(1) = 1; ePow = 0
+    lgList(0) = 1; lgList(1:) = powList(lg, self%n)
+    b = self%andim(nf)%MatchingAlphaLog()
 
-    b = 0; c = 0; c(0,1) = 1 ;  b(0,1:) = self%andim(nf)%alphaMatching(nf)
-    call self%andim(nf    )%expandAlpha( b(:,1:) )
-    call self%andim(nf - 1)%expandAlpha( c(:,1:) )
-
-    b(0,:self%n + 1) = matmul( lgList, b(:self%n,:self%n + 1) )
-    c(0,:self%n + 1) = matmul( lgList, c(:self%n,:self%n + 1) )
-
-    do n = 2, self%n + 1
-
-      ePow(1,n - 1) = e(n - 1)
-
-      do i = 2, n
-        ePow(i,n) = sum( e(:n + 1 - i) * ePow(i - 1,n - 1:i - 1:-1) )
-      end do
-
-      e(n) = b(0,n) - sum( c(0,2:n) * ePow(2:n,n) )
-
-    end do
+    e = matmul( lgList, b(:self%n, :self%n + 1) )
 
   end function thresholdMatching
+
+!ccccccccccccccc
+
+  ! function thresholdMatching2(self, nf, lg) result(e) ! smarter but slower
+  !   class (Alpha)                  , intent(in) :: self
+  !   integer                        , intent(in) :: nf
+  !   real (dp)                      , intent(in) :: lg
+  !   real (dp), dimension(self%n + 1)            :: e
+  !   real (dp), dimension(0:self%n  )            :: lgList
+  !   real (dp), dimension(0:4       , 0:5      ) :: b, c
+  !   real (dp), dimension(self%n + 1,self%n + 1) :: ePow
+  !   integer                                     :: n, i
+  !
+  !   lgList(0) = 1; lgList(1:) = powList(lg, self%n); e = 0; e(1) = 1; ePow = 0
+  !
+  !   b = 0; c = 0; c(0,1) = 1 ;  b(0,1:) = self%andim(nf)%MatchingAlpha()
+  !   call self%andim(nf    )%expandAlpha( b(:,1:) )
+  !   call self%andim(nf - 1)%expandAlpha( c(:,1:) )
+  !
+  !   b(0,:self%n + 1) = matmul( lgList, b(:self%n,:self%n + 1) )
+  !   c(0,:self%n + 1) = matmul( lgList, c(:self%n,:self%n + 1) )
+  !
+  !   do n = 2, self%n + 1
+  !
+  !     ePow(1,n - 1) = e(n - 1)
+  !
+  !     do i = 2, n
+  !       ePow(i,n) = sum( e(:n + 1 - i) * ePow(i - 1,n - 1:i - 1:-1) )
+  !     end do
+  !
+  !     e(n) = b(0,n) - sum( c(0,2:n) * ePow(2:n,n) )
+  !
+  !   end do
+  !
+  ! end function thresholdMatching2
 
 !ccccccccccccccc
 
