@@ -20,6 +20,8 @@ module AnomDimClass
     integer                       :: nf
     character (len = 5)           :: str
     real (dp)                     :: G4, err
+    real (dp), dimension(5)       :: AlphaMatch, AlphaMatchUp
+    real (dp), dimension(0:4,5)   :: AlphaMatchLog
     real (dp), dimension(0:3,0:3) :: gammaHm
     real (dp), dimension(0:4)     :: bHat, bCoef, cCoef
     real (dp), dimension(0:4)     :: beta
@@ -34,12 +36,12 @@ module AnomDimClass
 
     procedure, pass(self), public :: expandAlpha, wTildeExpand, kTildeExpand, &
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
-    bHQETgamma, alphaMatching, wTildeHm, GammaRComputer, sCoefRecursive, PScoef,&
+    bHQETgamma, wTildeHm, GammaRComputer, sCoefRecursive, N12Generic, PScoef, &
     sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12, sCoefGeneric, cCoeff, &
-    P12Generic, N12Generic
+    P12Generic, MatchingAlpha, MatchingAlphaLog, MatchingAlphaUp
 
    procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
-   kTildeComplex, rootReal, rootComplex
+   kTildeComplex, rootReal, alphaMatching, rootComplex
 
    generic, public                :: wTilde => wTildeReal, wTildeComplex
    generic, public                :: kTilde => kTildeReal, kTildeComplex
@@ -124,6 +126,10 @@ module AnomDimClass
     InAdim%sCoefMSRInc1    = InAdim%sCoefRecursive( MSbarDelta(nf   ,  1, InAdim%err) )
     InAdim%sCoefMSRInc2    = InAdim%sCoefRecursive( MSbarDelta(nf - 1, 1, InAdim%err) )
     InAdim%sCoefMSRInc3    = InAdim%sCoefRecursive( MSbarDelta(nf + 1, 1, InAdim%err) )
+
+    InAdim%AlphaMatch    = InAdim%alphaMatching(nf)
+    InAdim%AlphaMatchUp  = InAdim%alphaMatching(nf + 1)
+    InAdim%AlphaMatchLog = alphaMatchingLog(InAdim%AlphaMatch, nf)
 
    end function InAdim
 
@@ -1137,6 +1143,36 @@ module AnomDimClass
     tab = self%gammaHm
 
   end function bHQETgamma
+
+!ccccccccccccccc
+
+pure function MatchingAlpha(self) result(tab)
+  class (AnomDim), intent(in) :: self
+  real (dp)    , dimension(5) :: tab
+
+  tab = self%alphaMatch
+
+end function MatchingAlpha
+
+!ccccccccccccccc
+
+pure function MatchingAlphaLog(self) result(tab)
+  class (AnomDim)  , intent(in) :: self
+  real (dp)  , dimension(0:4,5) :: tab
+
+  tab = self%alphaMatchLog
+
+end function MatchingAlphaLog
+
+!ccccccccccccccc
+
+pure function MatchingAlphaUp(self) result(tab)
+  class (AnomDim), intent(in)     :: self
+  real (dp)  , dimension(5)       :: tab
+
+  tab = self%alphaMatchUp
+
+end function MatchingAlphaUp
 
 !ccccccccccccccc
 

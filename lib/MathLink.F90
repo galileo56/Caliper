@@ -2822,7 +2822,7 @@ subroutine f90AlphaMatchingLog(str, nf, beta)
   type (AnomDim)                              :: run
 
   run = AnomDim(str, nf, 0._dp)
-  beta = alphaMatchingLog(run%alphaMatching(nf), nf)
+  beta = alphaMatchingLog(run%Matchingalpha(), nf)
 
 end subroutine f90AlphaMatchingLog
 
