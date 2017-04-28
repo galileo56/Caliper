@@ -58,7 +58,7 @@ module AlphaClass
 
     InitAlpha%andim = andimlist
 
-    InitAlpha%muRef = 0; InitAlpha%run = run; InitAlpha%n = min(3,order - 1)
+    InitAlpha%muRef = 0; InitAlpha%run = run; InitAlpha%n = min(4,order - 1)
     InitAlpha%muRef(5) = mZ
 
     if ( present(method) ) then
