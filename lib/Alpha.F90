@@ -733,7 +733,7 @@ module AlphaClass
     real (dp)                      , intent(in) :: lg
     real (dp), dimension(self%n + 1)            :: e
     real (dp), dimension(0:self%n  )            :: lgList
-    real (dp), dimension(0:3       , 0:4      ) :: b, c
+    real (dp), dimension(0:4       , 0:5      ) :: b, c
     real (dp), dimension(self%n + 1,self%n + 1) :: ePow
     integer                                     :: n, i
 
