@@ -58,8 +58,8 @@ module AlphaClass
 
     InitAlpha%andim = andimlist
 
-    InitAlpha%muRef = 0; InitAlpha%run = run; InitAlpha%n = min(4,order - 1)
-    InitAlpha%muRef(5) = mZ
+    InitAlpha%muRef = 0    ; InitAlpha%run = min(5,run)
+    InitAlpha%muRef(5) = mZ; InitAlpha%n   = min(4,order - 1)
 
     if ( present(method) ) then
       InitAlpha%method = method
