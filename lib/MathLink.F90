@@ -2828,6 +2828,20 @@ end subroutine f90AlphaMatchingLog
 
 !ccccccccccccccc
 
+subroutine f90AlphaMatchingInverse(str, nf, beta)
+  use AnomDimClass;  use constants, only: dp; implicit none
+  character (len = *)      , intent(in )  :: str
+  integer                  , intent(in )  :: nf
+  real (dp), dimension(5), intent(out)    :: beta
+  type (AnomDim)                          :: run
+
+  run = AnomDim(str, nf, 0._dp)
+  beta = getInverse( run%Matchingalpha() )
+
+end subroutine f90AlphaMatchingInverse
+
+!ccccccccccccccc
+
 subroutine f90AnomDim(str, nf, G4, beta)
   use AnomDimClass;  use constants, only: dp; implicit none
   character (len = *)    , intent(in )  :: str

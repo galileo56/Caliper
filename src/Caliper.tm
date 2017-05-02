@@ -52,6 +52,7 @@
 :Evaluate:  AnomDim::usage = "AnomDim[str, nf, G4] computes the QCD anomalous dimension"
 :Evaluate:  MSbarDeltaPiece::usage = "MSbarDeltaPiece[nl, nh] computes the pole to MS-bar relation"
 :Evaluate:  AlphaMatchingLog::usage = "AlphaMatchingLog[str, nf] computes the alpha threshold matching"
+:Evaluate:  AlphaMatchingInverse::usage = "AlphaMatchingInverse[str, nf] computes the inverse alpha threshold matching"
 :Evaluate:  cCoef::usage = "cCoef[nf, order, m] computes the inverse of the QCD anomalous dimension"
 :Evaluate:  PSCoef::usage = "PSCoef[nf, lg] computes the PS mass series coefficients"
 :Evaluate:  N12Generic::usage = "N12Generic[aCoef, order, nf, lambda] computes the renormalon sum rule"
@@ -1235,6 +1236,14 @@
 :Begin:
 :Function:      alphamatchinglog
 :Pattern:       AlphaMatchingLog[str_, nf_]
+:Arguments:     {str, nf}
+:ArgumentTypes: {String, Integer}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      alphamatchinginverse
+:Pattern:       AlphaMatchingInverse[str_, nf_]
 :Arguments:     {str, nf}
 :ArgumentTypes: {String, Integer}
 :ReturnType:    Manual
@@ -3259,6 +3268,19 @@ static void alphamatchinglog(char const* str, int nf){
    MLPutFunction(stdlink, "Partition", 2);
    MLPutRealList(stdlink, result, 25);
    MLPutInteger(stdlink, 5);
+   MLEndPacket(stdlink);
+}
+
+extern double f90alphamatchinginverse_(char const* str, int* nf, double* result);
+
+static void alphamatchinginverse(char const* str, int nf){
+  double result[5];
+
+   f90alphamatchinginverse_(str, &nf, result);
+
+  //  MLPutFunction(stdlink, "Partition", 2);
+   MLPutRealList(stdlink, result, 5);
+  //  MLPutInteger(stdlink, 5);
    MLEndPacket(stdlink);
 }
 
