@@ -126,7 +126,8 @@ module AlphaClass
     aS  = self%alphaGeneric(self%andim(5), self%muRef(5), self%alphaRef(5), muT)
 
     self%alphaRef(6) = pi * sum(   PowList(aS/Pi, self%n+1) * &
-    getInverse(  self%thresholdMatching( 6, log(muT/mT) )  )   )
+    ! getInverse(  self%thresholdMatching( 6, log(muT/mT) )  )   )
+    self%thresholdMatching( 'up', 6, log(muT/mT) )  )
 
   end subroutine SetMTop
 
@@ -142,7 +143,7 @@ module AlphaClass
 
     aS  = self%alphaGeneric(self%andim(5), self%muRef(5), self%alphaRef(5), muB )
 
-    self%alphaRef(4) = pi * sum(  self%thresholdMatching( 5, log(muB/mB) ) &
+    self%alphaRef(4) = pi * sum(  self%thresholdMatching( 'down', 5, log(muB/mB) ) &
     * PowList(aS/Pi, self%n+1)  )
 
 !   Running from mB to muC, with nf = 4 flavors, and matching
@@ -163,7 +164,7 @@ module AlphaClass
 
     aS  = self%alphaGeneric(self%andim(4), self%muRef(4), self%alphaRef(4), muC)
 
-    self%alphaRef(3) = pi * sum(  self%thresholdMatching( 4, log(muC/mC) ) &
+    self%alphaRef(3) = pi * sum(  self%thresholdMatching( 'down', 4, log(muC/mC) ) &
     * PowList(aS/Pi, self%n+1)  )
 
   end subroutine SetMCharm
@@ -727,8 +728,9 @@ module AlphaClass
 
 !ccccccccccccccc
 
-  function thresholdMatching(self, nf, lg) result(e)
+  function thresholdMatching(self, direction, nf, lg) result(e)
     class (Alpha)                  , intent(in) :: self
+    character (len = *)            , intent(in) :: direction
     integer                        , intent(in) :: nf
     real (dp)                      , intent(in) :: lg
     real (dp), dimension(self%n + 1)            :: e
@@ -736,7 +738,7 @@ module AlphaClass
     real (dp), dimension(0:4, 5    )            :: b
 
     lgList(0) = 1; lgList(1:) = powList(lg, self%n)
-    b = self%andim(nf)%MatchingAlphaLog()
+    b = self%andim(nf)%MatchingAlphaLog(direction)
 
     e = matmul( lgList, b(:self%n, :self%n + 1) )
 

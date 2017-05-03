@@ -20,8 +20,8 @@ module AnomDimClass
     integer                       :: nf
     character (len = 5)           :: str
     real (dp)                     :: G4, err
-    real (dp), dimension(5)       :: AlphaMatch, AlphaMatchUp
-    real (dp), dimension(0:4,5)   :: AlphaMatchLog
+    real (dp), dimension(5)       :: AlphaMatch, AlphaMatchInv, AlphaMatchUp
+    real (dp), dimension(0:4,5)   :: AlphaMatchLog, AlphaMatchInvLog
     real (dp), dimension(0:3,0:3) :: gammaHm
     real (dp), dimension(0:4)     :: bHat, bCoef, cCoef
     real (dp), dimension(0:4)     :: beta
@@ -128,8 +128,10 @@ module AnomDimClass
     InAdim%sCoefMSRInc3    = InAdim%sCoefRecursive( MSbarDelta(nf + 1, 1, InAdim%err) )
 
     InAdim%AlphaMatch    = InAdim%alphaMatching(nf)
+    InAdim%AlphaMatchInv = getInverse( InAdim%AlphaMatch )
     InAdim%AlphaMatchUp  = InAdim%alphaMatching(nf + 1)
-    InAdim%AlphaMatchLog = alphaMatchingLog(InAdim%AlphaMatch, nf)
+    InAdim%AlphaMatchLog = alphaMatchingLog(InAdim%AlphaMatch, nf, nf - 1)
+    InAdim%AlphaMatchInvLog = alphaMatchingLog(InAdim%AlphaMatchInv, nf - 1, nf)
 
    end function InAdim
 
@@ -1156,11 +1158,16 @@ end function MatchingAlpha
 
 !ccccccccccccccc
 
-pure function MatchingAlphaLog(self) result(tab)
-  class (AnomDim)  , intent(in) :: self
-  real (dp)  , dimension(0:4,5) :: tab
+pure function MatchingAlphaLog(self, direction) result(tab)
+  class (AnomDim)    , intent(in) :: self
+  character (len = *), intent(in) :: direction
+  real (dp)    , dimension(0:4,5) :: tab
 
-  tab = self%alphaMatchLog
+  if ( direction(:4) == 'down' ) then
+    tab = self%alphaMatchLog
+  else if ( direction(:2) == 'up' ) then
+    tab = self%AlphaMatchInvLog
+  end if
 
 end function MatchingAlphaLog
 
@@ -1203,7 +1210,7 @@ end function MatchingAlphaUp
 
       end do
 
-      c = alphaMatchingLog(tab2, nf)
+      c = alphaMatchingLog(tab2, nf, nf - 1)
 
       do i = 1, 3
         do j = i, 3
@@ -1229,8 +1236,8 @@ end function MatchingAlphaUp
 
 !ccccccccccccccc
 
-  pure function alphaMatchingLog(d, nf) result(tab)
-    integer                , intent(in) :: nf
+  pure function alphaMatchingLog(d, nf, nl) result(tab)
+    integer                , intent(in) :: nf, nl
     real (dp), dimension(5), intent(in) :: d
     real (dp), dimension(0:4,5)         :: tab  ! (log, alpha)
     real (dp), dimension(0:4,0:5)       :: b, c ! (log, alpha)
@@ -1240,8 +1247,8 @@ end function MatchingAlphaUp
     tab = 0; tab(0,1) = 1; ePow = 0
 
     b = 0; c = 0; c(0,1) = 1 ;  b(0,1:) = d
-    call AlphaExpand( betaFun(nf    ), b(:,1:) )
-    call AlphaExpand( betaFun(nf - 1), c(:,1:) )
+    call AlphaExpand( betaFun(nf), b(:,1:) )
+    call AlphaExpand( betaFun(nl), c(:,1:) )
 
     do n = 2, 5
 

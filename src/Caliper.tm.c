@@ -1,6 +1,6 @@
 /*
  * This file automatically produced by /Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mprep from:
- *	/Users/vmateu/GitHub/Caliper/src/Caliper.tm
+ *	/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm
  * mprep Revision 18 Copyright (c) Wolfram Research, Inc. 1990-2013
  */
 
@@ -289,7 +289,7 @@ MLYDEFN( devyield_result, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
-# line 1679 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
+# line 1679 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm"
 #include "mathlink.h"
 #include "ftypes.h"
 #include <stdio.h>
@@ -1872,12 +1872,13 @@ static void msbardeltapiece(int nl, int nh){
    MLEndPacket(stdlink);
 }
 
-extern double f90alphamatchinglog_(char const* str, int* nf, double* result);
+extern double f90alphamatchinglog_(char const* str, char const* direction,
+  int* nf, double* result);
 
-static void alphamatchinglog(char const* str, int nf){
+static void alphamatchinglog(char const* str, char const* direction, int nf){
   double result[25];
 
-   f90alphamatchinglog_(str, &nf, result);
+   f90alphamatchinglog_(str, direction, &nf, result);
 
    MLPutFunction(stdlink, "Partition", 2);
    MLPutRealList(stdlink, result, 25);
@@ -2686,7 +2687,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 2690 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
+# line 2691 "/Users/vicent/GitHubProjects/Caliper/src/Caliper.tm.c"
 
 
 void ewfactors P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5));
@@ -9166,7 +9167,7 @@ L0:	return res;
 } /* _tr72 */
 
 
-void alphamatchinglog P(( const char * _tp1, int _tp2));
+void alphamatchinglog P(( const char * _tp1, const char * _tp2, int _tp3));
 
 #if MLPROTOTYPES
 static int _tr73( MLINK mlp)
@@ -9176,15 +9177,18 @@ static int _tr73(mlp) MLINK mlp;
 {
 	int	res = 0;
 	const char * _tp1;
-	int _tp2;
+	const char * _tp2;
+	int _tp3;
 	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
-	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
-	if ( ! MLNewPacket(mlp) ) goto L2;
+	if ( ! MLGetString( mlp, &_tp2) ) goto L1;
+	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
+	if ( ! MLNewPacket(mlp) ) goto L3;
 
-	alphamatchinglog(_tp1, _tp2);
+	alphamatchinglog(_tp1, _tp2, _tp3);
 
 	res = 1;
-L2: L1:	MLReleaseString(mlp, _tp1);
+L3: L2:	MLReleaseString(mlp, _tp2);
+L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
 } /* _tr73 */
@@ -10968,7 +10972,7 @@ static struct func {
 		{ 3, 0, _tr70, "intecorre" },
 		{ 3, 0, _tr71, "anomdim" },
 		{ 2, 0, _tr72, "msbardeltapiece" },
-		{ 2, 0, _tr73, "alphamatchinglog" },
+		{ 3, 0, _tr73, "alphamatchinglog" },
 		{ 2, 0, _tr74, "alphamatchinginverse" },
 		{ 3, 0, _tr75, "ccoef" },
 		{ 2, 0, _tr76, "pscoef" },
@@ -11237,8 +11241,8 @@ static const char* evalstrs[] = {
 	"MSbarDeltaPiece::usage = \"MSbarDeltaPiece[nl, nh] computes the p",
 	"ole to MS-bar relation\"",
 	(const char*)0,
-	"AlphaMatchingLog::usage = \"AlphaMatchingLog[str, nf] computes th",
-	"e alpha threshold matching\"",
+	"AlphaMatchingLog::usage = \"AlphaMatchingLog[str, direction, nf] ",
+	"computes the alpha threshold matching\"",
 	(const char*)0,
 	"AlphaMatchingInverse::usage = \"AlphaMatchingInverse[str, nf] com",
 	"putes the inverse alpha threshold matching\"",
@@ -11747,7 +11751,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"InteCorre[b_, x0_, x1_]", (char *)"{b, x0, x1}", 70);
 	if (_res) _res = _definepattern(mlp, (char *)"AnomDim[str_, nf_, G4_]", (char *)"{str, nf, G4}", 71);
 	if (_res) _res = _definepattern(mlp, (char *)"MSbarDeltaPiece[nl_, nh_]", (char *)"{nl, nh}", 72);
-	if (_res) _res = _definepattern(mlp, (char *)"AlphaMatchingLog[str_, nf_]", (char *)"{str, nf}", 73);
+	if (_res) _res = _definepattern(mlp, (char *)"AlphaMatchingLog[str_, direction_, nf_]", (char *)"{str, direction, nf}", 73);
 	if (_res) _res = _definepattern(mlp, (char *)"AlphaMatchingInverse[str_, nf_]", (char *)"{str, nf}", 74);
 	if (_res) _res = _definepattern(mlp, (char *)"cCoef[nf_, order_, n_]", (char *)"{nf, order, n}", 75);
 	if (_res) _res = _definepattern(mlp, (char *)"PSCoef[nf_, lg_]", (char *)"{nf, lg}", 76);

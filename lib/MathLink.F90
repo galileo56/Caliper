@@ -2814,15 +2814,15 @@ end subroutine f90MSbarDeltaPiece
 
 !ccccccccccccccc
 
-subroutine f90AlphaMatchingLog(str, nf, beta)
+subroutine f90AlphaMatchingLog(str, direction, nf, beta)
   use AnomDimClass;  use constants, only: dp; implicit none
-  character (len = *)          , intent(in )  :: str
+  character (len = *)          , intent(in )  :: str, direction
   integer                      , intent(in )  :: nf
   real (dp), dimension(0:4,5), intent(out)    :: beta
   type (AnomDim)                              :: run
 
   run = AnomDim(str, nf, 0._dp)
-  beta = alphaMatchingLog(run%Matchingalpha(), nf)
+  beta = run%MatchingAlphaLog(direction)
 
 end subroutine f90AlphaMatchingLog
 
