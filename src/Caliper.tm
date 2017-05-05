@@ -69,6 +69,8 @@
 :Evaluate:  PoleMass::usage = "PoleMass[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  MSbarMassLow::usage = "MSbarMassLow[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching below the mass."
 :Evaluate:  MSRMass::usage = "MSRMass[method, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
+:Evaluate:  OptimalR::usage = "OptimalR[n, method, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda] computes the Optimal R scale for quarkonium."
+:Evaluate:  OptimalRNatural::usage = "OptimalRNatural[n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda] computes the Optimal R scale for quarkonium."
 :Evaluate:  mmfromMSR::usage = "mmfromMSR[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
 :Evaluate:  mmfromMSRNatural::usage = "mmfromMSRNatural[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR natural definition running of the quark masses with flavor matching."
 :Evaluate:  MSRNaturalMass::usage = "MSRNaturalMass[method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, muLambda, R] computes the MSR natural definition running of the quark masses with flavor matching."
@@ -1515,6 +1517,28 @@
                  mC, muC, lambda, mu, R}
 :ArgumentTypes: {String, Integer, Integer, Integer, Integer, Real, Real, Real,
                  Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      optimalr
+:Pattern:       OptimalR[n_, method_, order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_,
+                muT_, mB_, muB_, mC_, muC_, lambda_, mu_]
+:Arguments:     {n, method, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB,
+                 mC, muC, lambda, mu}
+:ArgumentTypes: {Integer, String, Integer, Integer, Integer, Integer, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      optimalrnatural
+:Pattern:       OptimalRNatural[n_, method_, orderAlpha_, runAlpha_, order_, run_,
+                nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_, mu_]
+:Arguments:     {n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT,
+                 muT, mB, muB, mC, muC, lambda, mu}
+:ArgumentTypes: {Integer, String, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real}
 :ReturnType:     Real
 :End:
 
@@ -3895,6 +3919,39 @@ double muC, double lambda, double mu, double R){
 
   f90msrmass_(str, &order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB,
    &mC, &muC,&lambda, &mu, &R, &res);
+
+  return res;
+}
+
+extern double f90optimalr_(int* n, char const* str, int* order, int* runAlpha, int* run,
+int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB,
+double* mC, double* muC, double* lambda, double* mu, double* res);
+
+static double optimalr(int n, char const* str, int order, int runAlpha, int run, int nf,
+double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
+double muC, double lambda, double mu){
+
+  double res;
+
+  f90optimalr_(&n, str, &order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB,
+   &mC, &muC,&lambda, &mu, &res);
+
+  return res;
+}
+
+extern double f90optimalrnatural_(int* n, char const* str, int* orderAlpha,
+int* runAlpha, int* order, int* run, int* nf, double* Mz, double* aMz, double* mT,
+double* muT, double* mB, double* muB, double* mC, double* muC, double* lambda,
+double* mu, double* res);
+
+static double optimalrnatural(int n, char const* str, int orderAlpha, int runAlpha,
+int order, int run, int nf, double Mz, double aMz, double mT, double muT,
+double mB, double muB, double mC, double muC, double lambda, double mu){
+
+  double res;
+
+  f90optimalrnatural_(&n, str, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz,
+  &aMz, &mT, &muT, &mB, &muB, &mC, &muC,&lambda, &mu, &res);
 
   return res;
 }

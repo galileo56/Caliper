@@ -2,11 +2,11 @@
 module Constants
   use iso_fortran_env, only: error_unit, dp => real64
   implicit none
-  real (dp), parameter :: Pi    = 3.141592653589793_dp , ExpEuler = 1.781072417990198_dp,&
-                          Zeta3 = 1.2020569031595942   , Zeta2 = 1.6449340668482262_dp,  &
-                          Euler = 0.5772156649015329_dp, l2  = 0.6931471805599453_dp,    &
-                          Pio2  = 1.5707963267948966_dp, Pi2 = 9.869604401089358_dp ,    &
-                          sr2   = 1.4142135623730951_dp, prec = 1e-10_dp
+  real (dp), parameter :: Pi = 3.141592653589793_dp , prec = 1e-10_dp, &
+  Zeta3 = 1.2020569031595942   , Zeta2    = 1.6449340668482262_dp,     &
+  Euler = 0.5772156649015329_dp, l2       = 0.6931471805599453_dp,     &
+  Pio2  = 1.5707963267948966_dp, Pi2      = 9.869604401089358_dp ,     &
+  sr2   = 1.4142135623730951_dp, ExpEuler = 1.781072417990198_dp
 
     !**************************************************************
     !>
@@ -21,9 +21,9 @@ module Constants
 
     !**************************************************************
 
-  real (dp), dimension(5), parameter :: d1mach = [  tiny(1.0_dp), huge(1.0_dp), &
-           real(radix(1.0_dp),dp)**(-digits(1.0_dp)), epsilon(1.0_dp), &
-           log10(real(radix(1.0_dp),dp)) ]
+  real (dp), dimension(5), parameter :: d1mach = [  tiny(1.0_dp), &
+  huge(1.0_dp), real(radix(1.0_dp),dp)**(-digits(1.0_dp)),        &
+  epsilon(1.0_dp), log10(real(radix(1.0_dp),dp)) ]
 
 end module Constants
 
@@ -3524,9 +3524,9 @@ subroutine f90hiper2f1 ( ain, bin, cin, xin, hf )
   real (dp), intent(in)  :: ain, bin, cin, xin
   real (dp), intent(out) :: hf
 
-  real (dp) :: a, a0, aa, b, bb, c, c0, c1, eps, f0, f1, g0, g1, g2, g3, ga, gabc, x, x1, &
-               gam, gb, gbm, gc, gca, gcab, gcb, gm, hw, pa, pb, r, r0, r1, rm, rp, sm,&
-               sp0, sp
+  real (dp) :: a, a0, aa, b, bb, c, c0, c1, eps, f0, f1, g0, g1, g2, g3, ga, &
+  gabc, x, x1, gam, gb, gbm, gc, gca, gcab, gcb, gm, hw, pa, pb, r, r0, r1, &
+  rm, rp, sm, sp0, sp
 
   integer  :: j, k, m, nm
   logical  :: l0, l1, l2, l3, l4, l5

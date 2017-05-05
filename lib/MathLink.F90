@@ -3159,6 +3159,62 @@ end subroutine f90MSRMass
 
 !ccccccccccccccc
 
+subroutine f90OptimalR(n, method, orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, &
+mB, muB, mC, muC, lambda, mu, res)
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  implicit none
+
+  character (len = *), intent(in ) :: method
+  integer            , intent(in ) :: orderAlpha, runAlpha, run, nf, n
+  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, lambda
+  real (dp)          , intent(out) :: res
+  type (Running)                   :: alphaMass
+  type (Alpha)                     :: alphaAll
+  type (AnomDim), dimension(3:6)   :: AnDim
+  integer                          :: i
+
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
+
+  alphaMass = Running(nf, run, alphaAll, mu)
+  res = alphaMass%OptimalR( n, lambda, method(:8) )
+
+end subroutine f90OptimalR
+
+!ccccccccccccccc
+
+subroutine f90OptimalRNatural(n, method, orderAlpha, runAlpha, order, run, nf, &
+mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, mu, res)
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  implicit none
+
+  character (len = *), intent(in ) :: method
+  integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nf, n
+  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, lambda
+  real (dp)          , intent(out) :: res
+  type (Running)                   :: alphaMass
+  type (Alpha)                     :: alphaAll
+  type (AnomDim), dimension(3:6)   :: AnDim
+  integer                          :: i
+
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
+
+  alphaMass = Running(nf, run, alphaAll, mu)
+  res = alphaMass%OptimalRNatural( n, order, lambda, method(:8) )
+
+end subroutine f90OptimalRNatural
+
+!ccccccccccccccc
+
 subroutine f90mmfromMSR(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, &
 muB, mC, muC, mu, R, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp

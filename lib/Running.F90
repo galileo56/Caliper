@@ -24,7 +24,7 @@ module RunningClass
     DiffDelta, orders, adim, DiffDeltaHadron, scheme, MSbarDeltaMu, MSbarMassLow, &
     AlphaAll, DeltaGapMatching, DiffRMass, MSRNaturalMass, mmFromMSR, PoleMass,   &
     SetMTop, SetMBottom, SetMCharm, SetLambda, mmFromMSRNatural, SetAlpha, scales,&
-    DiffR, PSdelta
+    DiffR, PSdelta, OptimalR, OptimalRNatural
 
     procedure, pass(self), private :: MSRMatching, alphaQCDReal, alphaQCDComplex, &
     wTildeReal, wTildeComplex, kTildeReal, kTildeComplex, RunningMass
@@ -313,6 +313,31 @@ module RunningClass
 
 !ccccccccccccccc
 
+  real (dp) function OptimalR(self, n, lambda, method)
+    class (Running)                    , intent(in) :: self
+    real (dp)          , optional      , intent(in) :: lambda
+    character (len = *), optional      , intent(in) :: method
+    integer                            , intent(in) :: n
+    integer                                         :: IFLAG
+    real (dp)                                       :: a, b, c
+
+    a = 0.5_dp; b = self%mH
+
+    call DFZERO(root, a, b, c, 1e-10_dp, 1e-10_dp, IFLAG); OptimalR = a
+
+  contains
+
+    real (dp) function root(x)
+      real (dp), intent(in) :: x
+
+      root = n * x - 4 * self%MSRmass(x, lambda, method) * self%alphaQCD(x)/3
+
+    end function root
+
+  end function OptimalR
+
+!ccccccccccccccc
+
    real (dp) function MSRmass(self, R, lambda, method)
      class (Running)                    , intent(in) :: self
      real (dp)                          , intent(in) :: R
@@ -474,6 +499,32 @@ module RunningClass
    end function MSR
 
   end function mmFromMSRNatural
+
+!ccccccccccccccc
+
+  real (dp) function OptimalRNatural(self, n, order, lambda, method)
+    class (Running)                    , intent(in) :: self
+    real (dp)          , optional      , intent(in) :: lambda
+    character (len = *), optional      , intent(in) :: method
+    integer                            , intent(in) :: n, order
+    integer                                         :: IFLAG
+    real (dp)                                       :: a, b, c
+
+    a = 0.5_dp; b = self%mH
+
+    call DFZERO(root, a, b, c, 1e-9_dp, 1e-9_dp, IFLAG); OptimalRNatural = a
+
+  contains
+
+    real (dp) function root(x)
+      real (dp), intent(in) :: x
+
+      root = n * x - 4 * self%MSRNaturalMass(order, x, lambda, method) &
+      * self%alphaQCD(x)/3
+
+    end function root
+
+  end function OptimalRNatural
 
 !ccccccccccccccc
 
