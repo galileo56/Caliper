@@ -48,10 +48,10 @@ RM = /opt/local/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/vicent/GitHubProjects/Caliper
+CMAKE_SOURCE_DIR = /Users/vmateu/GitHub/Caliper
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/vicent/GitHubProjects/Caliper/build
+CMAKE_BINARY_DIR = /Users/vmateu/GitHub/Caliper/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -124,9 +124,9 @@ list_install_components/fast: list_install_components
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/vmateu/GitHub/Caliper/build/CMakeFiles /Users/vmateu/GitHub/Caliper/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/vicent/GitHubProjects/Caliper/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/vmateu/GitHub/Caliper/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -517,6 +517,33 @@ lib/Model.F90.s:
 	$(MAKE) -f CMakeFiles/subdir_mods.dir/build.make CMakeFiles/subdir_mods.dir/lib/Model.F90.s
 .PHONY : lib/Model.F90.s
 
+lib/NRQCD.o: lib/NRQCD.F90.o
+
+.PHONY : lib/NRQCD.o
+
+# target to build an object file
+lib/NRQCD.F90.o:
+	$(MAKE) -f CMakeFiles/subdir_mods.dir/build.make CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o
+.PHONY : lib/NRQCD.F90.o
+
+lib/NRQCD.i: lib/NRQCD.F90.i
+
+.PHONY : lib/NRQCD.i
+
+# target to preprocess a source file
+lib/NRQCD.F90.i:
+	$(MAKE) -f CMakeFiles/subdir_mods.dir/build.make CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.i
+.PHONY : lib/NRQCD.F90.i
+
+lib/NRQCD.s: lib/NRQCD.F90.s
+
+.PHONY : lib/NRQCD.s
+
+# target to generate assembly for a file
+lib/NRQCD.F90.s:
+	$(MAKE) -f CMakeFiles/subdir_mods.dir/build.make CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.s
+.PHONY : lib/NRQCD.F90.s
+
 lib/NonSing.o: lib/NonSing.F90.o
 
 .PHONY : lib/NonSing.o
@@ -811,6 +838,9 @@ help:
 	@echo "... lib/Model.o"
 	@echo "... lib/Model.i"
 	@echo "... lib/Model.s"
+	@echo "... lib/NRQCD.o"
+	@echo "... lib/NRQCD.i"
+	@echo "... lib/NRQCD.s"
 	@echo "... lib/NonSing.o"
 	@echo "... lib/NonSing.i"
 	@echo "... lib/NonSing.s"

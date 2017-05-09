@@ -11,6 +11,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/libCaliper.dir/MathLink.F90.o"
   "CMakeFiles/libCaliper.dir/MatrixElements.F90.o"
   "CMakeFiles/libCaliper.dir/Model.F90.o"
+  "CMakeFiles/libCaliper.dir/NRQCD.F90.o"
   "CMakeFiles/libCaliper.dir/NonSing.F90.o"
   "CMakeFiles/libCaliper.dir/Profiles.F90.o"
   "CMakeFiles/libCaliper.dir/Rhad.F90.o"

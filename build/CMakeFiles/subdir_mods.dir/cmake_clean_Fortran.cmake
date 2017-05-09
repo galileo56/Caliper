@@ -72,6 +72,10 @@ FILE(REMOVE
   "NONSINGULARCLASS.mod"
   "CMakeFiles/subdir_mods.dir/nonsingularclass.mod.stamp"
 
+  "nrqcdclass.mod"
+  "NRQCDCLASS.mod"
+  "CMakeFiles/subdir_mods.dir/nrqcdclass.mod.stamp"
+
   "poly.mod"
   "POLY.mod"
   "CMakeFiles/subdir_mods.dir/poly.mod.stamp"

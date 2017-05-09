@@ -32,7 +32,7 @@ module AnomDimClass
     gammaR,  gammaRNatural, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, &
     sCoefMSRInc3, gammaRInc3
 
-    contains
+  contains
 
     procedure, pass(self), public :: expandAlpha, wTildeExpand, kTildeExpand, &
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
@@ -59,7 +59,7 @@ module AnomDimClass
 
 !ccccccccccccccc
 
-   type(AnomDim) function InAdim(str, nf, G4, err)
+   type (AnomDim) function InAdim(str, nf, G4, err)
     character (len = *), intent(in) :: str
     integer            , intent(in) :: nf         ! number of active flavors
     real (dp)          , intent(in) :: G4         ! cusp anomalous dimension

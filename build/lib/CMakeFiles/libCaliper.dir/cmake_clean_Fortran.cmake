@@ -72,6 +72,10 @@ FILE(REMOVE
   "NONSINGULARCLASS.mod"
   "CMakeFiles/libCaliper.dir/nonsingularclass.mod.stamp"
 
+  "nrqcdclass.mod"
+  "NRQCDCLASS.mod"
+  "CMakeFiles/libCaliper.dir/nrqcdclass.mod.stamp"
+
   "poly.mod"
   "POLY.mod"
   "CMakeFiles/libCaliper.dir/poly.mod.stamp"

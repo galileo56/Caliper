@@ -203,8 +203,8 @@ module MatrixElementsClass
 
 !ccccccccccccccc
 
-  type (MatricesElementsMass) function InMatMass(AlphaAll, nf, runMass, s3T, s3C, j3, b3, &
-                                                  muLambda, muLambdaNl)
+  type (MatricesElementsMass) function InMatMass(AlphaAll, nf, runMass, s3T, &
+  s3C, j3, b3, muLambda, muLambdaNl)
     type (Alpha)   , intent(in)   :: AlphaAll
     integer        , intent(in)   :: nf, runMass
     real (dp)      , intent(in)   :: s3T, s3C, j3, b3, muLambda, muLambdaNl

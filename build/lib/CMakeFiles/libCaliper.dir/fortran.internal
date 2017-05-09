@@ -18,6 +18,7 @@ provides
  mctopclass
  modelclass
  nonsingularclass
+ nrqcdclass
  poly
  profilesclass
  quadpack

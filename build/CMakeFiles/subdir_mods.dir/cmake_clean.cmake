@@ -11,6 +11,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o"
   "CMakeFiles/subdir_mods.dir/lib/MatrixElements.F90.o"
   "CMakeFiles/subdir_mods.dir/lib/Model.F90.o"
+  "CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o"
   "CMakeFiles/subdir_mods.dir/lib/NonSing.F90.o"
   "CMakeFiles/subdir_mods.dir/lib/Profiles.F90.o"
   "CMakeFiles/subdir_mods.dir/lib/Rhad.F90.o"
