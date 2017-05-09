@@ -1,16 +1,22 @@
 module NRQCDClass
   use Constants, only: dp, d1mach, Pi ;  use RunningClass; use AlphaClass
-  implicit none ; private
+  use AnomDimClass; implicit none ; private
 
 !ccccccccccccccc
 
   type, public :: NRQCD
     private
-    type (Running)          :: alphaMass
-    type (Alpha)            :: alphaAll
-    real (dp), dimension(5) :: c
+    real (dp), dimension(0:4,0:3) :: c
+    character (len = 5)           :: scheme
+    real (dp)                     :: mH
+    type (Running)                :: alphaMass
+    type (Alpha)                  :: alphaAll
+    type (AnomDim)                :: Andim
+    integer                       :: n
 
   contains
+
+    procedure, pass(self), public :: EnPole
 
   end type NRQCD
 
@@ -24,18 +30,71 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  type (NRQCD) function InNRQCD(alphaAll, run, Lambda, nl, n, l, j, s)
-    integer       , intent(in) :: n, l, j, s, nl, run
-    real (dp)     , intent(in) :: Lambda
-    type (Alpha)  , intent(in) :: alphaAll
+  type (NRQCD) function InNRQCD(scheme, alphaAll, run, Lambda, nl, n, l, j, s)
+    integer            , intent(in) :: n, l, j, s, nl, run
+    character (len = *), intent(in) :: scheme
+    real (dp)          , intent(in) :: Lambda
+    type (Alpha)       , intent(in) :: alphaAll
+    real (dp)     , dimension(0:4)  :: beta
+    integer                         :: i, jj, k
 
-    InNRQCD%alphaAll  = alphaAll
+    InNRQCD%alphaAll  = alphaAll; InNRQCD%c = 0; InNRQCD%n = n
     InNRQCD%alphaMass = Running(nl, run, AlphaAll, Lambda)
+    InNRQCD%Andim = InNRQCD%alphaMass%adim();  beta  = InNRQCD%Andim%betaQCD('beta')
+    InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); InNRQCD%scheme = scheme
 
-    InNRQCD%c = [ 1._dp, 31._dp/6 - 5._dp * nl/9, c2(nl, n, l, j, s), &
+    InNRQCD%c(:,0) = [ 1._dp, 31._dp/6 - 5._dp * nl/9, c2(nl, n, l, j, s), &
     c3(nl, n, l, j, s), c3log(nl, n, l, j, s) ]
 
+    do k = 1, 3
+      do jj = 0, k - 1
+
+        do i = jj + 1, k - 1
+
+          InNRQCD%c(k,jj + 1) = InNRQCD%c(k,jj + 1) + beta(k - 1 - i) * &
+          ( (i + 2) * InNRQCD%c(i, jj) - (jj + 1) * InNRQCD%c(i, jj + 1) )/4**(k - i)
+
+        end do
+
+        InNRQCD%c(k,jj + 1) = 2 * (  InNRQCD%c(k,jj + 1) + &
+        (jj + 2) * InNRQCD%c(jj,jj) * beta(k - 1 - jj)/4**(k - jj)  )/(jj + 1)
+
+      end do
+    end do
+
   end function InNRQCD
+
+!ccccccccccccccc
+
+  pure function EnPole(self, mu, R) result(list)
+    class (NRQCD), intent(in)   :: self
+    real (dp)    , intent(in)   :: mu, R
+    real (dp), dimension(0:4)   :: list
+    real (dp), dimension(0:3)   :: logList, alphaList
+    real (dp)                   :: alp
+    real (dp), dimension(4)     :: delta
+    real (dp), dimension(0:4,4) :: coefMSR
+    list(0) = 2; alp = self%alphaMass%alphaQCD(mu); logList(0) = 1
+    logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / self%mH) , 3)
+    alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,3)
+
+    list(1:) = matmul( self%c(:3,:), logList );  list(4) = list(4) + self%c(4,0)
+    list(1:) = - 4 * alp**2/9/self%n**2 * alphaList * list(1:)
+
+    if ( self%scheme(:4) == 'pole' ) then
+      delta = 0
+    else if ( self%scheme(:5) == 'MSbar' ) then
+
+      coefMSR = 0 ; coefMSR(0,:) = R * self%andim%MSRDelta()
+
+    else if ( self%scheme(:5) == 'MSRp' ) then
+    else if ( self%scheme(:5) == 'MSRn' ) then
+    end if
+
+    list = self%mH * list
+
+  end function EnPole
+
 
 !ccccccccccccccc
 

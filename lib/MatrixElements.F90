@@ -577,7 +577,7 @@ module MatrixElementsClass
         end if
 
         call AddAlpha( InMatElMass%BJetExp, alphaJList(:3) )
-        call AddAlpha(coefMassLow         , alphaJList     )
+        call AddAlpha( coefMassLow        , alphaJList     )
 
         lgMSLowList            = powList( log(muJ/InMatElMass%MSLow), 4 )
         InMatElMass%deltaMSLow = DeltaComputer(coefMassLow, lgMSLowList, 0)
