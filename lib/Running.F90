@@ -534,7 +534,7 @@ module RunningClass
      real (dp), optional                , intent(in) :: lambda
      character (len = *), optional      , intent(in) :: method
      integer                            , intent(in) :: order
-     real (dp)                        , dimension(3) :: a
+     real (dp)                        , dimension(4) :: a
      real (dp), dimension(self%runMass,self%runMass) :: gammaLog
      real (dp), dimension(self%runMass)              :: gamm, alphaList, lglist
      integer                                         :: neval, ier, i
@@ -628,11 +628,13 @@ module RunningClass
 !ccccccccccccccc
 
   function MSRMatching(self) result(a)
-    class (Running), intent(in)    :: self
-    real (dp) , dimension(4)       :: a, c
+    class (Running), intent(in) :: self
+    real (dp) , dimension(4)    :: a, c
+    real (dp) , dimension(5)    :: b
 
-    c   = MSbarDelta(self%nf, 1); a = MSbarDelta(self%nf, 0)
-    call alphaReExpand( a, self%andim%MatchingAlphaUp() );  a = c - a
+    c = MSbarDelta(self%nf, 1); a = MSbarDelta(self%nf, 0)
+    b = self%andim%MatchingAlphaUp()
+    call alphaReExpand( a, b(:4) );  a = c - a
 
   end function MSRMatching
 

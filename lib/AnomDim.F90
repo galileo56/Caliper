@@ -1318,6 +1318,8 @@ end function MatchingAlphaUp
     real (dp), dimension( size(b), size(b) ) :: c
     integer                                  :: n, j
 
+    ! if ( size(a) /= size(b) )
+
     c(1,:) = b
 
     do n = 1, size(a) - 1
@@ -1478,8 +1480,8 @@ end function MatchingAlphaUp
     3560.8898310265354_dp + 6.959412931434764_dp * nh - &
     0.2350144435277955_dp * nh**2 + 0.07451_dp * nh**3/3 - &
     744.8539586181788_dp * nl - 0.9031271808335385_dp * nh * nl + &
-    0.03617166666666667_dp * nh**2 * nl + 43.37905086931079_dp * nl**2 + &
-    0.017201666666666664_dp * nh * nl**2 - 0.6781416666666666_dp * nl**3 ]
+    0.108515_dp * nh**2/3 * nl + 43.379048031381515_dp * nl**2 + &
+    0.01720208660410344_dp * nh * nl**2 - 0.6781410256045151_dp * nl**3 ]
 
     if ( present(err) ) coef(4) = coef(4) + err * (1.63_dp + 0.12_dp * nh + &
     0.0027_dp * nh**2 + 0.04_dp * nl**2 + 0.0004_dp * nh * nl)
