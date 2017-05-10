@@ -81,7 +81,7 @@ module NRQCDClass
     real (dp), dimension(0:4)       :: list, alphaList
     real (dp), dimension(0:3)       :: logList
     real (dp), dimension(0:4)       :: delta, lgmList
-    real (dp), dimension(0:1,2)     :: deltaLog  ! (power, order)
+    real (dp), dimension(0:1,0:2)   :: deltaLog  ! (power, order)
     real (dp), dimension(0:4,4)     :: coefMSR
     real (dp), dimension(4,0:3)     :: c
     real (dp)                       :: alp, Rmass, mass, factor
@@ -96,10 +96,10 @@ module NRQCDClass
     else if ( self%scheme(:5) == 'MSbar' ) then
       coefMSR(0,:) = self%mH * self%andim%MSRDelta()
       Rmass = self%mH; mass = self%mH
-    else if ( self%scheme(:5) == 'MSRp' ) then
+    else if ( self%scheme(:4) == 'MSRp' ) then
       coefMSR(0,:) = R * self%andim%MSRDelta(); Rmass = R
       mass = self%alphaMass%MSRmass(R, lambda, method)
-    else if ( self%scheme(:5) == 'MSRn' ) then
+    else if ( self%scheme(:4) == 'MSRn' ) then
       coefMSR(0,:) = R * MSbarDelta(self%nl, 0); Rmass = R
       mass = self%alphaMass%MSRNaturalMass(order, R, lambda, method)
     end if
@@ -115,23 +115,25 @@ module NRQCDClass
 
       call self%andim%expandAlpha(coefMSR); lgmList = PowList( log(mu/Rmass), 4 )
       call AddAlpha( coefMSR, alphaList(1:) )        ; c = 0; deltaLog = 0
-      delta(1:) = DeltaComputer(coefMSR, lgmList, 0)/mass; deltaLog(0,1) = 1
-      deltaLog(1,:) = delta(1:2) - [ 0._dp, delta(1)**2/2 ]
+      delta(1:) = DeltaComputer(coefMSR, lgmList, 0)/mass; deltaLog(0,0) = 1
+      deltaLog(1,1:) = delta(1:2) - [ 0._dp, delta(1)**2/2 ]
 
       do i = 1, 4
         do k = 0, i - 1
 
           do j = k, i - 1
-            c(i,k) = c(i,k) + self%c(i,j) * self%Binomial(i,j) * logList(j - k)
+            c(i,k) = c(i,k) + self%c(i - 1,j) * self%Binomial(i,j) * logList(j - k)
           end do
 
           c(i,k) = (-1)**k * c(i,k)
 
         end do
 
-        c(i,:) = factor * alphaList(i) * c(i,:)
+        c(i,:) = factor * alphaList(i - 1) * c(i,:)
 
       end do
+
+      ! list(1:) = c(:,0)
 
       do j = 1, 4
         do i = 1, j
@@ -142,9 +144,7 @@ module NRQCDClass
       end do
 
       do j = 4, 1, -1
-        do i = 0, j
-          list(j) = list(j) + delta(i) * list(j - i)
-        end do
+        list(j) = sum( delta(0:j) * list(j:0:-1) )
       end do
 
     end if

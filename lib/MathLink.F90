@@ -3241,11 +3241,11 @@ end subroutine f90OptimalRNatural
     alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
     mT, muT, mB, muB, mC, muC)
 
-    alphaMass = Running(nl, run, alphaAll, mu)
+    alphaMass = Running(nl, run, alphaAll, lambda)
 
-    Upsilon = NRQCD(scheme, alphaMass, n, l, j, s)
+    Upsilon = NRQCD( scheme(:5), alphaMass, n, l, j, s )
 
-    res = Upsilon%En(order, mu, R, lam, method)
+    res = Upsilon%En( order, mu, R, lam, method(:8) )
 
   end subroutine f90NRQCD
 
