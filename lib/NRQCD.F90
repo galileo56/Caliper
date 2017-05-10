@@ -12,7 +12,7 @@ module NRQCDClass
     type (Running)                :: alphaMass
     type (Alpha)                  :: alphaAll
     type (AnomDim)                :: Andim
-    integer                       :: n
+    integer                       :: n, nl
 
   contains
 
@@ -36,12 +36,19 @@ module NRQCDClass
     real (dp)          , intent(in) :: Lambda
     type (Alpha)       , intent(in) :: alphaAll
     real (dp)     , dimension(0:4)  :: beta
+    character (len = 5)             :: alphaScheme
     integer                         :: i, jj, k
 
-    InNRQCD%alphaAll  = alphaAll; InNRQCD%c = 0; InNRQCD%n = n
+    InNRQCD%alphaAll  = alphaAll; InNRQCD%c = 0; InNRQCD%n = n; InNRQCD%nl = l
     InNRQCD%alphaMass = Running(nl, run, AlphaAll, Lambda)
     InNRQCD%Andim = InNRQCD%alphaMass%adim();  beta  = InNRQCD%Andim%betaQCD('beta')
-    InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); InNRQCD%scheme = scheme
+    InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); alphaScheme = alphaAll%scheme()
+
+    if (  alphaScheme(:4) == 'pole') then
+      InNRQCD%scheme = 'pole'
+    else
+      InNRQCD%scheme = scheme
+    end if
 
     InNRQCD%c(:,0) = [ 1._dp, 31._dp/6 - 5._dp * nl/9, c2(nl, n, l, j, s), &
     c3(nl, n, l, j, s), c3log(nl, n, l, j, s) ]
@@ -71,24 +78,36 @@ module NRQCDClass
     real (dp)    , intent(in)   :: mu, R
     real (dp), dimension(0:4)   :: list
     real (dp), dimension(0:3)   :: logList, alphaList
-    real (dp)                   :: alp
-    real (dp), dimension(4)     :: delta
+    real (dp)                   :: alp, Rmass
+    real (dp), dimension(4)     :: delta, lgmList
     real (dp), dimension(0:4,4) :: coefMSR
+
     list(0) = 2; alp = self%alphaMass%alphaQCD(mu); logList(0) = 1
     logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / self%mH) , 3)
     alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,3)
 
     list(1:) = matmul( self%c(:3,:), logList );  list(4) = list(4) + self%c(4,0)
-    list(1:) = - 4 * alp**2/9/self%n**2 * alphaList * list(1:)
+    list(1:) = - 4 * alp**2/9/self%n**2 * alphaList * list(1:); coefMSR = 0
 
     if ( self%scheme(:4) == 'pole' ) then
       delta = 0
     else if ( self%scheme(:5) == 'MSbar' ) then
 
-      coefMSR = 0 ; coefMSR(0,:) = R * self%andim%MSRDelta()
+      coefMSR(0,:) = self%mH * self%andim%MSRDelta(); Rmass = self%mH
 
     else if ( self%scheme(:5) == 'MSRp' ) then
+
+      coefMSR(0,:) = R * self%andim%MSRDelta(); Rmass = R
+
     else if ( self%scheme(:5) == 'MSRn' ) then
+
+      coefMSR(0,:) = R * MSbarDelta(self%nl, 0); Rmass = R
+
+    end if
+
+    if ( self%scheme(:4) /= 'pole' ) then
+      call self%andim%expandAlpha(coefMSR); lgmList = PowList( log(mu/Rmass), 4 )
+
     end if
 
     list = self%mH * list
