@@ -85,9 +85,9 @@ module NRQCDClass
     real (dp), dimension(0:4,4)     :: coefMSR
     real (dp), dimension(4,0:3)     :: c
     real (dp)                       :: alp, Rmass, mass, factor
-    integer                         :: i, j, k
+    integer                         :: i, j, k, l
 
-    list(0) = 2     ; alp           = self%alphaMass%alphaQCD(mu); coefMSR = 0
+    list = 0; list(0) = 2 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
     alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
     factor = - 4 * alp**2/9/self%n**2 ; logList(0) = 1
 
@@ -122,7 +122,7 @@ module NRQCDClass
         do k = 0, i - 1
 
           do j = k, i - 1
-            c(i,k) = c(i,k) + self%c(i - 1,j) * self%Binomial(i,j) * logList(j - k)
+            c(i,k) = c(i,k) + self%c(i - 1,j) * self%Binomial(j,k) * logList(j - k)
           end do
 
           c(i,k) = (-1)**k * c(i,k)
@@ -133,13 +133,10 @@ module NRQCDClass
 
       end do
 
-      ! list(1:) = c(:,0)
-
       do j = 1, 4
         do i = 1, j
-          do k = 0, min(i - 1, j - i)
-            list(j) = list(j) + deltaLog(k,j - i) * c(i,k)
-          end do
+          l = min(i - 1, j - i)
+          list(j) = list(j) + sum( deltaLog(:l,j - i) * c(i,:l) )
         end do
       end do
 
