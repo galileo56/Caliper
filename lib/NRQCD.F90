@@ -11,7 +11,7 @@ module NRQCDClass
     real (dp)                     :: mH
     type (Running)                :: alphaMass
     type (AnomDim)                :: Andim
-    integer                       :: n, nl
+    integer                       :: n, l, nl
     integer, dimension(0:3)       :: listFact
 
   contains
@@ -42,7 +42,7 @@ module NRQCDClass
     InNRQCD%alphaMass  = alphaMass; InNRQCD%c = 0; InNRQCD%n = n; nl = alphaMass%numFlav()
     InNRQCD%Andim = InNRQCD%alphaMass%adim();  beta  = InNRQCD%Andim%betaQCD('beta')
     InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); alphaScheme = alphaMass%scheme()
-    InNRQCD%listFact = factList(3); InNRQCD%nl = nl
+    InNRQCD%listFact = factList(3); InNRQCD%nl = nl; InNRQCD%l = l
 
     if (  alphaScheme(:4) == 'pole') then
       InNRQCD%scheme = 'pole'
@@ -104,11 +104,12 @@ module NRQCDClass
       mass = self%alphaMass%MSRNaturalMass(order, R, lambda, method)
     end if
 
-    logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / mass) , 3)
+    logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / mass) + &
+    Harmonic(self%n + self%l) , 3)
 
     if ( self%scheme(:4) == 'pole' ) then
 
-      list(1:) = matmul( self%c(:3,:), logList );  list(4) = list(4) + self%c(4,0)
+      list(1:) = matmul( self%c(:3,:), logList );  list(4) = list(4) + self%c(4,0) * log(alp)
       list(1:) = factor * alphaList(:3) * list(1:)
 
     else
@@ -133,6 +134,8 @@ module NRQCDClass
 
       end do
 
+      c(4,0) = c(4,0) + factor * alphaList(3) * self%c(4,0) * log(alp)
+
       do j = 1, 4
         do i = 1, j
           l = min(i - 1, j - i)
@@ -141,7 +144,7 @@ module NRQCDClass
       end do
 
       do j = 4, 1, -1
-        list(j) = sum( delta(0:j) * list(j:0:-1) )
+        list(j) = sum( delta(:j) * list(j:0:-1) )
       end do
 
     end if
@@ -410,6 +413,20 @@ module NRQCDClass
     end do
 
   end function factList
+
+!ccccccccccccccc
+
+  real (dp) function Harmonic(n)
+    integer, intent(in) :: n
+    integer             :: i
+
+    Harmonic = 0
+
+    do i = 1, n
+      Harmonic = Harmonic + 1._dp/i
+    end do
+
+  end function Harmonic
 
 !ccccccccccccccc
 
