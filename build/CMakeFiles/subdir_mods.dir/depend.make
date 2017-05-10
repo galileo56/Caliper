@@ -154,6 +154,8 @@ CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.d
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/modelclass.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/nonsingularclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/nonsingularclass.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/nrqcdclass.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/nrqcdclass.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/poly.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/poly.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/profilesclass.mod.proxy

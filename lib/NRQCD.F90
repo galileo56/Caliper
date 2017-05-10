@@ -17,7 +17,7 @@ module NRQCDClass
 
   contains
 
-    procedure, pass(self), public  :: EnPole
+    procedure, pass(self), public  :: En
     procedure, pass(self), private :: Binomial
 
   end type NRQCD
@@ -76,7 +76,7 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  function EnPole(self, order, mu, R, lambda, method) result(list)
+  function En(self, order, mu, R, lambda, method) result(list)
     class (NRQCD)      , intent(in) :: self
     character (len = *), intent(in) :: method
     integer            , intent(in) :: order
@@ -154,8 +154,7 @@ module NRQCDClass
 
     list = mass * list
 
-  end function EnPole
-
+  end function En
 
 !ccccccccccccccc
 

@@ -154,6 +154,8 @@ lib/CMakeFiles/libCaliper.dir/MathLink.F90.o.requires: lib/CMakeFiles/libCaliper
 lib/CMakeFiles/libCaliper.dir/MathLink.F90.o: lib/CMakeFiles/libCaliper.dir/modelclass.mod.stamp
 lib/CMakeFiles/libCaliper.dir/MathLink.F90.o.requires: lib/CMakeFiles/libCaliper.dir/nonsingularclass.mod.proxy
 lib/CMakeFiles/libCaliper.dir/MathLink.F90.o: lib/CMakeFiles/libCaliper.dir/nonsingularclass.mod.stamp
+lib/CMakeFiles/libCaliper.dir/MathLink.F90.o.requires: lib/CMakeFiles/libCaliper.dir/nrqcdclass.mod.proxy
+lib/CMakeFiles/libCaliper.dir/MathLink.F90.o: lib/CMakeFiles/libCaliper.dir/nrqcdclass.mod.stamp
 lib/CMakeFiles/libCaliper.dir/MathLink.F90.o.requires: lib/CMakeFiles/libCaliper.dir/poly.mod.proxy
 lib/CMakeFiles/libCaliper.dir/MathLink.F90.o: lib/CMakeFiles/libCaliper.dir/poly.mod.stamp
 lib/CMakeFiles/libCaliper.dir/MathLink.F90.o.requires: lib/CMakeFiles/libCaliper.dir/profilesclass.mod.proxy

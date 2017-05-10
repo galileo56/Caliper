@@ -3215,6 +3215,39 @@ end subroutine f90OptimalRNatural
 
 !ccccccccccccccc
 
+  subroutine f90NRQCD(n, l, j, s, scheme, method, orderAlpha, runAlpha, order, &
+  run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, lam, mu, R, res)
+
+    use RunningClass;  use AlphaClass;  use constants, only: dp
+    use AnomDimClass;  use NRQCDClass;  implicit none
+
+    character (len = *), intent(in ) :: method, scheme
+    integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nl, n, l, j, s
+    real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, lambda, lam, R
+    real (dp)          , intent(out) :: res(5)
+    character (len = 5)              :: alphaScheme
+    type (NRQCD)                     :: Upsilon
+    type (Alpha)                     :: alphaAll
+    type (AnomDim), dimension(3:6)   :: AnDim
+    integer                          :: i
+
+    alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
+
+    do i = 3, 6
+      AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+    end do
+
+    alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+    mT, muT, mB, muB, mC, muC)
+
+    Upsilon = NRQCD(scheme, alphaAll, run, lambda, nl, n, l, j, s)
+
+    res = Upsilon%En(order, mu, R, lam, method)
+
+  end subroutine f90NRQCD
+
+!ccccccccccccccc
+
 subroutine f90mmfromMSR(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, &
 muB, mC, muC, mu, R, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
