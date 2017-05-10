@@ -24,7 +24,7 @@ module RunningClass
     DiffDelta, orders, adim, DiffDeltaHadron, scheme, MSbarDeltaMu, MSbarMassLow, &
     AlphaAll, DeltaGapMatching, DiffRMass, MSRNaturalMass, mmFromMSR, PoleMass,   &
     SetMTop, SetMBottom, SetMCharm, SetLambda, mmFromMSRNatural, SetAlpha, scales,&
-    DiffR, PSdelta, OptimalR, OptimalRNatural
+    DiffR, PSdelta, OptimalR, OptimalRNatural, numFlav
 
     procedure, pass(self), private :: MSRMatching, alphaQCDReal, alphaQCDComplex, &
     wTildeReal, wTildeComplex, kTildeReal, kTildeComplex, RunningMass
@@ -240,6 +240,13 @@ module RunningClass
      end if
 
    end function MSbarMass
+
+ !ccccccccccccccc
+
+   integer function numFlav(self)
+     class (Running), intent(in) :: self
+     numFlav = self%nf
+   end function numFlav
 
 !ccccccccccccccc
 

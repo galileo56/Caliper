@@ -3228,6 +3228,7 @@ end subroutine f90OptimalRNatural
     character (len = 5)              :: alphaScheme
     type (NRQCD)                     :: Upsilon
     type (Alpha)                     :: alphaAll
+    type (Running)                   :: alphaMass
     type (AnomDim), dimension(3:6)   :: AnDim
     integer                          :: i
 
@@ -3240,7 +3241,9 @@ end subroutine f90OptimalRNatural
     alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
     mT, muT, mB, muB, mC, muC)
 
-    Upsilon = NRQCD(scheme, alphaAll, run, lambda, nl, n, l, j, s)
+    alphaMass = Running(nl, run, alphaAll, mu)
+
+    Upsilon = NRQCD(scheme, alphaMass, n, l, j, s)
 
     res = Upsilon%En(order, mu, R, lam, method)
 

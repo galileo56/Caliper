@@ -10,7 +10,6 @@ module NRQCDClass
     character (len = 5)           :: scheme
     real (dp)                     :: mH
     type (Running)                :: alphaMass
-    type (Alpha)                  :: alphaAll
     type (AnomDim)                :: Andim
     integer                       :: n, nl
     integer, dimension(0:3)       :: listFact
@@ -32,20 +31,18 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  type (NRQCD) function InNRQCD(scheme, alphaAll, run, Lambda, nl, n, l, j, s)
-    integer            , intent(in) :: n, l, j, s, nl, run
+  type (NRQCD) function InNRQCD(scheme, alphaMass, n, l, j, s)
+    integer            , intent(in) :: n, l, j, s
     character (len = *), intent(in) :: scheme
-    real (dp)          , intent(in) :: Lambda
-    type (Alpha)       , intent(in) :: alphaAll
+    type (Running)     , intent(in) :: alphaMass
     real (dp)     , dimension(0:4)  :: beta
     character (len = 5)             :: alphaScheme
-    integer                         :: i, jj, k
+    integer                         :: nl, i, jj, k
 
-    InNRQCD%alphaAll  = alphaAll; InNRQCD%c = 0; InNRQCD%n = n; InNRQCD%nl = l
-    InNRQCD%alphaMass = Running(nl, run, AlphaAll, Lambda)
+    InNRQCD%alphaMass  = alphaMass; InNRQCD%c = 0; InNRQCD%n = n; nl = alphaMass%numFlav()
     InNRQCD%Andim = InNRQCD%alphaMass%adim();  beta  = InNRQCD%Andim%betaQCD('beta')
-    InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); alphaScheme = alphaAll%scheme()
-    InNRQCD%listFact = factList(3)
+    InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); alphaScheme = alphaMass%scheme()
+    InNRQCD%listFact = factList(3); InNRQCD%nl = nl
 
     if (  alphaScheme(:4) == 'pole') then
       InNRQCD%scheme = 'pole'

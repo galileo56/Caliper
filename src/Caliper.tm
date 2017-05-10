@@ -69,6 +69,7 @@
 :Evaluate:  PoleMass::usage = "PoleMass[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  MSbarMassLow::usage = "MSbarMassLow[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching below the mass."
 :Evaluate:  MSRMass::usage = "MSRMass[method, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
+:Evaluate:  NRQCD::usage = "NRQCD[n, l, j, s, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, lam, mu, R] computes the quarkonium energy levels."
 :Evaluate:  OptimalR::usage = "OptimalR[n, method, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda] computes the Optimal R scale for quarkonium."
 :Evaluate:  OptimalRNatural::usage = "OptimalRNatural[n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda] computes the Optimal R scale for quarkonium."
 :Evaluate:  mmfromMSR::usage = "mmfromMSR[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
@@ -1518,6 +1519,19 @@
 :ArgumentTypes: {String, Integer, Integer, Integer, Integer, Real, Real, Real,
                  Real, Real, Real, Real, Real, Real, Real, Real}
 :ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      nrqcd
+:Pattern:       NRQCD[n_, l_, j_, s_, scheme_, method_, orderAlpha_, runAlpha_,
+                order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_, muC_,
+                lambda_, lam_, mu_, R_]
+:Arguments:     {n, l, j, s, scheme, method, orderAlpha, runAlpha, order, run,
+                 nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, lam, mu, R}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, String, String, Integer,
+                 Integer, Integer, Integer, Integer, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Manual
 :End:
 
 :Begin:
@@ -3901,8 +3915,8 @@ double mT, double muT, double mB, double muB, double mC, double muC, double mu){
 
    double res;
 
-   f90msbarmasslow_(&order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC,
-                 &muC, &mu, &res);
+   f90msbarmasslow_(&order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB,
+   &muB, &mC, &muC, &mu, &res);
 
   return res;
 }
@@ -3921,6 +3935,27 @@ double muC, double lambda, double mu, double R){
    &mC, &muC,&lambda, &mu, &R, &res);
 
   return res;
+}
+
+extern double f90nrqcd_(int* n, int* l, int* j, int* s, char const* str,
+char const* method, int* orderAlpha, int* runAlpha, int* order, int* run, int* nf,
+double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB,
+double* mC, double* muC, double* lambda, double* lam, double* mu, double* R,
+double* res);
+
+static void nrqcd(int n, int l, int j, int s, char const* str,
+char const* method, int orderAlpha, int runAlpha, int order, int run, int nf,
+double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
+double muC, double lambda, double lam, double mu, double R){
+
+  double res[5];
+
+  f90nrqcd_(&n, &l, &j, &s, str, method, &orderAlpha, &runAlpha, &order, &run,
+  &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &lambda, &lam, &mu, &R, res);
+
+   MLPutRealList(stdlink, res, 5);
+   MLEndPacket(stdlink);
+
 }
 
 extern double f90optimalr_(int* n, char const* str, int* order, int* runAlpha, int* run,
@@ -3954,6 +3989,7 @@ double mB, double muB, double mC, double muC, double lambda, double mu){
   &aMz, &mT, &muT, &mB, &muB, &mC, &muC,&lambda, &mu, &res);
 
   return res;
+
 }
 
 extern double f90mmfrommsr_(int* order, int* runAlpha, int* run, int* nf, double* Mz,
@@ -3965,8 +4001,8 @@ double mT, double muT, double mB, double muB, double mC, double muC, double mu, 
 
    double res;
 
-   f90mmfrommsr_(&order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
-               &mu, &R, &res);
+   f90mmfrommsr_(&order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB,
+   &mC, &muC, &mu, &R, &res);
 
   return res;
 }
