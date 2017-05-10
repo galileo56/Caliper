@@ -13,10 +13,12 @@ module NRQCDClass
     type (Alpha)                  :: alphaAll
     type (AnomDim)                :: Andim
     integer                       :: n, nl
+    integer, dimension(0:3)       :: listFact
 
   contains
 
-    procedure, pass(self), public :: EnPole
+    procedure, pass(self), public  :: EnPole
+    procedure, pass(self), private :: Binomial
 
   end type NRQCD
 
@@ -43,6 +45,7 @@ module NRQCDClass
     InNRQCD%alphaMass = Running(nl, run, AlphaAll, Lambda)
     InNRQCD%Andim = InNRQCD%alphaMass%adim();  beta  = InNRQCD%Andim%betaQCD('beta')
     InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); alphaScheme = alphaAll%scheme()
+    InNRQCD%listFact = factList(3)
 
     if (  alphaScheme(:4) == 'pole') then
       InNRQCD%scheme = 'pole'
@@ -73,44 +76,83 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  pure function EnPole(self, mu, R) result(list)
-    class (NRQCD), intent(in)   :: self
-    real (dp)    , intent(in)   :: mu, R
-    real (dp), dimension(0:4)   :: list
-    real (dp), dimension(0:3)   :: logList, alphaList
-    real (dp)                   :: alp, Rmass
-    real (dp), dimension(4)     :: delta, lgmList
-    real (dp), dimension(0:4,4) :: coefMSR
+  function EnPole(self, order, mu, R, lambda, method) result(list)
+    class (NRQCD)      , intent(in) :: self
+    character (len = *), intent(in) :: method
+    integer            , intent(in) :: order
+    real (dp)          , intent(in) :: mu, R, lambda
+    real (dp), dimension(0:4)       :: list, alphaList
+    real (dp), dimension(0:3)       :: logList
+    real (dp), dimension(0:4)       :: delta, lgmList
+    real (dp), dimension(0:1,2)     :: deltaLog  ! (power, order)
+    real (dp), dimension(0:4,4)     :: coefMSR
+    real (dp), dimension(4,0:3)     :: c
+    real (dp)                       :: alp, Rmass, mass, factor
+    integer                         :: i, j, k
 
-    list(0) = 2; alp = self%alphaMass%alphaQCD(mu); logList(0) = 1
-    logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / self%mH) , 3)
-    alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,3)
-
-    list(1:) = matmul( self%c(:3,:), logList );  list(4) = list(4) + self%c(4,0)
-    list(1:) = - 4 * alp**2/9/self%n**2 * alphaList * list(1:); coefMSR = 0
+    list(0) = 2     ; alp           = self%alphaMass%alphaQCD(mu); coefMSR = 0
+    alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
+    factor = - 4 * alp**2/9/self%n**2 ; logList(0) = 1
 
     if ( self%scheme(:4) == 'pole' ) then
-      delta = 0
+      delta(1:) = 0; Rmass = 0; mass = self%mH
     else if ( self%scheme(:5) == 'MSbar' ) then
-
-      coefMSR(0,:) = self%mH * self%andim%MSRDelta(); Rmass = self%mH
-
+      coefMSR(0,:) = self%mH * self%andim%MSRDelta()
+      Rmass = self%mH; mass = self%mH
     else if ( self%scheme(:5) == 'MSRp' ) then
-
       coefMSR(0,:) = R * self%andim%MSRDelta(); Rmass = R
-
+      mass = self%alphaMass%MSRmass(R, lambda, method)
     else if ( self%scheme(:5) == 'MSRn' ) then
-
       coefMSR(0,:) = R * MSbarDelta(self%nl, 0); Rmass = R
-
+      mass = self%alphaMass%MSRNaturalMass(order, R, lambda, method)
     end if
 
-    if ( self%scheme(:4) /= 'pole' ) then
+    logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / mass) , 3)
+
+    if ( self%scheme(:4) == 'pole' ) then
+
+      list(1:) = matmul( self%c(:3,:), logList );  list(4) = list(4) + self%c(4,0)
+      list(1:) = factor * alphaList(:3) * list(1:)
+
+    else
+
       call self%andim%expandAlpha(coefMSR); lgmList = PowList( log(mu/Rmass), 4 )
+      call AddAlpha( coefMSR, alphaList(1:) )        ; c = 0; deltaLog = 0
+      delta(1:) = DeltaComputer(coefMSR, lgmList, 0)/mass; deltaLog(0,1) = 1
+      deltaLog(1,:) = delta(1:2) - [ 0._dp, delta(1)**2/2 ]
+
+      do i = 1, 4
+        do k = 0, i - 1
+
+          do j = k, i - 1
+            c(i,k) = c(i,k) + self%c(i,j) * self%Binomial(i,j) * logList(j - k)
+          end do
+
+          c(i,k) = (-1)**k * c(i,k)
+
+        end do
+
+        c(i,:) = factor * alphaList(i) * c(i,:)
+
+      end do
+
+      do j = 1, 4
+        do i = 1, j
+          do k = 0, min(i - 1, j - i)
+            list(j) = list(j) + deltaLog(k,j - i) * c(i,k)
+          end do
+        end do
+      end do
+
+      do j = 4, 1, -1
+        do i = 0, j
+          list(j) = list(j) + delta(i) * list(j - i)
+        end do
+      end do
 
     end if
 
-    list = self%mH * list
+    list = mass * list
 
   end function EnPole
 
@@ -336,6 +378,45 @@ module NRQCDClass
     end if
 
   end function c3
+
+!ccccccccccccccc
+
+   real (dp) function Binomial(self, i, j)
+     class (NRQCD), intent(in) :: self
+     integer      , intent(in) :: i, j
+     integer                   :: k
+
+    select case(j)
+    case(0)  ;  Binomial = 1
+    case(:-1);  Binomial = 0
+    case default
+
+      Binomial = i
+
+      do k = 1, j - 1
+        Binomial = Binomial * (i - k)
+      end do
+
+      Binomial = Binomial/self%Listfact(j)
+
+    end select
+
+   end function Binomial
+
+!ccccccccccccccc
+
+  pure function factList(n) result(list)
+    integer, intent(in)     :: n
+    integer                 :: i
+    integer, dimension(0:n) :: list
+
+    list(0) = 1
+
+    do i = 1, n
+      list(i) = list(i - 1) * i
+    end do
+
+  end function factList
 
 !ccccccccccccccc
 
