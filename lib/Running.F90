@@ -466,7 +466,6 @@ module RunningClass
 
      MSR = self%MSRMass(R) - mass
 
-
    end function MSR
 
   end function mmFromMSR

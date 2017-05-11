@@ -8,15 +8,16 @@ module NRQCDClass
     private
     real (dp), dimension(0:4,0:3) :: c
     character (len = 5)           :: scheme
-    real (dp)                     :: mH, harm
+    real (dp)                     :: mH, harm, rat
     type (Running)                :: alphaMass
+    type (Alpha)                  :: alphaOb
     type (AnomDim)                :: Andim
     integer                       :: n, nl
     integer, dimension(0:3)       :: listFact
 
   contains
 
-    procedure, pass(self), public  :: En
+    procedure, pass(self), public  :: En, MassFitter, setMass
     procedure, pass(self), private :: Binomial
 
   end type NRQCD
@@ -43,7 +44,13 @@ module NRQCDClass
     InNRQCD%Andim = InNRQCD%alphaMass%adim();  beta  = InNRQCD%Andim%betaQCD('beta')
     InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); alphaScheme = alphaMass%scheme()
     InNRQCD%listFact = factList(3); InNRQCD%nl = nl; InNRQCD%c = 0
-    InNRQCD%harm = Harmonic(n + l)
+    InNRQCD%harm = Harmonic(n + l); InNRQCD%alphaOb = alphaMass%AlphaAll()
+
+    if (InNRQCD%nl == 5) then
+      InNRQCD%rat = InNRQCD%alphaOb%scales('muT')/InNRQCD%mH
+    else if (InNRQCD%nl == 4) then
+      InNRQCD%rat = InNRQCD%alphaOb%scales('muB')/InNRQCD%mH
+    end if
 
     if (  alphaScheme(:4) == 'pole') then
       InNRQCD%scheme = 'pole'
@@ -71,6 +78,53 @@ module NRQCDClass
     end do
 
   end function InNRQCD
+
+!ccccccccccccccc
+
+  subroutine setMass(self, m, mu)
+    class (NRQCD), intent(inout) :: self
+    real (dp)    , intent(in)    :: m, mu
+
+    self%mH = m
+
+    if (self%nl == 5) then
+      call self%alphaMass%SetMTop(m, mu)
+    else if (self%nl == 4) then
+      call self%alphaMass%SetMBottom(m, mu)
+    end if
+
+  end subroutine setMass
+
+!ccccccccccccccc
+
+  real (dp) function MassFitter(self, n, order, mu, R, mUpsilon, lambda, method)
+    class (NRQCD)      , intent(inout) :: self
+    character (len = *), intent(in)    :: method
+    integer            , intent(in)    :: order, n
+    real (dp)          , intent(in)    :: mu, R, lambda, mUpsilon
+    real (dp)                          :: a, b, c
+    integer                            :: IFLAG
+
+    a = mUpsilon/4; b = mUpsilon
+
+    call DFZERO(FindRoot, a, b, c, 1e-10_dp, 1e-10_dp, IFLAG)
+
+    MassFitter = a!FindRoot(mUpsilon)
+
+  contains
+
+    real (dp) function FindRoot(mass)
+      real (dp), intent(in)     :: mass
+      real (dp), dimension(0:4) :: list
+
+      call self%SetMass(mass, self%rat * mass)
+      list = self%En(order, mu, R, lambda, method)
+
+      FindRoot = sum( list(:n) ) - mUpsilon
+
+    end function FindRoot
+
+  end function MassFitter
 
 !ccccccccccccccc
 
