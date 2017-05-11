@@ -109,7 +109,7 @@ module NRQCDClass
 
     call DFZERO(FindRoot, a, b, c, 1e-10_dp, 1e-10_dp, IFLAG)
 
-    MassFitter = a!FindRoot(mUpsilon)
+    MassFitter = a
 
   contains
 
