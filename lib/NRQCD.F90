@@ -82,7 +82,7 @@ module NRQCDClass
     real (dp), dimension(0:4)       :: list, alphaList
     real (dp), dimension(0:3)       :: logList
     real (dp), dimension(0:4)       :: delta, lgmList
-    real (dp), dimension(0:1,0:2)   :: deltaLog  ! (power, order)
+    real (dp), dimension(0:4,0:4)   :: deltaLog  ! (power, order)
     real (dp), dimension(0:4,4)     :: coefMSR
     real (dp), dimension(4,0:3)     :: c
     real (dp)                       :: alp, Rmass, mass, factor
@@ -117,7 +117,7 @@ module NRQCDClass
       call self%andim%expandAlpha(coefMSR); lgmList = PowList( log(mu/Rmass), 4 )
       call AddAlpha( coefMSR, alphaList(1:) )        ; c = 0; deltaLog = 0
       delta(1:) = DeltaComputer(coefMSR, lgmList, 0)/mass; deltaLog(0,0) = 1
-      deltaLog(1,1:) = delta(1:2) - [ 0._dp, delta(1)**2/2 ]
+      deltaLog(1,1:2) = delta(1:2) - [ 0._dp, delta(1)**2/2 ]
 
       do i = 1, 4
         do k = 0, i - 1
@@ -127,14 +127,13 @@ module NRQCDClass
           end do
 
           c(i,k) = (-1)**k * c(i,k)
+          if (i == 4 .and. k == 0) c(i,k) = c(i,k) + self%c(4,0) * log(alp)
 
         end do
 
         c(i,:) = factor * alphaList(i - 1) * c(i,:)
 
       end do
-
-      c(4,0) = c(4,0) + factor * alphaList(3) * self%c(4,0) * log(alp)
 
       do j = 1, 4
         do i = 1, j
