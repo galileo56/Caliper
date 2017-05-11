@@ -3165,8 +3165,8 @@ mB, muB, mC, muC, lambda, mu, res)
   use AnomDimClass;  implicit none
 
   character (len = *), intent(in ) :: method
-  integer            , intent(in ) :: orderAlpha, runAlpha, run, nf, n
-  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, lambda
+  integer            , intent(in ) :: orderAlpha, runAlpha, run, nf
+  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, lambda, n
   real (dp)          , intent(out) :: res
   type (Running)                   :: alphaMass
   type (Alpha)                     :: alphaAll
@@ -3193,8 +3193,8 @@ mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, mu, res)
   use AnomDimClass;  implicit none
 
   character (len = *), intent(in ) :: method
-  integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nf, n
-  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, lambda
+  integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nf
+  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, lambda, n
   real (dp)          , intent(out) :: res
   type (Running)                   :: alphaMass
   type (Alpha)                     :: alphaAll

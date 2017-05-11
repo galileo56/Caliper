@@ -2534,11 +2534,11 @@ double muC, double lambda, double lam, double mu, double R){
 
 }
 
-extern double f90optimalr_(int* n, char const* str, int* order, int* runAlpha, int* run,
+extern double f90optimalr_(double* n, char const* str, int* order, int* runAlpha, int* run,
 int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB,
 double* mC, double* muC, double* lambda, double* mu, double* res);
 
-static double optimalr(int n, char const* str, int order, int runAlpha, int run, int nf,
+static double optimalr(double n, char const* str, int order, int runAlpha, int run, int nf,
 double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
 double muC, double lambda, double mu){
 
@@ -2550,12 +2550,12 @@ double muC, double lambda, double mu){
   return res;
 }
 
-extern double f90optimalrnatural_(int* n, char const* str, int* orderAlpha,
+extern double f90optimalrnatural_(double* n, char const* str, int* orderAlpha,
 int* runAlpha, int* order, int* run, int* nf, double* Mz, double* aMz, double* mT,
 double* muT, double* mB, double* muB, double* mC, double* muC, double* lambda,
 double* mu, double* res);
 
-static double optimalrnatural(int n, char const* str, int orderAlpha, int runAlpha,
+static double optimalrnatural(double n, char const* str, int orderAlpha, int runAlpha,
 int order, int run, int nf, double Mz, double aMz, double mT, double muT,
 double mB, double muB, double mC, double muC, double lambda, double mu){
 
@@ -10352,7 +10352,7 @@ L0:	return res;
 } /* _tr106 */
 
 
-double optimalr P(( int _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16));
+double optimalr P(( double _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16));
 
 #if MLPROTOTYPES
 static int _tr107( MLINK mlp)
@@ -10361,7 +10361,7 @@ static int _tr107(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	double _tp1;
 	const char * _tp2;
 	int _tp3;
 	int _tp4;
@@ -10378,7 +10378,7 @@ static int _tr107(mlp) MLINK mlp;
 	double _tp15;
 	double _tp16;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetString( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
 	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
@@ -10406,7 +10406,7 @@ L0:	return res;
 } /* _tr107 */
 
 
-double optimalrnatural P(( int _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, int _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17));
+double optimalrnatural P(( double _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, int _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17));
 
 #if MLPROTOTYPES
 static int _tr108( MLINK mlp)
@@ -10415,7 +10415,7 @@ static int _tr108(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	double _tp1;
 	const char * _tp2;
 	int _tp3;
 	int _tp4;
@@ -10433,7 +10433,7 @@ static int _tr108(mlp) MLINK mlp;
 	double _tp16;
 	double _tp17;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetString( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
 	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;

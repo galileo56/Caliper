@@ -324,7 +324,7 @@ module RunningClass
     class (Running)                    , intent(in) :: self
     real (dp)          , optional      , intent(in) :: lambda
     character (len = *), optional      , intent(in) :: method
-    integer                            , intent(in) :: n
+    real (dp)                          , intent(in) :: n
     integer                                         :: IFLAG
     real (dp)                                       :: a, b, c
 
@@ -513,7 +513,8 @@ module RunningClass
     class (Running)                    , intent(in) :: self
     real (dp)          , optional      , intent(in) :: lambda
     character (len = *), optional      , intent(in) :: method
-    integer                            , intent(in) :: n, order
+    integer                            , intent(in) :: order
+    real (dp)                          , intent(in) :: n
     integer                                         :: IFLAG
     real (dp)                                       :: a, b, c
 

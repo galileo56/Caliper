@@ -1540,7 +1540,7 @@
                 muT_, mB_, muB_, mC_, muC_, lambda_, mu_]
 :Arguments:     {n, method, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB,
                  mC, muC, lambda, mu}
-:ArgumentTypes: {Integer, String, Integer, Integer, Integer, Integer, Real, Real,
+:ArgumentTypes: {Real, String, Integer, Integer, Integer, Integer, Real, Real,
                  Real, Real, Real, Real, Real, Real, Real, Real}
 :ReturnType:     Real
 :End:
@@ -1551,7 +1551,7 @@
                 nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_, mu_]
 :Arguments:     {n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT,
                  muT, mB, muB, mC, muC, lambda, mu}
-:ArgumentTypes: {Integer, String, Integer, Integer, Integer, Integer, Integer,
+:ArgumentTypes: {Real, String, Integer, Integer, Integer, Integer, Integer,
                  Real, Real, Real, Real, Real, Real, Real, Real, Real, Real}
 :ReturnType:     Real
 :End:
@@ -3958,11 +3958,11 @@ double muC, double lambda, double lam, double mu, double R){
 
 }
 
-extern double f90optimalr_(int* n, char const* str, int* order, int* runAlpha, int* run,
+extern double f90optimalr_(double* n, char const* str, int* order, int* runAlpha, int* run,
 int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB,
 double* mC, double* muC, double* lambda, double* mu, double* res);
 
-static double optimalr(int n, char const* str, int order, int runAlpha, int run, int nf,
+static double optimalr(double n, char const* str, int order, int runAlpha, int run, int nf,
 double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
 double muC, double lambda, double mu){
 
@@ -3974,12 +3974,12 @@ double muC, double lambda, double mu){
   return res;
 }
 
-extern double f90optimalrnatural_(int* n, char const* str, int* orderAlpha,
+extern double f90optimalrnatural_(double* n, char const* str, int* orderAlpha,
 int* runAlpha, int* order, int* run, int* nf, double* Mz, double* aMz, double* mT,
 double* muT, double* mB, double* muB, double* mC, double* muC, double* lambda,
 double* mu, double* res);
 
-static double optimalrnatural(int n, char const* str, int orderAlpha, int runAlpha,
+static double optimalrnatural(double n, char const* str, int orderAlpha, int runAlpha,
 int order, int run, int nf, double Mz, double aMz, double mT, double muT,
 double mB, double muB, double mC, double muC, double lambda, double mu){
 
