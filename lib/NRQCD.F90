@@ -8,10 +8,10 @@ module NRQCDClass
     private
     real (dp), dimension(0:4,0:3) :: c
     character (len = 5)           :: scheme
-    real (dp)                     :: mH
+    real (dp)                     :: mH, harm
     type (Running)                :: alphaMass
     type (AnomDim)                :: Andim
-    integer                       :: n, l, nl
+    integer                       :: n, nl
     integer, dimension(0:3)       :: listFact
 
   contains
@@ -39,10 +39,11 @@ module NRQCDClass
     character (len = 5)             :: alphaScheme
     integer                         :: nl, i, jj, k
 
-    InNRQCD%alphaMass  = alphaMass; InNRQCD%c = 0; InNRQCD%n = n; nl = alphaMass%numFlav()
+    InNRQCD%alphaMass = alphaMass; InNRQCD%n = n; nl = alphaMass%numFlav()
     InNRQCD%Andim = InNRQCD%alphaMass%adim();  beta  = InNRQCD%Andim%betaQCD('beta')
     InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); alphaScheme = alphaMass%scheme()
-    InNRQCD%listFact = factList(3); InNRQCD%nl = nl; InNRQCD%l = l
+    InNRQCD%listFact = factList(3); InNRQCD%nl = nl; InNRQCD%c = 0
+    InNRQCD%harm = Harmonic(n + l)
 
     if (  alphaScheme(:4) == 'pole') then
       InNRQCD%scheme = 'pole'
@@ -104,8 +105,7 @@ module NRQCDClass
       mass = self%alphaMass%MSRNaturalMass(order, R, lambda, method)
     end if
 
-    logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / mass) + &
-    Harmonic(self%n + self%l) , 3)
+    logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / mass) + self%harm, 3 )
 
     if ( self%scheme(:4) == 'pole' ) then
 
