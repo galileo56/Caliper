@@ -1560,6 +1560,44 @@ end function MatchingAlphaUp
 
 !ccccccccccccccc
 
+  real (dp) function deltaCharm2(r)
+    real (dp)   , intent(in) :: r
+    real (dp)                :: lr, r2, r3, a, dilog
+    real (dp), dimension(10) :: a
+
+    deltaCharm2 = 0; if (r < 0 .or. r > 1) return
+
+    if (10 * r <= 1) then
+
+      lr = log(r)
+
+      deltaCharm2 = pi2/6 * r (1 + r) - r*2 + (13 * lr/18 - 151_dp/216 - pi2/18&
+      - lr*2/3) * r*4 + (19._dp/225 - 4 * lr/45) * r*6 + (463._dp/39200 -
+      3 * lr/140) * r*8 + (997._dp/297675 - 8 * lr/945) * r**10
+
+    else if (10 * r > 9) then
+
+      a = powList(1 - r, 10)
+
+      deltaCharm2 = pi2/6 - 0.5_dp - 0.8599120891309684_dp * a - a**5/90  - &
+      0.1775329665758869_dp a**2 - 0.05917765552529561_dp a**3 - a**6/180 - &
+      0.02415567780803772_dp a**4 - 2 * a**7/675 - a**8/600 - &
+      779 * a**9/793800 - 191 * a**10/317520
+
+    else
+
+      lr = log(r); r2 = r**2; r3 = r * r2
+
+      deltaCharm2 = (  lr**2 + pi2/6 - r2 * (1.5_dp + lr) + &
+      (1 + r) * (1 + r3) * ( Dilog(-r) - lr**2/2 + lr * log(1 + r) + pi2/6 ) + &
+      (1 - r) * (1 - r3) * ( Dilog( r) - lr**2/2 + lr * log(1 - r) - pi2/3 )  )/3
+
+    end if
+
+  end function deltaCharm2
+
+!ccccccccccccccc
+
   pure function betaFun(nf) result(bet)
     integer    , intent(in) :: nf
     real (dp), dimension(5) :: bet
