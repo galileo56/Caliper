@@ -1,8 +1,19 @@
 
 !ccccccccccccccc
 
+subroutine f90DeltaCharm2(r, res)
+  use constants, only: dp; use AnomDimClass, only: deltaCharm2; implicit none
+  real (dp), intent(in ) :: r
+  real (dp), intent(out) :: res
+
+  res = deltaCharm2(r)
+
+end subroutine f90DeltaCharm2
+
+!ccccccccccccccc
+
 subroutine f90LegendreList(n, k, x, res)
-  use constants, only: dp; use Legendre
+  use constants, only: dp; use Legendre; implicit none
   integer                  , intent(in)  :: n, k
   real (dp)                , intent(in)  :: x
   real (dp), dimension(0:n), intent(out) :: res
@@ -14,7 +25,7 @@ end subroutine f90LegendreList
 !ccccccccccccccc
 
 subroutine f90QLegendreList(n, x, res)
-  use constants, only: dp; use Legendre
+  use constants, only: dp; use Legendre; implicit none
   integer                  , intent(in)  :: n
   real (dp)                , intent(in)  :: x
   real (dp), dimension(0:n), intent(out) :: res

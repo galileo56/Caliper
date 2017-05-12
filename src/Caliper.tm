@@ -2,7 +2,7 @@
 
 :Evaluate:   Print["     Package for Massive and Massless Event Shapes "]
 :Evaluate:   Print["     Author:            Vicent Mateu               "]
-:Evaluate:   Print["     Last modification: 23 - 02 - 2017             "]
+:Evaluate:   Print["     Last modification: 12 - 05 - 2017             "]
 :Evaluate:   Print["     Version:           test 1                     "]
 
 :Evaluate:  mZdef            = 91.187
@@ -12,6 +12,7 @@
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
 
+:Evaluate:  DeltaCharm2::usage = "DeltaCharm2[z] computes the massive charm corrections to the MSbar-pole mass relation"
 :Evaluate:  LegendreList::usage = "LegendreList[n, k, x] computes the of the first n + 1 k-th derivative of the Legendre Polynomials"
 :Evaluate:  QLegendreList::usage = "QLegendreList[n, x] computes the of the first n + 1 Legendre Polynomial"
 :Evaluate:  BreitUnstable::usage = "BreitUnstable[shape, mt, Q, gamma, n, k, x] computes the LO distribution for unstable tops convoluted with a BreitWigner"
@@ -1371,6 +1372,14 @@
 :Arguments:     {Re[z], Im[z]}
 :ArgumentTypes: {Real, Real}
 :ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      deltacharm2
+:Pattern:       DeltaCharm2[z_]
+:Arguments:     {z}
+:ArgumentTypes: {Real}
+:ReturnType:    Real
 :End:
 
 :Begin:
@@ -3563,6 +3572,15 @@ static void nglsoft(int n, double z1, double z2){
    MLPutReal(stdlink, res[1]);
 
    MLEndPacket(stdlink);
+}
+
+extern double f90deltacharm2_(double* z, double* result);
+
+static double deltacharm2(double z){
+  double res;
+
+   f90deltacharm2_(&z, &res);
+   return res;
 }
 
 extern double f90cli2_(double* z1, double* z2, double* result);
