@@ -469,6 +469,20 @@ module NRQCDClass
 
 !ccccccccccccccc
 
+  pure real (dp) function DeltaCharm(mb, mc, alpha)
+    real (dp), intent(in) :: mb, mc, alpha
+    real (dp)             :: rho, rho2, rho3, rho4
+
+    rho = 3 * mc/2/mb/alpha; rho2 = rho**2; rho4 = rho2**2; rho3 = rho * rho2
+
+    DeltaCharm = 4 * mb * alpha**3/pi/27 * (  11._dp/3 - 3 * pi * rho/2 + &
+    4 * rho2 - 2 * pi * rho3 - 2 * (2 - rho2 - 4 * rho4)/sqrt(rho2 - 1) * &
+    Atan( (rho - 1)/(rho + 1) )  )
+
+  end function DeltaCharm
+
+!ccccccccccccccc
+
   real (dp) function Harmonic(n)
     integer, intent(in) :: n
     integer             :: i
