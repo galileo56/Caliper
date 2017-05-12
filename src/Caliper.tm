@@ -12,6 +12,7 @@
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
 
+:Evaluate:  UpsilonDeltaCharm::usage = "DeltaCharm2[n, l, alp, mb, mc] computes the massive charm corrections to quarkonium masses"
 :Evaluate:  DeltaCharm2::usage = "DeltaCharm2[z] computes the massive charm corrections to the MSbar-pole mass relation"
 :Evaluate:  LegendreList::usage = "LegendreList[n, k, x] computes the of the first n + 1 k-th derivative of the Legendre Polynomials"
 :Evaluate:  QLegendreList::usage = "QLegendreList[n, x] computes the of the first n + 1 Legendre Polynomial"
@@ -1372,6 +1373,14 @@
 :Arguments:     {Re[z], Im[z]}
 :ArgumentTypes: {Real, Real}
 :ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      upsilondeltacharm
+:Pattern:       UpsilonDeltaCharm[n_, l_, alpha_, mb_, mc_]
+:Arguments:     {n, l, alpha, mb, mc}
+:ArgumentTypes: {Integer, Integer, Real, Real, Real}
+:ReturnType:    Real
 :End:
 
 :Begin:
@@ -3580,6 +3589,16 @@ static double deltacharm2(double z){
   double res;
 
    f90deltacharm2_(&z, &res);
+   return res;
+}
+
+extern double f90upsilondeltacharm_(int* n, int* l, double* alpha, double* mb,
+  double* mc, double* result);
+
+static double upsilondeltacharm(int n, int l, double alpha, double mb, double mc){
+  double res;
+
+   f90upsilondeltacharm_(&n, &l, &alpha, &mb, &mc, &res);
    return res;
 }
 
