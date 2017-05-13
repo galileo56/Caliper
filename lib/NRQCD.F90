@@ -8,7 +8,7 @@ module NRQCDClass
     private
     real (dp), dimension(0:4,0:3) :: c
     character (len = 5)           :: scheme
-    real (dp)                     :: mH, harm, rat
+    real (dp)                     :: mH, harm, rat, mc
     type (Running)                :: alphaMass
     type (Alpha)                  :: alphaOb
     type (AnomDim)                :: Andim
@@ -78,6 +78,9 @@ module NRQCDClass
       end do
     end do
 
+    if (nl == 5) InNRQCD%mc = InNRQCD%alphaOb%scales('mB')
+    if (nl == 4) InNRQCD%mc = InNRQCD%alphaOb%scales('mC')
+
   end function InNRQCD
 
 !ccccccccccccccc
@@ -98,19 +101,19 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  real (dp) function MassFitter(self, n, order, mu, R, mUpsilon, lambda, method)
+  real (dp) function MassFitter(self, charm, n, order, mu, R, mUpsilon, lambda, method)
     class (NRQCD)      , intent(inout) :: self
-    character (len = *), intent(in)    :: method
+    character (len = *), intent(in)    :: method, charm
     integer            , intent(in)    :: order, n
     real (dp)          , intent(in)    :: mu, R, lambda, mUpsilon
     real (dp)                          :: a, b, c
     integer                            :: IFLAG
 
-    a = mUpsilon/4; b = mUpsilon
+    a = mUpsilon/3; b = mUpsilon; c = mUpsilon/2
 
     call DFZERO(FindRoot, a, b, c, 1e-10_dp, 1e-10_dp, IFLAG)
 
-    MassFitter = a
+    MassFitter = b
 
   contains
 
@@ -119,7 +122,7 @@ module NRQCDClass
       real (dp), dimension(0:4) :: list
 
       call self%SetMass(mass, self%rat * mass)
-      list = self%En(order, mu, R, lambda, method)
+      list = self%En(charm, order, mu, R, lambda, method)
 
       FindRoot = sum( list(:n) ) - mUpsilon
 
@@ -129,9 +132,9 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  function En(self, order, mu, R, lambda, method) result(list)
+  function En(self, charm, order, mu, R, lambda, method) result(list)
     class (NRQCD)      , intent(in) :: self
-    character (len = *), intent(in) :: method
+    character (len = *), intent(in) :: method, charm
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda
     real (dp), dimension(0:4)       :: list, alphaList
@@ -204,6 +207,8 @@ module NRQCDClass
     end if
 
     list = mass * list
+
+    if ( charm(:3) == 'yes' ) list(2) = list(2) + self%DeltaCharm(alp, mass, self%mC)
 
   end function En
 
@@ -551,7 +556,7 @@ module NRQCDClass
 
     end if
 
-    DeltaCharm = 4 * mb * alpha**3/pi/27 * DeltaCharm
+    DeltaCharm = 4 * mb * alpha**3/pi/27/self%n**2 * DeltaCharm
 
   end function DeltaCharm
 
