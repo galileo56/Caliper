@@ -211,7 +211,19 @@ module NRQCDClass
     if ( charm(:3) == 'yes'   ) then
        list(2) = list(2) + self%DeltaCharm(alp, mass, self%mC)
     else if ( charm(:5) == '0-bin' ) then
-      list(2) = list(2) + self%DeltaCharm(alp, mass, self%mC) - self%ZeroBin(alp, mass, self%mC)
+      list(2) = list(2) + self%DeltaCharm(alp, mass, self%mC) - &
+      self%ZeroBin(alp, mass, self%mC)
+    else if ( charm(:5) == '0-bin' ) then
+      list(2) = list(2) + self%DeltaCharm(alp, mass, self%mC) - &
+      self%ZeroBin(alp, mass, self%mC)
+    end if
+
+    if ( (charm(:3) == 'yes' .or. charm(:5) == '0-bin') .and. self%scheme(:4) /= 'pole' ) then
+      if ( charm(6:6) == 'R' .or. charm(3:3) == 'R' ) then
+        list(2) = list(2) + 2 * Rmass * alphaList(2) * deltaCharm2(self%mc/R)
+      else if ( charm(6:6) == 'M' .or. charm(3:3) == 'M' ) then
+        list(2) = list(2) + 2 * Rmass * alphaList(2) * deltaCharm2(self%mc/self%mH)
+      end if
     end if
 
   end function En
