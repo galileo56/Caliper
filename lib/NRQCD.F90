@@ -17,7 +17,7 @@ module NRQCDClass
 
   contains
 
-    procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm
+    procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, ZeroBin
     procedure, pass(self), private :: Binomial
 
   end type NRQCD
@@ -208,7 +208,11 @@ module NRQCDClass
 
     list = mass * list
 
-    if ( charm(:3) == 'yes' ) list(2) = list(2) + self%DeltaCharm(alp, mass, self%mC)
+    if ( charm(:3) == 'yes'   ) then
+       list(2) = list(2) + self%DeltaCharm(alp, mass, self%mC)
+    else if ( charm(:5) == '0-bin' ) then
+      list(2) = list(2) + self%DeltaCharm(alp, mass, self%mC) - self%ZeroBin(alp, mass, self%mC)
+    end if
 
   end function En
 
@@ -559,6 +563,59 @@ module NRQCDClass
     DeltaCharm = 4 * mb * alpha**3/pi/27/self%n**2 * DeltaCharm
 
   end function DeltaCharm
+
+
+!ccccccccccccccc
+
+  pure real (dp) function ZeroBin(self, alpha, mb, mc)
+    class (NRQCD), intent(in)      :: self
+    real (dp)    , intent(in)      :: mb, mc, alpha
+    real (dp)                      :: rho
+
+    ZeroBin = 0; rho = 3 * mc/2/mb/alpha
+
+    if (self%n == 1) then
+
+      if (self%l == 0) then
+        ZeroBin = 11._dp/3
+      end if
+
+    else if (self%n == 2) then
+
+      if (self%l == 0) then
+
+        ZeroBin = 14._dp/3
+
+      else if (self%l == 1) then
+        ZeroBin = 16._dp/3
+      end if
+
+    else if (self%n == 3) then
+
+      if (self%l == 0) then
+        ZeroBin = 16._dp/3
+      else if (self%l == 1) then
+        ZeroBin = 35._dp/6
+      else if (self%l == 2) then
+        ZeroBin = 187._dp/30
+      end if
+
+    else if (self%n == 4) then
+      if (self%l == 0) then
+        ZeroBin = 35._dp/6
+      else if (self%l == 1) then
+        ZeroBin = 187._dp/30
+      else if (self%l == 2) then
+        ZeroBin = 197._dp/30
+      else if (self%l == 3) then
+        ZeroBin = 1439._dp/210
+      end if
+
+    end if
+
+    ZeroBin = 4 * mb * alpha**3/pi/27/self%n**2 * ( ZeroBin + 2 * log(rho/2) )
+
+  end function ZeroBin
 
 !ccccccccccccccc
 

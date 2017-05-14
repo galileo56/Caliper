@@ -3283,7 +3283,7 @@ end subroutine f90OptimalRNatural
 
     Upsilon = NRQCD( scheme(:5), alphaMass, n, l, j, s )
 
-    res = Upsilon%En( charm(:3), order, mu, R, lam, method(:8) )
+    res = Upsilon%En( charm(:5), order, mu, R, lam, method(:8) )
 
   end subroutine f90NRQCD
 
@@ -3322,7 +3322,7 @@ end subroutine f90OptimalRNatural
 
     Upsilon = NRQCD( scheme(:5), alphaMass, n, l, j, s )
 
-    res = Upsilon%MassFitter( charm(:3), ord, order, mu, R, mass, lam, method(:8) )
+    res = Upsilon%MassFitter( charm(:5), ord, order, mu, R, mass, lam, method(:8) )
 
   end subroutine f90FindMass
 
