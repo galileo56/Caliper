@@ -73,8 +73,8 @@
 :Evaluate:  MSRMass::usage = "MSRMass[type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
 :Evaluate:  NRQCD::usage = "NRQCD[n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, lam, mu, R] computes the quarkonium energy levels."
 :Evaluate:  FindMass::usage = "FindMass[ord, n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda, lam, mu, R] fits the quark mass from the quarkonium energy levels."
-:Evaluate:  OptimalR::usage = "OptimalR[type, n, method, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda] computes the Optimal R scale for quarkonium."
-:Evaluate:  mmfromMSR::usage = "mmfromMSR[type, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
+:Evaluate:  OptimalR::usage = "OptimalR[type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda] computes the Optimal R scale for quarkonium."
+:Evaluate:  mmfromMSR::usage = "mmfromMSR[type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
 :Evaluate:  Rhad::usage = "Rhad[scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
 :Evaluate:  RhadCoefs::usage = "RhadCoefs[nf] computes the massless total hadronic cross section series coefficients."
 :Evaluate:  RhadMass::usage = "RhadMass[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
@@ -1565,22 +1565,24 @@
 
 :Begin:
 :Function:      optimalr
-:Pattern:       OptimalR[type_, n_, method_, order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_,
-                muT_, mB_, muB_, mC_, muC_, lambda_, mu_]
-:Arguments:     {type, n, method, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB,
-                 mC, muC, lambda, mu}
-:ArgumentTypes: {String, Real, String, Integer, Integer, Integer, Integer, Real, Real,
-                 Real, Real, Real, Real, Real, Real, Real, Real}
+:Pattern:       OptimalR[type_, n_, method_, orderAlpha_, runAlpha_, order_, run_,
+                nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_, mu_]
+:Arguments:     {type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz,
+                 mT, muT, mB, muB, mC, muC, lambda, mu}
+:ArgumentTypes: {String, Real, String, Integer, Integer, Integer, Integer,
+                 Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real}
 :ReturnType:     Real
 :End:
 
 :Begin:
 :Function:      mmfrommsr
-:Pattern:       mmfromMSR[type_, order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,
-                mC_, muC_, mu_, R_]
-:Arguments:     {type, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, R}
-:ArgumentTypes: {String, Integer, Integer, Integer, Integer, Real, Real, Real, Real, Real, Real,
-                 Real, Real, Real, Real}
+:Pattern:       mmfromMSR[type_, orderAlpha_, runAlpha_, order, run_, nf_, Mz_,
+                aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mu_, R_]
+:Arguments:     {type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT,
+                 mB, muB, mC, muC, mu, R}
+:ArgumentTypes: {String, Integer, Integer, Integer, Integer, Integer, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real}
 :ReturnType:     Real
 :End:
 
@@ -3996,33 +3998,37 @@ double muC, double lambda, double lam, double mu, double R){
 
 }
 
-extern double f90optimalr_(char const* type, double* n, char const* str, int* order, int* runAlpha, int* run,
-int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB,
+extern double f90optimalr_(char const* type, double* n, char const* str,
+int* orderAlpha, int* runAlpha, int* order, int* run, int* nf, double* Mz,
+double* aMz, double* mT, double* muT, double* mB, double* muB,
 double* mC, double* muC, double* lambda, double* mu, double* res);
 
-static double optimalr(char const* type, double n, char const* str, int order, int runAlpha, int run, int nf,
-double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
+static double optimalr(char const* type, double n, char const* str,
+int orderAlpha, int runAlpha, int order, int run, int nf, double Mz, double aMz,
+double mT, double muT, double mB, double muB, double mC,
 double muC, double lambda, double mu){
 
   double res;
 
-  f90optimalr_(type, &n, str, &order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB,
-   &mC, &muC,&lambda, &mu, &res);
+  f90optimalr_(type, &n, str, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz,
+   &aMz, &mT, &muT, &mB, &muB, &mC, &muC,&lambda, &mu, &res);
 
   return res;
 }
 
-extern double f90mmfrommsr_(char const* type, int* order, int* runAlpha, int* run, int* nf, double* Mz,
-double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
-double* mu, double* R, double* res);
+extern double f90mmfrommsr_(char const* type, int* orderAlpha, int* runAlpha,
+int* order, int* run, int* nf, double* Mz, double* aMz, double* mT, double* muT,
+double* mB, double* muB, double* mC, double* muC, double* mu, double* R,
+double* res);
 
-static double mmfrommsr(char const* type, int order, int runAlpha, int run, int nf, double Mz, double aMz,
-double mT, double muT, double mB, double muB, double mC, double muC, double mu, double R){
+static double mmfrommsr(char const* type, int orderAlpha, int runAlpha, int order,
+int run, int nf, double Mz, double aMz, double mT, double muT, double mB,
+double muB, double mC, double muC, double mu, double R){
 
    double res;
 
-   f90mmfrommsr_(type, &order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB,
-   &mC, &muC, &mu, &R, &res);
+   f90mmfrommsr_(type, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz,
+   &mT, &muT, &mB, &muB, &mC, &muC, &mu, &R, &res);
 
   return res;
 }
