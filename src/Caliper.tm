@@ -1577,7 +1577,7 @@
 
 :Begin:
 :Function:      mmfrommsr
-:Pattern:       mmfromMSR[type_, orderAlpha_, runAlpha_, order, run_, nf_, Mz_,
+:Pattern:       mmfromMSR[type_, orderAlpha_, runAlpha_, order_, run_, nf_, Mz_,
                 aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mu_, R_]
 :Arguments:     {type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT,
                  mB, muB, mC, muC, mu, R}
