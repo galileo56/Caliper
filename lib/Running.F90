@@ -88,9 +88,9 @@ module RunningClass
     character (len = *), intent(in) :: type
     real (dp), dimension(4)         :: res
 
-    if ( type(:7) == 'natural' ) then
+    if ( type(:4) == 'MSRn' ) then
       res = self%gammaRn
-    else if ( type(:9) == 'practical' ) then
+    else if ( type(:4) == 'MSRp' ) then
       res = self%gammaRp
     end if
 
@@ -103,9 +103,9 @@ module RunningClass
     character (len = *), intent(in) :: type
     real (dp), dimension(4)         :: res
 
-    if ( type(:7) == 'natural' ) then
+    if ( type(:4) == 'MSRn' ) then
       res = self%sCoefN
-    else if ( type(:9) == 'practical' ) then
+    else if ( type(:4) == 'MSRp' ) then
       res = self%sCoefP
     end if
 
@@ -427,7 +427,7 @@ module RunningClass
 
     matching = 1
 
-     if ( self%runMass > 0 .and. type(:7) == 'natural' ) then
+     if ( self%runMass > 0 .and. type(:4) == 'MSRn' ) then
       alphaM = self%AlphaOb%alphaQCD(self%nf + 1, self%mH)/Pi
       a = self%MSRMatching(type); i = min(order, 4)
       matching = 1 + dot_product( a(:i), PowList(alphaM, i) )
@@ -524,7 +524,7 @@ module RunningClass
     real (dp) , dimension(4)        :: a, c
     real (dp) , dimension(5)        :: b
 
-    a = 0; if ( type(:7) /= 'natural' ) return
+    a = 0; if ( type(:4) /= 'MSRn' ) return
 
     c = MSbarDelta(self%nf, 1); a = MSbarDelta(self%nf, 0)
     b = self%andim%MatchingAlphaUp()

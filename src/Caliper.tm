@@ -70,7 +70,7 @@
 :Evaluate:  MSbarMass::usage = "MSbarMass[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  PoleMass::usage = "PoleMass[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  MSbarMassLow::usage = "MSbarMassLow[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching below the mass."
-:Evaluate:  MSRMass::usage = "MSRMass[type, method, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
+:Evaluate:  MSRMass::usage = "MSRMass[type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
 :Evaluate:  NRQCD::usage = "NRQCD[n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, lam, mu, R] computes the quarkonium energy levels."
 :Evaluate:  FindMass::usage = "FindMass[ord, n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda, lam, mu, R] fits the quark mass from the quarkonium energy levels."
 :Evaluate:  OptimalR::usage = "OptimalR[type, n, method, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda] computes the Optimal R scale for quarkonium."
@@ -1528,11 +1528,11 @@
 
 :Begin:
 :Function:      msrmass
-:Pattern:       MSRMass[type_, method_, order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_,
+:Pattern:       MSRMass[type_, method_, orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,
                 muT_, mB_, muB_, mC_, muC_, lambda_, mu_, R_]
-:Arguments:     {type, method, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB,
+:Arguments:     {type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB,
                  mC, muC, lambda, mu, R}
-:ArgumentTypes: {String, String, Integer, Integer, Integer, Integer, Real, Real, Real,
+:ArgumentTypes: {String, String, Integer, Integer, Integer, Integer, Integer, Real, Real, Real,
                  Real, Real, Real, Real, Real, Real, Real, Real}
 :ReturnType:     Real
 :End:
@@ -3936,18 +3936,20 @@ double mT, double muT, double mB, double muB, double mC, double muC, double mu){
   return res;
 }
 
-extern double f90msrmass_(char const* type, char const* str, int* order, int* runAlpha, int* run,
-int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB,
-double* mC, double* muC, double* lambda, double* mu, double* R, double* res);
+extern double f90msrmass_(char const* type, char const* str, int* orderAlpha,
+int* runAlpha, int* order, int* run, int* nf, double* Mz, double* aMz, double* mT,
+double* muT, double* mB, double* muB, double* mC, double* muC, double* lambda,
+double* mu, double* R, double* res);
 
-static double msrmass(char const* type, char const* str, int order, int runAlpha, int run, int nf,
-double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
-double muC, double lambda, double mu, double R){
+static double msrmass(char const* type, char const* str, int orderAlpha,
+int runAlpha, int order, int run, int nf, double Mz, double aMz, double mT,
+double muT, double mB, double muB, double mC, double muC, double lambda,
+double mu, double R){
 
   double res;
 
-  f90msrmass_(type, str, &order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB,
-   &mC, &muC,&lambda, &mu, &R, &res);
+  f90msrmass_(type, str, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz,
+  &mT, &muT, &mB, &muB, &mC, &muC,&lambda, &mu, &R, &res);
 
   return res;
 }

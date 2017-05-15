@@ -2516,18 +2516,20 @@ double mT, double muT, double mB, double muB, double mC, double muC, double mu){
   return res;
 }
 
-extern double f90msrmass_(char const* type, char const* str, int* order, int* runAlpha, int* run,
-int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB,
-double* mC, double* muC, double* lambda, double* mu, double* R, double* res);
+extern double f90msrmass_(char const* type, char const* str, int* orderAlpha,
+int* runAlpha, int* order, int* run, int* nf, double* Mz, double* aMz, double* mT,
+double* muT, double* mB, double* muB, double* mC, double* muC, double* lambda,
+double* mu, double* R, double* res);
 
-static double msrmass(char const* type, char const* str, int order, int runAlpha, int run, int nf,
-double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
-double muC, double lambda, double mu, double R){
+static double msrmass(char const* type, char const* str, int orderAlpha,
+int runAlpha, int order, int run, int nf, double Mz, double aMz, double mT,
+double muT, double mB, double muB, double mC, double muC, double lambda,
+double mu, double R){
 
   double res;
 
-  f90msrmass_(type, str, &order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB,
-   &mC, &muC,&lambda, &mu, &R, &res);
+  f90msrmass_(type, str, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz,
+  &mT, &muT, &mB, &muB, &mC, &muC,&lambda, &mu, &R, &res);
 
   return res;
 }
@@ -2731,7 +2733,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 2735 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
+# line 2737 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
 
 
 void ewfactors P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5));
@@ -10274,7 +10276,7 @@ L0:	return res;
 } /* _tr106 */
 
 
-double msrmass P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17));
+double msrmass P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, int _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18));
 
 #if MLPROTOTYPES
 static int _tr107( MLINK mlp)
@@ -10289,7 +10291,7 @@ static int _tr107(mlp) MLINK mlp;
 	int _tp4;
 	int _tp5;
 	int _tp6;
-	double _tp7;
+	int _tp7;
 	double _tp8;
 	double _tp9;
 	double _tp10;
@@ -10300,6 +10302,7 @@ static int _tr107(mlp) MLINK mlp;
 	double _tp15;
 	double _tp16;
 	double _tp17;
+	double _tp18;
 	double _rp0;
 	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetString( mlp, &_tp2) ) goto L1;
@@ -10307,7 +10310,7 @@ static int _tr107(mlp) MLINK mlp;
 	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
 	if ( ! MLGetInteger( mlp, &_tp5) ) goto L4;
 	if ( ! MLGetInteger( mlp, &_tp6) ) goto L5;
-	if ( ! MLGetReal( mlp, &_tp7) ) goto L6;
+	if ( ! MLGetInteger( mlp, &_tp7) ) goto L6;
 	if ( ! MLGetReal( mlp, &_tp8) ) goto L7;
 	if ( ! MLGetReal( mlp, &_tp9) ) goto L8;
 	if ( ! MLGetReal( mlp, &_tp10) ) goto L9;
@@ -10318,13 +10321,14 @@ static int _tr107(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
 	if ( ! MLGetReal( mlp, &_tp16) ) goto L15;
 	if ( ! MLGetReal( mlp, &_tp17) ) goto L16;
-	if ( ! MLNewPacket(mlp) ) goto L17;
+	if ( ! MLGetReal( mlp, &_tp18) ) goto L17;
+	if ( ! MLNewPacket(mlp) ) goto L18;
 
-	_rp0 = msrmass(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17);
+	_rp0 = msrmass(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L17: L16: L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2:	MLReleaseString(mlp, _tp2);
+L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
@@ -11206,7 +11210,7 @@ static struct func {
 		{13, 0, _tr104, "msbarmass" },
 		{14, 0, _tr105, "polemass" },
 		{13, 0, _tr106, "msbarmasslow" },
-		{17, 0, _tr107, "msrmass" },
+		{18, 0, _tr107, "msrmass" },
 		{24, 0, _tr108, "nrqcd" },
 		{26, 0, _tr109, "findmass" },
 		{17, 0, _tr110, "optimalr" },
@@ -11508,10 +11512,10 @@ static const char* evalstrs[] = {
 	", aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of th",
 	"e quark masses with flavor matching below the mass.\"",
 	(const char*)0,
-	"MSRMass::usage = \"MSRMass[type, method, order, runAlpha, run, nf",
-	", Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda, R] compu",
-	"tes the MSR practical definition running of the quark masses wit",
-	"h flavor matching.\"",
+	"MSRMass::usage = \"MSRMass[type, method, orderAlpha, runAlpha, or",
+	"der, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lamb",
+	"da, R] computes the MSR practical definition running of the quar",
+	"k masses with flavor matching.\"",
 	(const char*)0,
 	"NRQCD::usage = \"NRQCD[n, l, j, s, charm, scheme, method, orderAl",
 	"pha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, mu",
@@ -12000,7 +12004,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"MSbarMass[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,                 mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 104);
 	if (_res) _res = _definepattern(mlp, (char *)"PoleMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_, muT_,                 mB_, muB_, mC_, muC_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC,                  mu}", 105);
 	if (_res) _res = _definepattern(mlp, (char *)"MSbarMassLow[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_,                 muB_, mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 106);
-	if (_res) _res = _definepattern(mlp, (char *)"MSRMass[type_, method_, order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, lambda_, mu_, R_]", (char *)"{type, method, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB,                  mC, muC, lambda, mu, R}", 107);
+	if (_res) _res = _definepattern(mlp, (char *)"MSRMass[type_, method_, orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, lambda_, mu_, R_]", (char *)"{type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB,                  mC, muC, lambda, mu, R}", 107);
 	if (_res) _res = _definepattern(mlp, (char *)"NRQCD[n_, l_, j_, s_, charm_, scheme_, method_, orderAlpha_, runAlpha_,                 order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_, muC_,                 lambda_, lam_, mu_, R_]", (char *)"{n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order, run,                  nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, lam, mu, R}", 108);
 	if (_res) _res = _definepattern(mlp, (char *)"FindMass[ord_, n_, l_, j_, s_, charm_, scheme_, method_, orderAlpha_,                 runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_,                 mC_, muC_, mass_, lambda_, lam_, mu_, R_]", (char *)"{ord, n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order, run,                  nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda, lam, mu, R}", 109);
 	if (_res) _res = _definepattern(mlp, (char *)"OptimalR[type_, n_, method_, order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, lambda_, mu_]", (char *)"{type, n, method, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB,                  mC, muC, lambda, mu}", 110);
