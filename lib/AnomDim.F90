@@ -29,8 +29,8 @@ module AnomDimClass
     real (dp), dimension(0:4)     :: gammaMass
     real (dp), dimension(0:3)     :: gammaHard, gammaB, gammaJet, gammaSoft, &
     cusp, gtilde, gl
-    real (dp), dimension(4)       :: sCoefMSR, sCoefMSRNatural, betaList, &
-    gammaR,  gammaRNatural, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, &
+    real (dp), dimension(4)       :: sCoefMSRp, sCoefMSRn, betaList, &
+    gammaRp,  gammaRn, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, &
     sCoefMSRInc3, gammaRInc3
 
   contains
@@ -116,17 +116,17 @@ module AnomDimClass
       InAdim%gTilde(n + 1) = sum( powList(-1,n + 1) * InAdim%bHat(2:n+2) * InAdim%gTilde(n:0:-1) )/(n+1)
     end do
 
-    InAdim%gammaR        = InAdim%GammaRComputer( InAdim%MSRDelta() )
-    InAdim%gammaRNatural = InAdim%GammaRComputer( MSbarDelta(nf    , 0, InAdim%err) )
+    InAdim%gammaRp       = InAdim%GammaRComputer( InAdim%MSRDelta('MSRp') )
+    InAdim%gammaRn       = InAdim%GammaRComputer( MSbarDelta(nf    , 0, InAdim%err) )
     InAdim%gammaRInc1    = InAdim%GammaRComputer( MSbarDelta(nf    , 1, InAdim%err) )
     InAdim%gammaRInc2    = InAdim%GammaRComputer( MSbarDelta(nf - 1, 1, InAdim%err) )
     InAdim%gammaRInc3    = InAdim%GammaRComputer( MSbarDelta(nf + 1, 1, InAdim%err) )
 
-    InAdim%sCoefMSR        = InAdim%sCoefRecursive( InAdim%MSRDelta() )
-    InAdim%sCoefMSRNatural = InAdim%sCoefRecursive( MSbarDelta(nf   ,  0, InAdim%err) )
-    InAdim%sCoefMSRInc1    = InAdim%sCoefRecursive( MSbarDelta(nf   ,  1, InAdim%err) )
-    InAdim%sCoefMSRInc2    = InAdim%sCoefRecursive( MSbarDelta(nf - 1, 1, InAdim%err) )
-    InAdim%sCoefMSRInc3    = InAdim%sCoefRecursive( MSbarDelta(nf + 1, 1, InAdim%err) )
+    InAdim%sCoefMSRp     = InAdim%sCoefRecursive( InAdim%MSRDelta('MSRp') )
+    InAdim%sCoefMSRn     = InAdim%sCoefRecursive( MSbarDelta(nf   ,  0, InAdim%err) )
+    InAdim%sCoefMSRInc1  = InAdim%sCoefRecursive( MSbarDelta(nf   ,  1, InAdim%err) )
+    InAdim%sCoefMSRInc2  = InAdim%sCoefRecursive( MSbarDelta(nf - 1, 1, InAdim%err) )
+    InAdim%sCoefMSRInc3  = InAdim%sCoefRecursive( MSbarDelta(nf + 1, 1, InAdim%err) )
 
     InAdim%AlphaMatch    = InAdim%alphaMatching(nf)
     InAdim%AlphaMatchInv = getInverse( InAdim%AlphaMatch )
@@ -833,19 +833,19 @@ module AnomDimClass
     if ( str( :5) == 'cCoef'           ) bet     = self%cCoef
     if ( str( :2) == 'gl'              ) bet(:3) = self%gl
     if ( str( :6) == 'gTilde'          ) bet(:3) = self%gTilde
-    if ( str( :8) == 'MSRdelta'        ) bet(1:) = self%MSRDelta()
-    if ( str(:15) == 'MSRNaturaldelta' ) bet(1:) = MSbarDelta(self%nf, 0, self%err)
-    if ( str( :8) == 'sCoefMSR'        ) bet(1:) = self%sCoefMSR
+    if ( str( :9) == 'MSRpdelta'       ) bet(1:) = self%MSRDelta('MSRp')
+    if ( str( :9) == 'MSRndelta'       ) bet(1:) = self%MSRDelta('MSRn')
+    if ( str( :9) == 'sCoefMSRp'       ) bet(1:) = self%sCoefMSRp
     if ( str(:12) == 'sCoefMSRInc1'    ) bet(1:) = self%sCoefMSRInc1
     if ( str(:12) == 'sCoefMSRInc2'    ) bet(1:) = self%sCoefMSRInc2
     if ( str(:12) == 'sCoefMSRInc3'    ) bet(1:) = self%sCoefMSRInc3
-    if ( str(:15) == 'sCoefMSRNatural' ) bet(1:) = self%sCoefMSRNatural
+    if ( str( :9) == 'sCoefMSRn'       ) bet(1:) = self%sCoefMSRn
     if ( str( :8) == 'betaList'        ) bet(1:) = self%betaList
     if ( str( :9) == 'gammaRInc1'      ) bet(1:) = self%gammaRInc1
     if ( str(:10) == 'gammaRInc2'      ) bet(1:) = self%gammaRInc2
     if ( str(:10) == 'gammaRInc3'      ) bet(1:) = self%gammaRInc3
-    if ( str( :6) == 'gammaR'          ) bet(1:) = self%gammaR
-    if ( str(:13) == 'gammaRNatural'   ) bet(1:) = self%gammaRNatural
+    if ( str( :7) == 'gammaRp'         ) bet(1:) = self%gammaRp
+    if ( str( :7) == 'gammaRn'         ) bet(1:) = self%gammaRn
 
   end function betaQCD
 
@@ -932,9 +932,9 @@ module AnomDimClass
      else if ( type(:4) == 'Inc3' ) then
        sCoef = self%sCoefMSRInc3
      else if ( type(:7) == 'Natural' ) then
-       sCoef = self%sCoefMSRNatural
+       sCoef = self%sCoefMSRn
      else if ( type(:9) == 'Practical' ) then
-       sCoef = self%sCoefMSR
+       sCoef = self%sCoefMSRp
      end if
 
      res = self%sCoefGeneric(sCoef, lambda)
@@ -1283,12 +1283,22 @@ end function MatchingAlphaUp
 
 !ccccccccccccccc pole - MSR mass with mu = R
 
- pure function MSRDelta(self) result(coef)
-    class (AnomDim), intent(in)   :: self
-    real (dp), dimension(4)       :: coef, b
+  pure function MSRDelta(self, type) result(coef)
+    class (AnomDim)    , intent(in) :: self
+    character (len = *), intent(in) :: type
+    real (dp), dimension(4)         :: coef, b
 
-    coef = MSbarDelta(self%nf, 1, self%err)
-    b = getInverse( self%alphaMatching(self%nf + 1) ); call alphaReExpand(coef, b)
+    if ( type(:4) == 'MSRn' ) then
+
+      coef = MSbarDelta(self%nf, 0, self%err)
+
+    else if ( type(:4) == 'MSRp' ) then
+
+      coef = MSbarDelta(self%nf, 1, self%err)
+      b = getInverse( self%alphaMatching(self%nf + 1) )
+      call alphaReExpand(coef, b)
+
+    end if
 
   end function MSRDelta
 

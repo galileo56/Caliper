@@ -153,14 +153,11 @@ module NRQCDClass
     if ( self%scheme(:4) == 'pole' ) then
       delta(1:) = 0; Rmass = 0; mass = self%mH
     else if ( self%scheme(:5) == 'MSbar' ) then
-      coefMSR(0,:) = self%mH * self%andim%MSRDelta()
+      coefMSR(0,:) = self%mH * self%andim%MSRDelta('MSRp')
       Rmass = self%mH; mass = self%mH
-    else if ( self%scheme(:4) == 'MSRp' ) then
-      coefMSR(0,:) = R * self%andim%MSRDelta(); Rmass = R
-      mass = self%alphaMass%MSRmass(R, lambda, method)
-    else if ( self%scheme(:4) == 'MSRn' ) then
-      coefMSR(0,:) = R * MSbarDelta(self%nl, 0); Rmass = R
-      mass = self%alphaMass%MSRNaturalMass(order, R, lambda, method)
+    else if ( self%scheme(:3) == 'MSR' ) then
+      coefMSR(0,:) = R * self%andim%MSRDelta(self%scheme); Rmass = R
+      mass = self%alphaMass%MSRmass(self%scheme, order, R, lambda, method)
     end if
 
     logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / mass) + self%harm, 3 )

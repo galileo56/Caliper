@@ -14,7 +14,7 @@ module RunningClass
     type (AnomDim)              :: andim
     type (Alpha)                :: AlphaOb
     real (dp), dimension(0:4)   :: beta, gamma
-    real (dp), dimension(4)     :: bHat, sCoef, sCoefNatural, gammaR, gammaRNatural
+    real (dp), dimension(4)     :: bHat, sCoefP, sCoefN, gammaRn, gammaRp
     real (dp)                   :: muLambda, mH, mL
     real (dp), dimension(0:4,4) :: tab
 
@@ -22,9 +22,9 @@ module RunningClass
 
     procedure, pass(self), public :: MSbarMass, MSRMass, lambdaQCD, DiffDeltaMu,  &
     DiffDelta, orders, adim, DiffDeltaHadron, scheme, MSbarDeltaMu, MSbarMassLow, &
-    AlphaAll, DeltaGapMatching, DiffRMass, MSRNaturalMass, mmFromMSR, PoleMass,   &
-    SetMTop, SetMBottom, SetMCharm, SetLambda, mmFromMSRNatural, SetAlpha, scales,&
-    DiffR, PSdelta, OptimalR, OptimalRNatural, numFlav
+    AlphaAll, DeltaGapMatching, DiffRMass, mmFromMSR, PoleMass, gammaR, sCoef,  &
+    SetMTop, SetMBottom, SetMCharm, SetLambda, SetAlpha, scales, numFlav,DiffR, &
+    PSdelta, OptimalR
 
     procedure, pass(self), private :: MSRMatching, alphaQCDReal, alphaQCDComplex, &
     wTildeReal, wTildeComplex, kTildeReal, kTildeComplex, RunningMass
@@ -68,18 +68,48 @@ module RunningClass
     end if
 
     InitRun%tab = MSbarDeltaPiece(nf - 1, 1)
-    sCoef = InitRun%andim%betaQCD('sCoefMSR')
-    InitRun%sCoef = sCoef(1:); sCoef = 0;
-    sCoef = InitRun%andim%betaQCD('sCoefMSRNatural')
-    InitRun%sCoefNatural = sCoef(1:)
+    sCoef = InitRun%andim%betaQCD('sCoefMSRp')
+    InitRun%sCoefP = sCoef(1:); sCoef = 0;
+    sCoef = InitRun%andim%betaQCD('sCoefMSRn')
+    InitRun%sCoefN = sCoef(1:)
     sCoef = 0; sCoef = InitRun%andim%betaQCD('bHat')
     InitRun%bHat = sCoef(1:)
-    sCoef = 0; sCoef = InitRun%andim%betaQCD('MSRdelta')
-    InitRun%gammaR = sCoef(1:)
-    sCoef = 0; sCoef = InitRun%andim%betaQCD('MSRNaturaldelta')
-    InitRun%gammaRNatural = sCoef(1:)
+    sCoef = 0; sCoef = InitRun%andim%betaQCD('MSRpdelta')
+    InitRun%gammaRp = sCoef(1:)
+    sCoef = 0; sCoef = InitRun%andim%betaQCD('MSRndelta')
+    InitRun%gammaRn = sCoef(1:)
 
    end function InitRun
+
+!ccccccccccccccc
+
+  function gammaR(self, type) result(res)
+    class (Running)    , intent(in) :: self
+    character (len = *), intent(in) :: type
+    real (dp), dimension(4)         :: res
+
+    if ( type(:4) == 'MSRn' ) then
+      res = self%gammaRn
+    else if ( type(:4) == 'MSRp' ) then
+      res = self%gammaRp
+    end if
+
+  end function gammaR
+
+!ccccccccccccccc
+
+  function sCoef(self, type) result(res)
+    class (Running)    , intent(in) :: self
+    character (len = *), intent(in) :: type
+    real (dp), dimension(4)         :: res
+
+    if ( type(:4) == 'MSRn' ) then
+      res = self%sCoefN
+    else if ( type(:4) == 'MSRp' ) then
+      res = self%sCoefP
+    end if
+
+  end function sCoef
 
 !ccccccccccccccc
 
@@ -320,61 +350,41 @@ module RunningClass
 
 !ccccccccccccccc
 
-  real (dp) function OptimalR(self, n, lambda, method)
+  real (dp) function MSRMass(self, type, order, R, lambda, method)
     class (Running)                    , intent(in) :: self
-    real (dp)          , optional      , intent(in) :: lambda
+    real (dp)                          , intent(in) :: R
+    real (dp), optional                , intent(in) :: lambda
+    character (len = *)                , intent(in) :: type
     character (len = *), optional      , intent(in) :: method
-    real (dp)                          , intent(in) :: n
-    integer                                         :: IFLAG
-    real (dp)                                       :: a, b, c
+    integer                            , intent(in) :: order
+    real (dp)                        , dimension(4) :: a, gammaR
+    real (dp), dimension(self%runMass,self%runMass) :: gammaLog
+    real (dp), dimension(self%runMass)              :: gamm, alphaList, lglist
+    integer                                         :: neval, ier, i
+    real (dp)                                       :: corr, abserr, lan, delta, &
+    alphaM, matching, mu, Rstep, delta1, delta2
 
-    a = 0.5_dp; b = self%mH
+    gammaR = self%gammaR(type)
 
-    call DFZERO(root, a, b, c, 1e-10_dp, 1e-10_dp, IFLAG); OptimalR = a
+    if ( present(lambda) ) then
 
-  contains
+      gammaLog(1,:) = gammaR(:self%runMass) ; lan = lambda
+      call self%andim%expandAlpha( gammaLog )
 
-    real (dp) function root(x)
-      real (dp), intent(in) :: x
+      gamm = lambda * (   gammaLog(1,:) + &
+      matmul(  powList( - log(lambda), self%runMass-1 ), gammaLog(2:,:)  )   )
 
-      root = n * x - 4 * self%MSRmass(x, lambda, method) * self%alphaQCD(x)/3
+    else
 
-    end function root
+      lan = 1
 
-  end function OptimalR
+    end if
 
-!ccccccccccccccc
+    if (  ( .not. present(method) ) .or. method(:8) == 'analytic' ) then
 
-   real (dp) function MSRmass(self, R, lambda, method)
-     class (Running)                    , intent(in) :: self
-     real (dp)                          , intent(in) :: R
-     real (dp)          , optional      , intent(in) :: lambda
-     character (len = *), optional      , intent(in) :: method
-     real (dp), dimension(self%runMass,self%runMass) :: gammaLog
-     real (dp), dimension(self%runMass)              :: gamm, alphaList, lglist
-     integer                                         :: neval, ier
-     real (dp)                                       :: corr, abserr, lan, delta, &
-     mu, Rstep, delta1, delta2
-
-     if ( present(lambda) ) then
-
-       gammaLog(1,:) = self%gammaR(:self%runMass) ; lan = lambda
-       call self%andim%expandAlpha( gammaLog )
-
-       gamm = lambda * (  gammaLog(1,:) + &
-       matmul( powList(-log(lambda), self%runMass-1), gammaLog(2:,:) )  )
-
-     else
-
-       lan = 1
-
-     end if
-
-     if (  ( .not. present(method) ) .or. method(:8) == 'analytic' ) then
-
-       if ( .not. present(lambda) ) then
-         corr = self%DiffR( self%sCoef, self%runMass, self%mH, R )
-       else
+      if ( .not. present(lambda) ) then
+        corr = self%DiffR( self%sCoef(type), self%runMass, self%mH, R )
+      else
         corr = self%DiffR( self%andim%sCoefRecursive(gamm), &
         self%runMass, self%mH/lambda, R/lambda )
        end if
@@ -383,13 +393,11 @@ module RunningClass
 
     else if ( method(:7) == 'numeric' ) then
 
-      gammaLog(1,:) = self%gammaR(:self%runMass)
-
       if ( .not. present(lambda) ) then
-        gamm = self%gammaR(:self%runMass)
+        gamm = gammaR(:self%runMass)
       end if
 
-        gamm = self%andim%GammaRComputer( gamm )
+      gamm = self%andim%GammaRComputer( gamm )
 
       call qags( Integrand, R/lan, self%mH/lan, prec, prec, corr, abserr, neval, ier )
 
@@ -397,7 +405,7 @@ module RunningClass
 
       delta = 0.1_dp;   neval = abs(  Nint( ( self%mH - R )/delta )  )
       delta = (self%mH - R)/neval; corr = 0; Rstep = self%mH + delta
-      gammaLog(1,:) = self%gammaR(:self%runMass)
+      gammaLog(1,:) = gammaR(:self%runMass)
       call self%andim%expandAlpha( gammaLog )
 
       do ier = 1, neval
@@ -417,33 +425,43 @@ module RunningClass
 
     end if
 
-    MSRmass = self%mH + corr
+    matching = 1
+
+     if ( self%runMass > 0 .and. type(:4) == 'MSRn' ) then
+      alphaM = self%AlphaOb%alphaQCD(self%nf + 1, self%mH)/Pi
+      a = self%MSRMatching(type); i = min(order, 4)
+      matching = 1 + dot_product( a(:i), PowList(alphaM, i) )
+     end if
+
+     MSRMass = self%mH * matching + corr
 
     contains
 
 !ccccccccccccccc
 
-   real (dp) function Integrand(R)
-     real (dp)             , intent(in) :: R
-     real (dp), dimension(self%runMass) :: aPi
+    real (dp) function Integrand(R)
+      real (dp)             , intent(in) :: R
+      real (dp), dimension(self%runMass) :: aPi
 
-     aPi = powList( self%alphaQCD(R)/4/Pi, self%runMass )
+      aPi = powList( self%alphaQCD(R)/4/Pi, self%runMass )
 
-     Integrand = dot_product( gamm, aPi )
+      Integrand = dot_product( gamm, aPi )
 
-   end function Integrand
+    end function Integrand
 
-   end function MSRmass
+  end function MSRMass
 
 !ccccccccccccccc
 
-  real (dp) function mmFromMSR(self, mass, R)
-    class (Running), intent(inout) :: self
-    real (dp)      , intent(in   ) :: R, mass
-    integer                        :: IFLAG
-    real (dp)                      :: a, b, c, rat, massOr
+  real (dp) function mmFromMSR(self, type, mass, order, R)
+    class (Running) , intent(inout) :: self
+    character (len = *), intent(in) :: type
+    real (dp)       , intent(in   ) :: R, mass
+    integer         , intent(in   ) :: order
+    integer                         :: IFLAG
+    real (dp)                       :: a, b, c, rat, massOr
 
-    a = mass/2; b = 2 * mass; massOr = self%mH
+     a = mass/2; b = 2 * mass; massOr = self%mH
 
     if (self%nf == 5) rat = self%alphaOb%scales('muT')/self%mH
     if (self%nf == 4) rat = self%alphaOb%scales('muB')/self%mH
@@ -458,13 +476,13 @@ module RunningClass
    contains
 
    real (dp) function MSR(mm)
-     real (dp), intent(in) :: mm
+     real (dp), intent(in)   :: mm
 
      if (self%nf == 5) call self%SetMTop(   mm, rat * mm)
      if (self%nf == 4) call self%SetMBottom(mm, rat * mm)
      if (self%nf == 3) call self%SetMCharm (mm, rat * mm)
 
-     MSR = self%MSRMass(R) - mass
+     MSR = self%MSRMass(type, order, R) - mass
 
    end function MSR
 
@@ -472,44 +490,9 @@ module RunningClass
 
 !ccccccccccccccc
 
-  real (dp) function mmFromMSRNatural(self, mass, order, R)
-    class (Running), intent(inout) :: self
-    real (dp)      , intent(in   ) :: R, mass
-    integer        , intent(in   ) :: order
-    integer                        :: IFLAG
-    real (dp)                      :: a, b, c, rat, massOr
-
-     a = mass/2; b = 2 * mass; massOr = self%mH
-
-    if (self%nf == 5) rat = self%alphaOb%scales('muT')/self%mH
-    if (self%nf == 4) rat = self%alphaOb%scales('muB')/self%mH
-    if (self%nf == 3) rat = self%alphaOb%scales('muC')/self%mH
-
-    call DFZERO(MSR, a, b, c, 1e-9_dp, 1e-9_dp, IFLAG); mmFromMSRNatural = a
-
-    if (self%nf == 5) call self%SetMTop(   massOr, rat * massOr)
-    if (self%nf == 4) call self%SetMBottom(massOr, rat * massOr)
-    if (self%nf == 3) call self%SetMCharm( massOr, rat * massOr)
-
-   contains
-
-   real (dp) function MSR(mm)
-     real (dp), intent(in)   :: mm
-
-     if (self%nf == 5) call self%SetMTop(   mm, rat * mm)
-     if (self%nf == 4) call self%SetMBottom(mm, rat * mm)
-     if (self%nf == 3) call self%SetMCharm (mm, rat * mm)
-
-     MSR = self%MSRNaturalMass(order, R) - mass
-
-   end function MSR
-
-  end function mmFromMSRNatural
-
-!ccccccccccccccc
-
-  real (dp) function OptimalRNatural(self, n, order, lambda, method)
+  real (dp) function OptimalR(self, type, n, order, lambda, method)
     class (Running)                    , intent(in) :: self
+    character (len = *)                , intent(in) :: type
     real (dp)          , optional      , intent(in) :: lambda
     character (len = *), optional      , intent(in) :: method
     integer                            , intent(in) :: order
@@ -519,125 +502,29 @@ module RunningClass
 
     a = 0.5_dp; b = self%mH
 
-    call DFZERO(root, a, b, c, 1e-9_dp, 1e-9_dp, IFLAG); OptimalRNatural = a
+    call DFZERO(root, a, b, c, 1e-9_dp, 1e-9_dp, IFLAG); OptimalR = a
 
   contains
 
     real (dp) function root(x)
       real (dp), intent(in) :: x
 
-      root = n * x - 4 * self%MSRNaturalMass(order, x, lambda, method) &
+      root = n * x - 4 * self%MSRMass(type, order, x, lambda, method) &
       * self%alphaQCD(x)/3
 
     end function root
 
-  end function OptimalRNatural
+  end function OptimalR
 
 !ccccccccccccccc
 
-   real (dp) function MSRNaturalMass(self, order, R, lambda, method)
-     class (Running)                    , intent(in) :: self
-     real (dp)                          , intent(in) :: R
-     real (dp), optional                , intent(in) :: lambda
-     character (len = *), optional      , intent(in) :: method
-     integer                            , intent(in) :: order
-     real (dp)                        , dimension(4) :: a
-     real (dp), dimension(self%runMass,self%runMass) :: gammaLog
-     real (dp), dimension(self%runMass)              :: gamm, alphaList, lglist
-     integer                                         :: neval, ier, i
-     real (dp)                                       :: corr, abserr, lan, delta, &
-     alphaM, matching, mu, Rstep, delta1, delta2
+  function MSRMatching(self, type) result(a)
+    class (Running)    , intent(in) :: self
+    character (len = *), intent(in) :: type
+    real (dp) , dimension(4)        :: a, c
+    real (dp) , dimension(5)        :: b
 
-     if ( present(lambda) ) then
-
-       gammaLog(1,:) = self%gammaRNatural(:self%runMass) ; lan = lambda
-       call self%andim%expandAlpha( gammaLog )
-
-       gamm = lambda * (  gammaLog(1,:) + &
-       matmul( powList(-log(lambda), self%runMass-1), gammaLog(2:,:) )  )
-
-     else
-
-       lan = 1
-
-     end if
-
-     if (  ( .not. present(method) ) .or. method(:8) == 'analytic' ) then
-
-       if ( .not. present(lambda) ) then
-         corr = self%DiffR( self%sCoefNatural, self%runMass, self%mH, R )
-       else
-        corr = self%DiffR( self%andim%sCoefRecursive(gamm), &
-        self%runMass, self%mH/lambda, R/lambda )
-       end if
-
-       corr = self%lambdaQCD(self%runMass) * corr
-
-    else if ( method(:7) == 'numeric' ) then
-
-      gammaLog(1,:) = self%gammaRNatural(:self%runMass)
-
-      if ( .not. present(lambda) ) then
-        gamm = self%gammaRNatural(:self%runMass)
-      end if
-
-        gamm = self%andim%GammaRComputer( gamm )
-
-      call qags( Integrand, R/lan, self%mH/lan, prec, prec, corr, abserr, neval, ier )
-
-    else if ( method(:4) == 'diff' ) then
-
-      delta = 0.1_dp;   neval = abs(  Nint( ( self%mH - R )/delta )  )
-      delta = (self%mH - R)/neval; corr = 0; Rstep = self%mH + delta
-      gammaLog(1,:) = self%gammaRNatural(:self%runMass)
-      call self%andim%expandAlpha( gammaLog )
-
-      do ier = 1, neval
-
-        Rstep = Rstep - delta; mu = (Rstep - delta/2)/lan
-        alphaList = powList( self%alphaQCD(mu)/Pi, self%runMass )
-
-        lgList = powList( log(mu/Rstep), self%runMass )
-        delta1 = Rstep * dot_product( DeltaComputer(gammaLog, lgList, 0), alphaList )
-
-        lgList = powList( log(mu/(Rstep - delta) ), self%runMass )
-        delta2 = (Rstep - delta) * dot_product( DeltaComputer(gammaLog, lgList, 0), alphaList )
-
-        corr = corr + delta1 - delta2
-
-      end do
-
-    end if
-
-     if (self%runMass > 0) alphaM = self%AlphaOb%alphaQCD(self%nf + 1, self%mH)/Pi ! note: perform matching with nl active flavors?
-     a = self%MSRMatching(); i = min(order, 4)
-
-     matching = 1 + dot_product( a(:i), PowList(alphaM, i) )
-
-     MSRNaturalMass = self%mH * matching + corr
-
-    contains
-
-!ccccccccccccccc
-
-   real (dp) function Integrand(R)
-     real (dp)             , intent(in) :: R
-     real (dp), dimension(self%runMass) :: aPi
-
-     aPi = powList( self%alphaQCD(R)/4/Pi, self%runMass )
-
-     Integrand = dot_product( gamm, aPi )
-
-   end function Integrand
-
-   end function MSRNaturalMass
-
-!ccccccccccccccc
-
-  function MSRMatching(self) result(a)
-    class (Running), intent(in) :: self
-    real (dp) , dimension(4)    :: a, c
-    real (dp) , dimension(5)    :: b
+    a = 0; if ( type(:4) /= 'MSRn' ) return
 
     c = MSbarDelta(self%nf, 1); a = MSbarDelta(self%nf, 0)
     b = self%andim%MatchingAlphaUp()
