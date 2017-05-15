@@ -3142,68 +3142,12 @@ end subroutine f90MSbarMassLow
 
 !ccccccccccccccc
 
-subroutine f90MSRMass(method, orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, &
-mB, muB, mC, muC, lambda, mu, R, res)
-  use RunningClass;  use AlphaClass;  use constants, only: dp
-  use AnomDimClass;  implicit none
-
-  character (len = *), intent(in ) :: method
-  integer            , intent(in ) :: orderAlpha, runAlpha, run, nf
-  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R, lambda
-  real (dp)          , intent(out) :: res
-  type (Running)                   :: alphaMass
-  type (Alpha)                     :: alphaAll
-  type (AnomDim), dimension(3:6)   :: AnDim
-  integer                          :: i
-
-  do i = 3, 6
-    AnDim(i) = AnomDim('MSbar', i, 0._dp)
-  end do
-
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
-
-  alphaMass = Running(nf, run, alphaAll, mu)
-  res = alphaMass%MSRMass( R, lambda, method(:8) )
-
-end subroutine f90MSRMass
-
-!ccccccccccccccc
-
-subroutine f90OptimalR(n, method, orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, &
-mB, muB, mC, muC, lambda, mu, res)
-  use RunningClass;  use AlphaClass;  use constants, only: dp
-  use AnomDimClass;  implicit none
-
-  character (len = *), intent(in ) :: method
-  integer            , intent(in ) :: orderAlpha, runAlpha, run, nf
-  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, lambda, n
-  real (dp)          , intent(out) :: res
-  type (Running)                   :: alphaMass
-  type (Alpha)                     :: alphaAll
-  type (AnomDim), dimension(3:6)   :: AnDim
-  integer                          :: i
-
-  do i = 3, 6
-    AnDim(i) = AnomDim('MSbar', i, 0._dp)
-  end do
-
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
-
-  alphaMass = Running(nf, run, alphaAll, mu)
-  res = alphaMass%OptimalR( n, lambda, method(:8) )
-
-end subroutine f90OptimalR
-
-!ccccccccccccccc
-
-subroutine f90OptimalRNatural(n, method, orderAlpha, runAlpha, order, run, nf, &
+subroutine f90OptimalR(type, n, method, orderAlpha, runAlpha, order, run, nf, &
 mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, mu, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
 
-  character (len = *), intent(in ) :: method
+  character (len = *), intent(in ) :: method, type
   integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nf
   real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, lambda, n
   real (dp)          , intent(out) :: res
@@ -3220,9 +3164,9 @@ mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, mu, res)
   mT, muT, mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, mu)
-  res = alphaMass%OptimalRNatural( n, order, lambda, method(:8) )
+  res = alphaMass%OptimalR( type, n, order, lambda, method(:8) )
 
-end subroutine f90OptimalRNatural
+end subroutine f90OptimalR
 
 !ccccccccccccccc
 
@@ -3328,19 +3272,20 @@ end subroutine f90OptimalRNatural
 
 !ccccccccccccccc
 
-subroutine f90mmfromMSR(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, &
-muB, mC, muC, mu, R, res)
+subroutine f90mmfromMSR(type, orderAlpha, runAlpha, order, run, nf, mZ, amZ, &
+mT, muT, mB, muB, mC, muC, mu, R, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
 
-  integer  , intent(in ) :: orderAlpha, runAlpha, run, nf
-  real (dp), intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R
-  real (dp), intent(out) :: res
-  type (Running)         :: alphaMass
-  type (Alpha)           :: alphaAll
-  real (dp)              :: mass
+  integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nf
+  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R
+  character (len = *), intent(in ) :: type
+  real (dp)          , intent(out) :: res
+  type (Running)                   :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
-  integer                :: i
+  type (Alpha)                     :: alphaAll
+  real (dp)                        :: mass
+  integer                          :: i
 
   do i = 3, 6
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
@@ -3351,54 +3296,26 @@ muB, mC, muC, mu, R, res)
 
   if (nf == 5) mass = mT; if (nf == 4) mass = mB; if (nf == 3) mass = mC
 
-  alphaMass = Running(nf, run, alphaAll, mu);  res = alphaMass%mmFromMSR(mass, R)
+  alphaMass = Running(nf, run, alphaAll, mu)
+  res = alphaMass%mmFromMSR(type, mass, order, R)
 
 end subroutine f90mmfromMSR
 
 !ccccccccccccccc
 
-subroutine f90mmfromMSRNatural(orderAlpha, runAlpha, order, run, nf, mZ, amZ, &
-mT, muT, mB, muB, mC, muC, mu, R, res)
-  use RunningClass;  use AlphaClass;  use constants, only: dp
-  use AnomDimClass;  implicit none
-
-  integer  , intent(in ) :: orderAlpha, runAlpha, order, run, nf
-  real (dp), intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R
-  real (dp), intent(out) :: res
-  type (Running)         :: alphaMass
-  type (AnomDim), dimension(3:6)   :: AnDim
-  type (Alpha)           :: alphaAll
-  real (dp)              :: mass
-  integer                :: i
-
-  do i = 3, 6
-    AnDim(i) = AnomDim('MSbar', i, 0._dp)
-  end do
-
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
-
-  if (nf == 5) mass = mT; if (nf == 4) mass = mB; if (nf == 3) mass = mC
-
-  alphaMass = Running(nf, run, alphaAll, mu);  res = alphaMass%mmFromMSRNatural(mass, order, R)
-
-end subroutine f90mmfromMSRNatural
-
-!ccccccccccccccc
-
-subroutine f90MSRNaturalMass(method, orderAlpha, runAlpha, order, run, nf, mZ, &
+subroutine f90MSRMass(type, method, orderAlpha, runAlpha, order, run, nf, mZ, &
 amZ, mT, muT, mB, muB, mC, muC, lambda, mu, R, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
 
-  character (len = *), intent(in) :: method
-  integer  , intent(in ) :: orderAlpha, runAlpha, order, run, nf
-  real (dp), intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R, lambda
-  real (dp), intent(out) :: res
-  type (Running)         :: alphaMass
-  type (Alpha)           :: alphaAll
-  type (AnomDim), dimension(3:6)   :: AnDim
-  integer                :: i
+  character (len = *), intent(in) :: method, type
+  integer           , intent(in ) :: orderAlpha, runAlpha, order, run, nf
+  real (dp)         , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R, lambda
+  real (dp)         , intent(out) :: res
+  type (Running)                  :: alphaMass
+  type (Alpha)                    :: alphaAll
+  type (AnomDim), dimension(3:6)  :: AnDim
+  integer                         :: i
 
   do i = 3, 6
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
@@ -3408,10 +3325,9 @@ amZ, mT, muT, mB, muB, mC, muC, lambda, mu, R, res)
   mT, muT, mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, mu)
+  res       = alphaMass%MSRMass(type, order, R, lambda, method)
 
-  res       = alphaMass%MSRNaturalMass(order, R, lambda, method)
-
-end subroutine f90MSRNaturalMass
+end subroutine f90MSRMass
 
 !ccccccccccccccc
 
@@ -3449,14 +3365,14 @@ muT, mB, muB, mC, muC, muLambda, R, mu, res)
  use AlphaClass;   use MatrixElementsClass;  use constants, only: dp
  use AnomDimClass; implicit none
 
-  integer  , intent(in )      :: orderAlpha, order, runAlpha, run, nf
-  real (dp), intent(in )      :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, muC, R
-  real (dp), intent(out)      :: res
-  type (Alpha)                :: alphaAll
-  type (MatricesElementsMass) :: MatEl
-  real (dp)                   :: mass
-  type (AnomDim), dimension(3:6)   :: AnDim
-  integer                     :: i
+  integer  , intent(in )         :: orderAlpha, order, runAlpha, run, nf
+  real (dp), intent(in )         :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, muC, R
+  real (dp), intent(out)         :: res
+  type (Alpha)                   :: alphaAll
+  type (MatricesElementsMass)    :: MatEl
+  real (dp)                      :: mass
+  type (AnomDim), dimension(3:6) :: AnDim
+  integer                        :: i
 
   do i = 3, 6
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
@@ -3485,8 +3401,8 @@ subroutine f90Singular(hard, shape, setup, gap, space, cum, orderAlpha, runAlpha
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in)    :: shape, cum, setup, space, gap, hard
   integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen
-  real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, muC, j3, &
-                                        mu,  Q, G3, lambda, tau, R0, mu0, delta0, h, s3
+  real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, &
+  mu,  Q, G3, lambda, tau, R0, mu0, delta0, h, s3, muC, j3
   real (dp)          , intent(inout) :: muH, muJ, muS, R
   real (dp)          , intent(out)   :: res
   type (Alpha)                       :: alphaAll
@@ -3513,8 +3429,8 @@ subroutine f90Singular(hard, shape, setup, gap, space, cum, orderAlpha, runAlpha
     call Sing%setHard(Q, muH); call sing%SetMat(muJ, muS)
     call Sing%SetRunning(muJ, muS, R, mu)
 
-  res       = Sing%SingleSing(Mod, setup(:15), gap(:12), space(:6), cum(:4), order, R0, &
-                              mu0, delta0, h, tau)
+  res       = Sing%SingleSing(Mod, setup(:15), gap(:12), space(:6), cum(:4), &
+  order, R0, mu0, delta0, h, tau)
 
 end subroutine f90Singular
 
@@ -3529,9 +3445,8 @@ subroutine f90SingularDiff(hard, shape, setup, gap, space, cum, orderAlpha, runA
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in)    :: shape, cum, setup, space, hard, gap
   integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen
-  real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, muC,    &
-                                        mu,  Q, G3, lambda, tau1, tau2, R0, mu0, delta0, &
-                                        h, s3, j3
+  real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC,&
+  mu,  Q, G3, lambda, tau1, tau2, R0, mu0, delta0, h, s3, j3, muC
   real (dp)          , intent(inout) :: muH, muJ, muS, R
   real (dp)          , intent(out)   :: res
   type (Alpha)                       :: alphaAll
@@ -3555,11 +3470,11 @@ subroutine f90SingularDiff(hard, shape, setup, gap, space, cum, orderAlpha, runA
   Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Mod       = Model(lambda, c, [0,0], 'sum')
 
-    call Sing%setHard(Q, muH); call sing%SetMat(muJ, muS)
-    call Sing%SetRunning(muJ, muS, R, mu)
+  call Sing%setHard(Q, muH); call sing%SetMat(muJ, muS)
+  call Sing%SetRunning(muJ, muS, R, mu)
 
-  res       = Sing%SingleSing(Mod, setup(:15), gap(:12), space(:6), cum(:4), order, R0, &
-                              mu0, delta0, h, tau1, tau2)
+  res       = Sing%SingleSing(Mod, setup(:15), gap(:12), space(:6), cum(:4), &
+  order, R0, mu0, delta0, h, tau1, tau2)
 
 end subroutine f90SingularDiff
 
