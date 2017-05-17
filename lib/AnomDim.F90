@@ -1573,20 +1573,38 @@ end function MatchingAlphaUp
 
   real (dp) function deltaCharm2(r)
     real (dp)   , intent(in) :: r
-    real (dp)                :: lr, r2, r3, dilog
+    real (dp)                :: lr, r2, r3, dilog, r4, corr
     real (dp), dimension(10) :: a
+    integer                  :: i
 
-    deltaCharm2 = 0; if (r < 0 .or. r > 1) return; a = 0
+    deltaCharm2 = 0; if (r <= 0) return; a = 0
 
     if (1000 * r <= 1) then
 
-      lr = log(r); a(:3) = powList(r,3); a(2:10:2) = powList( a(2), 5 )
+      lr = log(r); r2 = r**2; r4 = r**4!; a(:3) = powList(r,3); a(2:10:2) = powList( a(2), 5 )
 
-      deltaCharm2 = pi2/6 * ( r + a(3) ) - a(2) + (13 * lr/18 - 151._dp/216    - &
-      pi2/18 - lr**2/3) * a(4) + (19._dp/225 - 4 * lr/45) * a(6) + (463._dp/39200 &
-      - 3 * lr/140) * a(8) + (997._dp/297675 - 8 * lr/945) * a(10)
+      deltaCharm2 = pi2/6 * r * ( 1 + r2 ) - r2 + (13 * lr/18 - 151._dp/216    - &
+      pi2/18 - lr**2/3) * r4
 
-    else if (10 * r > 9) then
+      i = 2
+
+      do
+
+        r4 = r2 * r4; i = i + 1
+      
+        corr = ( 2 * F(i) * lr + G(i) ) * r4
+
+        deltaCharm2 = deltaCharm2 + 4 * corr/3
+
+        if ( abs(corr) <= 1e-13_dp ) exit
+
+      end do
+
+      ! deltaCharm2 = pi2/6 * ( r + a(3) ) - a(2) + (13 * lr/18 - 151._dp/216    - &
+      ! pi2/18 - lr**2/3) * a(4) + (19._dp/225 - 4 * lr/45) * a(6) + (463._dp/39200 &
+      ! - 3 * lr/140) * a(8) + (997._dp/297675 - 8 * lr/945) * a(10)
+
+    else if ( 10 * r > 9 ) then
 
       a = powList(1 - r, 10)
 
@@ -1604,6 +1622,19 @@ end function MatchingAlphaUp
       (1 - r) * (1 - r3) * ( Dilog( r) - lr**2/2 + lr * log(1 - r) - pi2/3 )  )/3
 
     end if
+
+  contains
+
+    pure real (dp) function F(n)
+      integer, intent(in) :: n
+      F = 3._dp *  (n - 1)/4/n/(n - 2)/(2 * n - 1)/(2 * n - 3)
+    end function F
+
+    pure real (dp) function G(n)
+      integer, intent(in) :: n
+      G = - 3._dp *  (6 - 38 * n + 67 * n**2 - 48 * n**3 + 12 * n**4)/&
+      4/(1 - 2 * n)**2/(3 - 2 * n)**2/ (n - 2)**2/ n**2
+    end function G
 
   end function deltaCharm2
 
