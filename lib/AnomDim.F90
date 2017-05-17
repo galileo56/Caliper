@@ -1581,7 +1581,7 @@ end function MatchingAlphaUp
 
     if (1000 * r <= 1) then
 
-      lr = log(r); r2 = r**2; r4 = r**4!; a(:3) = powList(r,3); a(2:10:2) = powList( a(2), 5 )
+      lr = log(r); r2 = r**2; r4 = r**4
 
       deltaCharm2 = pi2/6 * r * ( 1 + r2 ) - r2 + (13 * lr/18 - 151._dp/216    - &
       pi2/18 - lr**2/3) * r4
@@ -1589,22 +1589,12 @@ end function MatchingAlphaUp
       i = 2
 
       do
-
-        r4 = r2 * r4; i = i + 1
-      
-        corr = ( 2 * F(i) * lr + G(i) ) * r4
-
+        r4 = r2 * r4; i = i + 1; corr = ( 2 * F(i) * lr + G(i) ) * r4
         deltaCharm2 = deltaCharm2 + 4 * corr/3
-
         if ( abs(corr) <= 1e-13_dp ) exit
-
       end do
 
-      ! deltaCharm2 = pi2/6 * ( r + a(3) ) - a(2) + (13 * lr/18 - 151._dp/216    - &
-      ! pi2/18 - lr**2/3) * a(4) + (19._dp/225 - 4 * lr/45) * a(6) + (463._dp/39200 &
-      ! - 3 * lr/140) * a(8) + (997._dp/297675 - 8 * lr/945) * a(10)
-
-    else if ( 10 * r > 9 ) then
+    else if ( 1000 * abs(r - 1) <= 1 ) then
 
       a = powList(1 - r, 10)
 
@@ -1617,9 +1607,18 @@ end function MatchingAlphaUp
 
       lr = log(r); r2 = r**2; r3 = r * r2
 
-      deltaCharm2 = (  lr**2 + pi2/6 - r2 * (1.5_dp + lr) + &
-      (1 + r) * (1 + r3) * ( Dilog(-r) - lr**2/2 + lr * log(1 + r) + pi2/6 ) + &
-      (1 - r) * (1 - r3) * ( Dilog( r) - lr**2/2 + lr * log(1 - r) - pi2/3 )  )/3
+      deltaCharm2 = lr**2 + pi2/6 - r2 * (1.5_dp + lr) + &
+      (1 + r) * (1 + r3) * ( Dilog(-r) - lr**2/2 + lr * log(1 + r) + pi2/6 )
+
+      if (r < 1) then
+        deltaCharm2 = deltaCharm2 + (1 - r) * (1 - r3) * ( Dilog(r) - &
+        lr**2/2 + lr * log(1 - r) - pi2/3 )
+      else
+        deltaCharm2 = deltaCharm2 - (1 - r) * (1 - r3) * ( Dilog(1 - r) + &
+        lr**2/2 + pi2/6 )
+      end if
+
+      deltaCharm2 = deltaCharm2/3
 
     end if
 
