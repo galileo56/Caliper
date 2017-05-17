@@ -17,8 +17,9 @@ module NRQCDClass
 
   contains
 
-    procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, ZeroBin
     procedure, pass(self), private :: Binomial
+    procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
+    ZeroBin, DeltaCharmBin
 
   end type NRQCD
 
@@ -498,6 +499,8 @@ module NRQCDClass
     if (100 * r > 1 ) then
       DeltaCharmBin = self%DeltaCharm(alpha, mb, mc) - self%ZeroBin(alpha, mb, mc)
       return
+    else if ( r <= tiny(1._dp) ) then
+      DeltaCharmBin = 0; return
     end if
 
     lg = log(r)
@@ -506,7 +509,7 @@ module NRQCDClass
 
       if (self%l == 0) then
         DeltaCharmBin = - 3 * Pi * r/2 + 9 * r**2/2 - 2 * Pi * r**3 + 3 * r**4/16 &
-        - 5 * r**6/6 - 369 * r**8/512 - 401 * r**10/640 + lg * (2 - 15 * r**4/4&
+        - 5 * r**6/6 - 369 * r**8/512 - 401 * r**10/640 + lg * ( - 15 * r**4/4&
         - 7 * r**6/4 - 81 * r**8/64 - 33 * r**10/32)
       end if
 
@@ -515,12 +518,12 @@ module NRQCDClass
       if (self%l == 0) then
 
         DeltaCharmBin = - 3 * Pi * r + 18 * r**2 - 14 * Pi * r**3 + 237 * r**4/16 &
-        - 713 * r**6/24 - 19161 * r**8/512 - 14693 * r**10/310 + lg * (2 - 165 * r**4/4&
+        - 713 * r**6/24 - 19161 * r**8/512 - 14693 * r**10/310 + lg * ( - 165 * r**4/4&
         - 77 * r**6/2 - 2997 * r**8/64 - 231 * r**10/4)
 
       else if (self%l == 1) then
         DeltaCharmBin = - 3 * Pi * r + 15 * r**2 - 10 * Pi * r**3 + 109 * r**4/16 &
-        - 359 * r**6/24 - 9033 * r**8/512 - 1647 * r**10/80 + lg * (2 - 105 * r**4/4&
+        - 359 * r**6/24 - 9033 * r**8/512 - 1647 * r**10/80 + lg * ( - 105 * r**4/4&
         - 21 * r**6 - 1485 * r**8/64 - 429 * r**10/16)
       end if
 
@@ -528,38 +531,40 @@ module NRQCDClass
 
       if (self%l == 0) then
         DeltaCharmBin = - 9 * Pi * r/2 + 81 * r**2/2 - 46 * Pi * r**3 + 2097 * r**4/16 &
-        - 7937 * r**6/24 - 323289 * r**8/512 - 707151 * r**10/640 + lg * (2 - 765 * r**4/4&
+        - 7937 * r**6/24 - 323289 * r**8/512 - 707151 * r**10/640 + lg * ( - 765 * r**4/4&
         - 1281 * r**6/4 - 39933 * r**8/64 - 36333 * r**10/32)
       else if (self%l == 1) then
         DeltaCharmBin = - 9 * Pi * r/2 + 75 * r**2/2 - 40 * Pi * r**3 + 1599 * r**4/16 &
-        - 11533 * r**6/48 - 222117 * r**8/512 - 232803 * r**10/320 + lg * (2 - 315 * r**4/4&
+        - 11533 * r**6/48 - 222117 * r**8/512 - 232803 * r**10/320 + lg * ( - 315 * r**4/4&
         - 483 * r**6/2 - 28215 * r**8/64 - 24453 * r**10/32)
       else if (self%l == 2) then
         DeltaCharmBin = - 9 * Pi * r/2 + 63 * r**2/2 - 28 * Pi * r**3 + 3747 * r**4/80 &
-        - 25037 * r**6/240 - 426537 * r**8/2560 - 16323 * r**10/64 + lg * (2 - 189 * r**4/2&
+        - 25037 * r**6/240 - 426537 * r**8/2560 - 16323 * r**10/64 + lg * ( - 189 * r**4/2&
         - 231 * r**6/2 - 11583 * r**8/64 - 9009 * r**10/32)
       end if
 
     else if (self%n == 4) then
       if (self%l == 0) then
         DeltaCharmBin = - 6 * Pi * r + 72 * r**2 - 108 * Pi * r**3 + 8817 * r**4/16 &
-        - 15885 * r**6/8 - 2867661 * r**8/512 - 4399953 * r**10/320 + lg * (2 - 585 * r**4&
+        - 15885 * r**6/8 - 2867661 * r**8/512 - 4399953 * r**10/320 + lg * ( - 585 * r**4&
         - 1582 * r**6 - 297999 * r**8/64 - 96657 * r**10/8)
       else if (self%l == 1) then
         DeltaCharmBin = - 6 * Pi * r + 69 * r**2 - 100 * Pi * r**3 + 7661 * r**4/16 &
-        - 99209 * r**6/60 - 2290317 * r**8/512 - 679527 * r**10/64 + lg * (2 - 525 * r**4&
+        - 99209 * r**6/60 - 2290317 * r**8/512 - 679527 * r**10/64 + lg * ( - 525 * r**4&
         - 1344 * r**6 - 242055 * r**8/64 - 151437 * r**10/16)
       else if (self%l == 2) then
         DeltaCharmBin = - 6 * Pi * r + 63 * r**2 - 84 * Pi * r**3 + 27577 * r**4/80 &
-        - 65089 * r**6/60 - 6857721 * r**8/2560 - 378641 * r**10/64 + lg * (2 - 819 * r**4/2&
+        - 65089 * r**6/60 - 6857721 * r**8/2560 - 378641 * r**10/64 + lg * ( - 819 * r**4/2&
         - 924 * r**6 - 150579 * r**8/64 - 87087 * r**10/16)
       else if (self%l == 3) then
         DeltaCharmBin = - 6 * Pi * r + 54 * r**2 - 60 * Pi * r**3 + 19031 * r**4/112 &
-        - 383231 * r**6/840 - 3433635 * r**8/3584 - 839075 * r**10/448 + lg * (2 - 495 * r**4/2&
+        - 383231 * r**6/840 - 3433635 * r**8/3584 - 839075 * r**10/448 + lg * ( - 495 * r**4/2&
         - 429 * r**6 - 57915 * r**8/64 - 7293 * r**10/4)
       end if
 
     end if
+
+    DeltaCharmBin = 4 * mb * alpha**3/pi/27/self%n**2 * DeltaCharmBin
 
   end function DeltaCharmBin
 
@@ -572,7 +577,15 @@ module NRQCDClass
     real (dp), dimension(4*self%n) :: rho
 
     DeltaCharm = 0; r = 3 * mc/2/mb/alpha; rho = powList(r,4*self%n)
-    ArTan = Atan(  sqrt( (r - 1)/(r + 1) )  ); root = sqrt( rho(2) - 1 )
+
+    if ( r > 1 ) then
+
+      ArTan = Atan(  sqrt( (r - 1)/(r + 1) )  ); root = sqrt( rho(2) - 1 )
+    else
+
+      root = sqrt( 1 - rho(2) ); ArTan = log( (1 + root)/r  )/2
+
+    end if
 
     if (self%n == 1) then
 
