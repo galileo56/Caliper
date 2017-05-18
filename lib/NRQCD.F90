@@ -494,7 +494,7 @@ module NRQCDClass
     real (dp)    , intent(in)      :: mb, mc, alpha
     real (dp)                      :: r, lg
 
-    r = 3 * mc/2/mb/alpha; DeltaCharmBin = 0
+    r = 3 * self%n * mc/2/mb/alpha; DeltaCharmBin = 0
 
     if (100 * r > 1 ) then
       DeltaCharmBin = self%DeltaCharm(alpha, mb, mc) - self%ZeroBin(alpha, mb, mc)
@@ -576,7 +576,7 @@ module NRQCDClass
     real (dp)                      :: r, root, ArTan
     real (dp), dimension(4*self%n) :: rho
 
-    DeltaCharm = 0; r = 3 * mc/2/mb/alpha; rho = powList(r,4*self%n)
+    DeltaCharm = 0; r = 3 * self%n * mc/2/mb/alpha; rho = powList(r,4*self%n)
 
     if ( r > 1 ) then
 
@@ -670,7 +670,7 @@ module NRQCDClass
     real (dp)    , intent(in)      :: mb, mc, alpha
     real (dp)                      :: rho
 
-    ZeroBin = 0; rho = 3 * mc/2/mb/alpha
+    ZeroBin = 0; rho = 3 * self%n * mc/2/mb/alpha
 
     if (self%n == 1) then
 
