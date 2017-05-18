@@ -8,7 +8,7 @@ module AnomDimClass
 
   public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta, &
   PowList, getInverse, MSbarDeltaPiece, AlphaExpand, alphaMatchingLog,     &
-  deltaCharm2, deltaCharm2Der
+  deltaCharm2, deltaCharm2Der, gammaRcharm2
 
   interface PowList
     module procedure   :: PowListDP, PowListInt, PowListComp
@@ -1659,6 +1659,13 @@ end function MatchingAlphaUp
     end if
 
   end function deltaCharm2Der
+
+!ccccccccccccccc
+
+  real (dp) function gammaRcharm2(r)
+    real (dp), intent(in) :: r
+    gammaRcharm2 = 16 * ( deltaCharm2(r) - r * deltaCharm2Der(r) )
+  end function gammaRcharm2
 
 !ccccccccccccccc
 
