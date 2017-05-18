@@ -6,5 +6,5 @@ C_FLAGS =   -F/Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/
 
 C_DEFINES = 
 
-C_INCLUDES = -I/Users/vmateu/GitHub/Caliper -I/Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mathlink.framework/Headers 
+C_INCLUDES = -I/Users/vicent/GitHubProjects/Caliper -I/Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mathlink.framework/Headers 
 

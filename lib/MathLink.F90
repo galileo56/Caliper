@@ -12,6 +12,17 @@ end subroutine f90DeltaCharm2
 
 !ccccccccccccccc
 
+subroutine f90DeltaCharm2Der(r, res)
+  use constants, only: dp; use AnomDimClass, only: deltaCharm2Der; implicit none
+  real (dp), intent(in ) :: r
+  real (dp), intent(out) :: res
+
+  res = deltaCharm2Der(r)
+
+end subroutine f90DeltaCharm2Der
+
+!ccccccccccccccc
+
 subroutine f90LegendreList(n, k, x, res)
   use constants, only: dp; use Legendre; implicit none
   integer                  , intent(in)  :: n, k

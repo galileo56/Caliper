@@ -8,7 +8,7 @@ module AnomDimClass
 
   public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta, &
   PowList, getInverse, MSbarDeltaPiece, AlphaExpand, alphaMatchingLog,     &
-  deltaCharm2
+  deltaCharm2, deltaCharm2Der
 
   interface PowList
     module procedure   :: PowListDP, PowListInt, PowListComp
@@ -1590,7 +1590,7 @@ end function MatchingAlphaUp
 
       do
         r4 = r2 * r4; i = i + 1; corr = ( 2 * F(i) * lr + G(i) ) * r4
-        deltaCharm2 = deltaCharm2 + 4 * corr/3
+        deltaCharm2 = deltaCharm2 - 4 * corr/3
         if ( abs(corr) <= 1e-13_dp ) exit
       end do
 
@@ -1598,44 +1598,82 @@ end function MatchingAlphaUp
 
       a = powList(1 - r, 10)
 
-      deltaCharm2 = pi2/6 - 0.5_dp - 0.8599120891309684_dp  * a(1) - a(5)/90  - &
-      0.1775329665758869_dp * a(2) - 0.05917765552529561_dp * a(3) - a(6)/180 - &
-      0.02415567780803772_dp * a(4) - 2 * a(7)/675 - a(8)/600 - &
-      779 * a(9)/793800 - 191 * a(10)/317520
+      deltaCharm2 = pi2/6 - 0.5_dp + (4._dp/3 - 2 * pi2/9) * a(1) - a(5)/90  + &
+      (pi2/12 - 1) * a(2) + (pi2/12 - 1) * a(3)/3 - a(6)/180 - a(8)/600 - &
+      (pi2 - 9) * a(4)/36 - 2 * a(7)/675 - 779 * a(9)/793800 - 191 * a(10)/317520
 
     else
 
       lr = log(r); r2 = r**2; r3 = r * r2
 
-      deltaCharm2 = lr**2 + pi2/6 - r2 * (1.5_dp + lr) + &
-      (1 + r) * (1 + r3) * ( Dilog(-r) - lr**2/2 + lr * log(1 + r) + pi2/6 )
-
-      if (r < 1) then
-        deltaCharm2 = deltaCharm2 + (1 - r) * (1 - r3) * ( Dilog(r) - &
-        lr**2/2 + lr * log(1 - r) - pi2/3 )
-      else
-        deltaCharm2 = deltaCharm2 - (1 - r) * (1 - r3) * ( Dilog(1 - r) + &
-        lr**2/2 + pi2/6 )
-      end if
-
-      deltaCharm2 = deltaCharm2/3
+      deltaCharm2 = ( lr**2 + pi2/6 - r2 * (1.5_dp + lr) + &
+      (1 + r) * (1 + r3) * ( Dilog(-r) - lr**2/2 + lr * log(1 + r) + pi2/6 ) - &
+      (1 - r) * (1 - r3) * ( Dilog(1 - r) + lr**2/2 + pi2/6 ) )/3
 
     end if
 
-  contains
-
-    pure real (dp) function F(n)
-      integer, intent(in) :: n
-      F = 3._dp *  (n - 1)/4/n/(n - 2)/(2 * n - 1)/(2 * n - 3)
-    end function F
-
-    pure real (dp) function G(n)
-      integer, intent(in) :: n
-      G = - 3._dp *  (6 - 38 * n + 67 * n**2 - 48 * n**3 + 12 * n**4)/&
-      4/(1 - 2 * n)**2/(3 - 2 * n)**2/ (n - 2)**2/ n**2
-    end function G
-
   end function deltaCharm2
+
+!ccccccccccccccc
+
+  real (dp) function deltaCharm2Der(r)
+    real (dp)   , intent(in) :: r
+    real (dp)                :: lr, r2, r3, dilog, corr
+    real (dp), dimension(10) :: a
+    integer                  :: i
+
+    deltaCharm2Der = 0; if (r <= 0) return; a = 0
+
+    if (1000 * r <= 1) then
+
+      lr = log(r); r2 = r**2; r3 = r * r2
+
+      deltaCharm2Der = pi2/6 * ( 1 + 3 * r2 ) - 2 * r + (20 * lr/9 - 56._dp/27 - &
+      2 * pi2/9 - 4 * lr**2/3) * r3
+
+      i = 2
+
+      do
+        r3 = r2 * r3; i = i + 1
+        corr = ( 2 * i * F(i) * lr + i * G(i) + F(i)  ) * r3
+        deltaCharm2Der = deltaCharm2Der - 8 * corr/3
+        if ( abs(corr) <= 1e-13_dp ) exit
+      end do
+
+    else if ( 1000 * abs(r - 1) <= 1 ) then
+
+      a = powList(1 - r, 10)
+
+      deltaCharm2Der = 2 * pi2/9 - 4._dp/3 + (2 - pi2/6) * a(1) + a(5)/30 + &
+      (1 - pi2/12) * a(2) - (1 - pi2/9) * a(3) + 14 * a(6)/675  + a(4)/18 + &
+      a(7)/75 + 779 * a(8)/88200 + 191 * a(9)/31752 + 3337 * a(10)/793800
+
+    else
+
+      lr = log(r); r2 = r**2; r3 = r * r2
+
+      deltaCharm2Der = ( Pi**2/3 - 4 * r + Pi**2 * r2 - 4 * lr**2 * r**3 + &
+      lr * ( log(1 + r) * (1 + 3 * r2 + 4 * r3) - 2 * r )                + &
+      (1 + 3 * r2 - 4 * r3) * DiLog(1 - r) + (1 + 3 * r2 + 4 * r3) * DiLog(-r) )/3
+
+    end if
+
+  end function deltaCharm2Der
+
+!ccccccccccccccc
+
+  pure real (dp) function F(n)
+    integer, intent(in) :: n
+    F = 3._dp *  (n - 1)/4/n/(n - 2)/(2 * n - 1)/(2 * n - 3)
+  end function F
+
+!ccccccccccccccc
+
+  pure real (dp) function G(n)
+    integer, intent(in) :: n
+    G = - 3._dp *  (6 - 38 * n + 67 * n**2 - 48 * n**3 + 12 * n**4)/&
+    4/(1 - 2 * n)**2/(3 - 2 * n)**2/ (n - 2)**2/ n**2
+  end function G
 
 !ccccccccccccccc
 
