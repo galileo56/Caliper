@@ -123,10 +123,10 @@ module NRQCDClass
 
     if ( iter(:3) == 'yes' ) then
 
-      MassFitter = FindRoot(self%mH)
+      MassFitter = FindRoot(self%mH); IFLAG = 0
 
       do
-        a = FindRoot(MassFitter)
+        a = FindRoot(MassFitter); IFLAG = IFLAG + 1
         if ( abs(a - MassFitter) < 1e-14_dp ) exit;  MassFitter = a
       end do
 
