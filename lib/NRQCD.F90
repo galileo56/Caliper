@@ -273,7 +273,7 @@ module NRQCDClass
       coefMSR(0,:) = self%andim%MSRDelta('MSRp')
       Rmass = mTree; mass = self%mH
     else if ( self%scheme(:3) == 'MSR' ) then
-      coefMSR(0,:) = R * self%andim%MSRDelta(self%scheme); Rmass = R
+      coefMSR(0,:) = self%andim%MSRDelta(self%scheme); Rmass = R
       mass = self%alphaMass%MSRmass(self%scheme, order, R, lambda, method)
     end if
 
@@ -290,7 +290,7 @@ module NRQCDClass
       delta(1:) = DeltaComputer(coefMSR, lgmList, 0)
 
       if ( self%scheme(:3) == 'MSR' ) then
-        list(1:) = list(1:) - delta(1:)
+        list(1:) = list(1:) - delta(1:) * Rmass/mTree
       else
         delta(3) = delta(3) + coefMSR(1,2) * ( coefMSR(0,1) - list(1) )
 
@@ -299,14 +299,14 @@ module NRQCDClass
         - list(1) ) + lgmList(1) * (  coefMSR(1,2)**2 + coefMSR(2,3) * &
         ( coefMSR(0,1) - list(1) )  )
 
-        deltaInv(1) = 1
+        deltaInv(0) = 1
 
         do n = 0, 3
           deltaInv(n + 1) = - sum( deltaInv(:n) * delta(n + 1:1:-1) )
         end do
 
         do n = 4, 1, -1
-          list(n) = sum( delta(:n) * list(n:0:-1) )
+          list(n) = sum( deltaInv(:n) * list(n:0:-1) )
         end do
 
       end if
