@@ -24,7 +24,7 @@ module RunningClass
     DiffDelta, orders, adim, DiffDeltaHadron, scheme, MSbarDeltaMu, MSbarMassLow, &
     AlphaAll, DeltaGapMatching, DiffRMass, mmFromMSR, PoleMass, gammaR, sCoef,  &
     SetMTop, SetMBottom, SetMCharm, SetLambda, SetAlpha, scales, numFlav,DiffR, &
-    PSdelta, OptimalR
+    PSdelta, OptimalR, MSREvol
 
     procedure, pass(self), private :: MSRMatching, alphaQCDReal, alphaQCDComplex, &
     wTildeReal, wTildeComplex, kTildeReal, kTildeComplex, RunningMass
@@ -357,16 +357,52 @@ module RunningClass
     character (len = *)                , intent(in) :: type
     character (len = *), optional      , intent(in) :: method
     integer                            , intent(in) :: order
-    real (dp)                        , dimension(4) :: a, gammaR
+    real (dp)                        , dimension(4) :: a
+    character (len = 8)                             :: met
+    integer                                         :: i
+    real (dp)                                       :: alphaM, lan, matching
+
+    if ( .not. present(lambda) ) then
+      lan = 1
+    else
+      lan = lambda
+    end if
+
+    if ( .not. present(method) ) then
+      met = 'analytic'
+    else
+      met = method
+    end if
+
+    matching = 1
+
+     if ( self%runMass > 0 .and. type(:4) == 'MSRn' ) then
+      alphaM = self%AlphaOb%alphaQCD(self%nf + 1, self%mH)/Pi
+      a = self%MSRMatching(type); i = min(order, 4)
+      matching = 1 + dot_product( a(:i), PowList(alphaM, i) )
+     end if
+
+     MSRMass = self%mH * matching + self%MSREvol(type, order, R, lan, met)
+
+  end function MSRMass
+
+!ccccccccccccccc
+
+  real (dp) function MSREvol(self, type, order, R, lambda, method)
+    class (Running)                    , intent(in) :: self
+    real (dp)                          , intent(in) :: R, lambda
+    character (len = *)                , intent(in) :: type, method
+    integer                            , intent(in) :: order
+    real (dp)                        , dimension(4) :: gammaR
     real (dp), dimension(self%runMass,self%runMass) :: gammaLog
     real (dp), dimension(self%runMass)              :: gamm, alphaList, lglist
-    integer                                         :: neval, ier, i
-    real (dp)                                       :: corr, abserr, lan, delta, &
-    alphaM, matching, mu, Rstep, delta1, delta2
+    integer                                         :: neval, ier
+    real (dp)                                       :: abserr, lan, delta, &
+    mu, Rstep, delta1, delta2
 
     gammaR = self%gammaR(type)
 
-    if ( present(lambda) ) then
+    if ( abs(lambda - 1) >= tiny(1._dp) ) then
 
       gammaLog(1,:) = gammaR(:self%runMass) ; lan = lambda
       call self%andim%expandAlpha( gammaLog )
@@ -380,31 +416,31 @@ module RunningClass
 
     end if
 
-    if (  ( .not. present(method) ) .or. method(:8) == 'analytic' ) then
+    if ( method(:8) == 'analytic' ) then
 
-      if ( .not. present(lambda) ) then
-        corr = self%DiffR( self%sCoef(type), self%runMass, self%mH, R )
+      if ( abs(lambda - 1) <= tiny(1._dp) ) then
+        MSREvol = self%DiffR( self%sCoef(type), self%runMass, self%mH, R )
       else
-        corr = self%DiffR( self%andim%sCoefRecursive(gamm), &
+        MSREvol = self%DiffR( self%andim%sCoefRecursive(gamm), &
         self%runMass, self%mH/lambda, R/lambda )
        end if
 
-       corr = self%lambdaQCD(self%runMass) * corr
+       MSREvol = self%lambdaQCD(self%runMass) * MSREvol
 
     else if ( method(:7) == 'numeric' ) then
 
-      if ( .not. present(lambda) ) then
+      if ( abs(lambda - 1) <= tiny(1._dp) ) then
         gamm = gammaR(:self%runMass)
       end if
 
       gamm = self%andim%GammaRComputer( gamm )
 
-      call qags( Integrand, R/lan, self%mH/lan, prec, prec, corr, abserr, neval, ier )
+      call qags( Integrand, R/lan, self%mH/lan, prec, prec, MSREvol, abserr, neval, ier )
 
     else if ( method(:4) == 'diff' ) then
 
       delta = 0.1_dp;   neval = abs(  Nint( ( self%mH - R )/delta )  )
-      delta = (self%mH - R)/neval; corr = 0; Rstep = self%mH + delta
+      delta = (self%mH - R)/neval; MSREvol = 0; Rstep = self%mH + delta
       gammaLog(1,:) = gammaR(:self%runMass)
       call self%andim%expandAlpha( gammaLog )
 
@@ -419,21 +455,11 @@ module RunningClass
         lgList = powList( log(mu/(Rstep - delta) ), self%runMass )
         delta2 = (Rstep - delta) * dot_product( DeltaComputer(gammaLog, lgList, 0), alphaList )
 
-        corr = corr + delta1 - delta2
+        MSREvol = MSREvol + delta1 - delta2
 
       end do
 
     end if
-
-    matching = 1
-
-     if ( self%runMass > 0 .and. type(:4) == 'MSRn' ) then
-      alphaM = self%AlphaOb%alphaQCD(self%nf + 1, self%mH)/Pi
-      a = self%MSRMatching(type); i = min(order, 4)
-      matching = 1 + dot_product( a(:i), PowList(alphaM, i) )
-     end if
-
-     MSRMass = self%mH * matching + corr
 
     contains
 
@@ -449,7 +475,7 @@ module RunningClass
 
     end function Integrand
 
-  end function MSRMass
+  end function MSREvol
 
 !ccccccccccccccc
 
