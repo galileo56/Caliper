@@ -17,7 +17,7 @@ module NRQCDClass
 
   contains
 
-    procedure, pass(self), private :: Binomial
+    procedure, pass(self), private :: Binomial, EnInv
     procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
     ZeroBin, DeltaCharmBin, mIter
 
@@ -118,40 +118,29 @@ module NRQCDClass
     character (len = *), intent(in)    :: method, charm, iter
     integer            , intent(in)    :: order, n
     real (dp)          , intent(in)    :: mu, R, lambda, mUpsilon
-    real (dp)                          :: a, b, c
-    integer                            :: IFLAG
+    real (dp)                          :: a
 
-    if ( iter(:3) == 'yes' ) then
+    MassFitter = FindRoot(self%mH)
 
-      MassFitter = FindRoot(self%mH); IFLAG = 0
-
-      do
-        a = FindRoot(MassFitter); IFLAG = IFLAG + 1
-        if ( abs(a - MassFitter) < 1e-14_dp ) exit;  MassFitter = a
-      end do
-
-    else
-
-      a = mUpsilon/3; b = mUpsilon; c = mUpsilon/2
-      call DFZERO(FindRoot, a, b, c, 1e-10_dp, 1e-10_dp, IFLAG)
-      MassFitter = b
-
-    end if
+    do
+      a = FindRoot(MassFitter)
+      if ( abs(a - MassFitter) < 1e-14_dp ) exit;  MassFitter = a
+    end do
 
   contains
 
     real (dp) function FindRoot(mass)
       real (dp), intent(in)     :: mass
-      real (dp), dimension(0:4) :: list
+      real (dp), dimension(0:5) :: list
 
       call self%SetMass(mass, self%rat * mass)
 
       if ( iter(:3) == 'yes' ) then
-        list = self%mIter(charm, order, mu, R, mUpsilon, lambda, method)
+        list(:4) = self%mIter(charm, order, mu, R, mUpsilon, lambda, method)
         FindRoot = sum( list(:n) )
       else
-        list = self%En(charm, order, mu, R, lambda, method)
-        FindRoot = sum( list(:n) ) - mUpsilon
+        list = self%EnInv(charm, order, mu, R, lambda, method)
+        FindRoot = mUpsilon/sum( list(:n) )/2 - list(5)
       end if
 
     end function FindRoot
@@ -165,7 +154,22 @@ module NRQCDClass
     character (len = *), intent(in) :: method, charm
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda
-    real (dp), dimension(0:4)       :: list, alphaList
+    real (dp), dimension(0:4)       :: list
+    real (dp), dimension(0:5)       :: listA
+
+    listA = self%EnInv(charm, order, mu, R, lambda, method)
+    list  = 2 * ( self%mH + listA(5) ) * listA(:4)
+
+  end function En
+
+!ccccccccccccccc
+
+  function EnInv(self, charm, order, mu, R, lambda, method) result(list)
+    class (NRQCD)      , intent(in) :: self
+    character (len = *), intent(in) :: method, charm
+    integer            , intent(in) :: order
+    real (dp)          , intent(in) :: mu, R, lambda
+    real (dp), dimension(0:5)       :: list, alphaList
     real (dp), dimension(0:3)       :: logList
     real (dp), dimension(0:4)       :: delta, lgmList
     real (dp), dimension(0:4,0:4)   :: deltaLog  ! (power, order)
@@ -174,9 +178,9 @@ module NRQCDClass
     real (dp)                       :: alp, Rmass, mass, factor
     integer                         :: i, j, k, l
 
-    list = 0; list(0) = 2 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
+    list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
     alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
-    factor = - 4 * alp**2/9/self%n**2 ; logList(0) = 1
+    factor = - 2 * alp**2/9/self%n**2 ; logList(0) = 1
 
     if ( self%scheme(:4) == 'pole' ) then
       delta(1:) = 0; Rmass = 0; mass = self%mH
@@ -192,8 +196,8 @@ module NRQCDClass
 
     if ( self%scheme(:4) == 'pole' ) then
 
-      list(1:) = matmul( self%c(:3,:), logList );  list(4) = list(4) + self%c(4,0) * log(alp)
-      list(1:) = factor * alphaList(:3) * list(1:)
+      list(1:4) = matmul( self%c(:3,:), logList );  list(4) = list(4) + self%c(4,0) * log(alp)
+      list(1:4) = factor * alphaList(:3) * list(1:4)
 
     else
 
@@ -232,18 +236,18 @@ module NRQCDClass
     end if
 
     if ( charm(:3) == 'yes'   ) then
-       list(2) = list(2) + self%DeltaCharm(alp, mass, self%mC)
+       list(2) = list(2) + self%DeltaCharm(alp, mass, self%mC)/2
     else if ( charm(:5) == '0-bin' ) then
-      list(2) = list(2) + self%DeltaCharmBin(alp, mass, self%mC)
+      list(2) = list(2) + self%DeltaCharmBin(alp, mass, self%mC)/2
     end if
-
-    list = mass * list
 
     if ( charm(:3) == 'yes' .and. self%scheme(:4) /= 'pole' ) then
-      list(2) = list(2) + 2 * Rmass * alphaList(2) * deltaCharm2(self%mc/Rmass)
+      list(2) = list(2) + Rmass/mass * alphaList(2) * deltaCharm2(self%mc/Rmass)
     end if
 
-  end function En
+    list(5) = mass - self%mH
+
+  end function EnInv
 
 !ccccccccccccccc
 
