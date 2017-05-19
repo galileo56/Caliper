@@ -3345,7 +3345,7 @@ end subroutine f90OptimalR
 
     Upsilon = NRQCD( scheme(:5), alphaMass, n, l, j, s )
 
-    res = Upsilon%mIter( charm(:6), order, mu, R, mass, lam, method(:8) )
+    res = Upsilon%MassIter( charm(:6), order, mu, R, mass, lam, method(:8) )
 
   end subroutine f90MassIter
 

@@ -19,7 +19,7 @@ module NRQCDClass
 
     procedure, pass(self), private :: Binomial, EnInv
     procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
-    ZeroBin, DeltaCharmBin, mIter
+    ZeroBin, DeltaCharmBin, MassIter
 
   end type NRQCD
 
@@ -136,7 +136,7 @@ module NRQCDClass
       call self%SetMass(mass, self%rat * mass)
 
       if ( iter(:3) == 'yes' ) then
-        list(:4) = self%mIter(charm, order, mu, R, mUpsilon, lambda, method)
+        list(:4) = self%MassIter(charm, order, mu, R, mUpsilon, lambda, method)
         FindRoot = sum( list(:n) )
       else
         list = self%EnInv(charm, order, mu, R, lambda, method)
@@ -251,7 +251,7 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  function mIter(self, charm, order, mu, R, mUpsilon, lambda, method) result(list)
+  function MassIter(self, charm, order, mu, R, mUpsilon, lambda, method) result(list)
     class (NRQCD)      , intent(in) :: self
     character (len = *), intent(in) :: method, charm
     integer            , intent(in) :: order
@@ -302,7 +302,7 @@ module NRQCDClass
       list(2) = list(2) - Rmass * alphaList(2) * deltaCharm2(self%mc/Rmass)
     end if
 
-  end function mIter
+  end function MassIter
 
 !ccccccccccccccc
 
