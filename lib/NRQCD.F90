@@ -118,40 +118,29 @@ module NRQCDClass
     character (len = *), intent(in)    :: method, charm, iter
     integer            , intent(in)    :: order, n
     real (dp)          , intent(in)    :: mu, R, lambda, mUpsilon
-    real (dp)                          :: a, b, c
-    integer                            :: IFLAG
+    real (dp)                          :: a
 
-    if ( iter(:3) == 'yes' ) then
+    MassFitter = FindRoot(self%mH)
 
-      MassFitter = FindRoot(self%mH); IFLAG = 0
-
-      do
-        a = FindRoot(MassFitter); IFLAG = IFLAG + 1
-        if ( abs(a - MassFitter) < 1e-14_dp ) exit;  MassFitter = a
-      end do
-
-    else
-
-      a = mUpsilon/3; b = mUpsilon; c = mUpsilon/2
-      call DFZERO(FindRoot, a, b, c, 1e-10_dp, 1e-10_dp, IFLAG)
-      MassFitter = b
-
-    end if
+    do
+      a = FindRoot(MassFitter)
+      if ( abs(a - MassFitter) < 1e-14_dp ) exit;  MassFitter = a
+    end do
 
   contains
 
     real (dp) function FindRoot(mass)
       real (dp), intent(in)     :: mass
-      real (dp), dimension(0:4) :: list
+      real (dp), dimension(0:5) :: list
 
       call self%SetMass(mass, self%rat * mass)
 
       if ( iter(:3) == 'yes' ) then
-        list = self%mIter(charm, order, mu, R, mUpsilon, lambda, method)
+        list(:4) = self%mIter(charm, order, mu, R, mUpsilon, lambda, method)
         FindRoot = sum( list(:n) )
       else
-        list = self%En(charm, order, mu, R, lambda, method)
-        FindRoot = sum( list(:n) ) - mUpsilon
+        list = self%EnInv(charm, order, mu, R, lambda, method)
+        FindRoot = mUpsilon/sum( list(:n) )/2 - list(5)
       end if
 
     end function FindRoot
