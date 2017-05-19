@@ -99,4 +99,8 @@ FILE(REMOVE
   "singularclass.mod"
   "SINGULARCLASS.mod"
   "CMakeFiles/libCaliper.dir/singularclass.mod.stamp"
+
+  "vfnsmsrclass.mod"
+  "VFNSMSRCLASS.mod"
+  "CMakeFiles/libCaliper.dir/vfnsmsrclass.mod.stamp"
   )

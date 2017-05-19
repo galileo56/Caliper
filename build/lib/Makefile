@@ -709,6 +709,33 @@ Spline.F90.s:
 	cd /Users/vmateu/GitHub/Caliper/build && $(MAKE) -f lib/CMakeFiles/libCaliper.dir/build.make lib/CMakeFiles/libCaliper.dir/Spline.F90.s
 .PHONY : Spline.F90.s
 
+VFNS.o: VFNS.F90.o
+
+.PHONY : VFNS.o
+
+# target to build an object file
+VFNS.F90.o:
+	cd /Users/vmateu/GitHub/Caliper/build && $(MAKE) -f lib/CMakeFiles/libCaliper.dir/build.make lib/CMakeFiles/libCaliper.dir/VFNS.F90.o
+.PHONY : VFNS.F90.o
+
+VFNS.i: VFNS.F90.i
+
+.PHONY : VFNS.i
+
+# target to preprocess a source file
+VFNS.F90.i:
+	cd /Users/vmateu/GitHub/Caliper/build && $(MAKE) -f lib/CMakeFiles/libCaliper.dir/build.make lib/CMakeFiles/libCaliper.dir/VFNS.F90.i
+.PHONY : VFNS.F90.i
+
+VFNS.s: VFNS.F90.s
+
+.PHONY : VFNS.s
+
+# target to generate assembly for a file
+VFNS.F90.s:
+	cd /Users/vmateu/GitHub/Caliper/build && $(MAKE) -f lib/CMakeFiles/libCaliper.dir/build.make lib/CMakeFiles/libCaliper.dir/VFNS.F90.s
+.PHONY : VFNS.F90.s
+
 quadpack.o: quadpack.F90.o
 
 .PHONY : quadpack.o
@@ -809,6 +836,9 @@ help:
 	@echo "... Spline.o"
 	@echo "... Spline.i"
 	@echo "... Spline.s"
+	@echo "... VFNS.o"
+	@echo "... VFNS.i"
+	@echo "... VFNS.s"
 	@echo "... quadpack.o"
 	@echo "... quadpack.i"
 	@echo "... quadpack.s"

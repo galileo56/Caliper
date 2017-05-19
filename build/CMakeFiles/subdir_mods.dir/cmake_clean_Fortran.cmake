@@ -99,4 +99,8 @@ FILE(REMOVE
   "singularclass.mod"
   "SINGULARCLASS.mod"
   "CMakeFiles/subdir_mods.dir/singularclass.mod.stamp"
+
+  "vfnsmsrclass.mod"
+  "VFNSMSRCLASS.mod"
+  "CMakeFiles/subdir_mods.dir/vfnsmsrclass.mod.stamp"
   )
