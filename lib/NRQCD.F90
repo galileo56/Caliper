@@ -258,9 +258,10 @@ module NRQCDClass
     real (dp)          , intent(in) :: mu, R, lambda, mUpsilon
     real (dp), dimension(0:4)       :: list, alphaList
     real (dp), dimension(0:3)       :: logList
-    real (dp), dimension(0:4)       :: delta, lgmList
+    real (dp), dimension(0:4)       :: delta, lgmList, deltaInv
     real (dp), dimension(0:4,4)     :: coefMSR
     real (dp)                       :: alp, Rmass, mass, factor, mTree
+    integer                         :: n
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
     alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
@@ -269,8 +270,8 @@ module NRQCDClass
     if ( self%scheme(:4) == 'pole' ) then
       delta(1:) = 0; Rmass = 0; mass = self%mH
     else if ( self%scheme(:5) == 'MSbar' ) then
-      coefMSR(0,:) = self%mH * self%andim%MSRDelta('MSRp')
-      Rmass = self%mH; mass = self%mH
+      coefMSR(0,:) = self%andim%MSRDelta('MSRp')
+      Rmass = mTree; mass = self%mH
     else if ( self%scheme(:3) == 'MSR' ) then
       coefMSR(0,:) = R * self%andim%MSRDelta(self%scheme); Rmass = R
       mass = self%alphaMass%MSRmass(self%scheme, order, R, lambda, method)
@@ -278,9 +279,9 @@ module NRQCDClass
 
     logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / mTree) + self%harm, 3 )
 
-    list(1:) = matmul( self%c(:3,:), logList );  list(4) = list(4) + self%d(4,0) * log(alp)
-    list(1:) = factor * alphaList(:3) * list(1:); list = mTree * list
-    list(0) = list(0) + self%mH - mass
+    list(1:) = matmul( self%c(:3,:), logList )
+    list(4) = list(4) + self%d(4,0) * log(alp)
+    list(1:) = factor * alphaList(:3) * list(1:)
 
     if ( self%scheme(:4) /= 'pole' ) then
 
@@ -288,11 +289,33 @@ module NRQCDClass
       call AddAlpha( coefMSR, alphaList(1:) )
       delta(1:) = DeltaComputer(coefMSR, lgmList, 0)
 
-      list(1:) = list(1:) - delta(1:)
+      if ( self%scheme(:3) == 'MSR' ) then
+        list(1:) = list(1:) - delta(1:)
+      else
+        delta(3) = delta(3) + coefMSR(1,2) * ( coefMSR(0,1) - list(1) )
+
+        delta(4) = delta(4) + coefMSR(1,2) * ( list(1)**2 - 2 * list(2) - &
+        coefMSR(0,1)**2 + 2 * coefMSR(0,2) )/2 + coefMSR(1,3) * ( coefMSR(0,1) &
+        - list(1) ) + lgmList(1) * (  coefMSR(1,2)**2 + coefMSR(2,3) * &
+        ( coefMSR(0,1) - list(1) )  )
+
+        deltaInv(1) = 1
+
+        do n = 0, 3
+          deltaInv(n + 1) = - sum( deltaInv(:n) * delta(n + 1:1:-1) )
+        end do
+
+        do n = 4, 1, -1
+          list(n) = sum( delta(:n) * list(n:0:-1) )
+        end do
+
+      end if
 
     end if
 
-    if ( charm(:3) == 'yes'   ) then
+    list = mTree * list; list(0) = list(0) + self%mH - mass
+
+    if ( charm(:3) == 'yes' ) then
        list(2) = list(2) + mTree * self%DeltaCharm(alp, mTree, self%mC)/2
     else if ( charm(:5) == '0-bin' ) then
       list(2) = list(2) - mTree * self%DeltaCharmBin(alp, mTree, self%mC)/2

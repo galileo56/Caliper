@@ -103,10 +103,8 @@ module AnomDimClass
     InAdim%bHat(0) = 1; InAdim%cCoef(0) = 1
 
     do n = 0, 3
-
       InAdim%cCoef(n+1) = - sum( InAdim%cCoef(:n) * InAdim%bCoef(n+1:1:-1) )
       InAdim%bHat(n+1)  = - (-1)**n * InAdim%cCoef(n+1) * betaList(n+1)
-
     end do
 
     InAdim%gl(0) = 1; InAdim%gTilde(0) = 1
