@@ -121,11 +121,22 @@ module NRQCDClass
     real (dp)                          :: a, b, c
     integer                            :: IFLAG
 
-    a = mUpsilon/3; b = mUpsilon; c = mUpsilon/2
+    if ( iter(:3) == 'yes' ) then
 
-    call DFZERO(FindRoot, a, b, c, 1e-10_dp, 1e-10_dp, IFLAG)
+      MassFitter = FindRoot(self%mH)
 
-    MassFitter = b
+      do
+        a = FindRoot(MassFitter)
+        if ( abs(a - MassFitter) < 1e-14_dp ) exit;  MassFitter = a
+      end do
+
+    else
+
+      a = mUpsilon/3; b = mUpsilon; c = mUpsilon/2
+      call DFZERO(FindRoot, a, b, c, 1e-10_dp, 1e-10_dp, IFLAG)
+      MassFitter = b
+
+    end if
 
   contains
 
@@ -137,7 +148,7 @@ module NRQCDClass
 
       if ( iter(:3) == 'yes' ) then
         list = self%mIter(charm, order, mu, R, mUpsilon, lambda, method)
-        FindRoot = sum( list(:n) ) - mass
+        FindRoot = sum( list(:n) )
       else
         list = self%En(charm, order, mu, R, lambda, method)
         FindRoot = sum( list(:n) ) - mUpsilon
