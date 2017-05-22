@@ -53,8 +53,9 @@ contains
     real (dp), optional          , intent(in) :: lambda
     character (len = *)          , intent(in) :: type
     character (len = *), optional, intent(in) :: method
+    real (dp)                  , dimension(4) :: a
     integer                      , intent(in) :: order
-    integer                                   :: neval, ier
+    integer                                   :: neval, ier, i
     real (dp)                                 :: corr, abserr, lambdaQCD, t0, t1, &
     delta, mu, Rstep, delta1, delta2, alpha2, matching, alphaM
 
@@ -62,15 +63,16 @@ contains
 
     if (R < self%mL) then
 
-      matching = 0
-
-      if ( type(:4) == 'MSRn') then
+      if ( type(:4) == 'MSRp' ) then
         alphaM = self%AlphaMass(2)%alphaQCD(self%mL)/Pi
+        a = self%AlphaMass(1)%MSRMatching('charm'); i = min(order, 4)
+        matching = dot_product( a(:i), PowList(alphaM, i) ) - 1
       else
+        matching = - 1
       end if
 
-      res = self%MSRMass(type, order, self%mL, lambda, method) + &
-      self%AlphaMass(1)%MSREvol(type, order, R, lambda, method) + &
+      res = self%MSRMass(type, order, self%mL, lambda, method)  + &
+      self%AlphaMass(1)%MSRMass(type, order, R, lambda, method) + &
       self%mL * matching
       return
     end if

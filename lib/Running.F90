@@ -24,9 +24,9 @@ module RunningClass
     DiffDelta, orders, adim, DiffDeltaHadron, scheme, MSbarDeltaMu, MSbarMassLow, &
     AlphaAll, DeltaGapMatching, DiffRMass, mmFromMSR, PoleMass, gammaR, sCoef,  &
     SetMTop, SetMBottom, SetMCharm, SetLambda, SetAlpha, scales, numFlav,DiffR, &
-    PSdelta, OptimalR, MSREvol
+    PSdelta, OptimalR, MSRMatching, MSREvol
 
-    procedure, pass(self), private :: MSRMatching, alphaQCDReal, alphaQCDComplex, &
+    procedure, pass(self), private :: alphaQCDReal, alphaQCDComplex, &
     wTildeReal, wTildeComplex, kTildeReal, kTildeComplex, RunningMass
 
     generic, public :: alphaQCD => alphaQCDReal, alphaQCDComplex
@@ -550,9 +550,16 @@ module RunningClass
     real (dp) , dimension(4)        :: a, c
     real (dp) , dimension(5)        :: b
 
-    a = 0; if ( type(:4) /= 'MSRn' ) return
+    a = 0
 
-    c = MSbarDelta(self%nf, 1); a = MSbarDelta(self%nf, 0)
+    if ( type(:4) == 'MSRp' ) then
+      return
+    else if ( type(:4) == 'MSRn' ) then
+      c = MSbarDelta(self%nf, 1); a = MSbarDelta(self%nf, 0)
+    else if ( type(:4) == 'charm' ) then
+      c = MSbarDelta(self%nf, 2); a = MSbarDelta(self%nf, 1)
+    end if
+
     b = self%andim%MatchingAlphaUp()
     call alphaReExpand( a, b(:4) );  a = c - a
 
