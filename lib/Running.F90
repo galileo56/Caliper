@@ -709,6 +709,7 @@ module RunningClass
     class (Running), intent(in) :: self
     adim = self%andim
   end function
+
 !ccccccccccccccc
 
   pure type(Alpha) function AlphaAll(self)
