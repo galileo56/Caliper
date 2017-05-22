@@ -55,31 +55,36 @@ contains
     character (len = *), optional, intent(in) :: method
     integer                      , intent(in) :: order
     integer                                   :: neval, ier
-    ! real (dp), dimension(self%run,self%run)   :: gammaLog
-    ! real (dp), dimension(4)                   :: gammaR
-    ! real (dp), dimension(self%run)            :: alphaList, lglist
     real (dp)                                 :: corr, abserr, lambdaQCD, t0, t1, &
-    delta, mu, Rstep, delta1, delta2
+    delta, mu, Rstep, delta1, delta2, alpha2, matching, alphaM
 
     res = 0
 
     if (R < self%mL) then
+
+      matching = 0
+
+      if ( type(:4) == 'MSRn') then
+        alphaM = self%AlphaMass(2)%alphaQCD(self%mL)/Pi
+      else
+      end if
+
       res = self%MSRMass(type, order, self%mL, lambda, method) + &
-      self%AlphaMass(1)%MSREvol(type, order, R, lambda, method)
+      self%AlphaMass(1)%MSREvol(type, order, R, lambda, method) + &
+      self%mL * matching
       return
     end if
 
-    ! if ( type(:4) == 'diff' )
-    res = self%AlphaMass(2)%MSREvol(type, order, R, lambda, method)
+    res = self%AlphaMass(2)%MSRMass(type, order, R, lambda, method)
 
-    if ( type(:7) == 'numeric' ) then
+    if ( method(:7) == 'numeric' ) then
 
       call qags( InteNum, R/lambda, self%mH/lambda, prec, prec, corr, &
       abserr, neval, ier )
 
       res = res + corr
 
-    else if ( type == 'analytic' ) then
+    else if ( method(:8) == 'analytic' ) then
 
       t0 = - 2 * pi/self%beta0/lambda;  t1 = t0/self%AlphaMass(2)%alphaQCD(self%mH)
       t0 = t0/self%AlphaMass(2)%alphaQCD(R)
@@ -87,31 +92,22 @@ contains
 
       call qags( InteAn, t1, t0, prec, prec, corr, abserr, neval, ier )
 
-      res = res + corr/4/self%beta0**2
+      res = res + lambdaQCD * corr/4/self%beta0**2
 
     else if ( method(:4) == 'diff' ) then
 
-      ! gammaR = self%AlphaMass(2)%gammaR(type)
       delta = 0.1_dp;   neval = abs(  Nint( ( self%mH - R )/delta )  )
       delta = (self%mH - R)/neval; corr = 0; Rstep = self%mH + delta
-      ! gammaLog(1,:) = gammaR(:self%run)
-      ! call self%andim%expandAlpha( gammaLog )
 
       do ier = 1, neval
 
         Rstep = Rstep - delta; mu = (Rstep - delta/2)/lambda
-        ! alphaList = powList( self%AlphaMass(2)%alphaQCD(mu)/Pi, self%run )
+        alpha2 = ( self%AlphaMass(2)%alphaQCD(mu)/Pi )**2
 
-        ! lgList = powList( log(mu/Rstep), self%run )
-        delta1 = Rstep * ( self%AlphaMass(2)%alphaQCD(mu)/Pi )**2 * deltaCharm2(self%mL/Rstep)
-        ! delta1 = Rstep * (  alphaList(2) * deltaCharm2(self%mL/Rstep) + &
-        ! dot_product( DeltaComputer(gammaLog, lgList, 0), alphaList )  )
+        delta1 = Rstep * alpha2 * deltaCharm2(self%mL/Rstep)
 
-        ! lgList = powList( log(mu/(Rstep - delta) ), self%run )
-        delta2 = (Rstep - delta) * ( self%AlphaMass(2)%alphaQCD(mu)/Pi )**2 * deltaCharm2( self%mL/(Rstep - delta )  )
+        delta2 = (Rstep - delta) * alpha2 * deltaCharm2( self%mL/(Rstep - delta )  )
 
-        ! delta2 = (Rstep - delta) * (  alphaList(2) * deltaCharm2( self%mL/(Rstep - delta )  ) &
-        ! + dot_product( DeltaComputer(gammaLog, lgList, 0), alphaList )   )
 
         corr = corr + delta1 - delta2
 
@@ -128,7 +124,7 @@ contains
     real (dp) function InteNum(mu)
       real (dp), intent(in) :: mu
 
-      InteNum = gammaRcharm2(self%mL/mu) * self%AlphaMass(2)%alphaQCD(self%mH/mu)**2/16/Pi2
+      InteNum = gammaRcharm2(self%mL/mu) * self%AlphaMass(2)%alphaQCD(mu)**2/16/Pi2
 
     end function InteNum
 

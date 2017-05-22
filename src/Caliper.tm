@@ -14,6 +14,7 @@
 
 :Evaluate:  UpsilonDeltaCharmBin::usage = "UpsilonDeltaCharmBin[n, l, alp, mb, mc] computes the massive charm corrections to quarkonium masses"
 :Evaluate:  UpsilonDeltaCharm::usage = "UpsilonDeltaCharm[n, l, alp, mb, mc] computes the massive charm corrections to quarkonium masses"
+:Evaluate:  GammaRCharm2::usage = "GammaRCharm2[z] computes the massive charm corrections to the R-anomalous dimension"
 :Evaluate:  DeltaCharm2::usage = "DeltaCharm2[z] computes the massive charm corrections to the MSbar-pole mass relation"
 :Evaluate:  DeltaCharm2Der::usage = "DeltaCharm2Der[z] computes the derivative of the massive charm corrections to the MSbar-pole mass relation"
 :Evaluate:  LegendreList::usage = "LegendreList[n, k, x] computes the of the first n + 1 k-th derivative of the Legendre Polynomials"
@@ -1396,6 +1397,14 @@
 :Begin:
 :Function:      deltacharm2
 :Pattern:       DeltaCharm2[z_]
+:Arguments:     {z}
+:ArgumentTypes: {Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      gammarcharm2
+:Pattern:       GammaRCharm2[z_]
 :Arguments:     {z}
 :ArgumentTypes: {Real}
 :ReturnType:    Real
@@ -3619,6 +3628,15 @@ static double deltacharm2(double z){
   double res;
 
    f90deltacharm2_(&z, &res);
+   return res;
+}
+
+extern double f90gammarcharm2_(double* z, double* result);
+
+static double gammarcharm2(double z){
+  double res;
+
+   f90gammarcharm2_(&z, &res);
    return res;
 }
 
