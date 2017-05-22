@@ -14,6 +14,7 @@
 
 :Evaluate:  UpsilonDeltaCharmBin::usage = "UpsilonDeltaCharmBin[n, l, alp, mb, mc] computes the massive charm corrections to quarkonium masses"
 :Evaluate:  UpsilonDeltaCharm::usage = "UpsilonDeltaCharm[n, l, alp, mb, mc] computes the massive charm corrections to quarkonium masses"
+:Evaluate:  GammaRCharm2::usage = "GammaRCharm2[z] computes the massive charm corrections to the R-anomalous dimension"
 :Evaluate:  DeltaCharm2::usage = "DeltaCharm2[z] computes the massive charm corrections to the MSbar-pole mass relation"
 :Evaluate:  DeltaCharm2Der::usage = "DeltaCharm2Der[z] computes the derivative of the massive charm corrections to the MSbar-pole mass relation"
 :Evaluate:  LegendreList::usage = "LegendreList[n, k, x] computes the of the first n + 1 k-th derivative of the Legendre Polynomials"
@@ -72,9 +73,11 @@
 :Evaluate:  MSbarMass::usage = "MSbarMass[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  PoleMass::usage = "PoleMass[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  MSbarMassLow::usage = "MSbarMassLow[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching below the mass."
-:Evaluate:  MSRMass::usage = "MSRMass[type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
+:Evaluate:  MSRMass::usage = "MSRMass[type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda, R] computes the MSR running of the quark masses."
+:Evaluate:  MSRVFNS::usage = "MSRVFNS[type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R] computes the MSR running of the quark masses with flavor matching."
 :Evaluate:  NRQCD::usage = "NRQCD[n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, lam, mu, R] computes the quarkonium energy levels."
-:Evaluate:  MassIter::usage = "MassIter[n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda, lam, mu, R] computes the quarkonium energy levels."
+:Evaluate:  MassIter::usage = "MassIter[n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda, lam, mu, R] computes the bottom mass from quarkonium energy levels."
+:Evaluate:  MassExpand::usage = "MassExpand[n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda, lam, mu, R] computes the bottom mass from quarkonium energy levels."
 :Evaluate:  FindMass::usage = "FindMass[ord, n, l, j, s, iter, charm, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda, lam, mu, R] fits the quark mass from the quarkonium energy levels."
 :Evaluate:  OptimalR::usage = "OptimalR[type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda] computes the Optimal R scale for quarkonium."
 :Evaluate:  mmfromMSR::usage = "mmfromMSR[type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
@@ -1400,6 +1403,14 @@
 :End:
 
 :Begin:
+:Function:      gammarcharm2
+:Pattern:       GammaRCharm2[z_]
+:Arguments:     {z}
+:ArgumentTypes: {Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
 :Function:      deltacharm2der
 :Pattern:       DeltaCharm2Der[z_]
 :Arguments:     {z}
@@ -1557,6 +1568,19 @@
 :End:
 
 :Begin:
+:Function:      msrvfns
+:Pattern:       MSRVFNS[type_, method_, orderAlpha_, runAlpha_, order_, run_,
+                nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_, mu1_,
+                mu2_, R_]
+:Arguments:     {type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz,
+                 mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R}
+:ArgumentTypes: {String, String, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
 :Function:      nrqcd
 :Pattern:       NRQCD[n_, l_, j_, s_, charm_, scheme_, method_, orderAlpha_, runAlpha_,
                 order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_, muC_,
@@ -1572,6 +1596,20 @@
 :Begin:
 :Function:      massiter
 :Pattern:       MassIter[n_, l_, j_, s_, charm_, scheme_, method_, orderAlpha_,
+                runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_,
+                mC_, muC_, mass_, lambda_, lam_, mu_, R_]
+:Arguments:     {n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order,
+                 run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda, lam,
+                 mu, R}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, String, String, String, Integer,
+                 Integer, Integer, Integer, Integer, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      massexpand
+:Pattern:       MassExpand[n_, l_, j_, s_, charm_, scheme_, method_, orderAlpha_,
                 runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_,
                 mC_, muC_, mass_, lambda_, lam_, mu_, R_]
 :Arguments:     {n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order,
@@ -3593,6 +3631,15 @@ static double deltacharm2(double z){
    return res;
 }
 
+extern double f90gammarcharm2_(double* z, double* result);
+
+static double gammarcharm2(double z){
+  double res;
+
+   f90gammarcharm2_(&z, &res);
+   return res;
+}
+
 extern double f90deltacharm2der_(double* z, double* result);
 
 static double deltacharm2der(double z){
@@ -4010,6 +4057,24 @@ double mu, double R){
   return res;
 }
 
+extern double f90msrvfns_(char const* type, char const* str, int* orderAlpha,
+int* runAlpha, int* order, int* run, int* nf, double* Mz, double* aMz, double* mT,
+double* muT, double* mB, double* muB, double* mC, double* muC, double* lambda,
+double* mu1, double* mu2, double* R, double* res);
+
+static double msrvfns(char const* type, char const* str, int orderAlpha,
+int runAlpha, int order, int run, int nf, double Mz, double aMz, double mT,
+double muT, double mB, double muB, double mC, double muC, double lambda,
+double mu1, double mu2, double R){
+
+  double res;
+
+  f90msrvfns_(type, str, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz,
+  &mT, &muT, &mB, &muB, &mC, &muC,&lambda, &mu1, &mu2, &R, &res);
+
+  return res;
+}
+
 extern double f90findmass_(int* ord, int* n, int* l, int* j, int* s,
 char const* iter, char const* charm, char const* str, char const* method,
 int* orderAlpha, int* runAlpha, int* order, int* run, int* nf, double* Mz,
@@ -4068,6 +4133,28 @@ double muC, double mass, double lambda, double lam, double mu, double R){
   double res[5];
 
   f90massiter_(&n, &l, &j, &s, charm, str, method, &orderAlpha, &runAlpha,
+  &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &mass, &lambda,
+  &lam, &mu, &R, res);
+
+   MLPutRealList(stdlink, res, 5);
+   MLEndPacket(stdlink);
+
+}
+
+extern double f90massexpand_(int* n, int* l, int* j, int* s, char const* charm,
+char const* str, char const* method, int* orderAlpha, int* runAlpha, int* order,
+int* run, int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB,
+double* muB, double* mC, double* muC, double* mass, double* lambda, double* lam,
+double* mu, double* R, double* res);
+
+static void massexpand(int n, int l, int j, int s, char const* charm, char const* str,
+char const* method, int orderAlpha, int runAlpha, int order, int run, int nf,
+double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
+double muC, double mass, double lambda, double lam, double mu, double R){
+
+  double res[5];
+
+  f90massexpand_(&n, &l, &j, &s, charm, str, method, &orderAlpha, &runAlpha,
   &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &mass, &lambda,
   &lam, &mu, &R, res);
 

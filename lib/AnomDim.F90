@@ -1296,6 +1296,12 @@ end function MatchingAlphaUp
       b = getInverse( self%alphaMatching(self%nf + 1) )
       call alphaReExpand(coef, b)
 
+    else if ( type(:5) == 'charm' ) then
+
+      coef = MSbarDelta(self%nf - 1, 2, self%err)
+      b = getInverse( self%alphaMatching(self%nf + 1) )
+      call alphaReExpand(coef, b)
+
     end if
 
   end function MSRDelta

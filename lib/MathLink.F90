@@ -12,6 +12,17 @@ end subroutine f90DeltaCharm2
 
 !ccccccccccccccc
 
+subroutine f90GammaRCharm2(r, res)
+  use constants, only: dp; use AnomDimClass, only: gammaRcharm2; implicit none
+  real (dp), intent(in ) :: r
+  real (dp), intent(out) :: res
+
+  res = gammaRCharm2(r)
+
+end subroutine f90GammaRCharm2
+
+!ccccccccccccccc
+
 subroutine f90DeltaCharm2Der(r, res)
   use constants, only: dp; use AnomDimClass, only: deltaCharm2Der; implicit none
   real (dp), intent(in ) :: r
@@ -3306,7 +3317,7 @@ end subroutine f90OptimalR
 
     Upsilon = NRQCD( scheme(:5), alphaMass, n, l, j, s )
 
-    res = Upsilon%MassFitter( iter(:3), charm(:6), ord, order, mu, R, mass, lam, method(:8) )
+    res = Upsilon%MassFitter( iter(:10), charm(:6), ord, order, mu, R, mass, lam, method(:8) )
 
   end subroutine f90FindMass
 
@@ -3348,6 +3359,45 @@ end subroutine f90OptimalR
     res = Upsilon%MassIter( charm(:6), order, mu, R, mass, lam, method(:8) )
 
   end subroutine f90MassIter
+
+!ccccccccccccccc
+
+  subroutine f90MassExpand(n, l, j, s, charm, scheme, method, orderAlpha, &
+  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda, &
+  lam, mu, R, res)
+
+    use RunningClass;  use AlphaClass;  use constants, only: dp
+    use AnomDimClass;  use NRQCDClass;  implicit none
+
+    character (len = *), intent(in ) :: method, scheme, charm
+    integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nl, &
+    n, l, j, s
+    real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC,&
+    lambda, lam, R, mass
+    real (dp)          , intent(out) :: res(5)
+    character (len = 5)              :: alphaScheme
+    type (NRQCD)                     :: Upsilon
+    type (Alpha)                     :: alphaAll
+    type (Running)                   :: alphaMass
+    type (AnomDim), dimension(3:6)   :: AnDim
+    integer                          :: i
+
+    alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
+
+    do i = 3, 6
+      AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+    end do
+
+    alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+    mT, muT, mB, muB, mC, muC)
+
+    alphaMass = Running(nl, run, alphaAll, lambda)
+
+    Upsilon = NRQCD( scheme(:5), alphaMass, n, l, j, s )
+
+    res = Upsilon%EnExpand( charm(:6), order, mu, R, mass, lam, method(:8) )
+
+  end subroutine f90MassExpand
 
 !ccccccccccccccc
 
@@ -3407,6 +3457,39 @@ amZ, mT, muT, mB, muB, mC, muC, lambda, mu, R, res)
   res       = alphaMass%MSRMass(type, order, R, lambda, method)
 
 end subroutine f90MSRMass
+
+!ccccccccccccccc
+
+subroutine f90MSRVFNS(type, method, orderAlpha, runAlpha, order, run, nf, mZ, &
+amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R, res)
+  use RunningClass;  use AlphaClass   ;  use constants, only: dp
+  use AnomDimClass;  use VFNSMSRClass ;  implicit none
+
+  character (len = *), intent(in) :: method, type
+  integer           , intent(in ) :: orderAlpha, runAlpha, order, run, nf
+  real (dp)         , intent(in ) :: mZ, amZ, mu1, mu2, mT, muT, mB, muB, mC, &
+  muC, R, lambda
+  real (dp)         , intent(out) :: res
+  type (Running), dimension(2)    :: alphaMass
+  type (AnomDim), dimension(3:6)  :: AnDim
+  type (Alpha)                    :: alphaAll
+  type (VFNSMSR)                  :: MSRVFNS
+  integer                         :: i
+
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
+
+  alphaMass(1) = Running(nf - 1, run, alphaAll, mu2)
+  alphaMass(2) = Running(nf    , run, alphaAll, mu1)
+  MSRVFNS      = VFNSMSR( alphaMass )
+  res          = MSRVFNS%MSRMass( type(:4), order, R, lambda, method(:8) )
+  ! res          = alphaMass(2)%MSRMass(type, order, R, lambda, method)
+
+end subroutine f90MSRVFNS
 
 !ccccccccccccccc
 
@@ -4112,7 +4195,7 @@ muB, mC, muC, mu, res)
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
-    AnDim(i) = AnomDim(str(:5), i, 0._dp)
+    AnDim(i) = AnomDim( str(:5), i, 0._dp )
   end do
 
   alphaAll  = Alpha(AnDim, order, runAlpha, mZ, amZ, mT, muT, &

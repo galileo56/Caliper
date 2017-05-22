@@ -786,7 +786,7 @@ module AlphaClass
     integer      , intent(in) :: nf
     integer                   :: n
 
-    n = nf; if (nf > 6) n = 6; if (nf < 4) n = 4;  adim = self%andim(n)
+    n = nf; if (nf > 6) n = 6; if (nf < 3) n = 3;  adim = self%andim(n)
 
   end function adim
 
