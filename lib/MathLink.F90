@@ -3449,6 +3449,38 @@ end subroutine f90MSRMass
 
 !ccccccccccccccc
 
+subroutine f90MSRVFNS(type, method, orderAlpha, runAlpha, order, run, nf, mZ, &
+amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R, res)
+  use RunningClass;  use AlphaClass   ;  use constants, only: dp
+  use AnomDimClass;  use VFNSMSRClass ;  implicit none
+
+  character (len = *), intent(in) :: method, type
+  integer           , intent(in ) :: orderAlpha, runAlpha, order, run, nf
+  real (dp)         , intent(in ) :: mZ, amZ, mu1, mu2, mT, muT, mB, muB, mC, &
+  muC, R, lambda
+  real (dp)         , intent(out) :: res
+  type (Running), dimension(2)    :: alphaMass
+  type (AnomDim), dimension(3:6)  :: AnDim
+  type (Alpha)                    :: alphaAll
+  type (VFNSMSR)                  :: MSRVFNS
+  integer                         :: i
+
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
+
+  alphaMass(1) = Running(nf - 1, run, alphaAll, mu1)
+  alphaMass(2) = Running(nf    , run, alphaAll, mu2)
+  MSRVFNS      = VFNSMSR( alphaMass )
+  res          = MSRVFNS%MSRMass(type, order, R, lambda, method)
+
+end subroutine f90MSRVFNS
+
+!ccccccccccccccc
+
 subroutine f90JetMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, &
 mB, muB, mC, muC, muLambda, R, mu, res)
  use AlphaClass;    use MatrixElementsClass;  use constants, only: dp

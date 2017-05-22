@@ -166,6 +166,8 @@ CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.d
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/sigmaclass.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/singularclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/singularclass.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/vfnsmsrclass.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/vfnsmsrclass.mod.stamp
 
 CMakeFiles/subdir_mods.dir/lib/MatrixElements.F90.o.requires: CMakeFiles/subdir_mods.dir/alphaclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/MatrixElements.F90.o: CMakeFiles/subdir_mods.dir/alphaclass.mod.stamp

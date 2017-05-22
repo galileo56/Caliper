@@ -166,6 +166,8 @@ lib/CMakeFiles/libCaliper.dir/MathLink.F90.o.requires: lib/CMakeFiles/libCaliper
 lib/CMakeFiles/libCaliper.dir/MathLink.F90.o: lib/CMakeFiles/libCaliper.dir/sigmaclass.mod.stamp
 lib/CMakeFiles/libCaliper.dir/MathLink.F90.o.requires: lib/CMakeFiles/libCaliper.dir/singularclass.mod.proxy
 lib/CMakeFiles/libCaliper.dir/MathLink.F90.o: lib/CMakeFiles/libCaliper.dir/singularclass.mod.stamp
+lib/CMakeFiles/libCaliper.dir/MathLink.F90.o.requires: lib/CMakeFiles/libCaliper.dir/vfnsmsrclass.mod.proxy
+lib/CMakeFiles/libCaliper.dir/MathLink.F90.o: lib/CMakeFiles/libCaliper.dir/vfnsmsrclass.mod.stamp
 
 lib/CMakeFiles/libCaliper.dir/MatrixElements.F90.o.requires: lib/CMakeFiles/libCaliper.dir/alphaclass.mod.proxy
 lib/CMakeFiles/libCaliper.dir/MatrixElements.F90.o: lib/CMakeFiles/libCaliper.dir/alphaclass.mod.stamp
