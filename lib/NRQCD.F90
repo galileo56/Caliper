@@ -19,7 +19,7 @@ module NRQCDClass
 
     procedure, pass(self), private :: Binomial, EnInv
     procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
-    ZeroBin, DeltaCharmBin, MassIter
+    ZeroBin, DeltaCharmBin, MassIter, EnExpand
 
   end type NRQCD
 
@@ -141,6 +141,9 @@ module NRQCDClass
       else if ( iter(:10) == 'FixedOrder' ) then
         list = self%EnInv(charm, order, mu, R, lambda, method)
         FindRoot = mUpsilon/sum( list(:n) )/2 - list(5)
+      else if ( iter(:8) == 'expanded' ) then
+        list(:4) = self%EnExpand(charm, order, mu, R, mUpsilon, lambda, method)
+        FindRoot = sum( list(:n) )
       end if
 
     end function FindRoot
@@ -161,6 +164,29 @@ module NRQCDClass
     list  = 2 * ( self%mH + listA(5) ) * listA(:4)
 
   end function En
+
+!ccccccccccccccc
+
+  function EnExpand(self, charm, order, mu, R, mUpsilon, lambda, method) result(list)
+    class (NRQCD)      , intent(in) :: self
+    character (len = *), intent(in) :: method, charm
+    integer            , intent(in) :: order
+    real (dp)          , intent(in) :: mu, R, lambda, mUpsilon
+    real (dp), dimension(0:4)       :: list
+    real (dp), dimension(0:5)       :: listA
+    integer                         :: n
+
+    listA = self%EnInv(charm, order, mu, R, lambda, method)
+
+    list(0) = 1
+
+    do n = 0, 3
+      list(n + 1) = - sum( list(:n) * listA(n + 1:1:-1) )
+    end do
+
+    list = mUpsilon * list/2; list(0) = list(0) - listA(5)
+
+  end function EnExpand
 
 !ccccccccccccccc
 
