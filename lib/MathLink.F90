@@ -4195,7 +4195,7 @@ muB, mC, muC, mu, res)
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
-    AnDim(i) = AnomDim(str(:5), i, 0._dp)
+    AnDim(i) = AnomDim( str(:5), i, 0._dp )
   end do
 
   alphaAll  = Alpha(AnDim, order, runAlpha, mZ, amZ, mT, muT, &
