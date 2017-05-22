@@ -65,7 +65,7 @@ contains
 
       if ( type(:4) == 'MSRp' ) then
         alphaM = self%AlphaMass(2)%alphaQCD(self%mL)/Pi
-        a = self%AlphaMass(1)%MSRMatching('charm'); i = min(order, 4)
+        a = self%AlphaMass(2)%MSRMatching('charm'); i = min(order, 4)
         matching = dot_product( a(:i), PowList(alphaM, i) ) - 1
       else
         matching = - 1

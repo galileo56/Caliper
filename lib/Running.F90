@@ -556,12 +556,11 @@ module RunningClass
       return
     else if ( type(:4) == 'MSRn' ) then
       c = MSbarDelta(self%nf, 1); a = MSbarDelta(self%nf, 0)
-    else if ( type(:4) == 'charm' ) then
-      c = MSbarDelta(self%nf, 2); a = MSbarDelta(self%nf, 1)
+      b = self%andim%MatchingAlphaUp()
+      call alphaReExpand( a, b(:4) );  a = c - a
+    else if ( type(:5) == 'charm' ) then
+      a = self%andim%MSRDelta('charm') - MSbarDelta(self%nf - 1, 1)
     end if
-
-    b = self%andim%MatchingAlphaUp()
-    call alphaReExpand( a, b(:4) );  a = c - a
 
   end function MSRMatching
 
