@@ -135,10 +135,10 @@ module NRQCDClass
 
       call self%SetMass(mass, self%rat * mass)
 
-      if ( iter(:3) == 'yes' ) then
+      if ( iter(:9) == 'iterative' ) then
         list(:4) = self%MassIter(charm, order, mu, R, mUpsilon, lambda, method)
         FindRoot = sum( list(:n) )
-      else
+      else if ( iter(:10) == 'FixedOrder' ) then
         list = self%EnInv(charm, order, mu, R, lambda, method)
         FindRoot = mUpsilon/sum( list(:n) )/2 - list(5)
       end if

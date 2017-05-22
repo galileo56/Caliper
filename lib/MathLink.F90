@@ -3306,7 +3306,7 @@ end subroutine f90OptimalR
 
     Upsilon = NRQCD( scheme(:5), alphaMass, n, l, j, s )
 
-    res = Upsilon%MassFitter( iter(:3), charm(:6), ord, order, mu, R, mass, lam, method(:8) )
+    res = Upsilon%MassFitter( iter(:10), charm(:6), ord, order, mu, R, mass, lam, method(:8) )
 
   end subroutine f90FindMass
 
