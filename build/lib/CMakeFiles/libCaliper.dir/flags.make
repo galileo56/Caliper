@@ -6,5 +6,5 @@ Fortran_FLAGS = -Waliasing -Wampersand -Wconversion -Wc-binding-type -Wintrinsic
 
 Fortran_DEFINES = 
 
-Fortran_INCLUDES = -I/Users/vicent/GitHubProjects/Caliper 
+Fortran_INCLUDES = -I/Users/vicent/GitHub/Caliper 
 
