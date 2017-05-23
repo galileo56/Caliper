@@ -1575,6 +1575,38 @@ end function MatchingAlphaUp
 
 !ccccccccccccccc
 
+  real (dp) function deltaCharm3(nl, nh, r)
+    real (dp), intent(in) :: r
+    integer  , intent(in) :: nl, nh
+    real (dp)             :: lr
+
+    lr = log(r)
+
+    deltaCharm3 = ( 205687._dp/9000 - 737._dp * nl/750 + &
+    lr * (413._dp * nl/375 - 18049._dp/1000) ) * r + 37 * nh * r**4/750 + &
+    (40._dp/9 - 3136 * lr/1125 + 51._dp * nh/250 - 901._dp * nl/3000) * r**2 + &
+    ( 1316._dp/1125 + 31 * lr/900 - 443._dp * nh/3000 ) * r**3
+
+  end function deltaCharm3
+
+!ccccccccccccccc
+
+  real (dp) function deltaCharm3Der(nl, nh, r)
+    real (dp), intent(in) :: r
+    integer  , intent(in) :: nl, nh
+    real (dp)             :: lr
+
+    lr = log(r)
+
+    deltaCharm3Der = 21623._dp/4500 + 89._dp * nl/750 + lr * (-18049._dp/1000 &
+    + 413._dp * nl/375 ) + (2288._dp/375 - 6272 * lr/1125 + 51._dp * nh/125 - &
+    901._dp * nl/1500 ) * r + (15947._dp/4500 + 31 * lr/300 - &
+    443._dp * nh/1000) * r**2 + 74 * nh * r**3/375
+
+  end function deltaCharm3Der
+
+!ccccccccccccccc
+
   real (dp) function deltaCharm2(r)
     real (dp)   , intent(in) :: r
     real (dp)                :: lr, r2, r3, dilog, r4, corr
@@ -1670,6 +1702,20 @@ end function MatchingAlphaUp
     real (dp), intent(in) :: r
     gammaRcharm2 = 16 * ( deltaCharm2(r) - r * deltaCharm2Der(r) )
   end function gammaRcharm2
+
+!ccccccccccccccc
+
+  real (dp) function gammaRcharm3(nl, nh, r)
+    real (dp), intent(in) :: r
+    integer  , intent(in) :: nl, nh
+    real (dp)             :: bet
+
+    bet = 11 - 2 * nl/3._dp
+
+    gammaRcharm3 = 64 * ( deltaCharm3(nl, nh, r) - bet * deltaCharm2(r) &
+    - r * deltaCharm3Der(nl, nh, r) )
+
+  end function gammaRcharm3
 
 !ccccccccccccccc
 
