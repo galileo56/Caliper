@@ -13,7 +13,8 @@ module VFNSMSRClass
     integer                      :: nf, nl, run
     type (Running), dimension(2) :: AlphaMass
     type (AnomDim)               :: AnDim
-    real (dp)                    :: mH, mL, b1, beta0
+    real (dp)                    :: mH, mL, beta0
+    real (dp), dimension(0:4)    :: bHat
 
     contains
 
@@ -39,9 +40,8 @@ contains
      InitMSR%AlphaMass = AlphaMass      ; InitMSR%run = AlphaMass(2)%orders('runMass')
      InitMSR%nf  = AlphaMass(2)%numFlav()     ; InitMSR%nl = AlphaMass(1)%numFlav()
      InitMSR%mH  = AlphaMass(2)%scales('mH')  ; InitMSR%mL = AlphaMass(1)%scales('mH')
-     AnDim       = AlphaMass(2)%adim()        ; bHat       = AnDim%betaQCD('bHat')
-     InitMSR%b1  = bHat(1)              ; InitMSR%AnDim = AnDim
-     bHat        = AnDim%betaQCD('beta'); InitMSR%beta0 = bHat(0)
+     AnDim       = AlphaMass(2)%adim()        ; InitMSR%bHat       = AnDim%betaQCD('bHat')
+     InitMSR%AnDim = AnDim; bHat = AnDim%betaQCD('beta'); InitMSR%beta0 = bHat(0)
 
    end function InitMSR
 
@@ -56,10 +56,11 @@ contains
     real (dp)                  , dimension(4) :: a
     integer                      , intent(in) :: order
     integer                                   :: neval, ier, i
-    real (dp)                                 :: corr, abserr, lambdaQCD, t0, t1, &
-    delta, mu, Rstep, delta1, delta2, alpha2, matching, alphaM
+    real (dp)                                 :: corr, abserr, lambdaQCD, t0, &
+    delta, mu, Rstep, delta1, delta2, alpha, alpha2, alpha3, matching, alphaM,&
+    rat1, rat2, t1, b1, b2
 
-    res = 0
+    res = 0; b1 = self%bHat(1); b2 = self%bHat(2)
 
     if (R < self%mL) then
 
@@ -78,6 +79,8 @@ contains
     end if
 
     res = self%AlphaMass(2)%MSRMass(type, order, R, lambda, method)
+
+    if (self%run < 2) return
 
     if ( method(:7) == 'numeric' ) then
 
@@ -103,15 +106,28 @@ contains
 
       do ier = 1, neval
 
-        Rstep = Rstep - delta; mu = (Rstep - delta/2)/lambda
-        alpha2 = ( self%AlphaMass(2)%alphaQCD(mu)/Pi )**2
+        Rstep  = Rstep - delta; mu = (Rstep - delta/2)/lambda
+        alpha  = self%AlphaMass(2)%alphaQCD(mu)/Pi;  alpha2 = alpha**2
+        rat1 = self%mL/Rstep; rat2 = self%mL/(Rstep - delta )
 
-        delta1 = Rstep * alpha2 * deltaCharm2(self%mL/Rstep)
+        delta1 = alpha2 * deltaCharm2(rat1)
+        delta2 = alpha2 * deltaCharm2(rat2)
 
-        delta2 = (Rstep - delta) * alpha2 * deltaCharm2( self%mL/(Rstep - delta )  )
+        if (self%run == 3) then
 
+          alpha3 = alpha * alpha2
 
-        corr = corr + delta1 - delta2
+          if ( type(:4) == 'MSRp' ) then
+            delta1 = delta1 + deltaCharm3(self%nf, 1, rat1) * alpha3
+            delta2 = delta2 + deltaCharm3(self%nf, 1, rat2) * alpha3
+          else if ( type(:4) == 'MSRn' ) then
+            delta1 = delta1 + deltaCharm3(self%nf, 0, rat1) * alpha3
+            delta2 = delta2 + deltaCharm3(self%nf, 0, rat2) * alpha3
+          end if
+
+        end if
+
+        corr = corr + Rstep * delta1 - (Rstep - delta) * delta2
 
       end do
 
@@ -125,8 +141,23 @@ contains
 
     real (dp) function InteNum(mu)
       real (dp), intent(in) :: mu
+      real (dp)             :: aPi, api2, api3
 
-      InteNum = gammaRcharm2(self%mL/mu) * self%AlphaMass(2)%alphaQCD(mu)**2/16/Pi2
+      aPi = self%AlphaMass(2)%alphaQCD(mu)**2/4/Pi; aPi2 = aPi**2
+
+      InteNum = gammaRcharm2(self%mL/mu) * aPi2
+
+      if (self%run == 3) then
+
+        aPi3 = aPi * aPi2
+
+        if ( type(:4) == 'MSRp' ) then
+          InteNum = InteNum + gammaRcharm3(self%nf, 1, self%mL/mu) * aPi3
+        else if ( type(:4) == 'MSRn' ) then
+          InteNum = InteNum + gammaRcharm3(self%nf, 0, self%mL/mu) * aPi3
+        end if
+
+      end if
 
     end function InteNum
 
@@ -135,7 +166,7 @@ contains
     real (dp) function InteAn(t)
       real (dp), intent(in) :: t
 
-      InteAn = Exp(-t) * (-t)**(- 2 - self%b1) * &
+      InteAn = Exp(-t) * (-t)**(- 2 - b1) * &
       gammaRcharm2(self%mL/lambdaQCD * self%Andim%Gfun(self%run,t) )
 
     end function InteAn
