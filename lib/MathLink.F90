@@ -3256,13 +3256,13 @@ end subroutine f90OptimalR
     end do
 
     alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, &
-    0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+    0._dp, 0._dp, mc, mc, mc, mc)
 
-    alphaMass = Running(3, 0, alphaAll, 100._dp)
+    alphaMass = Running(4, 0, alphaAll, 100._dp)
 
-    Upsilon = NRQCD( 'MSbar', alphaMass, n, l, 0, 0 )
+    Upsilon = NRQCD( 'up', 'MSbar', alphaMass, n, l, 0, 0 )
 
-    res = Upsilon%DeltaCharm(alp, mb, mc)
+    res = Upsilon%DeltaCharm(alp, mb)
 
   end subroutine f90UpsilonDeltaCharm
 
@@ -3285,13 +3285,13 @@ end subroutine f90OptimalR
     end do
 
     alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, &
-    0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+    0._dp, 0._dp, mc, mc, mc, mc)
 
-    alphaMass = Running(3, 0, alphaAll, 100._dp)
+    alphaMass = Running(4, 0, alphaAll, 100._dp)
 
-    Upsilon = NRQCD( 'MSbar', alphaMass, n, l, 0, 0 )
+    Upsilon = NRQCD( 'up', 'MSbar', alphaMass, n, l, 0, 0 )
 
-    res = Upsilon%DeltaCharmBin(alp, mb, mc)
+    res = Upsilon%DeltaCharmBin(alp, mb)
 
   end subroutine f90UpsilonDeltaCharmBin
 
@@ -3323,7 +3323,7 @@ end subroutine f90OptimalR
 
     alphaMass = Running(nl, run, alphaAll, lambda)
 
-    Upsilon = NRQCD( scheme(:5), alphaMass, n, l, j, s )
+    Upsilon = NRQCD( charm(:4), scheme(:5), alphaMass, n, l, j, s )
 
     res = Upsilon%En( charm(:6), order, mu, R, lam, method(:8) )
 
@@ -3362,7 +3362,7 @@ end subroutine f90OptimalR
 
     alphaMass = Running(nl, run, alphaAll, lambda)
 
-    Upsilon = NRQCD( scheme(:5), alphaMass, n, l, j, s )
+    Upsilon = NRQCD( charm(:4), scheme(:5), alphaMass, n, l, j, s )
 
     res = Upsilon%MassFitter( iter(:10), charm(:6), ord, order, mu, R, mass, lam, method(:8) )
 
@@ -3401,7 +3401,7 @@ end subroutine f90OptimalR
 
     alphaMass = Running(nl, run, alphaAll, lambda)
 
-    Upsilon = NRQCD( scheme(:5), alphaMass, n, l, j, s )
+    Upsilon = NRQCD( charm(:4), scheme(:5), alphaMass, n, l, j, s )
 
     res = Upsilon%MassIter( charm(:6), order, mu, R, mass, lam, method(:8) )
 
@@ -3440,7 +3440,7 @@ end subroutine f90OptimalR
 
     alphaMass = Running(nl, run, alphaAll, lambda)
 
-    Upsilon = NRQCD( scheme(:5), alphaMass, n, l, j, s )
+    Upsilon = NRQCD( charm(:4), scheme(:5), alphaMass, n, l, j, s )
 
     res = Upsilon%EnExpand( charm(:6), order, mu, R, mass, lam, method(:8) )
 

@@ -7,7 +7,7 @@ module NRQCDClass
   type, public                    :: NRQCD
     private
     real (dp), dimension(0:4,0:3) :: c, d
-    character (len = 5)           :: scheme
+    character (len = 5)           :: scheme, up
     real (dp)                     :: mH, harm, rat, mc
     type (Running)                :: alphaMass
     type (Alpha)                  :: alphaOb
@@ -33,9 +33,9 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  type (NRQCD) function InNRQCD(scheme, alphaMass, n, l, j, s)
+  type (NRQCD) function InNRQCD(up, scheme, alphaMass, n, l, j, s)
     integer            , intent(in) :: n, l, j, s
-    character (len = *), intent(in) :: scheme
+    character (len = *), intent(in) :: scheme, up
     type (Running)     , intent(in) :: alphaMass
     real (dp)     , dimension(0:4)  :: beta
     character (len = 5)             :: alphaScheme
@@ -46,7 +46,7 @@ module NRQCDClass
     InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); InNRQCD%nl = nl; InNRQCD%c = 0
     InNRQCD%harm = Harmonic(n + l); InNRQCD%listFact = factList(3)
     InNRQCD%alphaOb = alphaMass%AlphaAll(); InNRQCD%l = l
-    beta = InNRQCD%Andim%betaQCD('beta')
+    beta = InNRQCD%Andim%betaQCD('beta'); InNRQCD%up = up
 
     if (InNRQCD%nl == 5) then
       InNRQCD%rat = InNRQCD%alphaOb%scales('muT')/InNRQCD%mH
@@ -264,9 +264,9 @@ module NRQCDClass
     end if
 
     if ( charm(:3) == 'yes'   ) then
-       list(2) = list(2) + self%DeltaCharm(alp, mass, self%mC)/2
+       list(2) = list(2) + self%DeltaCharm(alp, mass)/2
     else if ( charm(:5) == '0-bin' ) then
-      list(2) = list(2) + self%DeltaCharmBin(alp, mass, self%mC)/2
+      list(2) = list(2) + self%DeltaCharmBin(alp, mass)/2
     end if
 
     if ( charm(:3) == 'yes' .and. self%scheme(:4) /= 'pole' ) then
@@ -344,9 +344,9 @@ module NRQCDClass
     list = mTree * list; list(0) = list(0) + self%mH - mass
 
     if ( charm(:3) == 'yes' ) then
-       list(2) = list(2) + mTree * self%DeltaCharm(alp, mTree, self%mC)/2
+       list(2) = list(2) + mTree * self%DeltaCharm(alp, mTree)/2
     else if ( charm(:5) == '0-bin' ) then
-      list(2) = list(2) - mTree * self%DeltaCharmBin(alp, mTree, self%mC)/2
+      list(2) = list(2) - mTree * self%DeltaCharmBin(alp, mTree)/2
     end if
 
     if ( charm(:3) == 'yes' .and. self%scheme(:4) /= 'pole' ) then
@@ -618,15 +618,19 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  pure real (dp) function DeltaCharmBin(self, alpha, mb, mc)
+  pure real (dp) function DeltaCharmBin(self, alpha, mb)
     class (NRQCD), intent(in)      :: self
-    real (dp)    , intent(in)      :: mb, mc, alpha
+    real (dp)    , intent(in)      :: mb, alpha
     real (dp)                      :: r, lg
 
-    r = 3 * self%n * mc/2/mb/alpha; DeltaCharmBin = 0
+    if ( self%up(:4) == 'down' ) then
+      DeltaCharmBin = self%DeltaCharm(alpha, mb); return
+    end if
+
+    r = 3 * self%n * self%mc/2/mb/alpha; DeltaCharmBin = 0
 
     if (100 * r > 1 ) then
-      DeltaCharmBin = self%DeltaCharm(alpha, mb, mc) - self%ZeroBin(alpha, mb, mc)
+      DeltaCharmBin = self%DeltaCharm(alpha, mb) - self%ZeroBin(alpha, mb)
       return
     else if ( r <= tiny(1._dp) ) then
       DeltaCharmBin = 0; return
@@ -699,13 +703,13 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  pure real (dp) function DeltaCharm(self, alpha, mb, mc)
+  pure real (dp) function DeltaCharm(self, alpha, mb)
     class (NRQCD), intent(in)      :: self
-    real (dp)    , intent(in)      :: mb, mc, alpha
+    real (dp)    , intent(in)      :: mb, alpha
     real (dp)                      :: r, root, ArTan
     real (dp), dimension(4*self%n) :: rho
 
-    DeltaCharm = 0; r = 3 * self%n * mc/2/mb/alpha; rho = powList(r,4*self%n)
+    DeltaCharm = 0; r = 3 * self%n * self%mc/2/mb/alpha; rho = powList(r,4*self%n)
 
     if ( r > 1 ) then
 
@@ -794,12 +798,12 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  pure real (dp) function ZeroBin(self, alpha, mb, mc)
+  pure real (dp) function ZeroBin(self, alpha, mb)
     class (NRQCD), intent(in)      :: self
-    real (dp)    , intent(in)      :: mb, mc, alpha
+    real (dp)    , intent(in)      :: mb, alpha
     real (dp)                      :: rho
 
-    ZeroBin = 0; rho = 3 * self%n * mc/2/mb/alpha
+    ZeroBin = 0; rho = 3 * self%n * self%mc/2/mb/alpha
 
     if (self%n == 1) then
 
