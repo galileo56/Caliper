@@ -8,7 +8,8 @@ module AnomDimClass
 
   public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta, &
   PowList, getInverse, MSbarDeltaPiece, AlphaExpand, alphaMatchingLog,     &
-  deltaCharm2, deltaCharm2Der, gammaRcharm2, gammaRcharm3, deltaCharm3
+  deltaCharm2, deltaCharm2Der, gammaRcharm2, gammaRcharm3, deltaCharm3,    &
+  deltaCharm3Der
 
   interface PowList
     module procedure   :: PowListDP, PowListInt, PowListComp
@@ -1582,10 +1583,11 @@ end function MatchingAlphaUp
 
     lr = log(r)
 
-    deltaCharm3 = ( 205687._dp/9000 - 737._dp * nl/750 + &
-    lr * (413._dp * nl/375 - 18049._dp/1000) ) * r + 37 * nh * r**4/750 + &
+    deltaCharm3 = ( 205687._dp/9000 - 737._dp * nl/750 &
+    + lr * (413._dp * nl/375 - 18049._dp/1000) ) * r + 37 * nh * r**4/750 + &
     (40._dp/9 - 3136 * lr/1125 + 51._dp * nh/250 - 901._dp * nl/3000) * r**2 + &
-    ( 1316._dp/1125 + 31 * lr/900 - 443._dp * nh/3000 ) * r**3
+    ( 1316._dp/1125 + 31 * lr/900 - 443._dp * nh/3000 ) * r**3 + &
+    2 * deltaCharm2(r)/3
 
   end function deltaCharm3
 
@@ -1601,7 +1603,7 @@ end function MatchingAlphaUp
     deltaCharm3Der = 21623._dp/4500 + 89._dp * nl/750 + lr * (-18049._dp/1000 &
     + 413._dp * nl/375 ) + (2288._dp/375 - 6272 * lr/1125 + 51._dp * nh/125 - &
     901._dp * nl/1500 ) * r + (15947._dp/4500 + 31 * lr/300 - &
-    443._dp * nh/1000) * r**2 + 74 * nh * r**3/375
+    443._dp * nh/1000) * r**2 + 74 * nh * r**3/375 + 2 * deltaCharm2Der(r)/3
 
   end function deltaCharm3Der
 

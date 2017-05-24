@@ -12,6 +12,42 @@ end subroutine f90DeltaCharm2
 
 !ccccccccccccccc
 
+subroutine f90DeltaCharm3(nl, nh, r, res)
+  use constants, only: dp; use AnomDimClass, only: deltaCharm3; implicit none
+  real (dp), intent(in ) :: r
+  integer  , intent(in)  :: nl, nh
+  real (dp), intent(out) :: res
+
+  res = deltaCharm3(nl, nh, r)
+
+end subroutine f90DeltaCharm3
+
+!ccccccccccccccc
+
+subroutine f90DeltaCharm3Der(nl, nh, r, res)
+  use constants, only: dp; use AnomDimClass, only: deltaCharm3Der; implicit none
+  real (dp), intent(in ) :: r
+  integer  , intent(in)  :: nl, nh
+  real (dp), intent(out) :: res
+
+  res = deltaCharm3Der(nl, nh, r)
+
+end subroutine f90DeltaCharm3Der
+
+!ccccccccccccccc
+
+subroutine f90GammaRCharm3(nl, nh, r, res)
+  use constants, only: dp; use AnomDimClass, only: GammaRCharm3; implicit none
+  real (dp), intent(in ) :: r
+  integer  , intent(in)  :: nl, nh
+  real (dp), intent(out) :: res
+
+  res = GammaRCharm3(nl, nh, r)
+
+end subroutine f90GammaRCharm3
+
+!ccccccccccccccc
+
 subroutine f90GammaRCharm2(r, res)
   use constants, only: dp; use AnomDimClass, only: gammaRcharm2; implicit none
   real (dp), intent(in ) :: r
@@ -3487,7 +3523,6 @@ amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R, res)
   alphaMass(2) = Running(nf    , run, alphaAll, mu1)
   MSRVFNS      = VFNSMSR( alphaMass )
   res          = MSRVFNS%MSRMass( type(:4), order, R, lambda, method(:8) )
-  ! res          = alphaMass(2)%MSRMass(type, order, R, lambda, method)
 
 end subroutine f90MSRVFNS
 

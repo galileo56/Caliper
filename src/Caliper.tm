@@ -14,9 +14,12 @@
 
 :Evaluate:  UpsilonDeltaCharmBin::usage = "UpsilonDeltaCharmBin[n, l, alp, mb, mc] computes the massive charm corrections to quarkonium masses"
 :Evaluate:  UpsilonDeltaCharm::usage = "UpsilonDeltaCharm[n, l, alp, mb, mc] computes the massive charm corrections to quarkonium masses"
-:Evaluate:  GammaRCharm2::usage = "GammaRCharm2[z] computes the massive charm corrections to the R-anomalous dimension"
-:Evaluate:  DeltaCharm2::usage = "DeltaCharm2[z] computes the massive charm corrections to the MSbar-pole mass relation"
-:Evaluate:  DeltaCharm2Der::usage = "DeltaCharm2Der[z] computes the derivative of the massive charm corrections to the MSbar-pole mass relation"
+:Evaluate:  GammaRCharm2::usage = "GammaRCharm2[z] computes the massive charm corrections to the R-anomalous dimension at two loops"
+:Evaluate:  GammaRCharm3::usage = "GammaRCharm3[nl, nh, z] computes the massive charm corrections to the R-anomalous dimension at three loops"
+:Evaluate:  DeltaCharm2::usage = "DeltaCharm2[z] computes the massive charm corrections to the MSbar-pole mass relation at two loops"
+:Evaluate:  DeltaCharm3::usage = "DeltaCharm3[nl, nh, z] computes the massive charm corrections to the MSbar-pole mass relation at three loops"
+:Evaluate:  DeltaCharm3Der::usage = "DeltaCharm3Der[nl, nh, z] computes the derivative of the massive charm corrections to the MSbar-pole mass relation at three loops"
+:Evaluate:  DeltaCharm2Der::usage = "DeltaCharm2Der[z] computes the derivative of the massive charm corrections to the MSbar-pole mass relation at two loops"
 :Evaluate:  LegendreList::usage = "LegendreList[n, k, x] computes the of the first n + 1 k-th derivative of the Legendre Polynomials"
 :Evaluate:  QLegendreList::usage = "QLegendreList[n, x] computes the of the first n + 1 Legendre Polynomial"
 :Evaluate:  BreitUnstable::usage = "BreitUnstable[shape, mt, Q, gamma, n, k, x] computes the LO distribution for unstable tops convoluted with a BreitWigner"
@@ -1391,6 +1394,30 @@
 :Pattern:       UpsilonDeltaCharmBin[n_, l_, alpha_, mb_, mc_]
 :Arguments:     {n, l, alpha, mb, mc}
 :ArgumentTypes: {Integer, Integer, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      deltacharm3
+:Pattern:       DeltaCharm3[nl_, nh_, z_]
+:Arguments:     {nl, nh, z}
+:ArgumentTypes: {Integer, Integer, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      deltacharm3der
+:Pattern:       DeltaCharm3Der[nl_, nh_, z_]
+:Arguments:     {nl, nh, z}
+:ArgumentTypes: {Integer, Integer, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      gammarcharm3
+:Pattern:       GammaRCharm3[nl_, nh_, z_]
+:Arguments:     {nl, nh, z}
+:ArgumentTypes: {Integer, Integer, Real}
 :ReturnType:    Real
 :End:
 
@@ -3620,6 +3647,33 @@ static void nglsoft(int n, double z1, double z2){
    MLPutReal(stdlink, res[1]);
 
    MLEndPacket(stdlink);
+}
+
+extern double f90deltacharm3_(int* nl, int* nh, double* z, double* result);
+
+static double deltacharm3(int nl, int nh, double z){
+  double res;
+
+   f90deltacharm3_(&nl, &nh, &z, &res);
+   return res;
+}
+
+extern double f90deltacharm3der_(int* nl, int* nh, double* z, double* result);
+
+static double deltacharm3der(int nl, int nh, double z){
+  double res;
+
+   f90deltacharm3der_(&nl, &nh, &z, &res);
+   return res;
+}
+
+extern double f90gammarcharm3_(int* nl, int* nh, double* z, double* result);
+
+static double gammarcharm3(int nl, int nh, double z){
+  double res;
+
+   f90gammarcharm3_(&nl, &nh, &z, &res);
+   return res;
 }
 
 extern double f90deltacharm2_(double* z, double* result);
