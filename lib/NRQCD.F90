@@ -164,6 +164,31 @@ module NRQCDClass
 
 !ccccccccccccccc
 
+  function EnExpand(self, charm, order, mu, R, mUpsilon, lambda, method) result(list)
+    class (NRQCD)      , intent(in) :: self
+    character (len = *), intent(in) :: method, charm
+    integer            , intent(in) :: order
+    real (dp)          , intent(in) :: mu, R, lambda, mUpsilon
+    real (dp), dimension(0:4)       :: list
+    real (dp), dimension(0:5)       :: listA
+    integer                         :: n
+
+    listA = self%EnInv(charm, order, mu, R, lambda, method)
+
+    list(0) = 1
+
+    do n = 0, 3
+      list(n + 1) = - sum( list(:n) * listA(n + 1:1:-1) )
+    end do
+
+    list = mUpsilon * list/2
+
+    list(0) = list(0) - listA(5)
+
+  end function EnExpand
+
+!ccccccccccccccc
+
   function EnInv(self, charm, order, mu, R, lambda, method) result(list)
     class (NRQCD)      , intent(in) :: self
     character (len = *), intent(in) :: method, charm
