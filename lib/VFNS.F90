@@ -19,7 +19,7 @@ module VFNSMSRClass
 
     contains
 
-    procedure, pass(self), public :: MSRMass!setMtop, setMbottom, setMcharm
+    procedure, pass(self), public :: MSRMass, setMass
 
   end type VFNSMSR
 
@@ -202,5 +202,25 @@ contains
     end function InteAn
 
   end function MSRMass
+
+!ccccccccccccccc
+
+  subroutine setMass(self, m, mu)
+    class (VFNSMSR), intent(inout) :: self
+    real (dp)      , intent(in)    :: m, mu
+
+    self%mH = m
+
+    if (self%nl == 5) then
+      call self%alphaMass(1)%SetMTop(m, mu)
+      call self%alphaMass(2)%SetMTop(m, mu)
+    else if (self%nl == 4) then
+      call self%alphaMass(1)%SetMBottom(m, mu)
+      call self%alphaMass(2)%SetMBottom(m, mu)
+    end if
+
+  end subroutine setMass
+
+!ccccccccccccccc
 
 end module VFNSMSRClass
