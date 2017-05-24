@@ -1592,10 +1592,9 @@ end function MatchingAlphaUp
 
     lr = log(r)
 
-    deltaCharm3 = ( 205687._dp/9000 - 737._dp * nl/750 &
-    + lr * (413._dp * nl/375 - 18049._dp/1000) ) * r + 37 * nh * r**4/750 + &
-    (40._dp/9 - 3136 * lr/1125 + 51._dp * nh/250 - 901._dp * nl/3000) * r**2 + &
-    ( 1316._dp/1125 + 31 * lr/900 - 443._dp * nh/3000 ) * r**3 + &
+    deltaCharm3 = ( 205687._dp/9000 - 737._dp * nl/750 + lr * (413._dp * nl/375&
+    - 18049._dp/1000) ) * r + (40._dp/9 - 3136 * lr/1125 - 901._dp * nl/3000) *&
+    r**2 + ( 1316._dp/1125 + 31 * lr/900 ) * r**3 + nh * deltaCharmNh(r) + &
     2 * deltaCharm2(r)/3
 
   end function deltaCharm3
