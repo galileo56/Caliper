@@ -47,11 +47,11 @@ contains
 
 !ccccccccccccccc
 
-  recursive real (dp) function MSRMass(self, type, order, R, lambda, method) result(res)
+  recursive real (dp) function MSRMass(self, up, type, order, R, lambda, method) result(res)
     class (VFNSMSR)              , intent(in) :: self
     real (dp)                    , intent(in) :: R
     real (dp), optional          , intent(in) :: lambda
-    character (len = *)          , intent(in) :: type
+    character (len = *)          , intent(in) :: type, up
     character (len = *), optional, intent(in) :: method
     real (dp)                  , dimension(4) :: a
     real (dp)                  , dimension(2) :: bet2
@@ -63,7 +63,7 @@ contains
 
     res = 0; b1 = self%bHat(1); b2 = self%bHat(2)
 
-    if (R < self%mL) then
+    if ( up(:4) == 'down' ) then
 
       if ( type(:4) == 'MSRp' ) then
         alphaM = self%AlphaMass(2)%alphaQCD(self%mL)/Pi
@@ -73,7 +73,7 @@ contains
         matching = - 1
       end if
 
-      res = self%MSRMass(type, order, self%mL, lambda, method)  + &
+      res = self%MSRMass('up', type, order, self%mL, lambda, method)  + &
       self%AlphaMass(1)%MSRMass(type, order, R, lambda, method) + &
       self%mL * matching
       return

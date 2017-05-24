@@ -77,7 +77,7 @@
 :Evaluate:  PoleMass::usage = "PoleMass[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  MSbarMassLow::usage = "MSbarMassLow[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching below the mass."
 :Evaluate:  MSRMass::usage = "MSRMass[type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda, R] computes the MSR running of the quark masses."
-:Evaluate:  MSRVFNS::usage = "MSRVFNS[type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R] computes the MSR running of the quark masses with flavor matching."
+:Evaluate:  MSRVFNS::usage = "MSRVFNS[up, type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R] computes the MSR running of the quark masses with flavor matching."
 :Evaluate:  NRQCD::usage = "NRQCD[n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, lam, mu, R] computes the quarkonium energy levels."
 :Evaluate:  MassIter::usage = "MassIter[n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda, lam, mu, R] computes the bottom mass from quarkonium energy levels."
 :Evaluate:  MassExpand::usage = "MassExpand[n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda, lam, mu, R] computes the bottom mass from quarkonium energy levels."
@@ -1596,14 +1596,14 @@
 
 :Begin:
 :Function:      msrvfns
-:Pattern:       MSRVFNS[type_, method_, orderAlpha_, runAlpha_, order_, run_,
-                nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_, mu1_,
-                mu2_, R_]
-:Arguments:     {type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz,
-                 mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R}
-:ArgumentTypes: {String, String, Integer, Integer, Integer, Integer, Integer,
-                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
-                 Real, Real}
+:Pattern:       MSRVFNS[up_, type_, method_, orderAlpha_, runAlpha_, order_,
+                run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_,
+                mu1_, mu2_, R_]
+:Arguments:     {up, type, method, orderAlpha, runAlpha, order, run, nf, Mz,
+                 aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R}
+:ArgumentTypes: {String, String, String, Integer, Integer, Integer, Integer,
+                 Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real}
 :ReturnType:     Real
 :End:
 
@@ -4111,20 +4111,20 @@ double mu, double R){
   return res;
 }
 
-extern double f90msrvfns_(char const* type, char const* str, int* orderAlpha,
-int* runAlpha, int* order, int* run, int* nf, double* Mz, double* aMz, double* mT,
-double* muT, double* mB, double* muB, double* mC, double* muC, double* lambda,
-double* mu1, double* mu2, double* R, double* res);
+extern double f90msrvfns_(char const* up, char const* type, char const* str,
+int* orderAlpha, int* runAlpha, int* order, int* run, int* nf, double* Mz,
+double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+double* muC, double* lambda, double* mu1, double* mu2, double* R, double* res);
 
-static double msrvfns(char const* type, char const* str, int orderAlpha,
-int runAlpha, int order, int run, int nf, double Mz, double aMz, double mT,
-double muT, double mB, double muB, double mC, double muC, double lambda,
-double mu1, double mu2, double R){
+static double msrvfns(char const* up, char const* type, char const* str,
+int orderAlpha, int runAlpha, int order, int run, int nf, double Mz, double aMz,
+double mT, double muT, double mB, double muB, double mC, double muC,
+double lambda, double mu1, double mu2, double R){
 
   double res;
 
-  f90msrvfns_(type, str, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz,
-  &mT, &muT, &mB, &muB, &mC, &muC,&lambda, &mu1, &mu2, &R, &res);
+  f90msrvfns_(up, type, str, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz,
+  &aMz, &mT, &muT, &mB, &muB, &mC, &muC,&lambda, &mu1, &mu2, &R, &res);
 
   return res;
 }
