@@ -213,6 +213,8 @@ lib/CMakeFiles/libCaliper.dir/NRQCD.F90.o.requires: lib/CMakeFiles/libCaliper.di
 lib/CMakeFiles/libCaliper.dir/NRQCD.F90.o: lib/CMakeFiles/libCaliper.dir/constants.mod.stamp
 lib/CMakeFiles/libCaliper.dir/NRQCD.F90.o.requires: lib/CMakeFiles/libCaliper.dir/runningclass.mod.proxy
 lib/CMakeFiles/libCaliper.dir/NRQCD.F90.o: lib/CMakeFiles/libCaliper.dir/runningclass.mod.stamp
+lib/CMakeFiles/libCaliper.dir/NRQCD.F90.o.requires: lib/CMakeFiles/libCaliper.dir/vfnsmsrclass.mod.proxy
+lib/CMakeFiles/libCaliper.dir/NRQCD.F90.o: lib/CMakeFiles/libCaliper.dir/vfnsmsrclass.mod.stamp
 lib/CMakeFiles/libCaliper.dir/nrqcdclass.mod.proxy: lib/CMakeFiles/libCaliper.dir/NRQCD.F90.o.provides
 lib/CMakeFiles/libCaliper.dir/NRQCD.F90.o.provides.build:
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod lib/nrqcdclass lib/CMakeFiles/libCaliper.dir/nrqcdclass.mod.stamp GNU

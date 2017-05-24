@@ -1,6 +1,6 @@
 module NRQCDClass
   use Constants, only: dp, pi2, d1mach, Pi ;  use RunningClass; use AlphaClass
-  use AnomDimClass; implicit none ; private
+  use AnomDimClass; use VFNSMSRClass; implicit none ; private
 
 !ccccccccccccccc
 
@@ -12,7 +12,8 @@ module NRQCDClass
     type (Running)                :: alphaMass
     type (Alpha)                  :: alphaOb
     type (AnomDim)                :: Andim
-    integer                       :: n, l, nl
+    type (VFNSMSR)                :: MSR
+    integer                       :: n, l, nl, nf
     integer, dimension(0:3)       :: listFact
 
   contains
@@ -39,18 +40,28 @@ module NRQCDClass
     type (Running)     , intent(in) :: alphaMass
     real (dp)     , dimension(0:4)  :: beta
     character (len = 5)             :: alphaScheme
-    integer                         :: nl, i, jj, k
+    integer                         :: nf, nl, i, jj, k
 
-    InNRQCD%alphaMass = alphaMass; InNRQCD%n = n; nl = alphaMass%numFlav()
+    InNRQCD%alphaMass = alphaMass; InNRQCD%n = n; nf = alphaMass%numFlav()
     InNRQCD%Andim = InNRQCD%alphaMass%adim(); alphaScheme = alphaMass%scheme()
-    InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); InNRQCD%nl = nl; InNRQCD%c = 0
+    InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); InNRQCD%nf = nf; InNRQCD%c = 0
     InNRQCD%harm = Harmonic(n + l); InNRQCD%listFact = factList(3)
     InNRQCD%alphaOb = alphaMass%AlphaAll(); InNRQCD%l = l
     beta = InNRQCD%Andim%betaQCD('beta'); InNRQCD%up = up
 
-    if (InNRQCD%nl == 5) then
+    ! InNRQCD%MSR = VFNSMSR(AlphaMass)
+
+    if ( up(:2) == 'up' ) then
+      nl = nf
+    else if ( up(:2) == 'down' ) then
+      nl = nf - 1
+    end if
+
+    InNRQCD%nl = nl
+
+    if (nf == 5) then
       InNRQCD%rat = InNRQCD%alphaOb%scales('muT')/InNRQCD%mH
-    else if (InNRQCD%nl == 4) then
+    else if (nf == 4) then
       InNRQCD%rat = InNRQCD%alphaOb%scales('muB')/InNRQCD%mH
     end if
 
@@ -89,8 +100,8 @@ module NRQCDClass
       end do
     end do
 
-    if (nl == 5) InNRQCD%mc = InNRQCD%alphaOb%scales('mB')
-    if (nl == 4) InNRQCD%mc = InNRQCD%alphaOb%scales('mC')
+    if (nf == 5) InNRQCD%mc = InNRQCD%alphaOb%scales('mB')
+    if (nf == 4) InNRQCD%mc = InNRQCD%alphaOb%scales('mC')
 
   end function InNRQCD
 

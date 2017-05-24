@@ -213,6 +213,8 @@ CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o.requires: CMakeFiles/subdir_mods.dir/
 CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o: CMakeFiles/subdir_mods.dir/constants.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o.requires: CMakeFiles/subdir_mods.dir/runningclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o: CMakeFiles/subdir_mods.dir/runningclass.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o.requires: CMakeFiles/subdir_mods.dir/vfnsmsrclass.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o: CMakeFiles/subdir_mods.dir/vfnsmsrclass.mod.stamp
 CMakeFiles/subdir_mods.dir/nrqcdclass.mod.proxy: CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o.provides
 CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o.provides.build:
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod nrqcdclass CMakeFiles/subdir_mods.dir/nrqcdclass.mod.stamp GNU
