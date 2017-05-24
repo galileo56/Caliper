@@ -54,11 +54,12 @@ contains
     character (len = *)          , intent(in) :: type
     character (len = *), optional, intent(in) :: method
     real (dp)                  , dimension(4) :: a
+    real (dp)                  , dimension(2) :: bet2
     integer                      , intent(in) :: order
     integer                                   :: neval, ier, i
     real (dp)                                 :: corr, abserr, lambdaQCD, t0, &
     delta, mu, Rstep, delta1, delta2, alpha, alpha2, alpha3, matching, alphaM,&
-    rat1, rat2, t1, b1, b2
+    rat1, rat2, t1, b1, b2, mol
 
     res = 0; b1 = self%bHat(1); b2 = self%bHat(2)
 
@@ -92,12 +93,13 @@ contains
     else if ( method(:8) == 'analytic' ) then
 
       t0 = - 2 * pi/self%beta0/lambda;  t1 = t0/self%AlphaMass(2)%alphaQCD(self%mH)
-      t0 = t0/self%AlphaMass(2)%alphaQCD(R)
+      t0 = t0/self%AlphaMass(2)%alphaQCD(R);  bet2(2) = 2 * self%beta0
       lambdaQCD = self%AlphaMass(2)%lambdaQCD( self%run )
+      mol = self%mL/lambdaQCD; bet2(1) = bet2(2)**2; bet2(2) = Product(bet2)
 
       call qags( InteAn, t1, t0, prec, prec, corr, abserr, neval, ier )
 
-      res = res + lambdaQCD * corr/4/self%beta0**2
+      res = res + lambdaQCD * corr
 
     else if ( method(:4) == 'diff' ) then
 
@@ -113,7 +115,7 @@ contains
         delta1 = alpha2 * deltaCharm2(rat1)
         delta2 = alpha2 * deltaCharm2(rat2)
 
-        if (self%run == 3) then
+        if (self%run >= 3) then
 
           alpha3 = alpha * alpha2
 
@@ -147,7 +149,7 @@ contains
 
       InteNum = gammaRcharm2(self%mL/mu) * aPi2
 
-      if (self%run == 3) then
+      if (self%run >= 3) then
 
         aPi3 = aPi * aPi2
 
@@ -165,9 +167,27 @@ contains
 
     real (dp) function InteAn(t)
       real (dp), intent(in) :: t
+      real (dp)             :: gammaR, gammaR2
 
-      InteAn = Exp(-t) * (-t)**(- 2 - b1) * &
-      gammaRcharm2(self%mL/lambdaQCD * self%Andim%Gfun(self%run,t) )
+      gammaR = gammaRcharm2(mol * self%Andim%Gfun(self%run,t) )/bet2(1)
+
+      InteAn = (-t)**(- 2 - b1) * gammaR
+
+      if (self%run >= 3) then
+
+        if ( type(:4) == 'MSRp' ) then
+          gammaR2 = gammaRcharm3(self%nf, 1, mol * self%Andim%Gfun(self%run,t) )
+        else if ( type(:4) == 'MSRn' ) then
+          gammaR2 = gammaRcharm3(self%nf, 0, mol * self%Andim%Gfun(self%run,t) )
+        end if
+
+        gammaR = gammaR2/bet2(2) - (b1 + b2) * gammaR
+
+        InteAn = InteAn + (-t)**(- 3 - b1) * gammaR
+
+      end if
+
+      InteAn = Exp(-t) * InteAn
 
     end function InteAn
 
