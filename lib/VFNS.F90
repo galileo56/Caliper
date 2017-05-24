@@ -41,7 +41,7 @@ contains
      InitMSR%AlphaMass = AlphaMass      ; InitMSR%run = AlphaMass(2)%orders('runMass')
      InitMSR%nf  = AlphaMass(2)%numFlav()     ; InitMSR%nl = AlphaMass(1)%numFlav()
      InitMSR%mH  = AlphaMass(2)%scales('mH')  ; InitMSR%mL = AlphaMass(1)%scales('mH')
-     AnDim       = AlphaMass(2)%adim()        ; InitMSR%bHat       = AnDim%betaQCD('bHat')
+     AnDim       = AlphaMass(2)%adim()        ; InitMSR%bHat = AnDim%betaQCD('bHat')
      InitMSR%AnDim = AnDim; bHat = AnDim%betaQCD('beta'); InitMSR%beta0 = bHat(0)
      InitMSR%rat = InitMSR%mL/InitMSR%mH
      InitMSR%AlphaAll = AlphaMass(1)%AlphaAll()
