@@ -192,7 +192,6 @@ contains
         end if
 
         gammaR = gammaR2/bet2(2) - (b1 + b2) * gammaR
-
         InteAn = InteAn + (-t)**(- 3 - b1) * gammaR
 
       end if
