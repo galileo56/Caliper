@@ -1576,6 +1576,15 @@ end function MatchingAlphaUp
 
 !ccccccccccccccc
 
+  real (dp) function deltaCharmNh(r)
+    real (dp), intent(in) :: r
+
+    deltaCharmNh = r**2 * ( 51._dp/250 + (37 * r/750 - 443._dp/3000) * r )
+
+  end function deltaCharmNh
+
+!ccccccccccccccc
+
   real (dp) function deltaCharm3(nl, nh, r)
     real (dp), intent(in) :: r
     integer  , intent(in) :: nl, nh
