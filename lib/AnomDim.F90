@@ -9,7 +9,7 @@ module AnomDimClass
   public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta, &
   PowList, getInverse, MSbarDeltaPiece, AlphaExpand, alphaMatchingLog,     &
   deltaCharm2, deltaCharm2Der, gammaRcharm2, gammaRcharm3, deltaCharm3,    &
-  deltaCharm3Der
+  deltaCharm3Der, deltaCharmNh
 
   interface PowList
     module procedure   :: PowListDP, PowListInt, PowListComp

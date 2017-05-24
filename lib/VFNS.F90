@@ -13,7 +13,8 @@ module VFNSMSRClass
     integer                      :: nf, nl, run
     type (Running), dimension(2) :: AlphaMass
     type (AnomDim)               :: AnDim
-    real (dp)                    :: mH, mL, beta0
+    type (Alpha)                 :: AlphaAll
+    real (dp)                    :: mH, mL, beta0, rat
     real (dp), dimension(0:4)    :: bHat
 
     contains
@@ -42,6 +43,8 @@ contains
      InitMSR%mH  = AlphaMass(2)%scales('mH')  ; InitMSR%mL = AlphaMass(1)%scales('mH')
      AnDim       = AlphaMass(2)%adim()        ; InitMSR%bHat       = AnDim%betaQCD('bHat')
      InitMSR%AnDim = AnDim; bHat = AnDim%betaQCD('beta'); InitMSR%beta0 = bHat(0)
+     InitMSR%rat = InitMSR%mL/InitMSR%mH
+     InitMSR%AlphaAll = AlphaMass(1)%AlphaAll()
 
    end function InitMSR
 
@@ -80,6 +83,13 @@ contains
     end if
 
     res = self%AlphaMass(2)%MSRMass(type, order, R, lambda, method)
+
+    if ( type(:4) == 'MSRn' .and. order >= 3 ) then
+
+      res = res + self%mH * deltaCharmNh(self%rat) * &
+      ( self%AlphaAll%alphaQCD(self%nf + 1, self%mH)/Pi )**3
+
+    end if
 
     if (self%run < 2) return
 
