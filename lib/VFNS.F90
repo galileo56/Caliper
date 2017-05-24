@@ -155,7 +155,7 @@ contains
       real (dp), intent(in) :: mu
       real (dp)             :: aPi, api2, api3
 
-      aPi = self%AlphaMass(2)%alphaQCD(mu)**2/4/Pi; aPi2 = aPi**2
+      aPi = self%AlphaMass(2)%alphaQCD(mu)/4/Pi; aPi2 = aPi**2
 
       InteNum = gammaRcharm2(self%mL/mu) * aPi2
 
