@@ -19,7 +19,7 @@ module NRQCDClass
 
     procedure, pass(self), private :: Binomial, EnInv
     procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
-    ZeroBin, DeltaCharmBin, MassIter
+    ZeroBin, DeltaCharmBin, MassIter, EnExpand
 
   end type NRQCD
 
@@ -135,12 +135,15 @@ module NRQCDClass
 
       call self%SetMass(mass, self%rat * mass)
 
-      if ( iter(:3) == 'yes' ) then
+      if ( iter(:9) == 'iterative' ) then
         list(:4) = self%MassIter(charm, order, mu, R, mUpsilon, lambda, method)
         FindRoot = sum( list(:n) )
-      else
+      else if ( iter(:10) == 'FixedOrder' ) then
         list = self%EnInv(charm, order, mu, R, lambda, method)
         FindRoot = mUpsilon/sum( list(:n) )/2 - list(5)
+      else if ( iter(:8) == 'expanded' ) then
+        list(:4) = self%EnExpand(charm, order, mu, R, mUpsilon, lambda, method)
+        FindRoot = sum( list(:n) )
       end if
 
     end function FindRoot
