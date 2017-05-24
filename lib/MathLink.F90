@@ -3496,12 +3496,12 @@ end subroutine f90MSRMass
 
 !ccccccccccccccc
 
-subroutine f90MSRVFNS(type, method, orderAlpha, runAlpha, order, run, nf, mZ, &
+subroutine f90MSRVFNS(up, type, method, orderAlpha, runAlpha, order, run, nf, mZ, &
 amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R, res)
   use RunningClass;  use AlphaClass   ;  use constants, only: dp
   use AnomDimClass;  use VFNSMSRClass ;  implicit none
 
-  character (len = *), intent(in) :: method, type
+  character (len = *), intent(in) :: method, type, up
   integer           , intent(in ) :: orderAlpha, runAlpha, order, run, nf
   real (dp)         , intent(in ) :: mZ, amZ, mu1, mu2, mT, muT, mB, muB, mC, &
   muC, R, lambda
@@ -3522,7 +3522,7 @@ amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R, res)
   alphaMass(1) = Running(nf - 1, run, alphaAll, mu2)
   alphaMass(2) = Running(nf    , run, alphaAll, mu1)
   MSRVFNS      = VFNSMSR( alphaMass )
-  res          = MSRVFNS%MSRMass( type(:4), order, R, lambda, method(:8) )
+  res          = MSRVFNS%MSRMass( up(:4), type(:4), order, R, lambda, method(:8) )
 
 end subroutine f90MSRVFNS
 

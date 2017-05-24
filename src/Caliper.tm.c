@@ -2589,20 +2589,20 @@ double mu, double R){
   return res;
 }
 
-extern double f90msrvfns_(char const* type, char const* str, int* orderAlpha,
-int* runAlpha, int* order, int* run, int* nf, double* Mz, double* aMz, double* mT,
-double* muT, double* mB, double* muB, double* mC, double* muC, double* lambda,
-double* mu1, double* mu2, double* R, double* res);
+extern double f90msrvfns_(char const* up, char const* type, char const* str,
+int* orderAlpha, int* runAlpha, int* order, int* run, int* nf, double* Mz,
+double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+double* muC, double* lambda, double* mu1, double* mu2, double* R, double* res);
 
-static double msrvfns(char const* type, char const* str, int orderAlpha,
-int runAlpha, int order, int run, int nf, double Mz, double aMz, double mT,
-double muT, double mB, double muB, double mC, double muC, double lambda,
-double mu1, double mu2, double R){
+static double msrvfns(char const* up, char const* type, char const* str,
+int orderAlpha, int runAlpha, int order, int run, int nf, double Mz, double aMz,
+double mT, double muT, double mB, double muB, double mC, double muC,
+double lambda, double mu1, double mu2, double R){
 
   double res;
 
-  f90msrvfns_(type, str, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz,
-  &mT, &muT, &mB, &muB, &mC, &muC,&lambda, &mu1, &mu2, &R, &res);
+  f90msrvfns_(up, type, str, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz,
+  &aMz, &mT, &muT, &mB, &muB, &mC, &muC,&lambda, &mu1, &mu2, &R, &res);
 
   return res;
 }
@@ -10616,7 +10616,7 @@ L0:	return res;
 } /* _tr113 */
 
 
-double msrvfns P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, int _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19));
+double msrvfns P(( const char * _tp1, const char * _tp2, const char * _tp3, int _tp4, int _tp5, int _tp6, int _tp7, int _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20));
 
 #if MLPROTOTYPES
 static int _tr114( MLINK mlp)
@@ -10627,12 +10627,12 @@ static int _tr114(mlp) MLINK mlp;
 	int	res = 0;
 	const char * _tp1;
 	const char * _tp2;
-	int _tp3;
+	const char * _tp3;
 	int _tp4;
 	int _tp5;
 	int _tp6;
 	int _tp7;
-	double _tp8;
+	int _tp8;
 	double _tp9;
 	double _tp10;
 	double _tp11;
@@ -10644,15 +10644,16 @@ static int _tr114(mlp) MLINK mlp;
 	double _tp17;
 	double _tp18;
 	double _tp19;
+	double _tp20;
 	double _rp0;
 	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetString( mlp, &_tp2) ) goto L1;
-	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
+	if ( ! MLGetString( mlp, &_tp3) ) goto L2;
 	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
 	if ( ! MLGetInteger( mlp, &_tp5) ) goto L4;
 	if ( ! MLGetInteger( mlp, &_tp6) ) goto L5;
 	if ( ! MLGetInteger( mlp, &_tp7) ) goto L6;
-	if ( ! MLGetReal( mlp, &_tp8) ) goto L7;
+	if ( ! MLGetInteger( mlp, &_tp8) ) goto L7;
 	if ( ! MLGetReal( mlp, &_tp9) ) goto L8;
 	if ( ! MLGetReal( mlp, &_tp10) ) goto L9;
 	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
@@ -10664,13 +10665,15 @@ static int _tr114(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp17) ) goto L16;
 	if ( ! MLGetReal( mlp, &_tp18) ) goto L17;
 	if ( ! MLGetReal( mlp, &_tp19) ) goto L18;
-	if ( ! MLNewPacket(mlp) ) goto L19;
+	if ( ! MLGetReal( mlp, &_tp20) ) goto L19;
+	if ( ! MLNewPacket(mlp) ) goto L20;
 
-	_rp0 = msrvfns(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19);
+	_rp0 = msrvfns(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2:	MLReleaseString(mlp, _tp2);
+L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3:	MLReleaseString(mlp, _tp3);
+L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
@@ -11710,7 +11713,7 @@ static struct func {
 		{14, 0, _tr111, "polemass" },
 		{13, 0, _tr112, "msbarmasslow" },
 		{18, 0, _tr113, "msrmass" },
-		{19, 0, _tr114, "msrvfns" },
+		{20, 0, _tr114, "msrvfns" },
 		{24, 0, _tr115, "nrqcd" },
 		{25, 0, _tr116, "massiter" },
 		{25, 0, _tr117, "massexpand" },
@@ -12041,10 +12044,10 @@ static const char* evalstrs[] = {
 	"der, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lamb",
 	"da, R] computes the MSR running of the quark masses.\"",
 	(const char*)0,
-	"MSRVFNS::usage = \"MSRVFNS[type, method, orderAlpha, runAlpha, or",
-	"der, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, m",
-	"u2, R] computes the MSR running of the quark masses with flavor ",
-	"matching.\"",
+	"MSRVFNS::usage = \"MSRVFNS[up, type, method, orderAlpha, runAlpha",
+	", order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, mu",
+	"1, mu2, R] computes the MSR running of the quark masses with fla",
+	"vor matching.\"",
 	(const char*)0,
 	"NRQCD::usage = \"NRQCD[n, l, j, s, charm, scheme, method, orderAl",
 	"pha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, mu",
@@ -12559,7 +12562,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"PoleMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_, muT_,                 mB_, muB_, mC_, muC_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC,                  mu}", 111);
 	if (_res) _res = _definepattern(mlp, (char *)"MSbarMassLow[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_,                 muB_, mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 112);
 	if (_res) _res = _definepattern(mlp, (char *)"MSRMass[type_, method_, orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, lambda_, mu_, R_]", (char *)"{type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB,                  mC, muC, lambda, mu, R}", 113);
-	if (_res) _res = _definepattern(mlp, (char *)"MSRVFNS[type_, method_, orderAlpha_, runAlpha_, order_, run_,                 nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_, mu1_,                 mu2_, R_]", (char *)"{type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz,                  mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R}", 114);
+	if (_res) _res = _definepattern(mlp, (char *)"MSRVFNS[up_, type_, method_, orderAlpha_, runAlpha_, order_,                 run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_,                 mu1_, mu2_, R_]", (char *)"{up, type, method, orderAlpha, runAlpha, order, run, nf, Mz,                  aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R}", 114);
 	if (_res) _res = _definepattern(mlp, (char *)"NRQCD[n_, l_, j_, s_, charm_, scheme_, method_, orderAlpha_, runAlpha_,                 order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_, mC_, muC_,                 lambda_, lam_, mu_, R_]", (char *)"{n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order,                  run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, lam, mu, R}", 115);
 	if (_res) _res = _definepattern(mlp, (char *)"MassIter[n_, l_, j_, s_, charm_, scheme_, method_, orderAlpha_,                 runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_,                 mC_, muC_, mass_, lambda_, lam_, mu_, R_]", (char *)"{n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order,                  run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda, lam,                  mu, R}", 116);
 	if (_res) _res = _definepattern(mlp, (char *)"MassExpand[n_, l_, j_, s_, charm_, scheme_, method_, orderAlpha_,                 runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_,                 mC_, muC_, mass_, lambda_, lam_, mu_, R_]", (char *)"{n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order,                  run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda, lam,                  mu, R}", 117);
