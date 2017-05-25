@@ -3329,8 +3329,8 @@ end subroutine f90OptimalR
     alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
     mT, muT, mB, muB, mC, muC)
 
-    alphaMass = [ Running(nl, run, alphaAll, lambda1), &
-    Running(nl - 1, run, alphaAll, lambda2) ]
+    alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
+    Running(nl, run, alphaAll, lambda1) ]
 
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), MSR, n, l, j, s )
@@ -3371,8 +3371,8 @@ end subroutine f90OptimalR
     alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
     mT, muT, mB, muB, mC, muC)
 
-    alphaMass = [ Running(nl, run, alphaAll, lambda1), &
-    Running(nl - 1, run, alphaAll, lambda2) ]
+    alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
+    Running(nl, run, alphaAll, lambda1) ]
 
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), MSR, n, l, j, s )
@@ -3414,8 +3414,8 @@ end subroutine f90OptimalR
     alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
     mT, muT, mB, muB, mC, muC)
 
-    alphaMass = [ Running(nl, run, alphaAll, lambda1), &
-    Running(nl - 1, run, alphaAll, lambda2) ]
+    alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
+    Running(nl, run, alphaAll, lambda1) ]
 
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), MSR, n, l, j, s )
@@ -3456,8 +3456,8 @@ end subroutine f90OptimalR
     alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
     mT, muT, mB, muB, mC, muC)
 
-    alphaMass = [ Running(nl, run, alphaAll, lambda1), &
-    Running(nl - 1, run, alphaAll, lambda2) ]
+    alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
+    Running(nl, run, alphaAll, lambda1) ]
 
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), MSR, n, l, j, s )

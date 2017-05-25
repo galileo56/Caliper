@@ -8,7 +8,7 @@ module NRQCDClass
     private
     real (dp), dimension(0:4,0:3) :: c, d
     character (len = 5)           :: scheme, up
-    real (dp)                     :: mH, harm, rat, mc
+    real (dp)                     :: mH, harm, rat, mC
     type (Running)                :: alphaMass
     type (Alpha)                  :: alphaOb
     type (AnomDim)                :: Andim
@@ -44,24 +44,23 @@ module NRQCDClass
 
     if ( up(:2) == 'up' ) then
       InNRQCD%alphaMass = MSR%RunArray(2)
-    else if ( up(:2) == 'down' ) then
+    else if ( up(:4) == 'down' ) then
       InNRQCD%alphaMass = MSR%RunArray(1)
     end if
 
     InNRQCD%n = n; nf = MSR%numFlav() ; alphaScheme = InNRQCD%alphaMass%scheme()
-    InNRQCD%Andim = InNRQCD%alphaMass%adim()
+    InNRQCD%Andim = InNRQCD%alphaMass%adim(); InNRQCD%up = up; InNRQCD%l = l
     InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); InNRQCD%nf = nf; InNRQCD%c = 0
     InNRQCD%harm = Harmonic(n + l); InNRQCD%listFact = factList(3)
-    InNRQCD%alphaOb = MSR%AlphaAll(); InNRQCD%l = l
-    beta = InNRQCD%Andim%betaQCD('beta'); InNRQCD%up = up
+    InNRQCD%alphaOb = MSR%AlphaAll(); beta = InNRQCD%Andim%betaQCD('beta')
 
     if ( up(:2) == 'up' ) then
       nl = nf
-    else if ( up(:2) == 'down' ) then
+    else if ( up(:4) == 'down' ) then
       nl = nf - 1
     end if
 
-    InNRQCD%nl = nl
+    InNRQCD%nl = nl; InNRQCD%MSR = MSR
 
     if (nf == 5) then
       InNRQCD%rat = InNRQCD%alphaOb%scales('muT')/InNRQCD%mH
@@ -232,7 +231,8 @@ module NRQCDClass
       Rmass = self%mH; mass = self%mH
     else if ( self%scheme(:3) == 'MSR' ) then
       coefMSR(0,:) = R * self%andim%MSRDelta(self%scheme); Rmass = R
-      mass = self%alphaMass%MSRmass(self%scheme, order, R, lambda, method)
+      mass = self%MSR%MSRmass(self%up, self%scheme, order, R, lambda, method)
+      ! mass = self%AlphaMass%MSRmass(self%scheme, order, R, lambda, method)
     end if
 
     logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / mass) + self%harm, 3 )
@@ -278,15 +278,15 @@ module NRQCDClass
 
     end if
 
-    if ( charm(:3) == 'yes'   ) then
-       list(2) = list(2) + self%DeltaCharm(alp, mass)/2
-    else if ( charm(:5) == '0-bin' ) then
-      list(2) = list(2) + self%DeltaCharmBin(alp, mass)/2
-    end if
-
-    if ( charm(:3) == 'yes' .and. self%scheme(:4) /= 'pole' ) then
-      list(2) = list(2) + Rmass/mass * alphaList(2) * deltaCharm2(self%mc/Rmass)
-    end if
+    ! if ( charm(:3) == 'yes'   ) then
+    !    list(2) = list(2) + self%DeltaCharm(alp, mass)/2
+    ! else if ( charm(:5) == '0-bin' ) then
+    !   list(2) = list(2) + self%DeltaCharmBin(alp, mass)/2
+    ! end if
+    !
+    ! if ( charm(:3) == 'yes' .and. self%scheme(:4) /= 'pole' ) then
+    !   list(2) = list(2) + Rmass/mass * alphaList(2) * deltaCharm2(self%mc/Rmass)
+    ! end if
 
     list(5) = mass - self%mH
 
@@ -358,15 +358,15 @@ module NRQCDClass
 
     list = mTree * list; list(0) = list(0) + self%mH - mass
 
-    if ( charm(:3) == 'yes' ) then
-       list(2) = list(2) + mTree * self%DeltaCharm(alp, mTree)/2
-    else if ( charm(:5) == '0-bin' ) then
-      list(2) = list(2) - mTree * self%DeltaCharmBin(alp, mTree)/2
-    end if
-
-    if ( charm(:3) == 'yes' .and. self%scheme(:4) /= 'pole' ) then
-      list(2) = list(2) - Rmass * alphaList(2) * deltaCharm2(self%mc/Rmass)
-    end if
+    ! if ( charm(:3) == 'yes' ) then
+    !    list(2) = list(2) + mTree * self%DeltaCharm(alp, mTree)/2
+    ! else if ( charm(:5) == '0-bin' ) then
+    !   list(2) = list(2) - mTree * self%DeltaCharmBin(alp, mTree)/2
+    ! end if
+    !
+    ! if ( charm(:3) == 'yes' .and. self%scheme(:4) /= 'pole' ) then
+    !   list(2) = list(2) - Rmass * alphaList(2) * deltaCharm2(self%mc/Rmass)
+    ! end if
 
   end function MassIter
 
