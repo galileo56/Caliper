@@ -1,18 +1,19 @@
 module NRQCDClass
   use Constants, only: dp, pi2, d1mach, Pi ;  use RunningClass; use AlphaClass
-  use AnomDimClass; implicit none ; private
+  use AnomDimClass; use VFNSMSRClass; implicit none ; private
 
 !ccccccccccccccc
 
   type, public                    :: NRQCD
     private
     real (dp), dimension(0:4,0:3) :: c, d
-    character (len = 5)           :: scheme
-    real (dp)                     :: mH, harm, rat, mc
+    character (len = 5)           :: scheme, up
+    real (dp)                     :: mH, harm, rat, mC
     type (Running)                :: alphaMass
     type (Alpha)                  :: alphaOb
     type (AnomDim)                :: Andim
-    integer                       :: n, l, nl
+    type (VFNSMSR)                :: MSR
+    integer                       :: n, l, nl, nf
     integer, dimension(0:3)       :: listFact
 
   contains
@@ -33,24 +34,37 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  type (NRQCD) function InNRQCD(scheme, alphaMass, n, l, j, s)
+  type (NRQCD) function InNRQCD(up, scheme, MSR, n, l, j, s)
     integer            , intent(in) :: n, l, j, s
-    character (len = *), intent(in) :: scheme
-    type (Running)     , intent(in) :: alphaMass
+    character (len = *), intent(in) :: scheme, up
+    type (VFNSMSR)     , intent(in) :: MSR
     real (dp)     , dimension(0:4)  :: beta
     character (len = 5)             :: alphaScheme
-    integer                         :: nl, i, jj, k
+    integer                         :: nf, nl, i, jj, k
 
-    InNRQCD%alphaMass = alphaMass; InNRQCD%n = n; nl = alphaMass%numFlav()
-    InNRQCD%Andim = InNRQCD%alphaMass%adim(); alphaScheme = alphaMass%scheme()
-    InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); InNRQCD%nl = nl; InNRQCD%c = 0
+    if ( up(:2) == 'up' ) then
+      InNRQCD%alphaMass = MSR%RunArray(2)
+    else if ( up(:4) == 'down' ) then
+      InNRQCD%alphaMass = MSR%RunArray(1)
+    end if
+
+    InNRQCD%n = n; nf = MSR%numFlav() ; alphaScheme = InNRQCD%alphaMass%scheme()
+    InNRQCD%Andim = InNRQCD%alphaMass%adim(); InNRQCD%up = up; InNRQCD%l = l
+    InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); InNRQCD%nf = nf; InNRQCD%c = 0
     InNRQCD%harm = Harmonic(n + l); InNRQCD%listFact = factList(3)
-    InNRQCD%alphaOb = alphaMass%AlphaAll(); InNRQCD%l = l
-    beta = InNRQCD%Andim%betaQCD('beta')
+    InNRQCD%alphaOb = MSR%AlphaAll(); beta = InNRQCD%Andim%betaQCD('beta')
 
-    if (InNRQCD%nl == 5) then
+    if ( up(:2) == 'up' ) then
+      nl = nf
+    else if ( up(:4) == 'down' ) then
+      nl = nf - 1
+    end if
+
+    InNRQCD%nl = nl; InNRQCD%MSR = MSR
+
+    if (nf == 5) then
       InNRQCD%rat = InNRQCD%alphaOb%scales('muT')/InNRQCD%mH
-    else if (InNRQCD%nl == 4) then
+    else if (nf == 4) then
       InNRQCD%rat = InNRQCD%alphaOb%scales('muB')/InNRQCD%mH
     end if
 
@@ -89,8 +103,8 @@ module NRQCDClass
       end do
     end do
 
-    if (nl == 5) InNRQCD%mc = InNRQCD%alphaOb%scales('mB')
-    if (nl == 4) InNRQCD%mc = InNRQCD%alphaOb%scales('mC')
+    if (nf == 5) InNRQCD%mc = InNRQCD%alphaOb%scales('mB')
+    if (nf == 4) InNRQCD%mc = InNRQCD%alphaOb%scales('mC')
 
   end function InNRQCD
 
@@ -100,13 +114,7 @@ module NRQCDClass
     class (NRQCD), intent(inout) :: self
     real (dp)    , intent(in)    :: m, mu
 
-    self%mH = m
-
-    if (self%nl == 5) then
-      call self%alphaMass%SetMTop(m, mu)
-    else if (self%nl == 4) then
-      call self%alphaMass%SetMBottom(m, mu)
-    end if
+    self%mH = m;    call self%MSR%setMass(m, mu)
 
   end subroutine setMass
 
@@ -203,28 +211,29 @@ module NRQCDClass
     real (dp), dimension(0:4,0:4)   :: deltaLog  ! (power, order)
     real (dp), dimension(0:4,4)     :: coefMSR
     real (dp), dimension(4,0:3)     :: c
-    real (dp)                       :: alp, Rmass, mass, factor
+    real (dp)                       :: alp, Rmass, mass, factor, deltaM
     integer                         :: i, j, k, l
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
     alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
-    factor = - 2 * alp**2/9/self%n**2 ; logList(0) = 1
+    factor = - 2 * alp**2/9/self%n**2 ; logList(0) = 1 ; deltaM = 0
 
     if ( self%scheme(:4) == 'pole' ) then
       delta(1:) = 0; Rmass = 0; mass = self%mH
     else if ( self%scheme(:5) == 'MSbar' ) then
-      coefMSR(0,:) = self%mH * self%andim%MSRDelta('MSRp')
+      coefMSR(0,:) = self%mH * self%Andim%MSRDelta('MSRp')
       Rmass = self%mH; mass = self%mH
     else if ( self%scheme(:3) == 'MSR' ) then
       coefMSR(0,:) = R * self%andim%MSRDelta(self%scheme); Rmass = R
-      mass = self%alphaMass%MSRmass(self%scheme, order, R, lambda, method)
+      mass = self%MSR%MSRmass(self%up, self%scheme, order, R, lambda, method)
     end if
 
     logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / mass) + self%harm, 3 )
 
     if ( self%scheme(:4) == 'pole' ) then
 
-      list(1:4) = matmul( self%c(:3,:), logList );  list(4) = list(4) + self%c(4,0) * log(alp)
+      list(1:4) = matmul( self%c(:3,:), logList )
+      list(4) = list(4) + self%c(4,0) * log(alp)
       list(1:4) = factor * alphaList(:3) * list(1:4)
 
     else
@@ -233,6 +242,14 @@ module NRQCDClass
       call AddAlpha( coefMSR, alphaList(1:) )        ; c = 0; deltaLog = 0
       delta(1:) = DeltaComputer(coefMSR, lgmList, 0)/mass; deltaLog(0,0) = 1
       deltaLog(1,1:2) = delta(1:2) - [ 0._dp, delta(1)**2/2 ]
+
+      if ( self%scheme(:3) == 'MSR' .and. self%up(:2) == 'up' ) then
+        deltaM = self%MSR%DeltaM(self%up, Rmass)
+      else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
+        deltaM = 4 * log(self%rat)/9 + deltaCharm2(self%rat) - 71._dp/144 - pi2/18
+      end if
+
+      deltaM = Rmass * alphaList(2) * deltaM/mass
 
       do i = 1, 4
         do k = 0, i - 1
@@ -261,16 +278,8 @@ module NRQCDClass
         list(j) = sum( delta(:j) * list(j:0:-1) )
       end do
 
-    end if
+      list(2) = list(2) + deltaM + self%DeltaCharmBin(alp, mass)/2
 
-    if ( charm(:3) == 'yes'   ) then
-       list(2) = list(2) + self%DeltaCharm(alp, mass, self%mC)/2
-    else if ( charm(:5) == '0-bin' ) then
-      list(2) = list(2) + self%DeltaCharmBin(alp, mass, self%mC)/2
-    end if
-
-    if ( charm(:3) == 'yes' .and. self%scheme(:4) /= 'pole' ) then
-      list(2) = list(2) + Rmass/mass * alphaList(2) * deltaCharm2(self%mc/Rmass)
     end if
 
     list(5) = mass - self%mH
@@ -288,21 +297,22 @@ module NRQCDClass
     real (dp), dimension(0:3)       :: logList
     real (dp), dimension(0:4)       :: delta, lgmList, deltaInv
     real (dp), dimension(0:4,4)     :: coefMSR
-    real (dp)                       :: alp, Rmass, mass, factor, mTree
+    real (dp)                       :: alp, Rmass, mass, factor, mTree, deltaM
     integer                         :: n
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
     alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
     factor = 2 * alp**2/9/self%n**2 ; logList(0) = 1; mTree = mUpsilon/2
+    deltaM = 0
 
     if ( self%scheme(:4) == 'pole' ) then
       delta(1:) = 0; Rmass = 0; mass = self%mH
     else if ( self%scheme(:5) == 'MSbar' ) then
-      coefMSR(0,:) = self%andim%MSRDelta('MSRp')
+      coefMSR(0,:) = self%Andim%MSRDelta('MSRp')
       Rmass = mTree; mass = self%mH
     else if ( self%scheme(:3) == 'MSR' ) then
       coefMSR(0,:) = self%andim%MSRDelta(self%scheme); Rmass = R
-      mass = self%alphaMass%MSRmass(self%scheme, order, R, lambda, method)
+      mass = self%MSR%MSRmass(self%up, self%scheme, order, R, lambda, method)
     end if
 
     logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / mTree) + self%harm, 3 )
@@ -312,6 +322,14 @@ module NRQCDClass
     list(1:) = factor * alphaList(:3) * list(1:)
 
     if ( self%scheme(:4) /= 'pole' ) then
+
+      if ( self%scheme(:3) == 'MSR' .and. self%up(:2) == 'up' ) then
+        deltaM = self%MSR%DeltaM(self%up, Rmass)
+      else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
+        deltaM = 4 * log(self%rat)/9 + deltaCharm2(self%rat) - 71._dp/144 - pi2/18
+      end if
+
+      deltaM = Rmass * alphaList(2) * deltaM/mTree
 
       call self%andim%expandAlpha(coefMSR); lgmList = PowList( log(mu/Rmass), 4 )
       call AddAlpha( coefMSR, alphaList(1:) )
@@ -341,17 +359,9 @@ module NRQCDClass
 
     end if
 
+    list(2) = list(2) - deltaM - self%DeltaCharmBin(alp, mTree)/2
+
     list = mTree * list; list(0) = list(0) + self%mH - mass
-
-    if ( charm(:3) == 'yes' ) then
-       list(2) = list(2) + mTree * self%DeltaCharm(alp, mTree, self%mC)/2
-    else if ( charm(:5) == '0-bin' ) then
-      list(2) = list(2) - mTree * self%DeltaCharmBin(alp, mTree, self%mC)/2
-    end if
-
-    if ( charm(:3) == 'yes' .and. self%scheme(:4) /= 'pole' ) then
-      list(2) = list(2) - Rmass * alphaList(2) * deltaCharm2(self%mc/Rmass)
-    end if
 
   end function MassIter
 
@@ -618,15 +628,19 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  pure real (dp) function DeltaCharmBin(self, alpha, mb, mc)
+  pure real (dp) function DeltaCharmBin(self, alpha, mb)
     class (NRQCD), intent(in)      :: self
-    real (dp)    , intent(in)      :: mb, mc, alpha
+    real (dp)    , intent(in)      :: mb, alpha
     real (dp)                      :: r, lg
 
-    r = 3 * self%n * mc/2/mb/alpha; DeltaCharmBin = 0
+    if ( self%up(:4) == 'down' ) then
+      DeltaCharmBin = self%DeltaCharm(alpha, mb); return
+    end if
+
+    r = 3 * self%n * self%mc/2/mb/alpha; DeltaCharmBin = 0
 
     if (100 * r > 1 ) then
-      DeltaCharmBin = self%DeltaCharm(alpha, mb, mc) - self%ZeroBin(alpha, mb, mc)
+      DeltaCharmBin = self%DeltaCharm(alpha, mb) - self%ZeroBin(alpha, mb)
       return
     else if ( r <= tiny(1._dp) ) then
       DeltaCharmBin = 0; return
@@ -699,13 +713,13 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  pure real (dp) function DeltaCharm(self, alpha, mb, mc)
+  pure real (dp) function DeltaCharm(self, alpha, mb)
     class (NRQCD), intent(in)      :: self
-    real (dp)    , intent(in)      :: mb, mc, alpha
+    real (dp)    , intent(in)      :: mb, alpha
     real (dp)                      :: r, root, ArTan
     real (dp), dimension(4*self%n) :: rho
 
-    DeltaCharm = 0; r = 3 * self%n * mc/2/mb/alpha; rho = powList(r,4*self%n)
+    DeltaCharm = 0; r = 3 * self%n * self%mc/2/mb/alpha; rho = powList(r,4*self%n)
 
     if ( r > 1 ) then
 
@@ -794,12 +808,12 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  pure real (dp) function ZeroBin(self, alpha, mb, mc)
+  pure real (dp) function ZeroBin(self, alpha, mb)
     class (NRQCD), intent(in)      :: self
-    real (dp)    , intent(in)      :: mb, mc, alpha
+    real (dp)    , intent(in)      :: mb, alpha
     real (dp)                      :: rho
 
-    ZeroBin = 0; rho = 3 * self%n * mc/2/mb/alpha
+    ZeroBin = 0; rho = 3 * self%n * self%mc/2/mb/alpha
 
     if (self%n == 1) then
 

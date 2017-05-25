@@ -213,6 +213,8 @@ CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o.requires: CMakeFiles/subdir_mods.dir/
 CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o: CMakeFiles/subdir_mods.dir/constants.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o.requires: CMakeFiles/subdir_mods.dir/runningclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o: CMakeFiles/subdir_mods.dir/runningclass.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o.requires: CMakeFiles/subdir_mods.dir/vfnsmsrclass.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o: CMakeFiles/subdir_mods.dir/vfnsmsrclass.mod.stamp
 CMakeFiles/subdir_mods.dir/nrqcdclass.mod.proxy: CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o.provides
 CMakeFiles/subdir_mods.dir/lib/NRQCD.F90.o.provides.build:
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod nrqcdclass CMakeFiles/subdir_mods.dir/nrqcdclass.mod.stamp GNU
@@ -320,21 +322,21 @@ CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides.build:
 CMakeFiles/subdir_mods.dir/build: CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides.build
 
 
-CMakeFiles/subdir_mods.dir/lib/VFNS.F90.o.requires: CMakeFiles/subdir_mods.dir/alphaclass.mod.proxy
-CMakeFiles/subdir_mods.dir/lib/VFNS.F90.o: CMakeFiles/subdir_mods.dir/alphaclass.mod.stamp
-CMakeFiles/subdir_mods.dir/lib/VFNS.F90.o.requires: CMakeFiles/subdir_mods.dir/anomdimclass.mod.proxy
-CMakeFiles/subdir_mods.dir/lib/VFNS.F90.o: CMakeFiles/subdir_mods.dir/anomdimclass.mod.stamp
-CMakeFiles/subdir_mods.dir/lib/VFNS.F90.o.requires: CMakeFiles/subdir_mods.dir/constants.mod.proxy
-CMakeFiles/subdir_mods.dir/lib/VFNS.F90.o: CMakeFiles/subdir_mods.dir/constants.mod.stamp
-CMakeFiles/subdir_mods.dir/lib/VFNS.F90.o.requires: CMakeFiles/subdir_mods.dir/quadpack.mod.proxy
-CMakeFiles/subdir_mods.dir/lib/VFNS.F90.o: CMakeFiles/subdir_mods.dir/quadpack.mod.stamp
-CMakeFiles/subdir_mods.dir/lib/VFNS.F90.o.requires: CMakeFiles/subdir_mods.dir/runningclass.mod.proxy
-CMakeFiles/subdir_mods.dir/lib/VFNS.F90.o: CMakeFiles/subdir_mods.dir/runningclass.mod.stamp
-CMakeFiles/subdir_mods.dir/vfnsmsrclass.mod.proxy: CMakeFiles/subdir_mods.dir/lib/VFNS.F90.o.provides
-CMakeFiles/subdir_mods.dir/lib/VFNS.F90.o.provides.build:
+CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o.requires: CMakeFiles/subdir_mods.dir/alphaclass.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o: CMakeFiles/subdir_mods.dir/alphaclass.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o.requires: CMakeFiles/subdir_mods.dir/anomdimclass.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o: CMakeFiles/subdir_mods.dir/anomdimclass.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o.requires: CMakeFiles/subdir_mods.dir/constants.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o: CMakeFiles/subdir_mods.dir/constants.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o.requires: CMakeFiles/subdir_mods.dir/quadpack.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o: CMakeFiles/subdir_mods.dir/quadpack.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o.requires: CMakeFiles/subdir_mods.dir/runningclass.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o: CMakeFiles/subdir_mods.dir/runningclass.mod.stamp
+CMakeFiles/subdir_mods.dir/vfnsmsrclass.mod.proxy: CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o.provides
+CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o.provides.build:
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod vfnsmsrclass CMakeFiles/subdir_mods.dir/vfnsmsrclass.mod.stamp GNU
-	$(CMAKE_COMMAND) -E touch CMakeFiles/subdir_mods.dir/lib/VFNS.F90.o.provides.build
-CMakeFiles/subdir_mods.dir/build: CMakeFiles/subdir_mods.dir/lib/VFNS.F90.o.provides.build
+	$(CMAKE_COMMAND) -E touch CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o.provides.build
+CMakeFiles/subdir_mods.dir/build: CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o.provides.build
 
 CMakeFiles/subdir_mods.dir/lib/quadpack.F90.o.requires: CMakeFiles/subdir_mods.dir/constants.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/quadpack.F90.o: CMakeFiles/subdir_mods.dir/constants.mod.stamp

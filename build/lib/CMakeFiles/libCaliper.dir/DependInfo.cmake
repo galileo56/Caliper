@@ -24,7 +24,7 @@ set(CMAKE_DEPENDS_CHECK_Fortran
   "/Users/vmateu/GitHub/Caliper/lib/Singular.F90" "/Users/vmateu/GitHub/Caliper/build/lib/CMakeFiles/libCaliper.dir/Singular.F90.o"
   "/Users/vmateu/GitHub/Caliper/lib/SpecFun.F90" "/Users/vmateu/GitHub/Caliper/build/lib/CMakeFiles/libCaliper.dir/SpecFun.F90.o"
   "/Users/vmateu/GitHub/Caliper/lib/Spline.F90" "/Users/vmateu/GitHub/Caliper/build/lib/CMakeFiles/libCaliper.dir/Spline.F90.o"
-  "/Users/vmateu/GitHub/Caliper/lib/VFNS.F90" "/Users/vmateu/GitHub/Caliper/build/lib/CMakeFiles/libCaliper.dir/VFNS.F90.o"
+  "/Users/vmateu/GitHub/Caliper/lib/VFNSMSR.F90" "/Users/vmateu/GitHub/Caliper/build/lib/CMakeFiles/libCaliper.dir/VFNSMSR.F90.o"
   "/Users/vmateu/GitHub/Caliper/lib/quadpack.F90" "/Users/vmateu/GitHub/Caliper/build/lib/CMakeFiles/libCaliper.dir/quadpack.F90.o"
   )
 set(CMAKE_Fortran_COMPILER_ID "GNU")
