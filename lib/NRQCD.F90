@@ -249,7 +249,13 @@ module NRQCDClass
       delta(1:) = DeltaComputer(coefMSR, lgmList, 0)/mass; deltaLog(0,0) = 1
       deltaLog(1,1:2) = delta(1:2) - [ 0._dp, delta(1)**2/2 ]
 
-      deltaM = Rmass * alphaList(2) * self%MSR%DeltaM(self%up, Rmass)/mass
+      if ( self%scheme(:3) == 'MSR' ) then
+        deltaM = self%MSR%DeltaM(self%up, Rmass)
+      else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
+        deltaM = 4 * log(self%rat)/9 + deltaCharm2(self%rat) - 71._dp/144 - pi2/18
+      end if
+
+      deltaM = Rmass * alphaList(2) * deltaM/mass
 
       do i = 1, 4
         do k = 0, i - 1
