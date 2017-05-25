@@ -114,13 +114,7 @@ module NRQCDClass
     class (NRQCD), intent(inout) :: self
     real (dp)    , intent(in)    :: m, mu
 
-    self%mH = m
-
-    if (self%nl == 5) then
-      call self%alphaMass%SetMTop(m, mu)
-    else if (self%nl == 4) then
-      call self%alphaMass%SetMBottom(m, mu)
-    end if
+    self%mH = m;    call self%MSR%setMass(m, mu)
 
   end subroutine setMass
 
@@ -249,7 +243,7 @@ module NRQCDClass
       delta(1:) = DeltaComputer(coefMSR, lgmList, 0)/mass; deltaLog(0,0) = 1
       deltaLog(1,1:2) = delta(1:2) - [ 0._dp, delta(1)**2/2 ]
 
-      if ( self%scheme(:3) == 'MSR' ) then
+      if ( self%scheme(:3) == 'MSR' .and. self%up(:2) == 'up'  ) then
         deltaM = self%MSR%DeltaM(self%up, Rmass)
       else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
         deltaM = 4 * log(self%rat)/9 + deltaCharm2(self%rat) - 71._dp/144 - pi2/18
