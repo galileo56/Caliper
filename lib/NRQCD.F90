@@ -34,22 +34,26 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  type (NRQCD) function InNRQCD(up, scheme, alphaMass, n, l, j, s)
+  type (NRQCD) function InNRQCD(up, scheme, MSR, n, l, j, s)
     integer            , intent(in) :: n, l, j, s
     character (len = *), intent(in) :: scheme, up
-    type (Running)     , intent(in) :: alphaMass
+    type (VFNSMSR)     , intent(in) :: MSR
     real (dp)     , dimension(0:4)  :: beta
     character (len = 5)             :: alphaScheme
     integer                         :: nf, nl, i, jj, k
 
-    InNRQCD%alphaMass = alphaMass; InNRQCD%n = n; nf = alphaMass%numFlav()
-    InNRQCD%Andim = InNRQCD%alphaMass%adim(); alphaScheme = alphaMass%scheme()
+    if ( up(:2) == 'up' ) then
+      InNRQCD%alphaMass = MSR%RunArray(2)
+    else if ( up(:2) == 'down' ) then
+      InNRQCD%alphaMass = MSR%RunArray(1)
+    end if
+
+    InNRQCD%n = n; nf = MSR%numFlav() ; alphaScheme = InNRQCD%alphaMass%scheme()
+    InNRQCD%Andim = InNRQCD%alphaMass%adim()
     InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); InNRQCD%nf = nf; InNRQCD%c = 0
     InNRQCD%harm = Harmonic(n + l); InNRQCD%listFact = factList(3)
-    InNRQCD%alphaOb = alphaMass%AlphaAll(); InNRQCD%l = l
+    InNRQCD%alphaOb = MSR%AlphaAll(); InNRQCD%l = l
     beta = InNRQCD%Andim%betaQCD('beta'); InNRQCD%up = up
-
-    ! InNRQCD%MSR = VFNSMSR(AlphaMass)
 
     if ( up(:2) == 'up' ) then
       nl = nf

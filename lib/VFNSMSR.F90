@@ -13,13 +13,13 @@ module VFNSMSRClass
     integer                      :: nf, nl, run
     type (Running), dimension(2) :: AlphaMass
     type (AnomDim)               :: AnDim
-    type (Alpha)                 :: AlphaAll
+    type (Alpha)                 :: AlphaOb
     real (dp)                    :: mH, mL, beta0, rat
     real (dp), dimension(0:4)    :: bHat
 
     contains
 
-    procedure, pass(self), public :: MSRMass, setMass
+    procedure, pass(self), public :: MSRMass, setMass, RunArray, numFlav, alphaAll
 
   end type VFNSMSR
 
@@ -44,9 +44,39 @@ contains
      AnDim       = AlphaMass(2)%adim()        ; InitMSR%bHat       = AnDim%betaQCD('bHat')
      InitMSR%AnDim = AnDim; bHat = AnDim%betaQCD('beta'); InitMSR%beta0 = bHat(0)
      InitMSR%rat = InitMSR%mL/InitMSR%mH
-     InitMSR%AlphaAll = AlphaMass(1)%AlphaAll()
+     InitMSR%AlphaOb = AlphaMass(1)%AlphaAll()
 
    end function InitMSR
+
+!ccccccccccccccc
+
+  function RunArray(self,i) result(res)
+    class (VFNSMSR) , intent(in) :: self
+    integer         , intent(in) :: i
+    type (Running)               :: res
+
+    res = self%AlphaMass(i)
+
+  end function RunArray
+
+!ccccccccccccccc
+
+  function AlphaAll(self) result(res)
+    class (VFNSMSR) , intent(in) :: self
+    type (Alpha)                 :: res
+
+    res = self%AlphaOb
+
+  end function AlphaAll
+
+!ccccccccccccccc
+
+  integer function numFlav(self)
+    class (VFNSMSR) , intent(in) :: self
+
+    numFlav = self%nf
+
+  end function numFlav
 
 !ccccccccccccccc
 
@@ -84,10 +114,12 @@ contains
 
     res = self%AlphaMass(2)%MSRMass(type, order, R, lambda, method)
 
+    if ( self%mL < tiny(1._dp) ) return
+
     if ( type(:4) == 'MSRn' .and. order >= 3 ) then
 
       res = res + self%mH * deltaCharmNh(self%rat) * &
-      ( self%AlphaAll%alphaQCD(self%nf + 1, self%mH)/Pi )**3
+      ( self%AlphaOb%alphaQCD(self%nf + 1, self%mH)/Pi )**3
 
     end if
 

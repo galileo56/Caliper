@@ -322,21 +322,21 @@ lib/CMakeFiles/libCaliper.dir/SpecFun.F90.o.provides.build:
 lib/CMakeFiles/libCaliper.dir/build: lib/CMakeFiles/libCaliper.dir/SpecFun.F90.o.provides.build
 
 
-lib/CMakeFiles/libCaliper.dir/VFNS.F90.o.requires: lib/CMakeFiles/libCaliper.dir/alphaclass.mod.proxy
-lib/CMakeFiles/libCaliper.dir/VFNS.F90.o: lib/CMakeFiles/libCaliper.dir/alphaclass.mod.stamp
-lib/CMakeFiles/libCaliper.dir/VFNS.F90.o.requires: lib/CMakeFiles/libCaliper.dir/anomdimclass.mod.proxy
-lib/CMakeFiles/libCaliper.dir/VFNS.F90.o: lib/CMakeFiles/libCaliper.dir/anomdimclass.mod.stamp
-lib/CMakeFiles/libCaliper.dir/VFNS.F90.o.requires: lib/CMakeFiles/libCaliper.dir/constants.mod.proxy
-lib/CMakeFiles/libCaliper.dir/VFNS.F90.o: lib/CMakeFiles/libCaliper.dir/constants.mod.stamp
-lib/CMakeFiles/libCaliper.dir/VFNS.F90.o.requires: lib/CMakeFiles/libCaliper.dir/quadpack.mod.proxy
-lib/CMakeFiles/libCaliper.dir/VFNS.F90.o: lib/CMakeFiles/libCaliper.dir/quadpack.mod.stamp
-lib/CMakeFiles/libCaliper.dir/VFNS.F90.o.requires: lib/CMakeFiles/libCaliper.dir/runningclass.mod.proxy
-lib/CMakeFiles/libCaliper.dir/VFNS.F90.o: lib/CMakeFiles/libCaliper.dir/runningclass.mod.stamp
-lib/CMakeFiles/libCaliper.dir/vfnsmsrclass.mod.proxy: lib/CMakeFiles/libCaliper.dir/VFNS.F90.o.provides
-lib/CMakeFiles/libCaliper.dir/VFNS.F90.o.provides.build:
+lib/CMakeFiles/libCaliper.dir/VFNSMSR.F90.o.requires: lib/CMakeFiles/libCaliper.dir/alphaclass.mod.proxy
+lib/CMakeFiles/libCaliper.dir/VFNSMSR.F90.o: lib/CMakeFiles/libCaliper.dir/alphaclass.mod.stamp
+lib/CMakeFiles/libCaliper.dir/VFNSMSR.F90.o.requires: lib/CMakeFiles/libCaliper.dir/anomdimclass.mod.proxy
+lib/CMakeFiles/libCaliper.dir/VFNSMSR.F90.o: lib/CMakeFiles/libCaliper.dir/anomdimclass.mod.stamp
+lib/CMakeFiles/libCaliper.dir/VFNSMSR.F90.o.requires: lib/CMakeFiles/libCaliper.dir/constants.mod.proxy
+lib/CMakeFiles/libCaliper.dir/VFNSMSR.F90.o: lib/CMakeFiles/libCaliper.dir/constants.mod.stamp
+lib/CMakeFiles/libCaliper.dir/VFNSMSR.F90.o.requires: lib/CMakeFiles/libCaliper.dir/quadpack.mod.proxy
+lib/CMakeFiles/libCaliper.dir/VFNSMSR.F90.o: lib/CMakeFiles/libCaliper.dir/quadpack.mod.stamp
+lib/CMakeFiles/libCaliper.dir/VFNSMSR.F90.o.requires: lib/CMakeFiles/libCaliper.dir/runningclass.mod.proxy
+lib/CMakeFiles/libCaliper.dir/VFNSMSR.F90.o: lib/CMakeFiles/libCaliper.dir/runningclass.mod.stamp
+lib/CMakeFiles/libCaliper.dir/vfnsmsrclass.mod.proxy: lib/CMakeFiles/libCaliper.dir/VFNSMSR.F90.o.provides
+lib/CMakeFiles/libCaliper.dir/VFNSMSR.F90.o.provides.build:
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod lib/vfnsmsrclass lib/CMakeFiles/libCaliper.dir/vfnsmsrclass.mod.stamp GNU
-	$(CMAKE_COMMAND) -E touch lib/CMakeFiles/libCaliper.dir/VFNS.F90.o.provides.build
-lib/CMakeFiles/libCaliper.dir/build: lib/CMakeFiles/libCaliper.dir/VFNS.F90.o.provides.build
+	$(CMAKE_COMMAND) -E touch lib/CMakeFiles/libCaliper.dir/VFNSMSR.F90.o.provides.build
+lib/CMakeFiles/libCaliper.dir/build: lib/CMakeFiles/libCaliper.dir/VFNSMSR.F90.o.provides.build
 
 lib/CMakeFiles/libCaliper.dir/quadpack.F90.o.requires: lib/CMakeFiles/libCaliper.dir/constants.mod.proxy
 lib/CMakeFiles/libCaliper.dir/quadpack.F90.o: lib/CMakeFiles/libCaliper.dir/constants.mod.stamp
