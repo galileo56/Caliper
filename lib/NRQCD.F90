@@ -217,29 +217,29 @@ module NRQCDClass
     real (dp), dimension(0:4,0:4)   :: deltaLog  ! (power, order)
     real (dp), dimension(0:4,4)     :: coefMSR
     real (dp), dimension(4,0:3)     :: c
-    real (dp)                       :: alp, Rmass, mass, factor
+    real (dp)                       :: alp, Rmass, mass, factor, deltaM
     integer                         :: i, j, k, l
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
     alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
-    factor = - 2 * alp**2/9/self%n**2 ; logList(0) = 1
+    factor = - 2 * alp**2/9/self%n**2 ; logList(0) = 1 ; deltaM = 0
 
     if ( self%scheme(:4) == 'pole' ) then
       delta(1:) = 0; Rmass = 0; mass = self%mH
     else if ( self%scheme(:5) == 'MSbar' ) then
-      coefMSR(0,:) = self%mH * self%andim%MSRDelta('MSRp')
+      coefMSR(0,:)  = self%mH * self%Andim%MSRDelta('MSRp')
       Rmass = self%mH; mass = self%mH
     else if ( self%scheme(:3) == 'MSR' ) then
       coefMSR(0,:) = R * self%andim%MSRDelta(self%scheme); Rmass = R
       mass = self%MSR%MSRmass(self%up, self%scheme, order, R, lambda, method)
-      ! mass = self%AlphaMass%MSRmass(self%scheme, order, R, lambda, method)
     end if
 
     logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / mass) + self%harm, 3 )
 
     if ( self%scheme(:4) == 'pole' ) then
 
-      list(1:4) = matmul( self%c(:3,:), logList );  list(4) = list(4) + self%c(4,0) * log(alp)
+      list(1:4) = matmul( self%c(:3,:), logList )
+      list(4) = list(4) + self%c(4,0) * log(alp)
       list(1:4) = factor * alphaList(:3) * list(1:4)
 
     else
@@ -248,6 +248,8 @@ module NRQCDClass
       call AddAlpha( coefMSR, alphaList(1:) )        ; c = 0; deltaLog = 0
       delta(1:) = DeltaComputer(coefMSR, lgmList, 0)/mass; deltaLog(0,0) = 1
       deltaLog(1,1:2) = delta(1:2) - [ 0._dp, delta(1)**2/2 ]
+
+      deltaM = Rmass * alphaList(2) * self%MSR%DeltaM(self%up, Rmass)/mass
 
       do i = 1, 4
         do k = 0, i - 1
@@ -276,17 +278,9 @@ module NRQCDClass
         list(j) = sum( delta(:j) * list(j:0:-1) )
       end do
 
-    end if
+      list(2) = list(2) + deltaM + self%DeltaCharmBin(alp, mass)/2
 
-    ! if ( charm(:3) == 'yes'   ) then
-    !    list(2) = list(2) + self%DeltaCharm(alp, mass)/2
-    ! else if ( charm(:5) == '0-bin' ) then
-    !   list(2) = list(2) + self%DeltaCharmBin(alp, mass)/2
-    ! end if
-    !
-    ! if ( charm(:3) == 'yes' .and. self%scheme(:4) /= 'pole' ) then
-    !   list(2) = list(2) + Rmass/mass * alphaList(2) * deltaCharm2(self%mc/Rmass)
-    ! end if
+    end if
 
     list(5) = mass - self%mH
 

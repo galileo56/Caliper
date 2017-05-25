@@ -12,14 +12,15 @@ module VFNSMSRClass
 
     integer                      :: nf, nl, run
     type (Running), dimension(2) :: AlphaMass
-    type (AnomDim)               :: AnDim
+    type (AnomDim), dimension(2) :: AnDim
     type (Alpha)                 :: AlphaOb
     real (dp)                    :: mH, mL, beta0, rat
     real (dp), dimension(0:4)    :: bHat
 
     contains
 
-    procedure, pass(self), public :: MSRMass, setMass, RunArray, numFlav, alphaAll
+    procedure, pass(self), public :: MSRMass, setMass, RunArray, numFlav, &
+    MSRDelta, alphaAll, deltaM
 
   end type VFNSMSR
 
@@ -35,14 +36,15 @@ contains
 
    type (VFNSMSR) function InitMSR(AlphaMass)
      type (Running), dimension(2), intent(in) :: AlphaMass
-     type (AnomDim)                           :: AnDim
+     type (AnomDim), dimension(2)             :: AnDim
      real (dp), dimension(0:4)                :: bHat
 
      InitMSR%AlphaMass = AlphaMass      ; InitMSR%run = AlphaMass(2)%orders('runMass')
      InitMSR%nf  = AlphaMass(2)%numFlav()     ; InitMSR%nl = AlphaMass(1)%numFlav()
      InitMSR%mH  = AlphaMass(2)%scales('mH')  ; InitMSR%mL = AlphaMass(1)%scales('mH')
-     AnDim       = AlphaMass(2)%adim()        ; InitMSR%bHat       = AnDim%betaQCD('bHat')
-     InitMSR%AnDim = AnDim; bHat = AnDim%betaQCD('beta'); InitMSR%beta0 = bHat(0)
+     AnDim       = [ AlphaMass(1)%adim(), AlphaMass(2)%adim() ]
+     InitMSR%bHat = AnDim(2)%betaQCD('bHat')
+     InitMSR%AnDim = AnDim; bHat = AnDim(2)%betaQCD('beta'); InitMSR%beta0 = bHat(0)
      InitMSR%rat = InitMSR%mL/InitMSR%mH
      InitMSR%AlphaOb = AlphaMass(1)%AlphaAll()
 
@@ -80,15 +82,54 @@ contains
 
 !ccccccccccccccc
 
+  real (dp) function DeltaM(self, up, R)
+    class (VFNSMSR)    , intent(in) :: self
+    character (len = *), intent(in) :: up
+    real (dp)          , intent(in) :: R
+
+    if ( up(:2) == 'up' ) then
+      DeltaM = deltaCharm2(self%mL/R)
+    else
+      DeltaM = 0
+    end if
+
+  end function DeltaM
+
+!ccccccccccccccc
+
+  function MSRDelta(self, up, type, R) result(res)
+    class (VFNSMSR)    , intent(in) :: self
+    character (len = *), intent(in) :: type, up
+    real (dp)          , intent(in) :: R
+    real (dp)        , dimension(4) :: res
+    real (dp)                       :: rat
+
+    if ( up(:2) == 'up' ) then
+      res = self%AnDim(2)%MSRDelta(type)        ; rat = self%mL/R
+      res(2) = res(2) + deltaCharm2(rat)
+
+      if ( type(:4) == 'MSRn' ) then
+        res(3) = res(3) + deltaCharm3(self%nf, 0, rat)
+      else if ( type(:4) == 'MSRp' ) then
+        res(3) = res(3) + deltaCharm3(self%nf, 1, rat)
+      end if
+
+    else
+      res = self%AnDim(1)%MSRDelta(type)
+    end if
+
+  end function MSRDelta
+
+!ccccccccccccccc
+
   recursive real (dp) function MSRMass(self, up, type, order, R, lambda, method) result(res)
     class (VFNSMSR)              , intent(in) :: self
     real (dp)                    , intent(in) :: R
     real (dp), optional          , intent(in) :: lambda
-    character (len = *)          , intent(in) :: type, up
-    character (len = *), optional, intent(in) :: method
+    character (len = *)          , intent(in) :: type, up, method
+    integer                      , intent(in) :: order
     real (dp)                  , dimension(4) :: a
     real (dp)                  , dimension(2) :: bet2
-    integer                      , intent(in) :: order
     integer                                   :: neval, ier, i
     real (dp)                                 :: corr, abserr, lambdaQCD, t0, &
     delta, mu, Rstep, delta1, delta2, alpha, alpha2, alpha3, matching, alphaM,&
@@ -211,16 +252,16 @@ contains
       real (dp), intent(in) :: t
       real (dp)             :: gammaR, gammaR2
 
-      gammaR = gammaRcharm2(mol * self%Andim%Gfun(self%run,t) )/bet2(1)
+      gammaR = gammaRcharm2(mol * self%Andim(2)%Gfun(self%run,t) )/bet2(1)
 
       InteAn = (-t)**(- 2 - b1) * gammaR
 
       if (self%run >= 3) then
 
         if ( type(:4) == 'MSRp' ) then
-          gammaR2 = gammaRcharm3(self%nf, 1, mol * self%Andim%Gfun(self%run,t) )
+          gammaR2 = gammaRcharm3(self%nf, 1, mol * self%Andim(2)%Gfun(self%run,t) )
         else if ( type(:4) == 'MSRn' ) then
-          gammaR2 = gammaRcharm3(self%nf, 0, mol * self%Andim%Gfun(self%run,t) )
+          gammaR2 = gammaRcharm3(self%nf, 0, mol * self%Andim(2)%Gfun(self%run,t) )
         end if
 
         gammaR = gammaR2/bet2(2) - (b1 + b2) * gammaR
