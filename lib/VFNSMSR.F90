@@ -286,9 +286,11 @@ contains
     if (self%nf == 5) then
       call self%alphaMass(1)%SetMTop(m, mu)
       call self%alphaMass(2)%SetMTop(m, mu)
+      call self%alphaOb%SetMTop(m, mu)
     else if (self%nf == 4) then
       call self%alphaMass(1)%SetMBottom(m, mu)
       call self%alphaMass(2)%SetMBottom(m, mu)
+      call self%alphaOb%SetMBottom(m, mu)
     end if
 
   end subroutine setMass

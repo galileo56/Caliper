@@ -116,6 +116,12 @@ module NRQCDClass
 
     self%mH = m;    call self%MSR%setMass(m, mu)
 
+    if (self%nl == 5) then
+      call self%alphaMass%SetMTop(m, mu)
+    else if (self%nl == 4) then
+      call self%alphaMass%SetMBottom(m, mu)
+    end if
+
   end subroutine setMass
 
 !ccccccccccccccc
@@ -128,11 +134,12 @@ module NRQCDClass
     real (dp)          , intent(in)    :: mu, R, lambda, mUpsilon
     real (dp)                          :: a
 
-    MassFitter = FindRoot(self%mH)
+    MassFitter = FindRoot(mUpsilon/2)
 
     do
       a = FindRoot(MassFitter)
-      if ( abs(a - MassFitter) < 1e-14_dp ) exit;  MassFitter = a
+      if ( abs(a - MassFitter) < 1e-14_dp ) exit
+      MassFitter = a
     end do
 
   contains
