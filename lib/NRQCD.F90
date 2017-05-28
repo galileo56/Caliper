@@ -6,7 +6,8 @@ module NRQCDClass
 
   type, public                    :: NRQCD
     private
-    real (dp), dimension(0:4,0:3) :: c, d
+    real (dp), dimension(0:4,0:3) :: c
+    real (dp), dimension(0:4)     :: beta
     character (len = 5)           :: scheme, up
     real (dp)                     :: mH, harm, rat, mC
     type (Running)                :: alphaMass
@@ -53,6 +54,7 @@ module NRQCDClass
     InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); InNRQCD%nf = nf; InNRQCD%c = 0
     InNRQCD%harm = Harmonic(n + l); InNRQCD%listFact = factList(3)
     InNRQCD%alphaOb = MSR%AlphaAll(); beta = InNRQCD%Andim%betaQCD('beta')
+    InNRQCD%beta = beta
 
     if ( up(:2) == 'up' ) then
       nl = nf
@@ -77,10 +79,6 @@ module NRQCDClass
     InNRQCD%c(:,0) = [ 1._dp, 31._dp/6 - 5._dp * nl/9, c2(nl, n, l, j, s), &
     c3(nl, n, l, j, s), c3log(nl, n, l, j, s) ]
 
-    InNRQCD%d(:,:1) = InNRQCD%c(:,:1)
-    InNRQCD%d(:, 2) = InNRQCD%c(:, 2) + 2 * pi2/9/n**2
-    InNRQCD%d(:, 3) = InNRQCD%c(:, 3) + 4 * pi2/9/n**2 * ( InNRQCD%c(:,1) - beta(0)/2 )
-
     do k = 1, 3
       do jj = 0, k - 1
 
@@ -89,16 +87,10 @@ module NRQCDClass
           InNRQCD%c(k,jj + 1) = InNRQCD%c(k,jj + 1) + beta(k - 1 - i) * &
           ( (i + 2) * InNRQCD%c(i, jj) - (jj + 1) * InNRQCD%c(i, jj + 1) )/4**(k - i)
 
-          InNRQCD%d(k,jj + 1) = InNRQCD%d(k,jj + 1) + beta(k - 1 - i) * &
-          ( (i + 2) * InNRQCD%d(i, jj) - (jj + 1) * InNRQCD%d(i, jj + 1) )/4**(k - i)
-
         end do
 
         InNRQCD%c(k,jj + 1) = 2 * (  InNRQCD%c(k,jj + 1) + &
         (jj + 2) * InNRQCD%c(jj,jj) * beta(k - 1 - jj)/4**(k - jj)  )/(jj + 1)
-
-        InNRQCD%d(k,jj + 1) = 2 * (  InNRQCD%d(k,jj + 1) + &
-        (jj + 2) * InNRQCD%d(jj,jj) * beta(k - 1 - jj)/4**(k - jj)  )/(jj + 1)
 
       end do
     end do
@@ -300,7 +292,7 @@ module NRQCDClass
     character (len = *), intent(in) :: method, charm
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda, mUpsilon
-    real (dp), dimension(0:4)       :: list, alphaList
+    real (dp), dimension(0:4)       :: list, listInv, alphaList
     real (dp), dimension(0:3)       :: logList
     real (dp), dimension(0:4)       :: delta, lgmList, deltaInv
     real (dp), dimension(0:4,4)     :: coefMSR
@@ -309,8 +301,8 @@ module NRQCDClass
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
     alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
-    factor = 2 * alp**2/9/self%n**2 ; logList(0) = 1; mTree = mUpsilon/2
-    deltaM = 0
+    factor = - 2 * alp**2/9/self%n**2 ; logList(0) = 1; mTree = mUpsilon/2
+    deltaM = 0; listInv = 0; listInv(0) = 1
 
     if ( self%scheme(:4) == 'pole' ) then
       delta(1:) = 0; Rmass = 0; mass = self%mH
@@ -324,9 +316,18 @@ module NRQCDClass
 
     logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / mTree) + self%harm, 3 )
 
-    list(1:) = matmul( self%c(:3,:), logList )
-    list(4) = list(4) + self%d(4,0) * log(alp)
-    list(1:) = factor * alphaList(:3) * list(1:)
+    listInv(1:) = matmul( self%c(:3,:), logList )
+    listInv(4) = listInv(4) + self%c(4,0) * log(alp)
+    listInv(1:) = factor * alphaList(:3) * listInv(1:)
+
+    listInv(3) = listInv(3) + alphaList(1) * self%beta(0) * factor**2
+    listInv(4) = listInv(4) - alphaList(1) * self%beta(0) * factor**3/2 + &
+    alphaList(2) * factor**2 * (  5 * self%beta(0)**2 * logList(1)/2 + &
+    ( 10 * self%beta(0) * self%c(1,0) - 2 * self%beta(0)**2 + self%beta(1) )/4  )
+
+    do n = 0, 3
+      list(n + 1) = - sum( list(:n) * listInv(n + 1:1:-1) )
+    end do
 
     if ( self%scheme(:4) /= 'pole' ) then
 
