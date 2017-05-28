@@ -346,12 +346,18 @@ module NRQCDClass
       if ( self%scheme(:3) == 'MSR' ) then
         list(1:) = list(1:) - delta(1:) * Rmass/mTree
       else
-        delta(3) = delta(3) + coefMSR(1,2) * ( coefMSR(0,1) - list(1) )
+
+        delta(3) = delta(3) + coefMSR(1,2) * ( delta(1) - list(1) )
+
+        ! delta(4) = delta(4) + coefMSR(1,2) * ( list(1)**2 - 2 * list(2) - &
+        ! coefMSR(0,1)**2 + 2 * coefMSR(0,2) )/2 + coefMSR(1,3) * ( coefMSR(0,1) &
+        ! - list(1) ) + lgmList(1) * (  coefMSR(1,2)**2 + coefMSR(2,3) * &
+        ! ( coefMSR(0,1) - list(1) )  )
 
         delta(4) = delta(4) + coefMSR(1,2) * ( list(1)**2 - 2 * list(2) - &
-        coefMSR(0,1)**2 + 2 * coefMSR(0,2) )/2 + coefMSR(1,3) * ( coefMSR(0,1) &
-        - list(1) ) + lgmList(1) * (  coefMSR(1,2)**2 + coefMSR(2,3) * &
-        ( coefMSR(0,1) - list(1) )  )
+        delta(1)**2 + 2 * coefMSR(0,2) )/2 + coefMSR(1,3) * ( delta(1) &
+        - list(1) ) + lgmList(1) * (  coefMSR(1,2)**2 + 2 * coefMSR(2,3) * &
+        ( delta(1) - list(1) )  )
 
         deltaInv(0) = 1
 
