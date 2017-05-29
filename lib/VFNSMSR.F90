@@ -20,7 +20,7 @@ module VFNSMSRClass
     contains
 
     procedure, pass(self), public :: MSRMass, setMass, RunArray, numFlav, &
-    MSRDelta, alphaAll, deltaM
+    MSRDelta, alphaAll, deltaM, mass
 
   end type VFNSMSR
 
@@ -94,6 +94,15 @@ contains
     end if
 
   end function DeltaM
+
+!ccccccccccccccc
+
+  real (dp) function mass(self)
+    class (VFNSMSR)    , intent(in) :: self
+
+    mass = self%mH
+
+  end function mass
 
 !ccccccccccccccc
 

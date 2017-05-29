@@ -51,7 +51,7 @@ module NRQCDClass
 
     InNRQCD%n = n; nf = MSR%numFlav() ; alphaScheme = InNRQCD%alphaMass%scheme()
     InNRQCD%Andim = InNRQCD%alphaMass%adim(); InNRQCD%up = up; InNRQCD%l = l
-    InNRQCD%mH = InNRQCD%alphaMass%scales('mH'); InNRQCD%nf = nf; InNRQCD%c = 0
+    InNRQCD%mH = MSR%mass(); InNRQCD%nf = nf; InNRQCD%c = 0
     InNRQCD%harm = Harmonic(n + l); InNRQCD%listFact = factList(3)
     InNRQCD%alphaOb = MSR%AlphaAll(); beta = InNRQCD%Andim%betaQCD('beta')
     InNRQCD%beta = beta
@@ -70,7 +70,7 @@ module NRQCDClass
       InNRQCD%rat = InNRQCD%alphaOb%scales('muB')/InNRQCD%mH
     end if
 
-    if (  alphaScheme(:4) == 'pole') then
+    if (  alphaScheme(:4) == 'pole' ) then
       InNRQCD%scheme = 'pole'
     else
       InNRQCD%scheme = scheme
