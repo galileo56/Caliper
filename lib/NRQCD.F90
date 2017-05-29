@@ -165,9 +165,10 @@ module NRQCDClass
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda
     real (dp), dimension(0:4)       :: list
-    real (dp), dimension(0:5)       :: listA
+    real (dp), dimension(0:6)       :: listA
 
     listA = self%EnInv(charm, order, mu, R, lambda, method)
+    listA(2) = listA(2) + listA(6)
     list  = 2 * ( self%mH + listA(5) ) * listA(:4)
 
   end function En
@@ -180,7 +181,7 @@ module NRQCDClass
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda, mUpsilon
     real (dp), dimension(0:4)       :: list
-    real (dp), dimension(0:5)       :: listA
+    real (dp), dimension(0:6)       :: listA
     integer                         :: n
 
     listA = self%EnInv(charm, order, mu, R, lambda, method)
@@ -190,6 +191,8 @@ module NRQCDClass
     do n = 0, 3
       list(n + 1) = - sum( list(:n) * listA(n + 1:1:-1) )
     end do
+
+    list(2) = list(2) - listA(6)
 
     list = mUpsilon * list/2
 
@@ -204,7 +207,8 @@ module NRQCDClass
     character (len = *), intent(in) :: method, charm
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda
-    real (dp), dimension(0:5)       :: list, alphaList
+    real (dp), dimension(0:5)       :: alphaList
+    real (dp), dimension(0:6)       :: list
     real (dp), dimension(0:3)       :: logList
     real (dp), dimension(0:4)       :: delta
     real (dp), dimension(4)         :: lgmList
@@ -279,11 +283,13 @@ module NRQCDClass
         list(j) = sum( delta(:j) * list(j:0:-1) )
       end do
 
-      list(2) = list(2) + deltaM
+      ! list(2) = list(2) + deltaM
+      list(6) = deltaM
 
     end if
 
-    list(2) = list(2) + self%DeltaCharmBin(alp, mass)/2
+    ! list(2) = list(2) + self%DeltaCharmBin(alp, mass)/2
+    list(6) = list(6) + self%DeltaCharmBin(alp, mass)/2
 
     list(5) = mass - self%mH
 
