@@ -211,7 +211,7 @@ module NRQCDClass
     real (dp), dimension(0:4,0:4)   :: deltaLog  ! (power, order)
     real (dp), dimension(0:4,4)     :: coefMSR
     real (dp), dimension(4,0:3)     :: c
-    real (dp)                       :: alp, Rmass, mass, factor, deltaM
+    real (dp)                       :: alp, Rmass, mass, factor, deltaM, rat
     integer                         :: i, j, k, l
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
@@ -239,14 +239,17 @@ module NRQCDClass
     else
 
       call self%andim%expandAlpha(coefMSR); lgmList = PowList( log(mu/Rmass), 4 )
-      call AddAlpha( coefMSR, alphaList(1:) )        ; c = 0; deltaLog = 0
+      call AddAlpha( coefMSR, alphaList(1:) )     ; c = 0; deltaLog = 0
       delta(1:) = DeltaComputer(coefMSR, lgmList, 0)/mass; deltaLog(0,0) = 1
       deltaLog(1,1:2) = delta(1:2) - [ 0._dp, delta(1)**2/2 ]
 
-      if ( self%scheme(:4) /= 'pole' .and. self%up(:2) == 'up' ) then
+      if ( self%scheme(:3) == 'MSR' ) then
         deltaM = self%MSR%DeltaM(self%up, Rmass)
       else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
-        deltaM = 4 * log(self%rat)/9 + deltaCharm2(self%rat) - 71._dp/144 - pi2/18
+        rat = self%mC/self%mH
+        deltaM = 4 * log(rat)/9 + deltaCharm2(rat) - 71._dp/144 - pi2/18
+      else if ( self%scheme(:5) == 'MSbar' .and. self%up(:2) == 'up' ) then
+        deltaM = self%MSR%DeltaM(self%up, Rmass)
       end if
 
       deltaM = Rmass * alphaList(2) * deltaM/mass
