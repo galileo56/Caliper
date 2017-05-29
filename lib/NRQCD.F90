@@ -108,9 +108,9 @@ module NRQCDClass
 
     self%mH = m;    call self%MSR%setMass(m, mu)
 
-    if (self%nl == 5) then
+    if (self%nf == 5) then
       call self%alphaMass%SetMTop(m, mu)
-    else if (self%nl == 4) then
+    else if (self%nf == 4) then
       call self%alphaMass%SetMBottom(m, mu)
     end if
 
@@ -231,7 +231,6 @@ module NRQCDClass
     else if ( self%scheme(:3) == 'MSR' ) then
       coefMSR(0,:) = R * self%andim%MSRDelta(self%scheme); Rmass = R
       mass = self%MSR%MSRmass(self%up, self%scheme, order, R, lambda, method)
-      ! mass = self%MSR%MSRmass(self%up, 'MSRp', order, R, lambda, method)
     end if
 
     logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / mass) + self%harm, 3 )
