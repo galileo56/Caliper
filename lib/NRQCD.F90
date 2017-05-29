@@ -206,7 +206,8 @@ module NRQCDClass
     real (dp)          , intent(in) :: mu, R, lambda
     real (dp), dimension(0:5)       :: list, alphaList
     real (dp), dimension(0:3)       :: logList
-    real (dp), dimension(0:4)       :: delta, lgmList
+    real (dp), dimension(0:4)       :: delta
+    real (dp), dimension(4)         :: lgmList
     real (dp), dimension(0:4,0:4)   :: deltaLog  ! (power, order)
     real (dp), dimension(0:4,4)     :: coefMSR
     real (dp), dimension(4,0:3)     :: c
@@ -294,7 +295,8 @@ module NRQCDClass
     real (dp)          , intent(in) :: mu, R, lambda, mUpsilon
     real (dp), dimension(0:4)       :: list, listInv, alphaList
     real (dp), dimension(0:3)       :: logList
-    real (dp), dimension(0:4)       :: delta, lgmList, deltaInv
+    real (dp), dimension(0:4)       :: delta, deltaInv
+    real (dp), dimension(4)         :: lgmList
     real (dp), dimension(0:4,4)     :: coefMSR
     real (dp)                       :: alp, Rmass, mass, factor, mTree, deltaM
     integer                         :: n
@@ -349,14 +351,9 @@ module NRQCDClass
 
         delta(3) = delta(3) + coefMSR(1,2) * ( delta(1) - list(1) )
 
-        ! delta(4) = delta(4) + coefMSR(1,2) * ( list(1)**2 - 2 * list(2) - &
-        ! coefMSR(0,1)**2 + 2 * coefMSR(0,2) )/2 + coefMSR(1,3) * ( coefMSR(0,1) &
-        ! - list(1) ) + lgmList(1) * (  coefMSR(1,2)**2 + coefMSR(2,3) * &
-        ! ( coefMSR(0,1) - list(1) )  )
-
         delta(4) = delta(4) + coefMSR(1,2) * ( list(1)**2 - 2 * list(2) - &
         delta(1)**2 + 2 * coefMSR(0,2) )/2 + coefMSR(1,3) * ( delta(1) &
-        - list(1) ) + lgmList(1) * (  coefMSR(1,2)**2 + 2 * coefMSR(2,3) * &
+         - list(1) ) + lgmList(1) * (  coefMSR(1,2)**2 + 2 * coefMSR(2,3) * &
         ( delta(1) - list(1) )  )
 
         deltaInv(0) = 1
