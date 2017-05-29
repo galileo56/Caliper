@@ -8,7 +8,8 @@ module NRQCDClass
     private
     real (dp), dimension(0:4,0:3) :: c
     real (dp), dimension(0:4)     :: beta
-    character (len = 5)           :: scheme, up
+    character (len = 5)           :: scheme
+    character (len = 4)           :: up
     real (dp)                     :: mH, harm, rat, mC
     type (Running)                :: alphaMass
     type (Alpha)                  :: alphaOb
