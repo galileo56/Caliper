@@ -231,6 +231,7 @@ module NRQCDClass
     else if ( self%scheme(:3) == 'MSR' ) then
       coefMSR(0,:) = R * self%andim%MSRDelta(self%scheme); Rmass = R
       mass = self%MSR%MSRmass(self%up, self%scheme, order, R, lambda, method)
+      ! mass = self%MSR%MSRmass(self%up, 'MSRp', order, R, lambda, method)
     end if
 
     logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / mass) + self%harm, 3 )
