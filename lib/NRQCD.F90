@@ -220,12 +220,13 @@ module NRQCDClass
     real (dp), dimension(0:4,0:4)   :: deltaLog  ! (power, order)
     real (dp), dimension(0:4,4)     :: coefMSR
     real (dp), dimension(4,0:3)     :: c
-    real (dp)                       :: alp, Rmass, mass, factor, deltaM, rat, lg
     integer                         :: i, j, k, l
+    real (dp)                       :: alp, Rmass, mass, factor, deltaM, &
+    deltaM2, rat, lg
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
     alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
-    factor = - 2 * alp**2/9/self%n**2 ; logList(0) = 1 ; deltaM = 0
+    factor = - 2 * alp**2/9/self%n**2 ; logList(0) = 1 ; deltaM = 0; deltaM2 = 0
 
     if ( self%scheme(:4) == 'pole' ) then
       delta(1:) = 0; Rmass = 0; mass = self%mH
@@ -253,7 +254,8 @@ module NRQCDClass
       deltaLog(1,1:2) = delta(1:2) - [ 0._dp, delta(1)**2/2 ]
 
       if ( self%scheme(:3) == 'MSR' .or. self%up(:2) == 'up' ) then
-        deltaM = self%MSR%DeltaM(self%up, Rmass)
+        deltaM  = self%MSR%DeltaM(self%up, Rmass)
+        deltaM2 = self%MSR%DeltaM2(self%scheme, self%up, Rmass)
       else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
         rat = self%mC/self%mH
         deltaM = 4 * log(rat)/9 + deltaCharm2(rat) - 71._dp/144 - pi2/18
@@ -306,7 +308,7 @@ module NRQCDClass
       if ( self%scheme(:4) == 'pole' ) then
         list(7) = list(7) - 7._dp/12
       else
-        list(7) = list(7) + 11._dp/36 - 2 * delta(1)/3 + factor * deltaM
+        list(7) = list(7) + 11._dp/36 - 2 * delta(1)/3 + factor * deltaM + deltaM2
       end if
 
       list(7) = factor * alphaList(3)

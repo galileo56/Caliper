@@ -20,7 +20,7 @@ module VFNSMSRClass
     contains
 
     procedure, pass(self), public :: MSRMass, setMass, RunArray, numFlav, &
-    MSRDelta, alphaAll, deltaM, mass
+    MSRDelta, alphaAll, deltaM, mass, DeltaM2
 
   end type VFNSMSR
 
@@ -97,8 +97,29 @@ contains
 
 !ccccccccccccccc
 
-  real (dp) function mass(self)
+  real (dp) function DeltaM2(self, type, up, R)
     class (VFNSMSR)    , intent(in) :: self
+    character (len = *), intent(in) :: up, type
+    real (dp)          , intent(in) :: R
+
+    if ( up(:2) == 'up' ) then
+
+      if ( type(:4) == 'MSRn' ) then
+        DeltaM2 = deltaCharm3(self%nf, 0, self%mL/R)
+      else if ( type(:4) == 'MSRp' ) then
+        DeltaM2 = deltaCharm3(self%nf, 1, self%mL/R)
+      end if
+
+    else
+      DeltaM2 = 0
+    end if
+
+  end function DeltaM2
+
+!ccccccccccccccc
+
+  real (dp) function mass(self)
+    class (VFNSMSR), intent(in) :: self
 
     mass = self%mH
 
