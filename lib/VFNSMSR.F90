@@ -106,7 +106,7 @@ contains
 
       if ( type(:4) == 'MSRn' ) then
         DeltaM2 = deltaCharm3(self%nf, 0, self%mL/R)
-      else if ( type(:4) == 'MSRp' ) then
+      else if ( type(:4) == 'MSRp' .or. type(:5) == 'MSbar' ) then
         DeltaM2 = deltaCharm3(self%nf, 1, self%mL/R)
       end if
 
