@@ -260,7 +260,8 @@ module NRQCDClass
         self%beta(0) * log(mu/Rmass) * deltaM
       else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
         rat = self%mC/self%mH
-        deltaM = 4 * log(rat)/9 + deltaCharm2(rat) - 71._dp/144 - pi2/18
+        deltaM  = 4 * log(rat)/9 + deltaCharm2(rat) - 71._dp/144 - pi2/18
+        ! deltaM2 =
       end if
 
       deltaM  = Rmass * alphaList(2) * deltaM /mass
