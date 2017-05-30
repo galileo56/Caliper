@@ -109,9 +109,9 @@ module NRQCDClass
 
     self%mH = m;    call self%MSR%setMass(m, mu)
 
-    if (self%nl == 5) then
+    if (self%nf == 5) then
       call self%alphaMass%SetMTop(m, mu)
-    else if (self%nl == 4) then
+    else if (self%nf == 4) then
       call self%alphaMass%SetMBottom(m, mu)
     end if
 
@@ -139,7 +139,7 @@ module NRQCDClass
 
     real (dp) function FindRoot(mass)
       real (dp), intent(in)     :: mass
-      real (dp), dimension(0:5) :: list
+      real (dp), dimension(0:6) :: list
 
       call self%SetMass(mass, self%rat * mass)
 
@@ -148,6 +148,7 @@ module NRQCDClass
         FindRoot = sum( list(:n) )
       else if ( iter(:10) == 'FixedOrder' ) then
         list = self%EnInv(charm, order, mu, R, lambda, method)
+        list(2) = list(2) + list(6)
         FindRoot = mUpsilon/sum( list(:n) )/2 - list(5)
       else if ( iter(:8) == 'expanded' ) then
         list(:4) = self%EnExpand(charm, order, mu, R, mUpsilon, lambda, method)
@@ -166,9 +167,10 @@ module NRQCDClass
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda
     real (dp), dimension(0:4)       :: list
-    real (dp), dimension(0:5)       :: listA
+    real (dp), dimension(0:6)       :: listA
 
     listA = self%EnInv(charm, order, mu, R, lambda, method)
+    listA(2) = listA(2) + listA(6)
     list  = 2 * ( self%mH + listA(5) ) * listA(:4)
 
   end function En
@@ -181,7 +183,7 @@ module NRQCDClass
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda, mUpsilon
     real (dp), dimension(0:4)       :: list
-    real (dp), dimension(0:5)       :: listA
+    real (dp), dimension(0:6)       :: listA
     integer                         :: n
 
     listA = self%EnInv(charm, order, mu, R, lambda, method)
@@ -191,6 +193,8 @@ module NRQCDClass
     do n = 0, 3
       list(n + 1) = - sum( list(:n) * listA(n + 1:1:-1) )
     end do
+
+    list(2) = list(2) - listA(6)
 
     list = mUpsilon * list/2
 
@@ -205,7 +209,8 @@ module NRQCDClass
     character (len = *), intent(in) :: method, charm
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda
-    real (dp), dimension(0:5)       :: list, alphaList
+    real (dp), dimension(0:5)       :: alphaList
+    real (dp), dimension(0:6)       :: list
     real (dp), dimension(0:3)       :: logList
     real (dp), dimension(0:4)       :: delta
     real (dp), dimension(4)         :: lgmList
@@ -244,13 +249,11 @@ module NRQCDClass
       delta(1:) = DeltaComputer(coefMSR, lgmList, 0)/mass; deltaLog(0,0) = 1
       deltaLog(1,1:2) = delta(1:2) - [ 0._dp, delta(1)**2/2 ]
 
-      if ( self%scheme(:3) == 'MSR' ) then
+      if ( self%scheme(:3) == 'MSR' .or. self%up(:2) == 'up' ) then
         deltaM = self%MSR%DeltaM(self%up, Rmass)
       else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
         rat = self%mC/self%mH
         deltaM = 4 * log(rat)/9 + deltaCharm2(rat) - 71._dp/144 - pi2/18
-      else if ( self%scheme(:5) == 'MSbar' .and. self%up(:2) == 'up' ) then
-        deltaM = self%MSR%DeltaM(self%up, Rmass)
       end if
 
       deltaM = Rmass * alphaList(2) * deltaM/mass
@@ -282,11 +285,11 @@ module NRQCDClass
         list(j) = sum( delta(:j) * list(j:0:-1) )
       end do
 
-      list(2) = list(2) + deltaM
+      list(6) = deltaM
 
     end if
 
-    list(2) = list(2) + self%DeltaCharmBin(alp, mass)/2
+    list(6) = list(6) + self%DeltaCharmBin(alp, mass)/2
 
     list(5) = mass - self%mH
 
@@ -304,7 +307,7 @@ module NRQCDClass
     real (dp), dimension(0:4)       :: delta, deltaInv
     real (dp), dimension(4)         :: lgmList
     real (dp), dimension(0:4,4)     :: coefMSR
-    real (dp)                       :: alp, Rmass, mass, factor, mTree, deltaM
+    real (dp)                       :: alp, Rmass, mass, factor, mTree, deltaM, rat
     integer                         :: n
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
@@ -339,10 +342,11 @@ module NRQCDClass
 
     if ( self%scheme(:4) /= 'pole' ) then
 
-      if ( self%scheme(:3) == 'MSR' .and. self%up(:2) == 'up' ) then
+      if ( self%scheme(:3) == 'MSR' .or. self%up(:2) == 'up' ) then
         deltaM = self%MSR%DeltaM(self%up, Rmass)
       else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
-        deltaM = 4 * log(self%rat)/9 + deltaCharm2(self%rat) - 71._dp/144 - pi2/18
+        rat = self%mC/mTree
+        deltaM = 4 * log(rat)/9 + deltaCharm2(rat) - 71._dp/144 - pi2/18
       end if
 
       deltaM = Rmass * alphaList(2) * deltaM/mTree

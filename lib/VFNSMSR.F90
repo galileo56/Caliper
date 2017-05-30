@@ -290,7 +290,7 @@ contains
     class (VFNSMSR), intent(inout) :: self
     real (dp)      , intent(in)    :: m, mu
 
-    self%mH = m
+    self%mH = m ; self%rat = self%mL/m
 
     if (self%nf == 5) then
       call self%alphaMass(1)%SetMTop(m, mu)
