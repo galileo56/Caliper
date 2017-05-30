@@ -256,7 +256,8 @@ module NRQCDClass
 
       if ( self%scheme(:3) == 'MSR' .or. self%up(:2) == 'up' ) then
         deltaM  = self%MSR%DeltaM(self%up, Rmass)
-        deltaM2 = self%MSR%DeltaM2(self%scheme, self%up, Rmass)
+        deltaM2 = self%MSR%DeltaM2(self%scheme, self%up, Rmass) + &
+        self%beta(0) * log(mu/Rmass) * deltaM
       else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
         rat = self%mC/self%mH
         deltaM = 4 * log(rat)/9 + deltaCharm2(rat) - 71._dp/144 - pi2/18
@@ -370,7 +371,8 @@ module NRQCDClass
 
       if ( self%scheme(:3) == 'MSR' .or. self%up(:2) == 'up' ) then
         deltaM  = self%MSR%DeltaM(self%up, Rmass)
-        deltaM2 = self%MSR%DeltaM2(self%scheme, self%up, Rmass)
+        deltaM2 = self%MSR%DeltaM2(self%scheme, self%up, Rmass) + &
+        self%beta(0) * log(mu/Rmass) * deltaM
       else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
         rat = self%mC/mTree
         deltaM = 4 * log(rat)/9 + deltaCharm2(rat) - 71._dp/144 - pi2/18
