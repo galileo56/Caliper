@@ -432,6 +432,14 @@ module NRQCDClass
       list(3) = list(3) - deltaM2 - delta2 + 2 * delta1 * listInv(1) + &
       2 * factor * list(1) * alphaList(1)/3
 
+      if ( self%scheme(:5) == 'MSbar' ) then
+
+        rat = self%mC/mTree
+        list(3) = list(3) + deltaM * ( 2 * delta(1) - list(1) ) + &
+        alphaList(2) * ( list(1) - delta(1) ) * rat * deltaCharm2Der(rat)
+
+      end if
+
     end if
 
     list = mTree * list; list(0) = list(0) + self%mH - mass
