@@ -261,7 +261,8 @@ module NRQCDClass
         deltaM = 4 * log(rat)/9 + deltaCharm2(rat) - 71._dp/144 - pi2/18
       end if
 
-      deltaM = Rmass * alphaList(2) * deltaM/mass
+      deltaM  = Rmass * alphaList(2) * deltaM /mass
+      deltaM2 = Rmass * alphaList(3) * deltaM2/mass
 
       do i = 1, 4
         do k = 0, i - 1
@@ -306,12 +307,11 @@ module NRQCDClass
       self%cnl(1) + (self%nl - 33/2._dp) * self%c(1,0) ) - self%c(2,0)
 
       if ( self%scheme(:4) == 'pole' ) then
-        list(7) = list(7) - 7._dp/12
+        list(7) = factor * alphaList(2) * ( list(7) - 7._dp/12 )
       else
-        list(7) = list(7) + 11._dp/36 - 2 * delta(1)/3 + factor * deltaM + deltaM2
+        list(7) = factor * ( alphaList(2) * ( list(7) + 11._dp/36) + deltaM &
+        - 2 * alphaList(1) * delta(1)/3 ) + deltaM2
       end if
-
-      list(7) = factor * alphaList(3)
 
     end if
 
