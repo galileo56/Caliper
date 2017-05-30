@@ -198,7 +198,7 @@ module NRQCDClass
     end do
 
     list(2) = list(2) - listA(6)
-    list(3) = list(3) + 2 * listA(6) * list(1) - listA(7)
+    list(3) = list(3) - 2 * listA(6) * list(1) - listA(7)
 
     list = mUpsilon * list/2
 
@@ -340,7 +340,7 @@ module NRQCDClass
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
     alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
     factor = - 2 * alp**2/9/self%n**2 ; logList(0) = 1; mTree = mUpsilon/2
-    deltaM = 0; listInv = 0; listInv(0) = 1
+    deltaM = 0; listInv = 0; listInv(0) = 1; deltaM2 = 0
 
     if ( self%scheme(:4) == 'pole' ) then
       delta(1:) = 0; Rmass = 0; mass = self%mH
