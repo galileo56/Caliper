@@ -23,7 +23,7 @@ module NRQCDClass
 
     procedure, pass(self), private :: Binomial, EnInv
     procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
-    ZeroBin, DeltaCharmBin, MassIter, EnExpand
+    ZeroBin, DeltaCharmBin, MassIter, EnExpand, DeltaCharmBin3
 
   end type NRQCD
 
@@ -346,7 +346,7 @@ module NRQCDClass
     real (dp), dimension(0:4,4)     :: coefMSR
     integer                         :: n
     real (dp)                       :: alp, Rmass, mass, factor, mTree, deltaM,&
-    delta1, delta2, rat, lg, deltaM2
+    delta1, delta2, rat, deltaM2
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
     alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
@@ -427,18 +427,7 @@ module NRQCDClass
 
     if ( self%up(:2) == 'up' .and. self%mC > tiny(1._dp) ) then
 
-      lg = log(mu/self%mC)
-
-      delta2 = self%cnl(2) + lg**2/3 - 2 * logList(2) * (self%nl - 17)/3 + lg * &
-      ( 13._dp/18 - 2._dp * self%nl/9 - self%cnl(1) ) + logList(1) * ( lg * &
-      (2 * self%nl - 35)/3 + (8 * self%nl - 79)/18._dp + (35/2._dp - self%nl) * &
-      self%cnl(1) + (self%nl - 33/2._dp) * self%c(1,0) ) - self%c(2,0)
-
-      if ( self%scheme(:4) == 'pole' ) then
-        delta2 = factor * alphaList(2) * (delta2 - 7._dp/12)
-      else
-        delta2 = factor * alphaList(2) * (delta2 + 11._dp/36)
-      end if
+      delta2 = factor * alphaList(2) * self%DeltaCharmBin3( mu, logList(1) )
 
       list(3) = list(3) - deltaM2 - delta2 + 2 * delta1 * listInv(1) + &
       2 * factor * list(1) * alphaList(1)/3
@@ -456,6 +445,28 @@ module NRQCDClass
     list = mTree * list; list(0) = list(0) + self%mH - mass
 
   end function MassIter
+
+!ccccccccccccccc
+
+  real (dp) function DeltaCharmBin3(self, mu, ln) result(delta2)
+    class (NRQCD), intent(in) :: self
+    real (dp)    , intent(in) :: mu, ln
+    real (dp)                 :: lg
+
+   lg = log(mu/self%mC)
+
+    delta2 = self%cnl(2) + lg**2/3 - 2 * ln**2 * (self%nl - 17)/3 + lg * &
+    ( 13._dp/18 - 2._dp * self%nl/9 - self%cnl(1) ) + ln * ( lg * &
+    (2 * self%nl - 35)/3 + (8 * self%nl - 79)/18._dp + (35/2._dp - self%nl) * &
+    self%cnl(1) + (self%nl - 33/2._dp) * self%c(1,0) ) - self%c(2,0)
+
+    if ( self%scheme(:4) == 'pole' ) then
+      delta2 = delta2 - 7._dp/12
+    else
+      delta2 = delta2 + 11._dp/36
+    end if
+
+  end function DeltaCharmBin3
 
 !ccccccccccccccc
 
