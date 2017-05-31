@@ -1590,6 +1590,8 @@ end function MatchingAlphaUp
     integer  , intent(in) :: nl, nh
     real (dp)             :: lr
 
+    deltaCharm3 = 0; if (r <= 0) return
+
     lr = log(r)
 
     deltaCharm3 = ( 205687._dp/9000 - 737._dp * nl/750 + lr * (413._dp * nl/375&

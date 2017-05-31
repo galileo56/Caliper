@@ -141,7 +141,7 @@ module NRQCDClass
 
     real (dp) function FindRoot(mass)
       real (dp), intent(in)     :: mass
-      real (dp), dimension(0:6) :: list
+      real (dp), dimension(0:7) :: list
 
       call self%SetMass(mass, self%rat * mass)
 
@@ -150,7 +150,7 @@ module NRQCDClass
         FindRoot = sum( list(:n) )
       else if ( iter(:10) == 'FixedOrder' ) then
         list = self%EnInv(charm, order, mu, R, lambda, method)
-        list(2) = list(2) + list(6)
+        list(2:3) = list(2:3) + list(6:7)
         FindRoot = mUpsilon/sum( list(:n) )/2 - list(5)
       else if ( iter(:8) == 'expanded' ) then
         list(:4) = self%EnExpand(charm, order, mu, R, mUpsilon, lambda, method)
