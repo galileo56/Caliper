@@ -259,9 +259,14 @@ module NRQCDClass
         deltaM2 = self%MSR%DeltaM2(self%scheme, self%up, Rmass) + &
         self%beta(0) * log(mu/Rmass) * deltaM
       else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
-        rat = self%mC/self%mH
+
+        rat = self%mC/self%mH; lg = - log(rat)
         deltaM  = 4 * log(rat)/9 + deltaCharm2(rat) - 71._dp/144 - pi2/18
-        ! deltaM2 =
+
+        deltaM2 = deltaCharm3(self%nf, 1, rat) + 2 * lg * deltaCharm2(rat)/3  + &
+        4 * lg**2/27 - 27.51152614489051_dp + 1.3053814981630874_dp * self%nf + &
+        lg * (11.073375282398949_dp - 0.694244607447754_dp * self%nf)
+
       end if
 
       deltaM  = Rmass * alphaList(2) * deltaM /mass
