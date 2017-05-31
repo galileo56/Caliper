@@ -1,0 +1,28 @@
+# The fortran modules provided by this target.
+provides
+ adapt
+ alphaclass
+ anomdimclass
+ carlson_elliptic_module
+ chaplin
+ constants
+ cumulantclass
+ derigamma
+ electroweakclass
+ gapmassclass
+ hyper
+ kernelsclass
+ legendre
+ massivensclass
+ matrixelementsclass
+ mctopclass
+ modelclass
+ nonsingularclass
+ nrqcdclass
+ poly
+ profilesclass
+ quadpack
+ runningclass
+ sigmaclass
+ singularclass
+ vfnsmsrclass

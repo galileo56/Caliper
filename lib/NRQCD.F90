@@ -306,7 +306,7 @@ module NRQCDClass
 
     end if
 
-    list(6) = list(6) + self%DeltaCharmBin(alp, mass)/2
+    list(6) = list(6) + factor * alphaList(1) * self%DeltaCharmBin(alp, mass)
 
     if ( self%up(:2) == 'up' .and. self%mC > tiny(1._dp) ) then
 
@@ -421,7 +421,7 @@ module NRQCDClass
 
     end if
 
-    delta1 = self%DeltaCharmBin(alp, mTree)/2
+    delta1 = factor * alphaList(1) * self%DeltaCharmBin(alp, mTree)
 
     list(2) = list(2) - deltaM - delta1
 
@@ -799,7 +799,7 @@ module NRQCDClass
 
     end if
 
-    DeltaCharmBin = 4 * alpha**3/pi/27/self%n**2 * DeltaCharmBin
+    DeltaCharmBin = - DeltaCharmBin/3
 
   end function DeltaCharmBin
 
@@ -894,7 +894,7 @@ module NRQCDClass
 
     end if
 
-    DeltaCharm = 4 * alpha**3/pi/27/self%n**2 * DeltaCharm
+    DeltaCharm = - DeltaCharm/3
 
   end function DeltaCharm
 
@@ -946,7 +946,7 @@ module NRQCDClass
 
     end if
 
-    ZeroBin = 4 * alpha**3/pi/27/self%n**2 * ( ZeroBin + 2 * log(rho/2) )
+    ZeroBin = - ( ZeroBin + 2 * log(rho/2) )/3
 
   end function ZeroBin
 
