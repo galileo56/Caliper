@@ -60,7 +60,7 @@ module NRQCDClass
 
     if ( up(:2) == 'up' ) then
       nl = nf
-      InNRQCD%cnl = [ 31._dp/6 - 5._dp * (nl - 1)/9, c2(nl - 1, n, l, j, s) ]
+      InNRQCD%cnl = [ 103._dp/18 - 5._dp * nl/9, c2(nl - 1, n, l, j, s) ]
     else if ( up(:4) == 'down' ) then
       nl = nf - 1
     end if
