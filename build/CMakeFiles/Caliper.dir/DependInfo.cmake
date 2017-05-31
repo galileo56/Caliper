@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/Users/vicent/GitHub/Caliper/src/Caliper.tm.c" "/Users/vicent/GitHub/Caliper/build/CMakeFiles/Caliper.dir/src/Caliper.tm.c.o"
+  "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c" "/Users/vmateu/GitHub/Caliper/build/CMakeFiles/Caliper.dir/src/Caliper.tm.c.o"
   )
 set(CMAKE_C_COMPILER_ID "AppleClang")
 
@@ -16,7 +16,7 @@ set(CMAKE_C_TARGET_INCLUDE_PATH
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/Users/vicent/GitHub/Caliper/build/lib/CMakeFiles/libCaliper.dir/DependInfo.cmake"
+  "/Users/vmateu/GitHub/Caliper/build/lib/CMakeFiles/libCaliper.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.
