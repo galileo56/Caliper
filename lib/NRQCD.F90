@@ -223,7 +223,7 @@ module NRQCDClass
     real (dp), dimension(4,0:3)     :: c
     integer                         :: i, j, k, l
     real (dp)                       :: alp, Rmass, mass, factor, deltaM, lg, &
-    deltaM2, rat, delta2
+    deltaM2, rat, delta2, delta3
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
     alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
@@ -310,15 +310,22 @@ module NRQCDClass
 
     if ( self%up(:2) == 'up' .and. self%mC > tiny(1._dp) ) then
 
-      delta2 = factor * alphaList(2) * self%DeltaCharmBin3( mu, logList(1) )
+      delta2 = factor * alphaList(2) * self%DeltaCharmExact('exact', mu, alp, mass)
 
       if ( self%scheme(:4) /= 'pole' ) then
-        list(7) = factor * ( deltaM - 2 * alphaList(1) * delta(1)/3 )
+
+        delta3 = 1
+
+        if (self%n == 1 .and. self%l == 0 .and. self%j == 1 .and. self%s == 1 ) &
+        delta3 = 4 * DeltaCharmDer(3 * self%mC/2/mass/alp)/3
+
+        list(7) = factor * ( deltaM - 2 * alphaList(1) * delta3 * delta(1)/3 )
+
       end if
 
     end if
 
-    list(7) = list(7) + deltaM2;  list(5) = mass - self%mH
+    list(7) = list(7) + delta2 + deltaM2;  list(5) = mass - self%mH
 
   end function EnInv
 
@@ -460,6 +467,26 @@ module NRQCDClass
 
 !ccccccccccccccc
 
+  real (dp) function DeltaCharmDer(a)
+    real (dp), intent(in) :: a
+
+    if (a > 1) then
+      DeltaCharmDer = 2 * atan( Sqrt( (a - 1)/(a + 1) )  )/Sqrt(a**2 - 1)
+    else if (a > 1) then
+      DeltaCharmDer = Log(  ( 1 + Sqrt(1 - a**2) )/a  )/Sqrt(1 - a**2)
+    else
+      DeltaCharmDer = 1
+    end if
+
+    DeltaCharmDer = 4 + 14 * a**2 - 24 * a**4 - 3 * a * Pi - 9 * a**3 * Pi + &
+    12 * a**5 * Pi - 6 * a**4 * (4 * a**2 - 5) * DeltaCharmDer
+
+    DeltaCharmDer = 2 * ( DeltaCharmDer/4/(a**2 - 1) + 1 )/3
+
+  end function DeltaCharmDer
+
+!ccccccccccccccc
+
   real (dp) function DeltaCharmExact(self, type, mu, alp, mass)
     class (NRQCD)      , intent(in) :: self
     character (len = *), intent(in) :: type
@@ -495,9 +522,13 @@ module NRQCDClass
       0.4712708827971536_dp * x**3 * lg + 0.8364190131891226_dp * x**4 * lg + &
       0.13911559154554373_dp * x**5 * lg + 0.0028092361619528835_dp * x**6 * lg
 
-      DeltaCharmExact = App1 + 57 * ( c1 * c2 * x/(1 + c2 * x) + &
+      DeltaCharmExact = 2 * (  App1 + 57 * ( c1 * c2 * x/(1 + c2 * x) + &
       d1 * d2 * x/(1 + d2 * x) + c1 * log(1 + c2 * x) + d1 * log(1 + d2 * x) )/4 &
-      + 3 * beta * ( App2 + 3 * App3 * ( log(mu/2/gamma) + 5/6._dp )/2 )
+      + 3 * beta * ( App2 + 3 * App3 * ( log(mu/2/gamma) + 5/6._dp )/2 )  )/9
+
+      if ( self%scheme(:4) /= 'pole' ) then
+        DeltaCharmExact = DeltaCharmExact + 4 * DeltaCharmDer(x)/3
+      end if
 
     else
 
