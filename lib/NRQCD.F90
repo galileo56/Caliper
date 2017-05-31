@@ -255,17 +255,20 @@ module NRQCDClass
       deltaLog(1,1:2) = delta(1:2) - [ 0._dp, delta(1)**2/2 ]
 
       if ( self%scheme(:3) == 'MSR' .or. self%up(:2) == 'up' ) then
+
         deltaM  = self%MSR%DeltaM(self%up, Rmass)
         deltaM2 = self%MSR%DeltaM2(self%scheme, self%up, Rmass) + &
         self%beta(0) * log(mu/Rmass) * deltaM
+
       else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
 
-        rat = self%mC/self%mH; lg = - log(rat)
-        deltaM  = 4 * log(rat)/9 + deltaCharm2(rat) - 71._dp/144 - pi2/18
+        rat = self%mC/self%mH; lg = - log(rat);  deltaM = deltaCharm2(rat)
 
-        deltaM2 = deltaCharm3(self%nf, 1, rat) + 2 * lg * deltaCharm2(rat)/3  + &
+        deltaM2 = deltaCharm3(self%nf, 1, rat) + 2 * lg * deltaM/3 +            &
         4 * lg**2/27 - 27.51152614489051_dp + 1.3053814981630874_dp * self%nf + &
         lg * (11.073375282398949_dp - 0.694244607447754_dp * self%nf)
+
+        deltaM  = 4 * log(rat)/9 + deltaM - 71._dp/144 - pi2/18
 
       end if
 
@@ -318,10 +321,12 @@ module NRQCDClass
         list(7) = factor * alphaList(2) * ( list(7) - 7._dp/12 )
       else
         list(7) = factor * ( alphaList(2) * ( list(7) + 11._dp/36 ) + deltaM &
-        - 2 * alphaList(1) * delta(1)/3 ) + deltaM2
+        - 2 * alphaList(1) * delta(1)/3 )
       end if
 
     end if
+
+    list(7) = list(7) + deltaM2
 
     list(5) = mass - self%mH
 
