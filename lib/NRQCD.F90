@@ -477,7 +477,7 @@ module NRQCDClass
 
     if (a > 1) then
       DeltaCharmDer = 2 * atan( Sqrt( (a - 1)/(a + 1) )  )/Sqrt(a**2 - 1)
-    else if (a > 1) then
+    else if (a < 1) then
       DeltaCharmDer = Log(  ( 1 + Sqrt(1 - a**2) )/a  )/Sqrt(1 - a**2)
     else
       DeltaCharmDer = 1
@@ -500,11 +500,12 @@ module NRQCDClass
     real (dp), parameter            :: c1 = - 0.8316040946513316_dp, &
     c2 = 0.470_dp, d2 = 1.120_dp, d1 = 1.8316040946513317_dp
 
-    if ( type(:5) == 'exact' .and. self%n == 1 .and. self%l == 0 &
-    .and. self%j == 1 .and. self%s == 1 ) then
+    gamma = 2 * mass * alp/3; x = self%mC/gamma
 
-      gamma = 2 * mass * alp/3; x = self%mC/gamma; lg = log(x)
-      beta = 11 - 2 * self%nf/3._dp
+    if ( type(:5) == 'exact' .and. self%n == 1 .and. self%l == 0 &
+    .and. self%j == 1 .and. self%s == 1 .and. x < 7 ) then
+
+      lg = log(x);  beta = 11 - 2 * self%nf/3._dp
 
       App1 = - 24.865811264136_dp * x + 11.983864345921031_dp * x**2 - &
       26.71170106052555_dp * x**3 + 15.542365205643007_dp * x**4 + &
