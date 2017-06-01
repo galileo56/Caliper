@@ -66,7 +66,7 @@ module NRQCDClass
     end if
 
     InNRQCD%cnl = [ 103._dp/18 - 5._dp * nf/9, c2(nf - 1, n, l, j, s) ]
-    InNRQCD%cnf = [   31._dp/6 - 5._dp * nf/9, c2(nf, n, l, j, s) ]
+    InNRQCD%cnf = [   31._dp/6 - 5._dp * nf/9, c2(nf    , n, l, j, s) ]
 
     InNRQCD%nl = nl; InNRQCD%MSR = MSR
 

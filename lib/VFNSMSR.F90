@@ -87,11 +87,9 @@ contains
     character (len = *), intent(in) :: up
     real (dp)          , intent(in) :: R
 
-    if ( up(:2) == 'up' ) then
-      DeltaM = deltaCharm2(self%mL/R)
-    else
-      DeltaM = 0
-    end if
+    DeltaM = 0; if ( self%mL <= tiny(1._dp) ) return
+
+    if ( up(:2) == 'up' ) DeltaM = deltaCharm2(self%mL/R)
 
   end function DeltaM
 

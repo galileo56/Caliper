@@ -1590,7 +1590,7 @@ end function MatchingAlphaUp
     integer  , intent(in) :: nl, nh
     real (dp)             :: lr
 
-    deltaCharm3 = 0; if (r <= 0) return
+    deltaCharm3 = 0; if ( r <= tiny(1._dp) ) return
 
     lr = log(r)
 
@@ -1607,6 +1607,8 @@ end function MatchingAlphaUp
     real (dp), intent(in) :: r
     integer  , intent(in) :: nl, nh
     real (dp)             :: lr
+
+    deltaCharm3Der = 0; if ( r <= tiny(1._dp) ) return
 
     lr = log(r)
 
@@ -1625,7 +1627,7 @@ end function MatchingAlphaUp
     real (dp), dimension(10) :: a
     integer                  :: i
 
-    deltaCharm2 = 0; if (r <= 0) return; a = 0
+    deltaCharm2 = 0; if ( r <= tiny(1._dp) ) return; a = 0
 
     if (1000 * r <= 1) then
 
@@ -1670,7 +1672,7 @@ end function MatchingAlphaUp
     real (dp), dimension(10) :: a
     integer                  :: i
 
-    deltaCharm2Der = 0; if (r <= 0) return; a = 0
+    deltaCharm2Der = 0; if ( r <= tiny(1._dp) ) return; a = 0
 
     if (1000 * r <= 1) then
 
