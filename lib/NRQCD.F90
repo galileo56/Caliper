@@ -226,7 +226,7 @@ module NRQCDClass
     deltaM2, rat, delta2, delta3
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
-    alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
+    alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1; delta2 = 0
     factor = - 2 * alp**2/9/self%n**2 ; logList(0) = 1 ; deltaM = 0; deltaM2 = 0
 
     if ( self%scheme(:4) == 'pole' ) then
@@ -325,7 +325,8 @@ module NRQCDClass
 
     end if
 
-    list(7) = list(7) + delta2 + deltaM2;  list(5) = mass - self%mH
+    list(7) = list(7) + delta2 + deltaM2
+    list(5) = mass - self%mH
 
   end function EnInv
 
@@ -579,6 +580,11 @@ module NRQCDClass
 
       DeltaCharmExact = self%DeltaCharmBin3(mu, lg, self%mC)
 
+    end if
+
+    if ( self%up(:4) == 'down' ) then
+      lg = log(3 * self%n * mu / 4 / alp / mass) + self%harm
+      DeltaCharmExact = DeltaCharmExact - self%DeltaCharmBin3(mu, lg, self%mC)
     end if
 
   end function DeltaCharmExact
