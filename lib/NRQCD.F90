@@ -7,7 +7,7 @@ module NRQCDClass
   type, public                    :: NRQCD
     private
     real (dp), dimension(0:4,0:3) :: c
-    real (dp), dimension(2)       :: cnl
+    real (dp), dimension(2)       :: cnl, cnf
     real (dp), dimension(0:4)     :: beta
     character (len = 5)           :: scheme
     character (len = 4)           :: up
@@ -61,10 +61,12 @@ module NRQCDClass
 
     if ( up(:2) == 'up' ) then
       nl = nf
-      InNRQCD%cnl = [ 103._dp/18 - 5._dp * nl/9, c2(nl - 1, n, l, j, s) ]
     else if ( up(:4) == 'down' ) then
       nl = nf - 1
     end if
+
+    InNRQCD%cnl = [ 103._dp/18 - 5._dp * nf/9, c2(nf - 1, n, l, j, s) ]
+    InNRQCD%cnf = [   31._dp/6 - 5._dp * nf/9, c2(nf, n, l, j, s) ]
 
     InNRQCD%nl = nl; InNRQCD%MSR = MSR
 
@@ -459,10 +461,10 @@ module NRQCDClass
 
    lg = log(mu/mC)
 
-    delta2 = self%cnl(2) + lg**2/3 - 2 * ln**2 * (self%nl - 17)/3 + lg * &
-    ( 13._dp/18 - 2._dp * self%nl/9 - self%cnl(1) ) + ln * ( lg * &
-    (2 * self%nl - 35)/3 + (8 * self%nl - 79)/18._dp + (35/2._dp - self%nl) * &
-    self%cnl(1) + (self%nl - 33/2._dp) * self%c(1,0) ) - self%c(2,0)
+    delta2 = self%cnl(2) + lg**2/3 - 2 * ln**2 * (self%nf - 17)/3 + lg * &
+    ( 13._dp/18 - 2._dp * self%nf/9 - self%cnl(1) ) + ln * ( lg * &
+    (2 * self%nf - 35)/3 + (8 * self%nf - 79)/18._dp + (35/2._dp - self%nf) * &
+    self%cnl(1) + (self%nf - 33/2._dp) * self%cnf(1) ) - self%cnf(2)
 
     if ( self%scheme(:4) == 'pole' ) then
       delta2 = delta2 - 7._dp/12
@@ -1133,7 +1135,7 @@ module NRQCDClass
     if ( r > 1 ) then
       ArTan = Atan(  sqrt( (r - 1)/(r + 1) )  ); root = sqrt( rho(2) - 1 )
     else
-      root = sqrt( 1 - rho(2) ); ArTan = log( (1 + root)/r  )/2
+      root = sqrt( 1 - rho(2) ); ArTan = - log( (1 + root)/r  )/2
     end if
 
     if (self%n == 1) then
