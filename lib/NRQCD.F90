@@ -488,6 +488,8 @@ module NRQCDClass
     real (dp), parameter            :: c1 = - 0.8316040946513316_dp, &
     c2 = 0.470_dp, d2 = 1.120_dp, d1 = 1.8316040946513317_dp
 
+    DeltaCharmExact = 0; if ( self%mC <= tiny(1._dp) ) return
+
     mC = 1._dp/sqrt(1._dp * self%n)
 
     if ( type(:5) == 'exact' ) then

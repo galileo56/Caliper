@@ -102,6 +102,8 @@ contains
     character (len = *), intent(in) :: up, type
     real (dp)          , intent(in) :: R
 
+    DeltaM2 = 0; if ( self%mL <= tiny(1._dp) ) return
+
     if ( up(:2) == 'up' ) then
 
       if ( type(:4) == 'MSRn' ) then
@@ -110,8 +112,6 @@ contains
         DeltaM2 = deltaCharm3(self%nf, 1, self%mL/R)
       end if
 
-    else
-      DeltaM2 = 0
     end if
 
   end function DeltaM2
