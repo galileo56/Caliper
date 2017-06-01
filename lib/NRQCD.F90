@@ -1037,54 +1037,15 @@ module NRQCDClass
     real (dp)    , intent(in)      :: mb, alpha
     real (dp)                      :: rho
 
-    ZeroBin = 0; rho = 3 * self%n * self%mc/2/mb/alpha
+    rho = 3 * self%n * self%mc/2/mb/alpha
 
-    if (self%n == 1) then
-
-      if (self%l == 0) then
-        ZeroBin = 11._dp/3
-      end if
-
-    else if (self%n == 2) then
-
-      if (self%l == 0) then
-
-        ZeroBin = 14._dp/3
-
-      else if (self%l == 1) then
-        ZeroBin = 16._dp/3
-      end if
-
-    else if (self%n == 3) then
-
-      if (self%l == 0) then
-        ZeroBin = 16._dp/3
-      else if (self%l == 1) then
-        ZeroBin = 35._dp/6
-      else if (self%l == 2) then
-        ZeroBin = 187._dp/30
-      end if
-
-    else if (self%n == 4) then
-      if (self%l == 0) then
-        ZeroBin = 35._dp/6
-      else if (self%l == 1) then
-        ZeroBin = 187._dp/30
-      else if (self%l == 2) then
-        ZeroBin = 197._dp/30
-      else if (self%l == 3) then
-        ZeroBin = 1439._dp/210
-      end if
-
-    end if
-
-    ZeroBin = - ( ZeroBin + 2 * log(rho/2) )/3
+    ZeroBin = - ( 5._dp/3 + 2 * Harmonic(self%l + self%n) + 2 * log(rho/2) )/3
 
   end function ZeroBin
 
 !ccccccccccccccc
 
-  real (dp) function Harmonic(n)
+  pure real (dp) function Harmonic(n)
     integer, intent(in) :: n
     integer             :: i
 
