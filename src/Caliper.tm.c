@@ -289,7 +289,7 @@ MLYDEFN( devyield_result, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
-# line 1835 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
+# line 1837 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
 #include "mathlink.h"
 #include "ftypes.h"
 #include <stdio.h>
@@ -2210,14 +2210,16 @@ static double upsilondeltacharmbin(int n, int l, double alpha, double mb, double
    return res;
 }
 
-extern double f90deltacharmexact_(char const* type, char const* scheme, int* nl,
-  double* mH, double* mL, double* mu, double* alp, double* result);
+extern double f90deltacharmexact_(char const* type, char const* scheme, int* n,
+int* l, int* j, int* s, int* nl, double* mH, double* mL, double* mu, double* alp,
+double* result);
 
-static double deltacharmexact(char const* type, char const* scheme, int nl,
-  double mH, double mL, double mu, double alp){
+static double deltacharmexact(char const* type, char const* scheme, int n, int l,
+int j, int s, int nl, double mH, double mL, double mu, double alp){
   double res;
 
-   f90deltacharmexact_(type, scheme, &nl, &mH, &mL, &mu, &alp, &res);
+   f90deltacharmexact_(type, scheme, &n, &l, &j, &s, &nl, &mH, &mL, &mu, &alp,
+   &res);
    return res;
 }
 
@@ -2879,7 +2881,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 2883 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
+# line 2885 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
 
 
 void ewfactors P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5));
@@ -9831,7 +9833,7 @@ L0:	return res;
 } /* _tr90 */
 
 
-double deltacharmexact P(( const char * _tp1, const char * _tp2, int _tp3, double _tp4, double _tp5, double _tp6, double _tp7));
+double deltacharmexact P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, int _tp7, double _tp8, double _tp9, double _tp10, double _tp11));
 
 #if MLPROTOTYPES
 static int _tr91( MLINK mlp)
@@ -9843,25 +9845,33 @@ static int _tr91(mlp) MLINK mlp;
 	const char * _tp1;
 	const char * _tp2;
 	int _tp3;
-	double _tp4;
-	double _tp5;
-	double _tp6;
-	double _tp7;
+	int _tp4;
+	int _tp5;
+	int _tp6;
+	int _tp7;
+	double _tp8;
+	double _tp9;
+	double _tp10;
+	double _tp11;
 	double _rp0;
 	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetString( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
-	if ( ! MLGetReal( mlp, &_tp4) ) goto L3;
-	if ( ! MLGetReal( mlp, &_tp5) ) goto L4;
-	if ( ! MLGetReal( mlp, &_tp6) ) goto L5;
-	if ( ! MLGetReal( mlp, &_tp7) ) goto L6;
-	if ( ! MLNewPacket(mlp) ) goto L7;
+	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
+	if ( ! MLGetInteger( mlp, &_tp5) ) goto L4;
+	if ( ! MLGetInteger( mlp, &_tp6) ) goto L5;
+	if ( ! MLGetInteger( mlp, &_tp7) ) goto L6;
+	if ( ! MLGetReal( mlp, &_tp8) ) goto L7;
+	if ( ! MLGetReal( mlp, &_tp9) ) goto L8;
+	if ( ! MLGetReal( mlp, &_tp10) ) goto L9;
+	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
+	if ( ! MLNewPacket(mlp) ) goto L11;
 
-	_rp0 = deltacharmexact(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7);
+	_rp0 = deltacharmexact(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L7: L6: L5: L4: L3: L2:	MLReleaseString(mlp, _tp2);
+L11: L10: L9: L8: L7: L6: L5: L4: L3: L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
@@ -11781,7 +11791,7 @@ static struct func {
 		{ 3, 0, _tr88, "complexpolylog" },
 		{ 2, 0, _tr89, "cli2" },
 		{ 5, 0, _tr90, "upsilondeltacharm" },
-		{ 7, 0, _tr91, "deltacharmexact" },
+		{11, 0, _tr91, "deltacharmexact" },
 		{ 5, 0, _tr92, "upsilondeltacharmbin" },
 		{ 3, 0, _tr93, "deltacharm3" },
 		{ 3, 0, _tr94, "deltacharm3der" },
@@ -11851,9 +11861,9 @@ static const char* evalstrs[] = {
 	(const char*)0,
 	"sin2ThetaWPythia = 0.2312",
 	(const char*)0,
-	"DeltaCharmExact::usage = \"DeltaCharmExact[type, scheme, nl, mH, ",
-	"mL, mu, alp] computes the subleading massive charm corrections t",
-	"o quarkonium masses\"",
+	"DeltaCharmExact::usage = \"DeltaCharmExact[type, scheme, n, l, j,",
+	" s, nl, mH, mL, mu, alp] computes the subleading massive charm c",
+	"orrections to quarkonium masses\"",
 	(const char*)0,
 	"UpsilonDeltaCharmBin::usage = \"UpsilonDeltaCharmBin[n, l, alp, m",
 	"b, mc] computes the massive charm corrections to quarkonium mass",
@@ -12643,7 +12653,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"ComplexPolylog[n_, z_]", (char *)"{n, Re[z], Im[z]}", 88);
 	if (_res) _res = _definepattern(mlp, (char *)"CLi2[z_]", (char *)"{Re[z], Im[z]}", 89);
 	if (_res) _res = _definepattern(mlp, (char *)"UpsilonDeltaCharm[n_, l_, alpha_, mb_, mc_]", (char *)"{n, l, alpha, mb, mc}", 90);
-	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharmExact[type_, scheme_, nl_, mH_, mL_, mu_, alp_]", (char *)"{type, scheme, nl, mH, mL, mu, alp}", 91);
+	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharmExact[type_, scheme_, n_, l_, j_, s_, nl_, mH_, mL_,                  mu_, alp_]", (char *)"{type, scheme, n, l, j, s, nl, mH, mL, mu, alp}", 91);
 	if (_res) _res = _definepattern(mlp, (char *)"UpsilonDeltaCharmBin[n_, l_, alpha_, mb_, mc_]", (char *)"{n, l, alpha, mb, mc}", 92);
 	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharm3[nl_, nh_, z_]", (char *)"{nl, nh, z}", 93);
 	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharm3Der[nl_, nh_, z_]", (char *)"{nl, nh, z}", 94);

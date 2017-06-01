@@ -3299,12 +3299,12 @@ end subroutine f90OptimalR
 
 !ccccccccccccccc
 
-  subroutine f90DeltaCharmExact(type, scheme, nl, mH, mL, mu, alp, res)
+  subroutine f90DeltaCharmExact(type, scheme, n, l, j, s, nl, mH, mL, mu, alp, res)
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
     character (len = *), intent(in ) :: type, scheme
-    integer            , intent(in ) :: nl
+    integer            , intent(in ) :: nl, n, l, j, s
     real (dp)          , intent(in ) :: mH, mL, alp, mu
     real (dp)          , intent(out) :: res
     real (dp)                        :: mB, mC, mT
@@ -3334,7 +3334,7 @@ end subroutine f90OptimalR
     Running(nl, 0, alphaAll, mH) ]
 
     MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( 'up', scheme, MSR, 1, 0, 1, 1 )
+    Upsilon = NRQCD( 'up', scheme, MSR, n, l, j, s )
 
     res = Upsilon%DeltaCharmExact(type, mu, alp, mH)
 

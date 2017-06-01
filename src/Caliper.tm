@@ -12,7 +12,7 @@
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
 
-:Evaluate:  DeltaCharmExact::usage = "DeltaCharmExact[type, scheme, nl, mH, mL, mu, alp] computes the subleading massive charm corrections to quarkonium masses"
+:Evaluate:  DeltaCharmExact::usage = "DeltaCharmExact[type, scheme, n, l, j, s, nl, mH, mL, mu, alp] computes the subleading massive charm corrections to quarkonium masses"
 :Evaluate:  UpsilonDeltaCharmBin::usage = "UpsilonDeltaCharmBin[n, l, alp, mb, mc] computes the massive charm corrections to quarkonium masses"
 :Evaluate:  UpsilonDeltaCharm::usage = "UpsilonDeltaCharm[n, l, alp, mb, mc] computes the massive charm corrections to quarkonium masses"
 :Evaluate:  GammaRCharm2::usage = "GammaRCharm2[z] computes the massive charm corrections to the R-anomalous dimension at two loops"
@@ -1393,10 +1393,12 @@
 
 :Begin:
 :Function:      deltacharmexact
-:Pattern:       DeltaCharmExact[type_, scheme_, nl_, mH_, mL_, mu_, alp_]
-:Arguments:     {type, scheme, nl, mH, mL, mu, alp}
-:ArgumentTypes: {String, String, Integer, Real, Real, Real, Real}
-:ReturnType:    Real
+:Pattern:       DeltaCharmExact[type_, scheme_, n_, l_, j_, s_, nl_, mH_, mL_,
+                 mu_, alp_]
+:Arguments:     {type, scheme, n, l, j, s, nl, mH, mL, mu, alp}
+:ArgumentTypes: {String, String, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real}
+:ReturnType:     Real
 :End:
 
 :Begin:
@@ -3752,14 +3754,16 @@ static double upsilondeltacharmbin(int n, int l, double alpha, double mb, double
    return res;
 }
 
-extern double f90deltacharmexact_(char const* type, char const* scheme, int* nl,
-  double* mH, double* mL, double* mu, double* alp, double* result);
+extern double f90deltacharmexact_(char const* type, char const* scheme, int* n,
+int* l, int* j, int* s, int* nl, double* mH, double* mL, double* mu, double* alp,
+double* result);
 
-static double deltacharmexact(char const* type, char const* scheme, int nl,
-  double mH, double mL, double mu, double alp){
+static double deltacharmexact(char const* type, char const* scheme, int n, int l,
+int j, int s, int nl, double mH, double mL, double mu, double alp){
   double res;
 
-   f90deltacharmexact_(type, scheme, &nl, &mH, &mL, &mu, &alp, &res);
+   f90deltacharmexact_(type, scheme, &n, &l, &j, &s, &nl, &mH, &mL, &mu, &alp,
+   &res);
    return res;
 }
 

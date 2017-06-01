@@ -450,12 +450,12 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  real (dp) function DeltaCharmBin3(self, mu, ln) result(delta2)
+  real (dp) function DeltaCharmBin3(self, mu, ln, mC) result(delta2)
     class (NRQCD), intent(in) :: self
-    real (dp)    , intent(in) :: mu, ln
+    real (dp)    , intent(in) :: mu, ln, mC
     real (dp)                 :: lg
 
-   lg = log(mu/self%mC)
+   lg = log(mu/mC)
 
     delta2 = self%cnl(2) + lg**2/3 - 2 * ln**2 * (self%nl - 17)/3 + lg * &
     ( 13._dp/18 - 2._dp * self%nl/9 - self%cnl(1) ) + ln * ( lg * &
@@ -496,51 +496,88 @@ module NRQCDClass
     class (NRQCD)      , intent(in) :: self
     character (len = *), intent(in) :: type
     real (dp)          , intent(in) :: mu, alp, mass
-    real (dp)                       :: lg, x, App1, App2, App3, gamma, beta
+    real (dp)                       :: lg, x, App1, App2, App3, gamma, beta, a, &
+    b, e1, e2, mC
     real (dp), parameter            :: c1 = - 0.8316040946513316_dp, &
     c2 = 0.470_dp, d2 = 1.120_dp, d1 = 1.8316040946513317_dp
 
-    gamma = 2 * mass * alp/3; x = self%mC/gamma
+    mC = 1._dp/sqrt(1._dp * self%n)
 
-    if ( type(:5) == 'exact' .and. self%n == 1 .and. self%l == 0 &
-    .and. self%j == 1 .and. self%s == 1 .and. x < 7 ) then
+    if ( type(:5) == 'exact' ) then
 
-      lg = log(x);  beta = 11 - 2 * self%nf/3._dp
+      gamma = 2 * mass * alp/3; x = self%mC/gamma
 
-      App1 = - 24.865811264136_dp * x + 11.983864345921031_dp * x**2 - &
-      26.71170106052555_dp * x**3 + 15.542365205643007_dp * x**4 + &
-      7.9194151299077715_dp * x**5 + 0.3053516028457726_dp * x**6 + &
-      0.04307631370176248_dp * x * lg + 0.23973826692206646_dp * x**2 * lg - &
-      12.19353255229631_dp * x**3 * lg - 17.71098150670699_dp * x**4 * lg - &
-      2.864456892317382_dp * x**5 * lg - 0.05715945405398001_dp * x**6 * lg
+      if ( self%n == 1 .and. self%l == 0 .and. self%j == 1 .and. self%s == 1 ) then
 
-      App2 = 1.9477460481502156_dp * x + 0.1527091423940376_dp * x**2 - &
-      2.862610556473993_dp * x**3 + 2.474572078659877_dp * x**4 + &
-      0.8542022081305681_dp * x**5 + 0.02932979796074642_dp * x**6 - &
-      2.3473257597558925_dp * x * lg + 0.32395085128272094_dp * x**2 * lg - &
-      2.4754591830262753_dp * x**3 * lg - 2.181651709563445_dp * x**4 * lg - &
-      0.2964274725676275_dp * x**5 * lg - 0.005426744077104387_dp * x**6 * lg
+        if (x < 7) then
 
-      App3 = 1.553742421397914_dp * x - 0.8004938532161119_dp * x**2 + &
-      1.380778522466775_dp * x**3 - 0.6923566636506896_dp * x**4 - &
-      0.3823712766542248_dp * x**5 - 0.014981803878737314_dp * x**6 - &
-      0.003436674677916459_dp * x * lg - 0.06597592537344886_dp * x**2 * lg + &
-      0.4712708827971536_dp * x**3 * lg + 0.8364190131891226_dp * x**4 * lg + &
-      0.13911559154554373_dp * x**5 * lg + 0.0028092361619528835_dp * x**6 * lg
+          lg = log(x);  beta = 11 - 2 * self%nf/3._dp
 
-      DeltaCharmExact = 2 * (  App1 + 57 * ( c1 * c2 * x/(1 + c2 * x) + &
-      d1 * d2 * x/(1 + d2 * x) + c1 * log(1 + c2 * x) + d1 * log(1 + d2 * x) )/4 &
-      + 3 * beta * ( App2 + 3 * App3 * ( log(mu/2/gamma) + 5/6._dp )/2 )  )/9
+          App1 = - 24.865811264136_dp * x + 11.983864345921031_dp * x**2 - &
+          26.71170106052555_dp * x**3 + 15.542365205643007_dp * x**4 + &
+          7.9194151299077715_dp * x**5 + 0.3053516028457726_dp * x**6 + &
+          0.04307631370176248_dp * x * lg + 0.23973826692206646_dp * x**2 * lg - &
+          12.19353255229631_dp * x**3 * lg - 17.71098150670699_dp * x**4 * lg - &
+          2.864456892317382_dp * x**5 * lg - 0.05715945405398001_dp * x**6 * lg
 
-      if ( self%scheme(:4) /= 'pole' ) then
-        DeltaCharmExact = DeltaCharmExact + 4 * DeltaCharmDer(x)/3
+          App2 = 1.9477460481502156_dp * x + 0.1527091423940376_dp * x**2 - &
+          2.862610556473993_dp * x**3 + 2.474572078659877_dp * x**4 + &
+          0.8542022081305681_dp * x**5 + 0.02932979796074642_dp * x**6 - &
+          2.3473257597558925_dp * x * lg + 0.32395085128272094_dp * x**2 * lg - &
+          2.4754591830262753_dp * x**3 * lg - 2.181651709563445_dp * x**4 * lg - &
+          0.2964274725676275_dp * x**5 * lg - 0.005426744077104387_dp * x**6 * lg
+
+          App3 = 1.553742421397914_dp * x - 0.8004938532161119_dp * x**2 + &
+          1.380778522466775_dp * x**3 - 0.6923566636506896_dp * x**4 - &
+          0.3823712766542248_dp * x**5 - 0.014981803878737314_dp * x**6 - &
+          0.003436674677916459_dp * x * lg - 0.06597592537344886_dp * x**2 * lg + &
+          0.4712708827971536_dp * x**3 * lg + 0.8364190131891226_dp * x**4 * lg + &
+          0.13911559154554373_dp * x**5 * lg + 0.0028092361619528835_dp * x**6 * lg
+
+          DeltaCharmExact = 2 * (  App1 + 57 * ( c1 * c2 * x/(1 + c2 * x) + &
+          d1 * d2 * x/(1 + d2 * x) + c1 * log(1 + c2 * x) + d1 * log(1 + d2 * x) )/4 &
+          + 3 * beta * ( App2 + 3 * App3 * ( log(mu/2/gamma) + 5/6._dp )/2 )  )/9
+
+          if ( self%scheme(:4) /= 'pole' ) then
+            DeltaCharmExact = DeltaCharmExact + 4 * DeltaCharmDer(x)/3
+          end if
+
+        else
+
+          lg = log(3 * self%n * mu / 4 / alp / mass) + self%harm
+          DeltaCharmExact = self%DeltaCharmBin3(mu, lg, self%mC)
+
+        end if
+
+      else
+
+        if ( self%mc < mC) then
+
+          lg = log(3 * self%n * mu / 4 / alp / mass) + self%harm
+
+          e1 = self%DeltaCharmBin3( mu, lg, mC )
+
+          e2 = ( self%DeltaCharmBin3(mu, lg, mC + 0.01_dp) - &
+          self%DeltaCharmBin3(mu, lg, mC - 0.01_dp) )/0.02_dp
+
+          a = ( e1 + (e1 - e2 * mC) * Log(mC) )/mC; b = e2 - e1/mC
+
+          DeltaCharmExact = self%mC * ( a + b * log(self%mC) )
+
+        else
+
+          lg = log(3 * self%n * mu / 4 / alp / mass) + self%harm
+          DeltaCharmExact = self%DeltaCharmBin3(mu, lg, self%mC)
+
+        end if
+
       end if
 
     else
 
       lg = log(3 * self%n * mu / 4 / alp / mass) + self%harm
 
-      DeltaCharmExact = self%DeltaCharmBin3(mu, lg)
+      DeltaCharmExact = self%DeltaCharmBin3(mu, lg, self%mC)
 
     end if
 
