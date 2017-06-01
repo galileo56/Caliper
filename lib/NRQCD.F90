@@ -135,8 +135,7 @@ module NRQCDClass
     MassFitter = FindRoot(mUpsilon/2)
 
     do
-      a = FindRoot(MassFitter)
-      if ( abs(a - MassFitter) < 1e-14_dp ) exit
+      a = FindRoot(MassFitter);  if ( abs(a - MassFitter) < 1e-10_dp ) exit
       MassFitter = a
     end do
 
@@ -226,7 +225,7 @@ module NRQCDClass
     real (dp), dimension(4,0:3)     :: c
     integer                         :: i, j, k, l
     real (dp)                       :: alp, Rmass, mass, factor, deltaM, lg, &
-    deltaM2, rat, delta2, delta3
+    deltaM2, rat, delta2
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
     alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1; delta2 = 0
@@ -310,25 +309,13 @@ module NRQCDClass
     end if
 
     list(6) = list(6) + factor * alphaList(1) * self%DeltaCharmBin(alp, mass)
+    delta2 = factor * alphaList(2) * self%DeltaCharmExact('exact', mu, alp, mass)
 
-    if ( self%up(:2) == 'up' .and. self%mC > tiny(1._dp) ) then
+    if ( self%up(:2) == 'up' .and. self%scheme(:4) /= 'pole' ) list(7) = factor * deltaM
 
-      delta2 = factor * alphaList(2) * self%DeltaCharmExact('exact', mu, alp, mass)
+    list(7) = list(7) + delta2 + deltaM2 - 8 * factor * alphaList(1) * &
+    delta(1) * self%DeltaCharmDerBin(alp, mass)/9
 
-      if ( self%scheme(:4) /= 'pole' ) then
-
-        delta3 = 1
-
-        if (self%n == 1 .and. self%l == 0 .and. self%j == 1 .and. self%s == 1 ) &
-        delta3 = 4 * self%DeltaCharmDerBin(alp, mass)/3
-
-        list(7) = factor * ( deltaM - 2 * alphaList(1) * delta3 * delta(1)/3 )
-
-      end if
-
-    end if
-
-    list(7) = list(7) + delta2 + deltaM2
     list(5) = mass - self%mH
 
   end function EnInv
@@ -347,7 +334,7 @@ module NRQCDClass
     real (dp), dimension(0:4,4)     :: coefMSR
     integer                         :: n
     real (dp)                       :: alp, Rmass, mass, factor, mTree, deltaM,&
-    delta1, delta2, rat, deltaM2, delta3
+    delta1, delta2, rat, deltaM2
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
     alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
@@ -426,17 +413,11 @@ module NRQCDClass
 
     list(2) = list(2) - deltaM - delta1
 
+    delta2 = factor * alphaList(2) * self%DeltaCharmExact('exact', mu, alp, mTree)
+
     if ( self%up(:2) == 'up' .and. self%mC > tiny(1._dp) ) then
 
-      delta2 = factor * alphaList(2) * self%DeltaCharmExact('exact', mu, alp, mTree)
-
-      delta3 = 1
-
-      if (self%n == 1 .and. self%l == 0 .and. self%j == 1 .and. self%s == 1 ) &
-      delta3 = 4 * self%DeltaCharmDerBin(alp, mass)/3
-
-      list(3) = list(3) - deltaM2 - delta2 + 2 * delta1 * listInv(1) + &
-      2 * factor * list(1) * delta3 * alphaList(1)/3
+      list(3) = list(3) - deltaM2 + 2 * delta1 * listInv(1)
 
       if ( self%scheme(:5) == 'MSbar' ) then
 
@@ -447,6 +428,8 @@ module NRQCDClass
       end if
 
     end if
+
+    list(3) = list(3) - delta2 + 8 * factor * list(1) * self%DeltaCharmDerBin(alp, mass) * alphaList(1)/9
 
     list = mTree * list; list(0) = list(0) + self%mH - mass
 
@@ -511,7 +494,7 @@ module NRQCDClass
 
       gamma = 2 * mass * alp/3; x = self%mC/gamma
 
-      if ( self%n == 1 .and. self%l == 0 .and. self%j == 1 .and. self%s == 1 ) then
+      if ( self%n == 1 .and. self%l == 0 ) then
 
         if (x < 7) then
 
@@ -555,9 +538,9 @@ module NRQCDClass
 
       else
 
-        if ( self%mc < mC) then
+        lg = log(3 * self%n * mu / 4 / alp / mass) + self%harm
 
-          lg = log(3 * self%n * mu / 4 / alp / mass) + self%harm
+        if ( self%mc < mC) then
 
           e1 = self%DeltaCharmBin3( mu, lg, mC )
 
@@ -570,7 +553,6 @@ module NRQCDClass
 
         else
 
-          lg = log(3 * self%n * mu / 4 / alp / mass) + self%harm
           DeltaCharmExact = self%DeltaCharmBin3(mu, lg, self%mC)
 
         end if
