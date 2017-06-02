@@ -427,8 +427,11 @@ module NRQCDClass
       if ( self%scheme(:5) == 'MSbar' ) then
 
         rat = self%mC/mTree
+
         list(3) = list(3) + deltaM(1) * ( 2 * delta(1) - list(1) ) + &
         alphaList(2) * ( list(1) - delta(1) ) * rat * DeltaCharm2Der(rat)
+
+        if ( self%up(:4) == 'down' ) list(3) = list(3) + 4._dp/9
 
       end if
 
