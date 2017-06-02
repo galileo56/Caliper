@@ -7,7 +7,7 @@ module NRQCDClass
   type, public                    :: NRQCD
     private
     real (dp), dimension(0:4,0:3) :: c
-    real (dp), dimension(2)       :: cnl
+    real (dp), dimension(2)       :: cnl, cnf
     real (dp), dimension(0:4)     :: beta
     character (len = 5)           :: scheme
     character (len = 4)           :: up
@@ -16,14 +16,15 @@ module NRQCDClass
     type (Alpha)                  :: alphaOb
     type (AnomDim)                :: Andim
     type (VFNSMSR)                :: MSR
-    integer                       :: n, l, nl, nf
+    integer                       :: n, l, j, s, nl, nf
     integer, dimension(0:3)       :: listFact
 
   contains
 
     procedure, pass(self), private :: Binomial, EnInv
     procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
-    ZeroBin, DeltaCharmBin, MassIter, EnExpand
+    ZeroBin, DeltaCharmBin, MassIter, EnExpand, DeltaCharmBin3, DeltaCharmDer, &
+    DeltaCharmExact, DeltaCharmDerBin
 
   end type NRQCD
 
@@ -53,17 +54,19 @@ module NRQCDClass
 
     InNRQCD%n = n; nf = MSR%numFlav() ; alphaScheme = InNRQCD%alphaMass%scheme()
     InNRQCD%Andim = InNRQCD%alphaMass%adim(); InNRQCD%up = up; InNRQCD%l = l
-    InNRQCD%mH = MSR%mass(); InNRQCD%nf = nf; InNRQCD%c = 0
+    InNRQCD%mH = MSR%mass(); InNRQCD%nf = nf; InNRQCD%c = 0; InNRQCD%j = j
     InNRQCD%harm = Harmonic(n + l); InNRQCD%listFact = factList(3)
     InNRQCD%alphaOb = MSR%AlphaAll(); beta = InNRQCD%Andim%betaQCD('beta')
-    InNRQCD%beta = beta; InNRQCD%cnl = 0
+    InNRQCD%beta = beta; InNRQCD%cnl = 0; InNRQCD%s = s
 
     if ( up(:2) == 'up' ) then
       nl = nf
-      InNRQCD%cnl = [ 103._dp/18 - 5._dp * nl/9, c2(nl - 1, n, l, j, s) ]
     else if ( up(:4) == 'down' ) then
       nl = nf - 1
     end if
+
+    InNRQCD%cnl = [ 103._dp/18 - 5._dp * nf/9, c2(nf - 1, n, l, j, s) ]
+    InNRQCD%cnf = [   31._dp/6 - 5._dp * nf/9, c2(nf    , n, l, j, s) ]
 
     InNRQCD%nl = nl; InNRQCD%MSR = MSR
 
@@ -132,8 +135,7 @@ module NRQCDClass
     MassFitter = FindRoot(mUpsilon/2)
 
     do
-      a = FindRoot(MassFitter)
-      if ( abs(a - MassFitter) < 1e-14_dp ) exit
+      a = FindRoot(MassFitter);  if ( abs(a - MassFitter) < 1e-10_dp ) exit
       MassFitter = a
     end do
 
@@ -213,7 +215,7 @@ module NRQCDClass
     character (len = *), intent(in) :: method, charm
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda
-    real (dp), dimension(0:5)       :: alphaList
+    real (dp), dimension(0:4)       :: alphaList
     real (dp), dimension(0:7)       :: list
     real (dp), dimension(0:3)       :: logList
     real (dp), dimension(0:4)       :: delta
@@ -221,13 +223,13 @@ module NRQCDClass
     real (dp), dimension(0:4,0:4)   :: deltaLog  ! (power, order)
     real (dp), dimension(0:4,4)     :: coefMSR
     real (dp), dimension(4,0:3)     :: c
+    real (dp), dimension(2)         :: deltaM, deltaCharm
     integer                         :: i, j, k, l
-    real (dp)                       :: alp, Rmass, mass, factor, deltaM, &
-    deltaM2, rat, lg
+    real (dp)                       :: alp, Rmass, mass, factor, lg, rat, delta2
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
-    alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
-    factor = - 2 * alp**2/9/self%n**2 ; logList(0) = 1 ; deltaM = 0; deltaM2 = 0
+    alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1; delta2 = 0
+    factor = - 2 * alp**2/9/self%n**2 ; logList(0) = 1 ; deltaM = 0
 
     if ( self%scheme(:4) == 'pole' ) then
       delta(1:) = 0; Rmass = 0; mass = self%mH
@@ -256,24 +258,24 @@ module NRQCDClass
 
       if ( self%scheme(:3) == 'MSR' .or. self%up(:2) == 'up' ) then
 
-        deltaM  = self%MSR%DeltaM(self%up, Rmass)
-        deltaM2 = self%MSR%DeltaM2(self%scheme, self%up, Rmass) + &
-        self%beta(0) * log(mu/Rmass) * deltaM
+        deltaM(1) = self%MSR%DeltaM(self%up, Rmass)
+        deltaM(2) = self%MSR%DeltaM2(self%scheme, self%up, Rmass) + &
+        self%beta(0) * log(mu/Rmass) * deltaM(1)
 
       else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
 
-        rat = self%mC/self%mH; lg = - log(rat);  deltaM = deltaCharm2(rat)
+        rat = self%mC/self%mH; lg = - log(rat);  deltaM(1) = deltaCharm2(rat)
 
-        deltaM2 = deltaCharm3(self%nf, 1, rat) + 2 * lg * deltaM/3 +            &
+        deltaM(2) = deltaCharm3(self%nf, 1, rat) + 2 * lg * deltaM(1)/3 +       &
         4 * lg**2/27 - 27.51152614489051_dp + 1.3053814981630874_dp * self%nf + &
         lg * (11.073375282398949_dp - 0.694244607447754_dp * self%nf)
 
-        deltaM  = 4 * log(rat)/9 + deltaM - 71._dp/144 - pi2/18
+        deltaM(1) = 4 * log(rat)/9 + deltaM(1) - 71._dp/144 - pi2/18
+        deltaM(2) = deltaM(2) + self%beta(0) * log(mu/self%mH) * deltaM(1)
 
       end if
 
-      deltaM  = Rmass * alphaList(2) * deltaM /mass
-      deltaM2 = Rmass * alphaList(3) * deltaM2/mass
+      deltaM = Rmass * alphaList(2:3) * deltaM /mass
 
       do i = 1, 4
         do k = 0, i - 1
@@ -302,31 +304,15 @@ module NRQCDClass
         list(j) = sum( delta(:j) * list(j:0:-1) )
       end do
 
-      list(6) = deltaM
-
     end if
 
-    list(6) = list(6) + self%DeltaCharmBin(alp, mass)/2
+    deltaCharm = factor * alphaList(1:2) * [ self%DeltaCharmBin(alp, mass), &
+    self%DeltaCharmExact('exact', mu, alp, mass) ]
 
-    if ( self%up(:2) == 'up' .and. self%mC > tiny(1._dp) ) then
+    list(6:7) = deltaM + deltaCharm
 
-      lg = log(mu/self%mC)
-
-      list(7) = self%cnl(2) + lg**2/3 - 2 * logList(2) * (self%nl - 17)/3 + lg * &
-      ( 13._dp/18 - 2._dp * self%nl/9 - self%cnl(1) ) + logList(1) * ( lg * &
-      (2 * self%nl - 35)/3 + (8 * self%nl - 79)/18._dp + (35/2._dp - self%nl) * &
-      self%cnl(1) + (self%nl - 33/2._dp) * self%c(1,0) ) - self%c(2,0)
-
-      if ( self%scheme(:4) == 'pole' ) then
-        list(7) = factor * alphaList(2) * ( list(7) - 7._dp/12 )
-      else
-        list(7) = factor * ( alphaList(2) * ( list(7) + 11._dp/36 ) + deltaM &
-        - 2 * alphaList(1) * delta(1)/3 )
-      end if
-
-    end if
-
-    list(7) = list(7) + deltaM2
+    list(7) = list(7) + factor * deltaM(1) + deltaCharm(1) * delta(1) - &
+    factor * alphaList(1) * delta(1) * self%DeltaCharmDerBin(alp, mass)
 
     list(5) = mass - self%mH
 
@@ -344,14 +330,14 @@ module NRQCDClass
     real (dp), dimension(0:4)       :: delta, deltaInv
     real (dp), dimension(4)         :: lgmList
     real (dp), dimension(0:4,4)     :: coefMSR
+    real (dp), dimension(2)         :: deltaM, deltaCharm
     integer                         :: n
-    real (dp)                       :: alp, Rmass, mass, factor, mTree, deltaM,&
-    delta1, delta2, rat, lg, deltaM2
+    real (dp)                       :: alp, Rmass, mass, factor, mTree, lg, rat
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
     alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
     factor = - 2 * alp**2/9/self%n**2 ; logList(0) = 1; mTree = mUpsilon/2
-    deltaM = 0; listInv = 0; listInv(0) = 1; deltaM2 = 0
+    deltaM = 0; listInv = 0; listInv(0) = 1
 
     if ( self%scheme(:4) == 'pole' ) then
       delta(1:) = 0; Rmass = 0; mass = self%mH
@@ -381,16 +367,23 @@ module NRQCDClass
     if ( self%scheme(:4) /= 'pole' ) then
 
       if ( self%scheme(:3) == 'MSR' .or. self%up(:2) == 'up' ) then
-        deltaM  = self%MSR%DeltaM(self%up, Rmass)
-        deltaM2 = self%MSR%DeltaM2(self%scheme, self%up, Rmass) + &
-        self%beta(0) * log(mu/Rmass) * deltaM
+        deltaM(1) = self%MSR%DeltaM(self%up, Rmass)
+        deltaM(2) = self%MSR%DeltaM2(self%scheme, self%up, Rmass) + &
+        self%beta(0) * log(mu/Rmass) * deltaM(1)
       else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
-        rat = self%mC/mTree
-        deltaM = 4 * log(rat)/9 + deltaCharm2(rat) - 71._dp/144 - pi2/18
+
+        rat = self%mC/mTree; lg = - log(rat);  deltaM(1) = deltaCharm2(rat)
+
+        deltaM(2) = deltaCharm3(self%nf, 1, rat) + 2 * lg * deltaM(1)/3 +       &
+        4 * lg**2/27 - 27.51152614489051_dp + 1.3053814981630874_dp * self%nf + &
+        lg * (11.073375282398949_dp - 0.694244607447754_dp * self%nf)
+
+        deltaM(1) = 4 * log(rat)/9 + deltaM(1) - 71._dp/144 - pi2/18
+        deltaM(2) = deltaM(2) + self%beta(0) * log(mu/mTree) * deltaM(1)
+
       end if
 
-      deltaM  = Rmass * alphaList(2) * deltaM /mTree
-      deltaM2 = Rmass * alphaList(3) * deltaM2/mTree
+      deltaM = Rmass * alphaList(2:3) * deltaM/mTree
 
       call self%andim%expandAlpha(coefMSR); lgmList = PowList( log(mu/Rmass), 4 )
       call AddAlpha( coefMSR, alphaList(1:) )
@@ -421,33 +414,24 @@ module NRQCDClass
 
     end if
 
-    delta1 = self%DeltaCharmBin(alp, mTree)/2
+    deltaCharm = factor * alphaList(1:2) * [ self%DeltaCharmBin(alp, mTree), &
+    self%DeltaCharmExact('exact', mu, alp, mTree) ]
 
-    list(2) = list(2) - deltaM - delta1
+    list(2:3) = list(2:3) - deltaM - deltaCharm
+
+    list(3) = list(3) + factor**2 * alphaList(1) * &
+    ( 2 * self%DeltaCharmBin(alp, mTree) - self%DeltaCharmDerBin(alp, mass) )
 
     if ( self%up(:2) == 'up' .and. self%mC > tiny(1._dp) ) then
-
-      lg = log(mu/self%mC)
-
-      delta2 = self%cnl(2) + lg**2/3 - 2 * logList(2) * (self%nl - 17)/3 + lg * &
-      ( 13._dp/18 - 2._dp * self%nl/9 - self%cnl(1) ) + logList(1) * ( lg * &
-      (2 * self%nl - 35)/3 + (8 * self%nl - 79)/18._dp + (35/2._dp - self%nl) * &
-      self%cnl(1) + (self%nl - 33/2._dp) * self%c(1,0) ) - self%c(2,0)
-
-      if ( self%scheme(:4) == 'pole' ) then
-        delta2 = factor * alphaList(2) * (delta2 - 7._dp/12)
-      else
-        delta2 = factor * alphaList(2) * (delta2 + 11._dp/36)
-      end if
-
-      list(3) = list(3) - deltaM2 - delta2 + 2 * delta1 * listInv(1) + &
-      2 * factor * list(1) * alphaList(1)/3
 
       if ( self%scheme(:5) == 'MSbar' ) then
 
         rat = self%mC/mTree
-        list(3) = list(3) + deltaM * ( 2 * delta(1) - list(1) ) + &
-        alphaList(2) * ( list(1) - delta(1) ) * rat * deltaCharm2Der(rat)
+
+        list(3) = list(3) + deltaM(1) * ( 2 * delta(1) - list(1) ) + &
+        alphaList(2) * ( list(1) - delta(1) ) * rat * DeltaCharm2Der(rat)
+
+        if ( self%up(:4) == 'down' ) list(3) = list(3) + 4._dp/9
 
       end if
 
@@ -456,6 +440,147 @@ module NRQCDClass
     list = mTree * list; list(0) = list(0) + self%mH - mass
 
   end function MassIter
+
+!ccccccccccccccc
+
+  real (dp) function DeltaCharmBin3(self, mu, ln, mC) result(delta2)
+    class (NRQCD), intent(in) :: self
+    real (dp)    , intent(in) :: mu, ln, mC
+    real (dp)                 :: lg
+
+   lg = log(mu/mC)
+
+    delta2 = self%cnl(2) + lg**2/3 - 2 * ln**2 * (self%nf - 17)/3 + lg * &
+    ( 13._dp/18 - 2._dp * self%nf/9 - self%cnl(1) ) + ln * ( lg * &
+    (2 * self%nf - 35)/3 + (8 * self%nf - 79)/18._dp + (35/2._dp - self%nf) * &
+    self%cnl(1) + (self%nf - 33/2._dp) * self%cnf(1) ) - self%cnf(2)
+
+    if ( self%scheme(:4) == 'pole' ) then
+      delta2 = delta2 - 7._dp/12
+    else
+      delta2 = delta2 + 11._dp/36
+    end if
+
+  end function DeltaCharmBin3
+
+!ccccccccccccccc
+
+  real (dp) function DeltaCharm1Der(a)
+    real (dp), intent(in) :: a
+
+    if (a > 1) then
+      DeltaCharm1Der = 2 * atan( Sqrt( (a - 1)/(a + 1) )  )/Sqrt(a**2 - 1)
+    else if (a < 1) then
+      DeltaCharm1Der = Log(  ( 1 + Sqrt(1 - a**2) )/a  )/Sqrt(1 - a**2)
+    else
+      DeltaCharm1Der = 1
+    end if
+
+    DeltaCharm1Der = 4 + 14 * a**2 - 24 * a**4 - 3 * a * Pi - 9 * a**3 * Pi + &
+    12 * a**5 * Pi - 6 * a**4 * (4 * a**2 - 5) * DeltaCharm1Der
+
+    DeltaCharm1Der = 2 * ( DeltaCharm1Der/4/(a**2 - 1) + 1 )/3
+
+  end function DeltaCharm1Der
+
+!ccccccccccccccc
+
+  real (dp) function DeltaCharmExact(self, type, mu, alp, mass)
+    class (NRQCD)      , intent(in) :: self
+    character (len = *), intent(in) :: type
+    real (dp)          , intent(in) :: mu, alp, mass
+    real (dp)                       :: lg, x, App1, App2, App3, gamma, beta, a, &
+    b, e1, e2, mC
+    real (dp), parameter            :: c1 = - 0.8316040946513316_dp, &
+    c2 = 0.470_dp, d2 = 1.120_dp, d1 = 1.8316040946513317_dp
+
+    DeltaCharmExact = 0; if ( self%mC <= tiny(1._dp) ) return
+
+    mC = 1._dp/sqrt(1._dp * self%n)
+
+    if ( type(:5) == 'exact' ) then
+
+      gamma = 2 * mass * alp/3; x = self%mC/gamma
+
+      if ( self%n == 1 .and. self%l == 0 ) then
+
+        if (x < 7) then
+
+          lg = log(x);  beta = 11 - 2 * self%nf/3._dp
+
+          App1 = - 24.865811264136_dp * x + 11.983864345921031_dp * x**2 - &
+          26.71170106052555_dp * x**3 + 15.542365205643007_dp * x**4 + &
+          7.9194151299077715_dp * x**5 + 0.3053516028457726_dp * x**6 + &
+          0.04307631370176248_dp * x * lg + 0.23973826692206646_dp * x**2 * lg - &
+          12.19353255229631_dp * x**3 * lg - 17.71098150670699_dp * x**4 * lg - &
+          2.864456892317382_dp * x**5 * lg - 0.05715945405398001_dp * x**6 * lg
+
+          App2 = 1.9477460481502156_dp * x + 0.1527091423940376_dp * x**2 - &
+          2.862610556473993_dp * x**3 + 2.474572078659877_dp * x**4 + &
+          0.8542022081305681_dp * x**5 + 0.02932979796074642_dp * x**6 - &
+          2.3473257597558925_dp * x * lg + 0.32395085128272094_dp * x**2 * lg - &
+          2.4754591830262753_dp * x**3 * lg - 2.181651709563445_dp * x**4 * lg - &
+          0.2964274725676275_dp * x**5 * lg - 0.005426744077104387_dp * x**6 * lg
+
+          App3 = 1.553742421397914_dp * x - 0.8004938532161119_dp * x**2 + &
+          1.380778522466775_dp * x**3 - 0.6923566636506896_dp * x**4 - &
+          0.3823712766542248_dp * x**5 - 0.014981803878737314_dp * x**6 - &
+          0.003436674677916459_dp * x * lg - 0.06597592537344886_dp * x**2 * lg + &
+          0.4712708827971536_dp * x**3 * lg + 0.8364190131891226_dp * x**4 * lg + &
+          0.13911559154554373_dp * x**5 * lg + 0.0028092361619528835_dp * x**6 * lg
+
+          DeltaCharmExact = 2 * (  App1 + 57 * ( c1 * c2 * x/(1 + c2 * x) + &
+          d1 * d2 * x/(1 + d2 * x) + c1 * log(1 + c2 * x) + d1 * log(1 + d2 * x) )/4 &
+          + 3 * beta * ( App2 + 3 * App3 * ( log(mu/2/gamma) + 5/6._dp )/2 )  )/9
+
+          if ( self%scheme(:4) /= 'pole' ) then
+            DeltaCharmExact = DeltaCharmExact + 4 * self%DeltaCharmDerBin(alp, mass)/3
+          end if
+
+        else
+
+          lg = log(3 * self%n * mu / 4 / alp / mass) + self%harm
+          DeltaCharmExact = self%DeltaCharmBin3(mu, lg, self%mC)
+
+        end if
+
+      else
+
+        lg = log(3 * self%n * mu / 4 / alp / mass) + self%harm
+
+        if ( self%mc < mC) then
+
+          e1 = self%DeltaCharmBin3( mu, lg, mC )
+
+          e2 = ( self%DeltaCharmBin3(mu, lg, mC + 0.01_dp) - &
+          self%DeltaCharmBin3(mu, lg, mC - 0.01_dp) )/0.02_dp
+
+          a = ( e1 + (e1 - e2 * mC) * Log(mC) )/mC; b = e2 - e1/mC
+
+          DeltaCharmExact = self%mC * ( a + b * log(self%mC) )
+
+        else
+
+          DeltaCharmExact = self%DeltaCharmBin3(mu, lg, self%mC)
+
+        end if
+
+      end if
+
+    else
+
+      lg = log(3 * self%n * mu / 4 / alp / mass) + self%harm
+
+      DeltaCharmExact = self%DeltaCharmBin3(mu, lg, self%mC)
+
+    end if
+
+    if ( self%up(:4) == 'down' ) then
+      lg = log(3 * self%n * mu / 4 / alp / mass) + self%harm
+      DeltaCharmExact = DeltaCharmExact - self%DeltaCharmBin3(mu, lg, self%mC)
+    end if
+
+  end function DeltaCharmExact
 
 !ccccccccccccccc
 
@@ -738,7 +863,7 @@ module NRQCDClass
       DeltaCharmBin = 0; return
     end if
 
-    lg = log(r)
+    lg = log(r/2)
 
     if (self%n == 1) then
 
@@ -799,7 +924,7 @@ module NRQCDClass
 
     end if
 
-    DeltaCharmBin = 4 * alpha**3/pi/27/self%n**2 * DeltaCharmBin
+    DeltaCharmBin = - DeltaCharmBin/3
 
   end function DeltaCharmBin
 
@@ -814,7 +939,6 @@ module NRQCDClass
     DeltaCharm = 0; r = 3 * self%n * self%mc/2/mb/alpha; rho = powList(r,4*self%n)
 
     if ( r > 1 ) then
-
       ArTan = Atan(  sqrt( (r - 1)/(r + 1) )  ); root = sqrt( rho(2) - 1 )
     else
 
@@ -894,9 +1018,194 @@ module NRQCDClass
 
     end if
 
-    DeltaCharm = 4 * alpha**3/pi/27/self%n**2 * DeltaCharm
+    DeltaCharm = - DeltaCharm/3
 
   end function DeltaCharm
+
+!ccccccccccccccc
+
+  pure real (dp) function DeltaCharmDerBin(self, alpha, mb)
+    class (NRQCD), intent(in)      :: self
+    real (dp)    , intent(in)      :: mb, alpha
+    real (dp)                      :: lg, r
+
+    if ( self%up(:4) == 'down' ) then
+      DeltaCharmDerBin = self%DeltaCharmDer(alpha, mb); return
+    end if
+
+    r = 3 * self%n * self%mc/2/mb/alpha; DeltaCharmDerBin = 0
+
+    if (100 * r > 1 ) then
+      DeltaCharmDerBin = self%DeltaCharmDer(alpha, mb) + 2._dp/3
+      return
+    else if ( r <= tiny(1._dp) ) then
+      DeltaCharmDerBin = 0; return
+    end if
+
+    lg = log(r/2)
+
+    if (self%n == 1) then
+
+      if (self%l == 0) then
+        DeltaCharmDerBin = 2 - 3 * pi * r/2 + 9 * r**2 - 6 * pi * r**3 + &
+        - (3 + 15 * lg) * r**4 - (27._dp/4 + 21 * lg/2) * r**6 - &
+        (225._dp/32 + 81 * lg/8) * r**8 - (467._dp/64 + 165 * lg/16) * r**10
+      end if
+
+    else if (self%n == 2) then
+
+      if (self%l == 0) then
+
+        DeltaCharmDerBin = 2 - 3 * pi * r + 36 * r**2 - 42 * pi * r**3  - &
+        (201._dp/2 + 165 * lg) * r**4 - (867._dp/4 + 231 * lg) * r**6 - &
+        (11079._dp/32 + 2997 * lg/8) * r**8 - (16541._dp/32 + 1155 * lg/2) * r**10
+
+      else if (self%l == 1) then
+        DeltaCharmDerBin = 2 - 3 * pi * r + 30 * r**2 - 30 * pi * r**3  - &
+        (107._dp/2 + 105 * lg) * r**4 - (443._dp/4 + 126 * lg) * r**6 - &
+        (5259._dp/32 + 1485 * lg/8) * r**8 - (3723._dp/16 + 2145 * lg/8) * r**10
+      end if
+
+    else if (self%n == 3) then
+
+      if (self%l == 0) then
+        DeltaCharmDerBin = 2 - 9 * pi * r/2 + 81 * r**2 - 138 * pi * r**3 - &
+        (1431._dp/2 + 765 * lg) * r**4 - (4609._dp/2 + 3843 * lg/2) * r**6  - &
+        (181611._dp/32 + 39933 * lg/8) * r**8 - (779817._dp/64 + &
+        181665 * lg/16) * r**10
+      else if (self%l == 1) then
+        DeltaCharmDerBin = 2 - 9 * pi * r/2 + 75 * r**2 - 120 * pi * r**3 - &
+        (2229._dp/4 + 630 * lg) * r**4 - (13465._dp/8 + 1449 * lg) * r**6 - &
+        (62583._dp/16 + 28215 * lg/8) * r**8 - (32157._dp/4 - 122265 * lg/16) * r**10
+      else if (self%l == 2) then
+        DeltaCharmDerBin = 2 - 9 * pi * r/2 + 63 * r**2 - 84 * pi * r**3 - &
+        (5637._dp/20 + 378 * lg) * r**4 - (29657._dp/40 + 693 * lg) * r**6 - &
+        (121113._dp/80 - 11583 * lg/8) * r**8 - (2832 + 45045 * lg/16) * r**10
+      end if
+
+    else if (self%n == 4) then
+      if (self%l == 0) then
+        DeltaCharmDerBin = 2 - 6 * pi * r + 144 * r**2 - 324 * pi * r**3 - &
+        (11157._dp/4 + 2340 * lg) * r**4 - (53983._dp/4 + 9492 * lg) * r**6 - &
+        (791415._dp/16 + 297999 * lg/8) * r**8 - (4786581._dp/32 + &
+        483285 * lg/4) * r**10
+      else if (self%l == 1) then
+        DeltaCharmDerBin = 2 - 6 * pi * r + 138 * r**2 - 300 * pi * r**3 - &
+        (9761._dp/4 + 2100 * lg) * r**4 - (112649._dp/10 + 8064 * lg) * r**6 - &
+        (633093._dp/16 + 242055 * lg/8) * r**8 - (3700509._dp/32 + &
+        757185 * lg/8) * r**10
+      else if (self%l == 2) then
+        DeltaCharmDerBin = 2 - 6 * pi * r + 126 * r**2 - 252 * pi * r**3 - &
+        (35767._dp/20 + 1638 * lg) * r**4 - (74329._dp/10 + 5544 * lg) * r**6 &
+        - (951327._dp/40 + 150579 * lg/8) * r**8 - (2067379._dp/32 + &
+        435435 * lg/8) * r**10
+      else if (self%l == 3) then
+        DeltaCharmDerBin = 2 - 6 * pi * r + 108 * r**2 - 180 * pi * r**3 - &
+        (25961._dp/28 + 990 * lg) * r**4 - (443291._dp/140 + 2574 * lg) * r**6 &
+        - (59985._dp/7 + 57915 * lg/8) * r**8 - (4603783._dp/224 + &
+        36465 * lg/2) * r**10
+      end if
+
+    end if
+
+    DeltaCharmDerBin = - DeltaCharmDerBin/3
+
+  end function DeltaCharmDerBin
+
+!ccccccccccccccc
+
+  pure real (dp) function DeltaCharmDer(self, alpha, mb)
+    class (NRQCD), intent(in)      :: self
+    real (dp)    , intent(in)      :: mb, alpha
+    real (dp)                      :: r, root, ArTan
+    real (dp), dimension(4*self%n) :: rho
+
+    DeltaCharmDer = 0; r = 3 * self%n * self%mc/2/mb/alpha; rho = powList(r,4*self%n)
+
+    if ( r > 1 ) then
+      ArTan = Atan(  sqrt( (r - 1)/(r + 1) )  ); root = sqrt( rho(2) - 1 )
+    else
+      root = sqrt( 1 - rho(2) ); ArTan = - log( (1 + root)/r  )/2
+    end if
+
+    if (self%n == 1) then
+
+      if (self%l == 0) then
+        DeltaCharmDer = (  4 + 14 * rho(2) - 24 * rho(4) + 3 * pi * r * &
+        ( 4 * rho(4) - 1 - 3 * rho(2) )  )/( 2 - 2 * rho(2) ) + ( 6 * ArTan *  &
+        rho(4) * ( 4 * rho(2) - 5 ) )/root**3
+      end if
+
+    else if (self%n == 2) then
+
+      if (self%l == 0) then
+        DeltaCharmDer = - 3 * pi * ( r + 14 * rho(3) ) + (  3 * ArTan * rho(4) &
+        * (  231 * rho(2) - 110 - 192 * rho(4) + 56 * rho(6) )  )/root**7 + &
+        ( 405 * rho(4) - 464 * rho(6) + 168 * rho(8) - 4 - 60 * rho(2) )/2/root**6
+      else if (self%l == 1) then
+        DeltaCharmDer = - 3 * pi * ( r + 10 * rho(3) ) + (  3 * ArTan * rho(4) * &
+        ( 161 * rho(2) - 136 * rho(4) + 40 * rho(6) - 70 )  )/root**7 + &
+        ( 275 * rho(4) - 328 * rho(6) + 120 * rho(8) - 4 - 48 * rho(2) )/2/root**6
+      end if
+
+    else if (self%n == 3) then
+
+      if (self%l == 0) then
+        DeltaCharmDer = - 3 * pi * r * ( 3 + 92 * rho(2) )/2 + (  3 * ArTan * &
+        rho(4) *  ( 3048 * rho(2) - 1020 - 5187 * rho(4) + 4488 * rho(6) -&
+        2012 * rho(8) + 368 * rho(10) )  )/2/root**11 + ( 4402 * rho(4) - 8 &
+        - 284 * rho(2) - 9017 * rho(6) + 10048 * rho(8) - 5300 * rho(10) + &
+        1104 * rho(12) )/4/root**10
+      else if (self%l == 1) then
+        DeltaCharmDer = - 3 * pi * r * ( 3 + 80 * rho(2) )/2 + (  3 * ArTan * rho(4)&
+        * (  5376 * rho(2) - 1680 - 8943 * rho(4) + 7788 * rho(6) - 3496 * rho(8) &
+        + 640 * rho(10) )  )/4/root**11 + ( 7298 * rho(4) - 16 - 520 * rho(2) - &
+        15925 * rho(6) + 17396 * rho(8) - 9208 * rho(10) + 1920 * rho(12) )/&
+        8/root**10
+      else if (self%l == 2) then
+        DeltaCharmDer = - 3 * pi * r * ( 3 + 56 * rho(2) )/2 + (  3 * ArTan * &
+        rho(4) * ( 3696 * rho(2) - 1008 - 6171 * rho(4) + 5412 * rho(6) -  &
+        2440 * rho(8) + 448 * rho(10) )  )/4/root**11 + ( 23074 * rho(4) - 80 &
+        - 2120 * rho(2) - 54893 * rho(6) + 60364 * rho(8) - 32120 * rho(10) + &
+        6720 * rho(12) )/40/root**10
+      end if
+
+    else if (self%n == 4) then
+      if (self%l == 0) then
+        DeltaCharmDer = - 6 * pi * ( r + 54 * rho(3) ) + (  3 * ArTan * rho(4) &
+        * (  42976 * rho(2) - 12480 - 123186 * rho(4) + 169355 * rho(6) - 153040 * &
+        rho(8) + 83760 * rho(10) - 25856 * rho(12) + 3456 * rho(14) )  )/&
+        8/root**15 + ( 60084 * rho(4) - 32 - 2080 * rho(2) - 153088 * rho(6) + &
+        320641 * rho(8) - 325392 * rho(10) + 205200 * rho(12) - 70656 * rho(14)&
+        + 10368 * rho(16) )/16/root**14
+      else if (self%l == 1) then
+        DeltaCharmDer = - 6 * pi * ( r + 50 * rho(3) ) + (  3 * ArTan * rho(4) * &
+        ( 40992 * rho(2) - 11200 - 111810 * rho(4) + 157665 * rho(6) -         &
+        141440 * rho(8) + 77520 * rho(10) - 23936 * rho(12) + 3200 * rho(14) )  )&
+        /8/root**15 + ( 269140 * rho(4) - 160 - 9920 * rho(2)- 733588 * rho(6) &
+        + 1454511 * rho(8) - 1514848 * rho(10) + 949040 * rho(12) - &
+        327040 * rho(14) + 48000 * rho(16) )/80/root**14
+      else if (self%l == 2) then
+        DeltaCharmDer = - 6 * pi * ( r + 42 * rho(3) ) + (  3 * ArTan * rho(4) * &
+        ( 35952 * rho(2) - 8736 - 91566 * rho(4) + 132275 * rho(6) - &
+        118560 * rho(8) + 65040 * rho(10) - 20096 * rho(12) + 2688 * rho(14) )  )&
+        /8/root**15 + ( 210268 * rho(4) - 160 - 8960 * rho(2) - 645684 * rho(6) + &
+        1198013 * rho(8) - 1270336 * rho(10) + 796144 * rho(12) - &
+        274560 * rho(14) + 40320 * rho(16) )/80/root**14
+      else if (self%l == 3) then
+        DeltaCharmDer = - 6 * pi * ( r + 30 * rho(3) ) + (  3 * ArTan * rho(4) * &
+        ( 25872 * rho(2) - 5280 - 64350 * rho(4) + 93665 * rho(6) - 84240 * rho(8)&
+        + 46320 * rho(10) - 14336 * rho(12) + 1920 * rho(14) )  )/8/root**15 + &
+        ( 919060 * rho(4) - 3230856 * rho(6) - 1120 - 52640 * rho(2) + &
+        5925737 * rho(8) - 6313456 * rho(10) + 3967600 * rho(12)  &
+        - 1370880 * rho(14) + 201600 * rho(16) )/560/root**14
+      end if
+
+    end if
+
+    DeltaCharmDer = - DeltaCharmDer/3
+
+  end function DeltaCharmDer
 
 !ccccccccccccccc
 
@@ -905,54 +1214,15 @@ module NRQCDClass
     real (dp)    , intent(in)      :: mb, alpha
     real (dp)                      :: rho
 
-    ZeroBin = 0; rho = 3 * self%n * self%mc/2/mb/alpha
+    rho = 3 * self%n * self%mc/2/mb/alpha
 
-    if (self%n == 1) then
-
-      if (self%l == 0) then
-        ZeroBin = 11._dp/3
-      end if
-
-    else if (self%n == 2) then
-
-      if (self%l == 0) then
-
-        ZeroBin = 14._dp/3
-
-      else if (self%l == 1) then
-        ZeroBin = 16._dp/3
-      end if
-
-    else if (self%n == 3) then
-
-      if (self%l == 0) then
-        ZeroBin = 16._dp/3
-      else if (self%l == 1) then
-        ZeroBin = 35._dp/6
-      else if (self%l == 2) then
-        ZeroBin = 187._dp/30
-      end if
-
-    else if (self%n == 4) then
-      if (self%l == 0) then
-        ZeroBin = 35._dp/6
-      else if (self%l == 1) then
-        ZeroBin = 187._dp/30
-      else if (self%l == 2) then
-        ZeroBin = 197._dp/30
-      else if (self%l == 3) then
-        ZeroBin = 1439._dp/210
-      end if
-
-    end if
-
-    ZeroBin = 4 * alpha**3/pi/27/self%n**2 * ( ZeroBin + 2 * log(rho/2) )
+    ZeroBin = - ( 5._dp/3 + 2 * Harmonic(self%l + self%n) + 2 * log(rho/2) )/3
 
   end function ZeroBin
 
 !ccccccccccccccc
 
-  real (dp) function Harmonic(n)
+  pure real (dp) function Harmonic(n)
     integer, intent(in) :: n
     integer             :: i
 

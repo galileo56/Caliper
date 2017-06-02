@@ -3299,6 +3299,49 @@ end subroutine f90OptimalR
 
 !ccccccccccccccc
 
+  subroutine f90DeltaCharmExact(charm, type, scheme, n, l, j, s, nl, mH, mL, mu, alp, res)
+    use RunningClass;  use AlphaClass;  use constants, only: dp
+    use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
+
+    character (len = *), intent(in ) :: type, scheme, charm
+    integer            , intent(in ) :: nl, n, l, j, s
+    real (dp)          , intent(in ) :: mH, mL, alp, mu
+    real (dp)          , intent(out) :: res
+    real (dp)                        :: mB, mC, mT
+    type (NRQCD)                     :: Upsilon
+    type (Alpha)                     :: alphaAll
+    type (VFNSMSR)                   :: MSR
+    type (Running), dimension(2)     :: alphaMass
+    type (AnomDim), dimension(3:6)   :: AnDim
+    integer                          :: i
+
+    if (nl == 5) then
+      mT = mH; mB = mL
+    else if (nl == 4) then
+      mB = mH; mC = mL
+    else
+      res = 0; return
+    end if
+
+    do i = 3, 6
+      AnDim(i) = AnomDim(scheme, i, 0._dp)
+    end do
+
+    alphaAll  = Alpha(AnDim, 4, 4, 91.187_dp, 0.118_dp, &
+    mT, mT, mB, mB, mC, mC)
+
+    alphaMass = [ Running(nl - 1, 0, alphaAll, mL), &
+    Running(nl, 0, alphaAll, mH) ]
+
+    MSR     = VFNSMSR(alphaMass)
+    Upsilon = NRQCD( charm, scheme, MSR, n, l, j, s )
+
+    res = Upsilon%DeltaCharmExact(type, mu, alp, mH)
+
+  end subroutine f90DeltaCharmExact
+
+!ccccccccccccccc
+
   subroutine f90NRQCD(n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, &
   order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam,   &
   mu, R, res)

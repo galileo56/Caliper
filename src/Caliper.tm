@@ -12,6 +12,7 @@
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
 
+:Evaluate:  DeltaCharmExact::usage = "DeltaCharmExact[charm, type, scheme, n, l, j, s, nl, mH, mL, mu, alp] computes the subleading massive charm corrections to quarkonium masses"
 :Evaluate:  UpsilonDeltaCharmBin::usage = "UpsilonDeltaCharmBin[n, l, alp, mb, mc] computes the massive charm corrections to quarkonium masses"
 :Evaluate:  UpsilonDeltaCharm::usage = "UpsilonDeltaCharm[n, l, alp, mb, mc] computes the massive charm corrections to quarkonium masses"
 :Evaluate:  GammaRCharm2::usage = "GammaRCharm2[z] computes the massive charm corrections to the R-anomalous dimension at two loops"
@@ -1388,6 +1389,16 @@
 :Arguments:     {n, l, alpha, mb, mc}
 :ArgumentTypes: {Integer, Integer, Real, Real, Real}
 :ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      deltacharmexact
+:Pattern:       DeltaCharmExact[charm_, type_, scheme_, n_, l_, j_, s_, nl_,
+                 mH_, mL_, mu_, alp_]
+:Arguments:     {charm, type, scheme, n, l, j, s, nl, mH, mL, mu, alp}
+:ArgumentTypes: {String, String, String, Integer, Integer, Integer, Integer,
+                 Integer, Real, Real, Real, Real}
+:ReturnType:     Real
 :End:
 
 :Begin:
@@ -3740,6 +3751,20 @@ static double upsilondeltacharmbin(int n, int l, double alpha, double mb, double
   double res;
 
    f90upsilondeltacharmbin_(&n, &l, &alpha, &mb, &mc, &res);
+   return res;
+}
+
+extern double f90deltacharmexact_(char const* charm, char const* type,
+char const* scheme, int* n, int* l, int* j, int* s, int* nl, double* mH,
+double* mL, double* mu, double* alp, double* result);
+
+static double deltacharmexact(char const* charm, char const* type,
+char const* scheme, int n, int l, int j, int s, int nl, double mH, double mL,
+double mu, double alp){
+  double res;
+
+   f90deltacharmexact_(charm, type, scheme, &n, &l, &j, &s, &nl, &mH, &mL, &mu, &alp,
+   &res);
    return res;
 }
 
