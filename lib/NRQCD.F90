@@ -215,7 +215,7 @@ module NRQCDClass
     character (len = *), intent(in) :: method, charm
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda
-    real (dp), dimension(0:5)       :: alphaList
+    real (dp), dimension(0:4)       :: alphaList
     real (dp), dimension(0:7)       :: list
     real (dp), dimension(0:3)       :: logList
     real (dp), dimension(0:4)       :: delta
@@ -223,7 +223,7 @@ module NRQCDClass
     real (dp), dimension(0:4,0:4)   :: deltaLog  ! (power, order)
     real (dp), dimension(0:4,4)     :: coefMSR
     real (dp), dimension(4,0:3)     :: c
-    real (dp), dimension(2)         :: deltaM
+    real (dp), dimension(2)         :: deltaM, deltaCharm
     integer                         :: i, j, k, l
     real (dp)                       :: alp, Rmass, mass, factor, lg, rat, delta2
 
@@ -274,7 +274,7 @@ module NRQCDClass
 
       end if
 
-      deltaM  = Rmass * alphaList(2:3) * deltaM /mass
+      deltaM = Rmass * alphaList(2:3) * deltaM /mass
 
       do i = 1, 4
         do k = 0, i - 1
@@ -303,16 +303,15 @@ module NRQCDClass
         list(j) = sum( delta(:j) * list(j:0:-1) )
       end do
 
-      list(6:7) = deltaM
-
     end if
 
-    list(6) = list(6) + factor * alphaList(1) * self%DeltaCharmBin(alp, mass)
+    deltaCharm = factor * alphaList(1:2) * [ self%DeltaCharmBin(alp, mass), &
+    self%DeltaCharmExact('exact', mu, alp, mass) ]
 
-    delta2 = factor * alphaList(2) * self%DeltaCharmExact('exact', mu, alp, mass)
+    list(6:7) = deltaM + deltaCharm
 
-    list(7) = list(7) + delta2 + factor * deltaM(1) - 8 * factor * &
-    alphaList(1) * delta(1) * self%DeltaCharmDerBin(alp, mass)/9
+    list(7) = list(7) + factor * deltaM(1) + deltaCharm(1) * delta(1) - &
+    factor * alphaList(1) * delta(1) * self%DeltaCharmDerBin(alp, mass)
 
     list(5) = mass - self%mH
 
@@ -330,10 +329,9 @@ module NRQCDClass
     real (dp), dimension(0:4)       :: delta, deltaInv
     real (dp), dimension(4)         :: lgmList
     real (dp), dimension(0:4,4)     :: coefMSR
-    real (dp), dimension(2)         :: deltaM
+    real (dp), dimension(2)         :: deltaM, deltaCharm
     integer                         :: n
-    real (dp)                       :: alp, Rmass, mass, factor, mTree, lg, &
-    delta1, delta2, rat
+    real (dp)                       :: alp, Rmass, mass, factor, mTree, lg, rat
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
     alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
@@ -414,15 +412,15 @@ module NRQCDClass
 
     end if
 
-    delta1 = factor * alphaList(1) * self%DeltaCharmBin(alp, mTree)
+    deltaCharm = factor * alphaList(1:2) * [ self%DeltaCharmBin(alp, mTree), &
+    self%DeltaCharmExact('exact', mu, alp, mTree) ]
 
-    list(2) = list(2) - deltaM(1) - delta1
+    list(2:3) = list(2:3) - deltaM - deltaCharm
 
-    delta2 = factor * alphaList(2) * self%DeltaCharmExact('exact', mu, alp, mTree)
+    list(3) = list(3) + factor**2 * alphaList(1) * &
+    ( 2 * self%DeltaCharmBin(alp, mTree) - self%DeltaCharmDerBin(alp, mass) )
 
     if ( self%up(:2) == 'up' .and. self%mC > tiny(1._dp) ) then
-
-      list(3) = list(3) - deltaM(2) + 2 * delta1 * listInv(1)
 
       if ( self%scheme(:5) == 'MSbar' ) then
 
@@ -433,9 +431,6 @@ module NRQCDClass
       end if
 
     end if
-
-    list(3) = list(3) - delta2 + 8 * factor * list(1) * &
-    self%DeltaCharmDerBin(alp, mass) * alphaList(1)/9
 
     list = mTree * list; list(0) = list(0) + self%mH - mass
 
