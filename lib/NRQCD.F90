@@ -271,6 +271,7 @@ module NRQCDClass
         lg * (11.073375282398949_dp - 0.694244607447754_dp * self%nf)
 
         deltaM(1) = 4 * log(rat)/9 + deltaM(1) - 71._dp/144 - pi2/18
+        deltaM(2) = deltaM(2) + self%beta(0) * log(mu/Rmass) * deltaM(1)
 
       end if
 
