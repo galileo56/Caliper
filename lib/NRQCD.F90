@@ -125,34 +125,36 @@ module NRQCDClass
 !ccccccccccccccc
 
   function MassError(self, iter, charm, n, order, mu0, mu1, deltaMu, R0, R1, &
-  deltaR, mUpsilon, lambda, method) result(list)
+  deltaR, x, mUpsilon, lambda, method) result(list)
     class (NRQCD)      , intent(inout) :: self
     character (len = *), intent(in)    :: method, charm, iter
     integer            , intent(in)    :: order, n
-    real (dp)          , intent(in)    :: lambda, mUpsilon, mu0, mu1, &
-    deltaMu, R0, R1, deltaR
+    real (dp)          , intent(in)    :: lambda, mUpsilon, mu0, mu1, R1, x, &
+    deltaMu, R0, deltaR
     real (dp), dimension(2)            :: list
-    real (dp)                          :: mu, R, mass
+    real (dp)                          :: mu, R, mass, xinv, rat
     integer                            :: imax, jmax, i, j
 
-    list = [0._dp, mUpsilon]
+    list = [0._dp, mUpsilon]; xinv = 1/x
 
     imax = Floor( (mu1 - mu0)/deltaMu ); jmax = Floor( (R1 - R0)/deltaR )
 
     do i = 0, imax
+
       mu = mu0 + i * deltaMu
 
       do j = 0, jmax
         R = R0 + j * deltaR
-        mass = self%MassFitter(iter, charm, n, order, mu, R, mUpsilon, &
-        lambda, method)
+        rat = mu/R; if ( rat > x .or.  rat < xinv ) cycle
+        mass = self%MassFitter(iter, charm, n, order, mu, R, mUpsilon, lambda, &
+        method)
         if ( mass > list(1) ) list(1) = mass
         if ( mass < list(2) ) list(2) = mass
       end do
 
     end do
 
-    list = [ sum(list), list(2) - list(1) ]/2
+    list = [ sum(list), list(1) - list(2) ]/2
 
   end function MassError
 

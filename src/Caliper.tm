@@ -84,6 +84,7 @@
 :Evaluate:  MassIter::usage = "MassIter[n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu, R] computes the bottom mass from quarkonium energy levels."
 :Evaluate:  MassExpand::usage = "MassExpand[n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu, R] computes the bottom mass from quarkonium energy levels."
 :Evaluate:  FindMass::usage = "FindMass[ord, n, l, j, s, iter, charm, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu, R] fits the quark mass from the quarkonium energy levels."
+:Evaluate:  MassError::usage = "MassError[ord, n, l, j, s, iter, charm, scheme, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x] fits the quark mass from the quarkonium energy levels, including perturbative error."
 :Evaluate:  OptimalR::usage = "OptimalR[type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda] computes the Optimal R scale for quarkonium."
 :Evaluate:  mmfromMSR::usage = "mmfromMSR[type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
 :Evaluate:  Rhad::usage = "Rhad[scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
@@ -1683,6 +1684,23 @@
                  Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
                  Real, Real, Real, Real}
 :ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      masserror
+:Pattern:       MassError[ord_, n_, l_, j_, s_, iter_, charm_, scheme_, method_,
+                orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_,
+                mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_, lam_, mu0_,
+                mu1_, deltaMu_, R0_, R1_, deltaR_, x_]
+:Arguments:     {ord, n, l, j, s, iter, charm, scheme, method, orderAlpha,
+                 runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,
+                 mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR,
+                 x}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, Integer, String, String,
+                 String, String, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Manual
 :End:
 
 :Begin:
@@ -4194,6 +4212,33 @@ double lambda1, double lambda2, double lam, double mu, double R){
   &mass, &lambda1, &lambda2, &lam, &mu, &R, &res);
 
   return res;
+
+}
+
+extern double f90masserror_(int* ord, int* n, int* l, int* j, int* s,
+char const* iter, char const* charm, char const* str, char const* method,
+int* orderAlpha, int* runAlpha, int* order, int* run, int* nf, double* Mz,
+double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+double* muC, double* mass, double* lambda1, double* lambda2, double* lam,
+double* mu0, double* mu1, double* deltaMu, double* R0, double* R1,
+double* deltaR, double* x, double* res);
+
+static void masserror(int ord, int n, int l, int j, int s, char const* iter,
+char const* charm, char const* str, char const* method, int orderAlpha,
+int runAlpha, int order, int run, int nf, double Mz, double aMz, double mT,
+double muT, double mB, double muB, double mC, double muC, double mass,
+double lambda1, double lambda2, double lam, double mu0, double mu1,
+double deltaMu, double R0, double R1, double deltaR, double x){
+
+  double res[2];
+
+  f90masserror_(&ord, &n, &l, &j, &s, iter, charm, str, method, &orderAlpha,
+  &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
+  &mass, &lambda1, &lambda2, &lam, &mu0, &mu1, &deltaMu, &R0, &R1, &deltaR,
+  &x, res);
+
+ MLPutRealList(stdlink, res, 2);
+ MLEndPacket(stdlink);
 
 }
 
