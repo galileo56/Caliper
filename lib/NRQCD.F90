@@ -24,7 +24,7 @@ module NRQCDClass
     procedure, pass(self), private :: Binomial, EnInv
     procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
     ZeroBin, DeltaCharmBin, MassIter, EnExpand, DeltaCharmBin3, DeltaCharmDer, &
-    DeltaCharmExact, DeltaCharmDerBin
+    DeltaCharmExact, DeltaCharmDerBin, MassError
 
   end type NRQCD
 
@@ -121,6 +121,40 @@ module NRQCDClass
     end if
 
   end subroutine setMass
+
+!ccccccccccccccc
+
+  function MassError(self, iter, charm, n, order, mu0, mu1, deltaMu, R0, R1, &
+  deltaR, mUpsilon, lambda, method) result(list)
+    class (NRQCD)      , intent(inout) :: self
+    character (len = *), intent(in)    :: method, charm, iter
+    integer            , intent(in)    :: order, n
+    real (dp)          , intent(in)    :: lambda, mUpsilon, mu0, mu1, &
+    deltaMu, R0, R1, deltaR
+    real (dp), dimension(2)            :: list
+    real (dp)                          :: mu, R, mass
+    integer                            :: imax, jmax, i, j
+
+    list = [0._dp, mUpsilon]
+
+    imax = Floor( (mu1 - mu0)/deltaMu ); jmax = Floor( (R1 - R0)/deltaR )
+
+    do i = 0, imax
+      mu = mu0 + i * deltaMu
+
+      do j = 0, jmax
+        R = R0 + j * deltaR
+        mass = self%MassFitter(iter, charm, n, order, mu, R, mUpsilon, &
+        lambda, method)
+        if ( mass > list(1) ) list(1) = mass
+        if ( mass < list(2) ) list(2) = mass
+      end do
+
+    end do
+
+    list = [ sum(list), list(2) - list(1) ]/2
+
+  end function MassError
 
 !ccccccccccccccc
 
@@ -264,7 +298,7 @@ module NRQCDClass
 
       else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
 
-        rat = self%mC/self%mH; lg = - log(rat);  deltaM(1) = deltaCharm2(rat)
+        rat = self%mC/self%mH; lg = -log(rat);  deltaM(1) = deltaCharm2(rat)
 
         deltaM(2) = deltaCharm3(self%nf, 1, rat) + 2 * lg * deltaM(1)/3 +       &
         4 * lg**2/27 - 27.51152614489051_dp + 1.3053814981630874_dp * self%nf + &
