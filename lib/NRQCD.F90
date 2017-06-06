@@ -24,8 +24,8 @@ module NRQCDClass
     procedure, pass(self), private :: Binomial, EnInv
     procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
     ZeroBin, DeltaCharmBin, MassIter, EnExpand, DeltaCharmBin3, DeltaCharmDer, &
-    DeltaCharmExact, DeltaCharmDerBin, MassError, EnError, IterError, &
-    EnExpandError
+    DeltaCharmExact, DeltaCharmDerBin, MassError, IterError, EnExpandError, &
+    EnError
 
   end type NRQCD
 
@@ -43,7 +43,7 @@ module NRQCDClass
     integer            , intent(in) :: n, l, j, s
     character (len = *), intent(in) :: scheme, up
     type (VFNSMSR)     , intent(in) :: MSR
-    real (dp)     , dimension(0:4)  :: beta
+    real (dp)      , dimension(0:4) :: beta
     character (len = 5)             :: alphaScheme
     integer                         :: nf, nl, i, jj, k
 
