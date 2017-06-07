@@ -12,7 +12,7 @@ module NRQCDClass
     character (len = 5)           :: scheme
     character (len = 4)           :: up
     character (len = 3)           :: average
-    real (dp)                     :: mH, harm, rat, mC
+    real (dp)                     :: mH, harm, h2, rat, mC
     type (Running)                :: alphaMass
     type (Alpha)                  :: alphaOb
     type (AnomDim)                :: Andim
@@ -46,7 +46,7 @@ module NRQCDClass
     character (len = *), intent(in) :: scheme, up, average
     type (VFNSMSR)     , intent(in) :: MSR
     real (dp)      , dimension(0:4) :: beta
-    real (dp)                       :: h2
+    real (dp)                       :: h3, harm
     character (len = 5)             :: alphaScheme
     integer                         :: nf, nl, i, jj, k, fac
 
@@ -59,9 +59,10 @@ module NRQCDClass
     InNRQCD%n = n; nf = MSR%numFlav() ; alphaScheme = InNRQCD%alphaMass%scheme()
     InNRQCD%Andim = InNRQCD%alphaMass%adim(); InNRQCD%up = up; InNRQCD%l = l
     InNRQCD%mH = MSR%mass(); InNRQCD%nf = nf; InNRQCD%c = 0; InNRQCD%j = j
-    InNRQCD%listFact = factList(3); InNRQCD%cnl = 0; InNRQCD%s = s
+    InNRQCD%listFact = factList(3); InNRQCD%cnl = 0; InNRQCD%s = s; h3 = 0
     InNRQCD%alphaOb = MSR%AlphaAll(); beta = InNRQCD%Andim%betaQCD('beta')
-    InNRQCD%beta = beta;  InNRQCD%average = average; h2 = 0
+    InNRQCD%beta = beta;  InNRQCD%average = average; InNRQCD%h2 = 0
+    InNRQCD%cnf = 0
 
     if ( up(:2) == 'up' ) then
       nl = nf
@@ -69,8 +70,8 @@ module NRQCDClass
       nl = nf - 1
     end if
 
-    InNRQCD%cnl = [ 103._dp/18 - 5._dp * nf/9, 0._dp ]
-    InNRQCD%cnf = [ 31._dp/6   - 5._dp * nf/9, 0._dp ]
+    InNRQCD%cnl(1) = 103._dp/18 - 5._dp * nf/9
+    InNRQCD%cnf(1) = 31._dp/6   - 5._dp * nf/9
 
     InNRQCD%nl = nl; InNRQCD%MSR = MSR
 
@@ -86,6 +87,8 @@ module NRQCDClass
       InNRQCD%scheme = scheme
     end if
 
+    InNRQCD%c(:1,0) = [ 1._dp, 31._dp/6 - 5._dp * nl/9 ]
+
     if ( average(:2) == 'no' ) then
 
       InNRQCD%c(2:,0) = [ c2(nl, n, l, j, s), c3(nl, n, l, j, s), &
@@ -96,15 +99,40 @@ module NRQCDClass
 
       InNRQCD%harm = Harmonic(n + l)
 
-    else
+    else if ( average(:1) == 'j' ) then
+
+      InNRQCD%harm = Harmonic(n + l)
+
+      do jj = abs(l - s), l + s
+
+        fac = 2 * jj + 1
+
+        InNRQCD%c(2:,0) = InNRQCD%c(2:,0) + fac * [ c2(nl, n, l, jj, s), &
+        c3(nl, n, l, jj, s), c3log(nl, n, l, jj, s) ]
+
+        InNRQCD%cnl(2) = InNRQCD%cnl(2) + fac * c2(nf - 1, n, l, jj, s)
+        InNRQCD%cnf(2) = InNRQCD%cnf(2) + fac * c2(nf    , n, l, jj, s)
+
+      end do
+
+      fac = (2 * l + 1) * (2 * s + 1)
+
+      InNRQCD%c(2:,0) = InNRQCD%c(2:,0)/fac
+      InNRQCD%cnf(2)  = InNRQCD%cnf(2)/fac
+      InNRQCD%cnl(2)  = InNRQCD%cnl(2)/fac
+
+    else if ( average(:3) == 'yes' ) then
 
       InNRQCD%harm = 0.5_dp - 1._dp/n/2 + Harmonic(n)
 
       do i = 0, n - 1
-        h2 = h2 + (2*i + 1) * Harmonic(n + i)**2
+        harm = Harmonic(n + i)
+        InNRQCD%h2 = InNRQCD%h2 + (2*i + 1) * harm**2
+        h3         = h3         + (2*i + 1) * harm**3
       end do
 
-      h2 = h2/n**2 - InNRQCD%harm**2
+      InNRQCD%h2 = InNRQCD%h2/n**2 - InNRQCD%harm**2
+      h3         = h3/n**2         - InNRQCD%harm**3
 
       do i = 0, n - 1
         do k = 0, 1
@@ -122,14 +150,14 @@ module NRQCDClass
         end do
       end do
 
-      InNRQCD%c(2:,0) = InNRQCD%c(2:,0)/4/n**2
-      InNRQCD%c(2,0)  = InNRQCD%c(2,0) + 3 * h2 * beta(0)**2/4
-      InNRQCD%cnf(2)  = InNRQCD%cnf(2)/4/n**2
-      InNRQCD%cnl(2)  = InNRQCD%cnl(2)/4/n**2
+      fac = 4 * n**2
+
+      InNRQCD%c(2:,0) = InNRQCD%c(2:,0)/fac
+      InNRQCD%c(2,0)  = InNRQCD%c(2,0) + 3 * beta(0)**2 * InNRQCD%h2/4
+      InNRQCD%cnf(2)  = InNRQCD%cnf(2)/fac
+      InNRQCD%cnl(2)  = InNRQCD%cnl(2)/fac
 
     end if
-
-    InNRQCD%c(:1,0) = [ 1._dp, 31._dp/6 - 5._dp * nl/9 ]
 
     do k = 1, 3
       do jj = 0, k - 1
@@ -611,7 +639,7 @@ end function IterError
     deltaCharm = factor * alphaList(1:2) * [ self%DeltaCharmBin(alp, mass), &
     self%DeltaCharmExact('exact', mu, alp, mass) ]
 
-    list(6:7) = deltaM + deltaCharm
+    list(6:7) = deltaM + deltaCharm(1:2)
 
     list(7) = list(7) + factor * deltaM(1) + deltaCharm(1) * delta(1) - &
     factor * alphaList(1) * delta(1) * self%DeltaCharmDerBin(alp, mass)
@@ -752,7 +780,7 @@ end function IterError
 
    lg = log(mu/mC)
 
-    delta2 = self%cnl(2) + lg**2/3 - 2 * ln**2 * (self%nf - 17)/3 + lg * &
+    delta2 = self%cnl(2) + lg**2/3 - 2 * (ln**2 + self%h2) * (self%nf - 17)/3 + lg * &
     ( 13._dp/18 - 2._dp * self%nf/9 - self%cnl(1) ) + ln * ( lg * &
     (2 * self%nf - 35)/3 + (8 * self%nf - 79)/18._dp + (35/2._dp - self%nf) * &
     self%cnl(1) + (self%nf - 33/2._dp) * self%cnf(1) ) - self%cnf(2)
@@ -1155,7 +1183,11 @@ end function IterError
         DeltaCharmBin = DeltaCharmBin + (2 * l + 1) * res(r)
       end do
 
-      DeltaCharmBin = DeltaCharmBin/self%n**2; return
+      DeltaCharmBin = DeltaCharmBin/self%n**2
+
+    else
+
+      DeltaCharmBin = res(r)
 
     end if
 
@@ -1589,7 +1621,7 @@ end function IterError
 
     rho = 3 * self%n * self%mc/2/mb/alpha
 
-    if ( self%average(:2) == 'no' ) then
+    if ( self%average(:3) /= 'yes' ) then
       coef = 2 * Harmonic(self%l + self%n)
     else
       coef = 1 - 1._dp/self%n + 2 * Harmonic(self%n)
