@@ -1110,334 +1110,349 @@ end function IterError
 
 !ccccccccccccccc
 
-  recursive real (dp) function DeltaCharmBin(self, alpha, mb) result(res)
+  real (dp) function DeltaCharmBin(self, alpha, mb)
     class (NRQCD), intent(inout)   :: self
     real (dp)    , intent(in)      :: mb, alpha
     real (dp)                      :: r, lg
     integer                        :: l
 
     if ( self%up(:4) == 'down' ) then
-      res = self%DeltaCharm(alpha, mb); return
+      DeltaCharmBin = self%DeltaCharm(alpha, mb); return
     end if
 
-    r = 3 * self%n * self%mc/2/mb/alpha; res = 0
+    r = 3 * self%n * self%mc/2/mb/alpha; DeltaCharmBin = 0
 
     if (100 * r > 1 ) then
-      res = self%DeltaCharm(alpha, mb) - self%ZeroBin(alpha, mb)
+      DeltaCharmBin = self%DeltaCharm(alpha, mb) - self%ZeroBin(alpha, mb)
       return
     else if ( r <= tiny(1._dp) ) then
-      res = 0; return
+      DeltaCharmBin = 0; return
     end if
+
+    lg = log(r/2)
 
     if ( self%average(:3) == 'yes' ) then
 
       do l = 0, self%n - 1
         self%l = l
-        res = res + self%DeltaCharmBin(alpha, mb)
+        DeltaCharmBin = DeltaCharmBin + res(r)
       end do
 
-      res = res/self%n**2; return
+      DeltaCharmBin = DeltaCharmBin/self%n**2; return
 
     end if
 
-    lg = log(r/2)
+  contains
 
-    if (self%n == 1) then
+    real (dp) function res(r)
+      real (dp), intent(in) :: r
 
-      if (self%l == 0) then
-        res = - 3 * Pi * r/2 + 9 * r**2/2 - 2 * Pi * r**3 + 3 * r**4/16 &
-        - 5 * r**6/6 - 369 * r**8/512 - 401 * r**10/640 + lg * ( - 15 * r**4/4&
-        - 7 * r**6/4 - 81 * r**8/64 - 33 * r**10/32)
+      if (self%n == 1) then
+
+        if (self%l == 0) then
+          res = - 3 * Pi * r/2 + 9 * r**2/2 - 2 * Pi * r**3 + 3 * r**4/16 &
+          - 5 * r**6/6 - 369 * r**8/512 - 401 * r**10/640 + lg * ( - 15 * r**4/4&
+          - 7 * r**6/4 - 81 * r**8/64 - 33 * r**10/32)
+        end if
+
+      else if (self%n == 2) then
+
+        if (self%l == 0) then
+
+          res = - 3 * Pi * r + 18 * r**2 - 14 * Pi * r**3 + 237 * r**4/16 &
+          - 713 * r**6/24 - 19161 * r**8/512 - 14693 * r**10/310 + lg * ( - 165 * r**4/4&
+          - 77 * r**6/2 - 2997 * r**8/64 - 231 * r**10/4)
+
+        else if (self%l == 1) then
+          res = - 3 * Pi * r + 15 * r**2 - 10 * Pi * r**3 + 109 * r**4/16 &
+          - 359 * r**6/24 - 9033 * r**8/512 - 1647 * r**10/80 + lg * ( - 105 * r**4/4&
+          - 21 * r**6 - 1485 * r**8/64 - 429 * r**10/16)
+        end if
+
+      else if (self%n == 3) then
+
+        if (self%l == 0) then
+          res = - 9 * Pi * r/2 + 81 * r**2/2 - 46 * Pi * r**3 + 2097 * r**4/16 &
+          - 7937 * r**6/24 - 323289 * r**8/512 - 707151 * r**10/640 + lg * ( - 765 * r**4/4&
+          - 1281 * r**6/4 - 39933 * r**8/64 - 36333 * r**10/32)
+        else if (self%l == 1) then
+          res = - 9 * Pi * r/2 + 75 * r**2/2 - 40 * Pi * r**3 + 1599 * r**4/16 &
+          - 11533 * r**6/48 - 222117 * r**8/512 - 232803 * r**10/320 + lg * ( - 315 * r**4/4&
+          - 483 * r**6/2 - 28215 * r**8/64 - 24453 * r**10/32)
+        else if (self%l == 2) then
+          res = - 9 * Pi * r/2 + 63 * r**2/2 - 28 * Pi * r**3 + 3747 * r**4/80 &
+          - 25037 * r**6/240 - 426537 * r**8/2560 - 16323 * r**10/64 + lg * ( - 189 * r**4/2&
+          - 231 * r**6/2 - 11583 * r**8/64 - 9009 * r**10/32)
+        end if
+
+      else if (self%n == 4) then
+        if (self%l == 0) then
+          res = - 6 * Pi * r + 72 * r**2 - 108 * Pi * r**3 + 8817 * r**4/16 &
+          - 15885 * r**6/8 - 2867661 * r**8/512 - 4399953 * r**10/320 + lg * ( - 585 * r**4&
+          - 1582 * r**6 - 297999 * r**8/64 - 96657 * r**10/8)
+        else if (self%l == 1) then
+          res = - 6 * Pi * r + 69 * r**2 - 100 * Pi * r**3 + 7661 * r**4/16 &
+          - 99209 * r**6/60 - 2290317 * r**8/512 - 679527 * r**10/64 + lg * ( - 525 * r**4&
+          - 1344 * r**6 - 242055 * r**8/64 - 151437 * r**10/16)
+        else if (self%l == 2) then
+          res = - 6 * Pi * r + 63 * r**2 - 84 * Pi * r**3 + 27577 * r**4/80 &
+          - 65089 * r**6/60 - 6857721 * r**8/2560 - 378641 * r**10/64 + lg * ( - 819 * r**4/2&
+          - 924 * r**6 - 150579 * r**8/64 - 87087 * r**10/16)
+        else if (self%l == 3) then
+          res = - 6 * Pi * r + 54 * r**2 - 60 * Pi * r**3 + 19031 * r**4/112 &
+          - 383231 * r**6/840 - 3433635 * r**8/3584 - 839075 * r**10/448 + lg * ( - 495 * r**4/2&
+          - 429 * r**6 - 57915 * r**8/64 - 7293 * r**10/4)
+        end if
+
       end if
 
-    else if (self%n == 2) then
+      res = - res/3
 
-      if (self%l == 0) then
-
-        res = - 3 * Pi * r + 18 * r**2 - 14 * Pi * r**3 + 237 * r**4/16 &
-        - 713 * r**6/24 - 19161 * r**8/512 - 14693 * r**10/310 + lg * ( - 165 * r**4/4&
-        - 77 * r**6/2 - 2997 * r**8/64 - 231 * r**10/4)
-
-      else if (self%l == 1) then
-        res = - 3 * Pi * r + 15 * r**2 - 10 * Pi * r**3 + 109 * r**4/16 &
-        - 359 * r**6/24 - 9033 * r**8/512 - 1647 * r**10/80 + lg * ( - 105 * r**4/4&
-        - 21 * r**6 - 1485 * r**8/64 - 429 * r**10/16)
-      end if
-
-    else if (self%n == 3) then
-
-      if (self%l == 0) then
-        res = - 9 * Pi * r/2 + 81 * r**2/2 - 46 * Pi * r**3 + 2097 * r**4/16 &
-        - 7937 * r**6/24 - 323289 * r**8/512 - 707151 * r**10/640 + lg * ( - 765 * r**4/4&
-        - 1281 * r**6/4 - 39933 * r**8/64 - 36333 * r**10/32)
-      else if (self%l == 1) then
-        res = - 9 * Pi * r/2 + 75 * r**2/2 - 40 * Pi * r**3 + 1599 * r**4/16 &
-        - 11533 * r**6/48 - 222117 * r**8/512 - 232803 * r**10/320 + lg * ( - 315 * r**4/4&
-        - 483 * r**6/2 - 28215 * r**8/64 - 24453 * r**10/32)
-      else if (self%l == 2) then
-        res = - 9 * Pi * r/2 + 63 * r**2/2 - 28 * Pi * r**3 + 3747 * r**4/80 &
-        - 25037 * r**6/240 - 426537 * r**8/2560 - 16323 * r**10/64 + lg * ( - 189 * r**4/2&
-        - 231 * r**6/2 - 11583 * r**8/64 - 9009 * r**10/32)
-      end if
-
-    else if (self%n == 4) then
-      if (self%l == 0) then
-        res = - 6 * Pi * r + 72 * r**2 - 108 * Pi * r**3 + 8817 * r**4/16 &
-        - 15885 * r**6/8 - 2867661 * r**8/512 - 4399953 * r**10/320 + lg * ( - 585 * r**4&
-        - 1582 * r**6 - 297999 * r**8/64 - 96657 * r**10/8)
-      else if (self%l == 1) then
-        res = - 6 * Pi * r + 69 * r**2 - 100 * Pi * r**3 + 7661 * r**4/16 &
-        - 99209 * r**6/60 - 2290317 * r**8/512 - 679527 * r**10/64 + lg * ( - 525 * r**4&
-        - 1344 * r**6 - 242055 * r**8/64 - 151437 * r**10/16)
-      else if (self%l == 2) then
-        res = - 6 * Pi * r + 63 * r**2 - 84 * Pi * r**3 + 27577 * r**4/80 &
-        - 65089 * r**6/60 - 6857721 * r**8/2560 - 378641 * r**10/64 + lg * ( - 819 * r**4/2&
-        - 924 * r**6 - 150579 * r**8/64 - 87087 * r**10/16)
-      else if (self%l == 3) then
-        res = - 6 * Pi * r + 54 * r**2 - 60 * Pi * r**3 + 19031 * r**4/112 &
-        - 383231 * r**6/840 - 3433635 * r**8/3584 - 839075 * r**10/448 + lg * ( - 495 * r**4/2&
-        - 429 * r**6 - 57915 * r**8/64 - 7293 * r**10/4)
-      end if
-
-    end if
-
-    res = - res/3
+    end function res
 
   end function DeltaCharmBin
 
 !ccccccccccccccc
 
-  recursive real (dp) function DeltaCharm(self, alpha, mb) result(res)
+  real (dp) function DeltaCharm(self, alpha, mb)
     class (NRQCD), intent(inout)   :: self
     real (dp)    , intent(in)      :: mb, alpha
     real (dp)                      :: r, root, ArTan
     real (dp), dimension(4*self%n) :: rho
     integer                        :: l
 
-    res = 0
-
-    if ( self%average(:3) == 'yes' ) then
-
-      do l = 0, self%n - 1
-        self%l = l
-        res = res + self%DeltaCharm(alpha, mb)
-      end do
-
-      res = res/self%n**2; return
-
-    end if
-
+    DeltaCharm = 0
     r = 3 * self%n * self%mc/2/mb/alpha; rho = powList(r,4*self%n)
 
     if ( r > 1 ) then
       ArTan = Atan(  sqrt( (r - 1)/(r + 1) )  ); root = sqrt( rho(2) - 1 )
     else
-
       root = sqrt( 1 - rho(2) ); ArTan = log( (1 + root)/r  )/2
-
-    end if
-
-    if (self%n == 1) then
-
-      if (self%l == 0) then
-        res = 11._dp/3 - 3 * pi * r/2 + 4 * rho(2) - 2 * pi * rho(3) &
-        - 2 * ( 2 - rho(2) - 4 * rho(4) )/root * ArTan
-      end if
-
-    else if (self%n == 2) then
-
-      if (self%l == 0) then
-
-        res = - pi * r * ( 3 + 14 * rho(2) ) + ArTan * &
-        ( 10 * rho(2) - 4 + 75 * rho(4) - 128 * rho(6) + 56 * rho(8) )/root**5 + &
-        ( 28 + 49 * rho(2) - 272 * rho(4) + 168 * rho(6) )/6/root**4
-
-      else if (self%l == 1) then
-        res = - pi * r * ( 3 + 10 * rho(2) ) + ArTan * &
-        ( 10 * rho(2) - 4 + 45 * rho(4) - 88 * rho(6) + 40 * rho(8) )/root**5 + &
-        ( 32 + 23 * rho(2) - 184 * rho(4) + 120 * rho(6) )/6/root**4
-      end if
-
-    else if (self%n == 3) then
-
-      if (self%l == 0) then
-        res = - pi * r * ( 9 + 92 * rho(2) )/2 + ArTan * &
-        ( 36 * rho(2) + 702 * rho(4) - 2109 * rho(6) + 2736 * rho(8) &
-        - 1620 * rho(10) + 368 * rho(12) - 8 )/2/root**9 + ( 64 + &
-        224 * rho(2) - 3111 * rho(4) + 5528 * rho(6) - 4124 * rho(8) + &
-        1104 * rho(10) )/12/root**8
-      else if (self%l == 1) then
-        res = - pi * r * ( 9 + 80 * rho(2) )/2 + ArTan * &
-        ( 72 * rho(2) + 1134 * rho(4) - 3633 * rho(6) + 4716 * rho(8) &
-        - 2808 * rho(10) + 640 * rho(12) - 16 )/4/root**9 + ( 140 + &
-        328 * rho(2) - 5115 * rho(4) + 9556 * rho(6) - 7144 * rho(8) + &
-        1920 * rho(10) )/24/root**8
-      else if (self%l == 2) then
-        res = - pi * r * ( 9 + 56 * rho(2) )/2 + ArTan * &
-        ( 72 * rho(2) + 630 * rho(4) - 2373 * rho(6) + 3204 * rho(8) &
-        - 1944 * rho(10) + 448 * rho(12) - 16 )/4/root**9 + ( 748 + &
-        728 * rho(2) - 16035 * rho(4) + 32204 * rho(6) - 24680 * rho(8) + &
-        6720 * rho(10) )/120/root**8
-      end if
-
-    else if (self%n == 4) then
-      if (self%l == 0) then
-        res = - 6 * pi * r * ( 1 + 18 * rho(2) ) + ArTan * ( 208 * rho(2) &
-        + 8788 * rho(4) - 34670 * rho(6) + 76531 * rho(8) - 89072 * rho(10) + &
-        60528 * rho(12) - 22272 * rho(14) + 3456 * rho(16) - 32 )/8/root**13 + &
-        ( 280 + 1752 * rho(2) - 42852 * rho(4) + 116345 * rho(6) - 178800 * rho(8)&
-        + 142416 * rho(10) - 59904 * rho(12) + 10368 * rho(14) )/48/root**12
-      else if (self%l == 1) then
-        res = - 2 * pi * r * ( 3 + 50 * rho(2) ) + ArTan * ( 208 * rho(2) &
-        + 7828 * rho(4) - 32238 * rho(6) + 70137 * rho(8) - 82368 * rho(10) + &
-        55952 * rho(12) - 20608 * rho(14) + 3200 * rho(16) - 32 )/8/root**13 + &
-        ( 1496 + 7464 * rho(2) - 191160 * rho(4) + 541079 * rho(6) - 819744 * rho(8)&
-        + 658800 * rho(10) - 277120 * rho(12) + 48000 * rho(14) )/240/root**12
-      else if (self%l == 2) then
-        res = - 6 * pi * r * ( 1 + 14 * rho(2) ) + ArTan * ( 208 * rho(2) &
-        + 5980 * rho(4) - 26946 * rho(6) + 57915 * rho(8) - 68640 * rho(10) + &
-        46800 * rho(12) - 17280 * rho(14) + 2688 * rho(16) - 32 )/8/root**13 + &
-        ( 1576 + 5544 * rho(2) - 149136 * rho(4) + 454325 * rho(6) - 681408 * rho(8)&
-        + 550704 * rho(10) - 232320 * rho(12) + 40320 * rho(14) )/240/root**12
-      else if (self%l == 3) then
-        res = - 6 * pi * r * ( 1 + 10 * rho(2) ) + ArTan * ( 208 * rho(2) &
-        + 3388 * rho(4) - 18018 * rho(6) + 39897 * rho(8) - 48048 * rho(10) + &
-        33072 * rho(12) - 12288 * rho(14) + 1920 * rho(16) - 32 )/8/root**13 + &
-        ( 11512 + 20808 * rho(2) - 652380 * rho(4) + 2169953 * rho(6) - 3325968 * rho(8)&
-        + 2719920 * rho(10) - 1155840 * rho(12) + 201600 * rho(14) )/1680/root**12
-      end if
-
-    end if
-
-    res = - res/3
-
-  end function DeltaCharm
-
-!ccccccccccccccc
-
-  recursive real (dp) function DeltaCharmDerBin(self, alpha, mb) result(res)
-    class (NRQCD), intent(inout) :: self
-    real (dp)    , intent(in)    :: mb, alpha
-    real (dp)                    :: lg, r
-    integer                      :: l
-
-    res = 0
-
-    if ( self%up(:4) == 'down' ) then
-      res = self%DeltaCharmDer(alpha, mb); return
-    end if
-
-    r = 3 * self%n * self%mc/2/mb/alpha; res = 0
-
-    if (100 * r > 1 ) then
-      res = self%DeltaCharmDer(alpha, mb) + 2._dp/3
-      return
-    else if ( r <= tiny(1._dp) ) then
-      res = 0; return
     end if
 
     if ( self%average(:3) == 'yes' ) then
 
       do l = 0, self%n - 1
         self%l = l
-        res = res + self%DeltaCharmDerBin(alpha, mb)
+        DeltaCharm = DeltaCharm + (2 * l + 1) * res(r)
       end do
 
-      res = res/self%n**2; return
+      DeltaCharm = DeltaCharm/self%n**2
 
+    else
+
+      DeltaCharm = res(r)
+
+    end if
+
+  contains
+
+    real (dp) function res(r)
+      real (dp), intent(in) :: r
+
+      if (self%n == 1) then
+
+        if (self%l == 0) then
+          res = 11._dp/3 - 3 * pi * r/2 + 4 * rho(2) - 2 * pi * rho(3) &
+          - 2 * ( 2 - rho(2) - 4 * rho(4) )/root * ArTan
+        end if
+
+      else if (self%n == 2) then
+
+        if (self%l == 0) then
+
+          res = - pi * r * ( 3 + 14 * rho(2) ) + ArTan * &
+          ( 10 * rho(2) - 4 + 75 * rho(4) - 128 * rho(6) + 56 * rho(8) )/root**5 + &
+          ( 28 + 49 * rho(2) - 272 * rho(4) + 168 * rho(6) )/6/root**4
+
+        else if (self%l == 1) then
+          res = - pi * r * ( 3 + 10 * rho(2) ) + ArTan * &
+          ( 10 * rho(2) - 4 + 45 * rho(4) - 88 * rho(6) + 40 * rho(8) )/root**5 + &
+          ( 32 + 23 * rho(2) - 184 * rho(4) + 120 * rho(6) )/6/root**4
+        end if
+
+      else if (self%n == 3) then
+
+        if (self%l == 0) then
+          res = - pi * r * ( 9 + 92 * rho(2) )/2 + ArTan * &
+          ( 36 * rho(2) + 702 * rho(4) - 2109 * rho(6) + 2736 * rho(8) &
+          - 1620 * rho(10) + 368 * rho(12) - 8 )/2/root**9 + ( 64 + &
+          224 * rho(2) - 3111 * rho(4) + 5528 * rho(6) - 4124 * rho(8) + &
+          1104 * rho(10) )/12/root**8
+        else if (self%l == 1) then
+          res = - pi * r * ( 9 + 80 * rho(2) )/2 + ArTan * &
+          ( 72 * rho(2) + 1134 * rho(4) - 3633 * rho(6) + 4716 * rho(8) &
+          - 2808 * rho(10) + 640 * rho(12) - 16 )/4/root**9 + ( 140 + &
+          328 * rho(2) - 5115 * rho(4) + 9556 * rho(6) - 7144 * rho(8) + &
+          1920 * rho(10) )/24/root**8
+        else if (self%l == 2) then
+          res = - pi * r * ( 9 + 56 * rho(2) )/2 + ArTan * &
+          ( 72 * rho(2) + 630 * rho(4) - 2373 * rho(6) + 3204 * rho(8) &
+          - 1944 * rho(10) + 448 * rho(12) - 16 )/4/root**9 + ( 748 + &
+          728 * rho(2) - 16035 * rho(4) + 32204 * rho(6) - 24680 * rho(8) + &
+          6720 * rho(10) )/120/root**8
+        end if
+
+      else if (self%n == 4) then
+        if (self%l == 0) then
+          res = - 6 * pi * r * ( 1 + 18 * rho(2) ) + ArTan * ( 208 * rho(2) &
+          + 8788 * rho(4) - 34670 * rho(6) + 76531 * rho(8) - 89072 * rho(10) + &
+          60528 * rho(12) - 22272 * rho(14) + 3456 * rho(16) - 32 )/8/root**13 + &
+          ( 280 + 1752 * rho(2) - 42852 * rho(4) + 116345 * rho(6) - 178800 * rho(8)&
+          + 142416 * rho(10) - 59904 * rho(12) + 10368 * rho(14) )/48/root**12
+        else if (self%l == 1) then
+          res = - 2 * pi * r * ( 3 + 50 * rho(2) ) + ArTan * ( 208 * rho(2) &
+          + 7828 * rho(4) - 32238 * rho(6) + 70137 * rho(8) - 82368 * rho(10) + &
+          55952 * rho(12) - 20608 * rho(14) + 3200 * rho(16) - 32 )/8/root**13 + &
+          ( 1496 + 7464 * rho(2) - 191160 * rho(4) + 541079 * rho(6) - 819744 * rho(8)&
+          + 658800 * rho(10) - 277120 * rho(12) + 48000 * rho(14) )/240/root**12
+        else if (self%l == 2) then
+          res = - 6 * pi * r * ( 1 + 14 * rho(2) ) + ArTan * ( 208 * rho(2) &
+          + 5980 * rho(4) - 26946 * rho(6) + 57915 * rho(8) - 68640 * rho(10) + &
+          46800 * rho(12) - 17280 * rho(14) + 2688 * rho(16) - 32 )/8/root**13 + &
+          ( 1576 + 5544 * rho(2) - 149136 * rho(4) + 454325 * rho(6) - 681408 * rho(8)&
+          + 550704 * rho(10) - 232320 * rho(12) + 40320 * rho(14) )/240/root**12
+        else if (self%l == 3) then
+          res = - 6 * pi * r * ( 1 + 10 * rho(2) ) + ArTan * ( 208 * rho(2) &
+          + 3388 * rho(4) - 18018 * rho(6) + 39897 * rho(8) - 48048 * rho(10) + &
+          33072 * rho(12) - 12288 * rho(14) + 1920 * rho(16) - 32 )/8/root**13 + &
+          ( 11512 + 20808 * rho(2) - 652380 * rho(4) + 2169953 * rho(6) - 3325968 * rho(8)&
+          + 2719920 * rho(10) - 1155840 * rho(12) + 201600 * rho(14) )/1680/root**12
+        end if
+
+      end if
+
+      res = - res/3
+
+    end function res
+
+  end function DeltaCharm
+
+!ccccccccccccccc
+
+  real (dp) function DeltaCharmDerBin(self, alpha, mb)
+    class (NRQCD), intent(inout) :: self
+    real (dp)    , intent(in)    :: mb, alpha
+    real (dp)                    :: lg, r
+    integer                      :: l
+
+    DeltaCharmDerBin = 0
+
+    if ( self%up(:4) == 'down' ) then
+      DeltaCharmDerBin = self%DeltaCharmDer(alpha, mb); return
+    end if
+
+    r = 3 * self%n * self%mc/2/mb/alpha
+
+    if (100 * r > 1 ) then
+      DeltaCharmDerBin = self%DeltaCharmDer(alpha, mb) + 2._dp/3
+      return
+    else if ( r <= tiny(1._dp) ) then
+      DeltaCharmDerBin = 0; return
     end if
 
     lg = log(r/2)
 
-    if (self%n == 1) then
+    if ( self%average(:3) == 'yes' ) then
 
-      if (self%l == 0) then
-        res = 2 - 3 * pi * r/2 + 9 * r**2 - 6 * pi * r**3 + &
-        - (3 + 15 * lg) * r**4 - (27._dp/4 + 21 * lg/2) * r**6 - &
-        (225._dp/32 + 81 * lg/8) * r**8 - (467._dp/64 + 165 * lg/16) * r**10
-      end if
+      do l = 0, self%n - 1
+        self%l = l
+        DeltaCharmDerBin = DeltaCharmDerBin + (2 * l + 1) * res(r)
+      end do
 
-    else if (self%n == 2) then
+      DeltaCharmDerBin = DeltaCharmDerBin/self%n**2
 
-      if (self%l == 0) then
+    else
 
-        res = 2 - 3 * pi * r + 36 * r**2 - 42 * pi * r**3  - &
-        (201._dp/2 + 165 * lg) * r**4 - (867._dp/4 + 231 * lg) * r**6 - &
-        (11079._dp/32 + 2997 * lg/8) * r**8 - (16541._dp/32 + 1155 * lg/2) * r**10
-
-      else if (self%l == 1) then
-        res = 2 - 3 * pi * r + 30 * r**2 - 30 * pi * r**3  - &
-        (107._dp/2 + 105 * lg) * r**4 - (443._dp/4 + 126 * lg) * r**6 - &
-        (5259._dp/32 + 1485 * lg/8) * r**8 - (3723._dp/16 + 2145 * lg/8) * r**10
-      end if
-
-    else if (self%n == 3) then
-
-      if (self%l == 0) then
-        res = 2 - 9 * pi * r/2 + 81 * r**2 - 138 * pi * r**3 - &
-        (1431._dp/2 + 765 * lg) * r**4 - (4609._dp/2 + 3843 * lg/2) * r**6  - &
-        (181611._dp/32 + 39933 * lg/8) * r**8 - (779817._dp/64 + &
-        181665 * lg/16) * r**10
-      else if (self%l == 1) then
-        res = 2 - 9 * pi * r/2 + 75 * r**2 - 120 * pi * r**3 - &
-        (2229._dp/4 + 630 * lg) * r**4 - (13465._dp/8 + 1449 * lg) * r**6 - &
-        (62583._dp/16 + 28215 * lg/8) * r**8 - (32157._dp/4 - 122265 * lg/16) * r**10
-      else if (self%l == 2) then
-        res = 2 - 9 * pi * r/2 + 63 * r**2 - 84 * pi * r**3 - &
-        (5637._dp/20 + 378 * lg) * r**4 - (29657._dp/40 + 693 * lg) * r**6 - &
-        (121113._dp/80 - 11583 * lg/8) * r**8 - (2832 + 45045 * lg/16) * r**10
-      end if
-
-    else if (self%n == 4) then
-      if (self%l == 0) then
-        res = 2 - 6 * pi * r + 144 * r**2 - 324 * pi * r**3 - &
-        (11157._dp/4 + 2340 * lg) * r**4 - (53983._dp/4 + 9492 * lg) * r**6 - &
-        (791415._dp/16 + 297999 * lg/8) * r**8 - (4786581._dp/32 + &
-        483285 * lg/4) * r**10
-      else if (self%l == 1) then
-        res = 2 - 6 * pi * r + 138 * r**2 - 300 * pi * r**3 - &
-        (9761._dp/4 + 2100 * lg) * r**4 - (112649._dp/10 + 8064 * lg) * r**6 - &
-        (633093._dp/16 + 242055 * lg/8) * r**8 - (3700509._dp/32 + &
-        757185 * lg/8) * r**10
-      else if (self%l == 2) then
-        res = 2 - 6 * pi * r + 126 * r**2 - 252 * pi * r**3 - &
-        (35767._dp/20 + 1638 * lg) * r**4 - (74329._dp/10 + 5544 * lg) * r**6 &
-        - (951327._dp/40 + 150579 * lg/8) * r**8 - (2067379._dp/32 + &
-        435435 * lg/8) * r**10
-      else if (self%l == 3) then
-        res = 2 - 6 * pi * r + 108 * r**2 - 180 * pi * r**3 - &
-        (25961._dp/28 + 990 * lg) * r**4 - (443291._dp/140 + 2574 * lg) * r**6 &
-        - (59985._dp/7 + 57915 * lg/8) * r**8 - (4603783._dp/224 + &
-        36465 * lg/2) * r**10
-      end if
+      DeltaCharmDerBin = res(r)
 
     end if
 
-    res = - res/3
+  contains
+
+    real (dp) function res(r)
+      real (dp), intent(in) :: r
+
+      if (self%n == 1) then
+
+        if (self%l == 0) then
+          res = 2 - 3 * pi * r/2 + 9 * r**2 - 6 * pi * r**3 + &
+          - (3 + 15 * lg) * r**4 - (27._dp/4 + 21 * lg/2) * r**6 - &
+          (225._dp/32 + 81 * lg/8) * r**8 - (467._dp/64 + 165 * lg/16) * r**10
+        end if
+
+      else if (self%n == 2) then
+
+        if (self%l == 0) then
+
+          res = 2 - 3 * pi * r + 36 * r**2 - 42 * pi * r**3  - &
+          (201._dp/2 + 165 * lg) * r**4 - (867._dp/4 + 231 * lg) * r**6 - &
+          (11079._dp/32 + 2997 * lg/8) * r**8 - (16541._dp/32 + 1155 * lg/2) * r**10
+
+        else if (self%l == 1) then
+          res = 2 - 3 * pi * r + 30 * r**2 - 30 * pi * r**3  - &
+          (107._dp/2 + 105 * lg) * r**4 - (443._dp/4 + 126 * lg) * r**6 - &
+          (5259._dp/32 + 1485 * lg/8) * r**8 - (3723._dp/16 + 2145 * lg/8) * r**10
+        end if
+
+      else if (self%n == 3) then
+
+        if (self%l == 0) then
+          res = 2 - 9 * pi * r/2 + 81 * r**2 - 138 * pi * r**3 - &
+          (1431._dp/2 + 765 * lg) * r**4 - (4609._dp/2 + 3843 * lg/2) * r**6  - &
+          (181611._dp/32 + 39933 * lg/8) * r**8 - (779817._dp/64 + &
+          181665 * lg/16) * r**10
+        else if (self%l == 1) then
+          res = 2 - 9 * pi * r/2 + 75 * r**2 - 120 * pi * r**3 - &
+          (2229._dp/4 + 630 * lg) * r**4 - (13465._dp/8 + 1449 * lg) * r**6 - &
+          (62583._dp/16 + 28215 * lg/8) * r**8 - (32157._dp/4 - 122265 * lg/16) * r**10
+        else if (self%l == 2) then
+          res = 2 - 9 * pi * r/2 + 63 * r**2 - 84 * pi * r**3 - &
+          (5637._dp/20 + 378 * lg) * r**4 - (29657._dp/40 + 693 * lg) * r**6 - &
+          (121113._dp/80 - 11583 * lg/8) * r**8 - (2832 + 45045 * lg/16) * r**10
+        end if
+
+      else if (self%n == 4) then
+        if (self%l == 0) then
+          res = 2 - 6 * pi * r + 144 * r**2 - 324 * pi * r**3 - &
+          (11157._dp/4 + 2340 * lg) * r**4 - (53983._dp/4 + 9492 * lg) * r**6 - &
+          (791415._dp/16 + 297999 * lg/8) * r**8 - (4786581._dp/32 + &
+          483285 * lg/4) * r**10
+        else if (self%l == 1) then
+          res = 2 - 6 * pi * r + 138 * r**2 - 300 * pi * r**3 - &
+          (9761._dp/4 + 2100 * lg) * r**4 - (112649._dp/10 + 8064 * lg) * r**6 - &
+          (633093._dp/16 + 242055 * lg/8) * r**8 - (3700509._dp/32 + &
+          757185 * lg/8) * r**10
+        else if (self%l == 2) then
+          res = 2 - 6 * pi * r + 126 * r**2 - 252 * pi * r**3 - &
+          (35767._dp/20 + 1638 * lg) * r**4 - (74329._dp/10 + 5544 * lg) * r**6 &
+          - (951327._dp/40 + 150579 * lg/8) * r**8 - (2067379._dp/32 + &
+          435435 * lg/8) * r**10
+        else if (self%l == 3) then
+          res = 2 - 6 * pi * r + 108 * r**2 - 180 * pi * r**3 - &
+          (25961._dp/28 + 990 * lg) * r**4 - (443291._dp/140 + 2574 * lg) * r**6 &
+          - (59985._dp/7 + 57915 * lg/8) * r**8 - (4603783._dp/224 + &
+          36465 * lg/2) * r**10
+        end if
+
+      end if
+
+      res = - res/3
+
+    end function res
 
   end function DeltaCharmDerBin
 
 !ccccccccccccccc
 
-  recursive real (dp) function DeltaCharmDer(self, alpha, mb) result(res)
+  real (dp) function DeltaCharmDer(self, alpha, mb)
     class (NRQCD), intent(inout)   :: self
     real (dp)    , intent(in)      :: mb, alpha
     real (dp)                      :: r, root, ArTan
     real (dp), dimension(4*self%n) :: rho
     integer                        :: l
 
-    res = 0
-
-    if ( self%average(:3) == 'yes' ) then
-
-      do l = 0, self%n - 1
-        self%l = l
-        res = res + self%DeltaCharmDer(alpha, mb)
-      end do
-
-      res = res/self%n**2; return
-
-    end if
+    DeltaCharmDer = 0
 
     r = 3 * self%n * self%mc/2/mb/alpha; rho = powList(r,4*self%n)
 
@@ -1447,88 +1462,110 @@ end function IterError
       root = sqrt( 1 - rho(2) ); ArTan = - log( (1 + root)/r  )/2
     end if
 
-    if (self%n == 1) then
+    if ( self%average(:3) == 'yes' ) then
 
-      if (self%l == 0) then
-        res = (  4 + 14 * rho(2) - 24 * rho(4) + 3 * pi * r * &
-        ( 4 * rho(4) - 1 - 3 * rho(2) )  )/( 2 - 2 * rho(2) ) + ( 6 * ArTan *  &
-        rho(4) * ( 4 * rho(2) - 5 ) )/root**3
-      end if
+      do l = 0, self%n - 1
+        self%l = l
+        DeltaCharmDer = DeltaCharmDer + (2 * l + 1) * res(r)
+      end do
 
-    else if (self%n == 2) then
+      DeltaCharmDer = DeltaCharmDer/self%n**2
 
-      if (self%l == 0) then
-        res = - 3 * pi * ( r + 14 * rho(3) ) + (  3 * ArTan * rho(4) &
-        * (  231 * rho(2) - 110 - 192 * rho(4) + 56 * rho(6) )  )/root**7 + &
-        ( 405 * rho(4) - 464 * rho(6) + 168 * rho(8) - 4 - 60 * rho(2) )/2/root**6
-      else if (self%l == 1) then
-        res = - 3 * pi * ( r + 10 * rho(3) ) + (  3 * ArTan * rho(4) * &
-        ( 161 * rho(2) - 136 * rho(4) + 40 * rho(6) - 70 )  )/root**7 + &
-        ( 275 * rho(4) - 328 * rho(6) + 120 * rho(8) - 4 - 48 * rho(2) )/2/root**6
-      end if
+    else
 
-    else if (self%n == 3) then
-
-      if (self%l == 0) then
-        res = - 3 * pi * r * ( 3 + 92 * rho(2) )/2 + (  3 * ArTan * &
-        rho(4) *  ( 3048 * rho(2) - 1020 - 5187 * rho(4) + 4488 * rho(6) -&
-        2012 * rho(8) + 368 * rho(10) )  )/2/root**11 + ( 4402 * rho(4) - 8 &
-        - 284 * rho(2) - 9017 * rho(6) + 10048 * rho(8) - 5300 * rho(10) + &
-        1104 * rho(12) )/4/root**10
-      else if (self%l == 1) then
-        res = - 3 * pi * r * ( 3 + 80 * rho(2) )/2 + (  3 * ArTan * rho(4)&
-        * (  5376 * rho(2) - 1680 - 8943 * rho(4) + 7788 * rho(6) - 3496 * rho(8) &
-        + 640 * rho(10) )  )/4/root**11 + ( 7298 * rho(4) - 16 - 520 * rho(2) - &
-        15925 * rho(6) + 17396 * rho(8) - 9208 * rho(10) + 1920 * rho(12) )/&
-        8/root**10
-      else if (self%l == 2) then
-        res = - 3 * pi * r * ( 3 + 56 * rho(2) )/2 + (  3 * ArTan * &
-        rho(4) * ( 3696 * rho(2) - 1008 - 6171 * rho(4) + 5412 * rho(6) -  &
-        2440 * rho(8) + 448 * rho(10) )  )/4/root**11 + ( 23074 * rho(4) - 80 &
-        - 2120 * rho(2) - 54893 * rho(6) + 60364 * rho(8) - 32120 * rho(10) + &
-        6720 * rho(12) )/40/root**10
-      end if
-
-    else if (self%n == 4) then
-      if (self%l == 0) then
-        res = - 6 * pi * ( r + 54 * rho(3) ) + (  3 * ArTan * rho(4) &
-        * (  42976 * rho(2) - 12480 - 123186 * rho(4) + 169355 * rho(6) - 153040 * &
-        rho(8) + 83760 * rho(10) - 25856 * rho(12) + 3456 * rho(14) )  )/&
-        8/root**15 + ( 60084 * rho(4) - 32 - 2080 * rho(2) - 153088 * rho(6) + &
-        320641 * rho(8) - 325392 * rho(10) + 205200 * rho(12) - 70656 * rho(14)&
-        + 10368 * rho(16) )/16/root**14
-      else if (self%l == 1) then
-        res = - 6 * pi * ( r + 50 * rho(3) ) + (  3 * ArTan * rho(4) * &
-        ( 40992 * rho(2) - 11200 - 111810 * rho(4) + 157665 * rho(6) -         &
-        141440 * rho(8) + 77520 * rho(10) - 23936 * rho(12) + 3200 * rho(14) )  )&
-        /8/root**15 + ( 269140 * rho(4) - 160 - 9920 * rho(2)- 733588 * rho(6) &
-        + 1454511 * rho(8) - 1514848 * rho(10) + 949040 * rho(12) - &
-        327040 * rho(14) + 48000 * rho(16) )/80/root**14
-      else if (self%l == 2) then
-        res = - 6 * pi * ( r + 42 * rho(3) ) + (  3 * ArTan * rho(4) * &
-        ( 35952 * rho(2) - 8736 - 91566 * rho(4) + 132275 * rho(6) - &
-        118560 * rho(8) + 65040 * rho(10) - 20096 * rho(12) + 2688 * rho(14) )  )&
-        /8/root**15 + ( 210268 * rho(4) - 160 - 8960 * rho(2) - 645684 * rho(6) + &
-        1198013 * rho(8) - 1270336 * rho(10) + 796144 * rho(12) - &
-        274560 * rho(14) + 40320 * rho(16) )/80/root**14
-      else if (self%l == 3) then
-        res = - 6 * pi * ( r + 30 * rho(3) ) + (  3 * ArTan * rho(4) * &
-        ( 25872 * rho(2) - 5280 - 64350 * rho(4) + 93665 * rho(6) - 84240 * rho(8)&
-        + 46320 * rho(10) - 14336 * rho(12) + 1920 * rho(14) )  )/8/root**15 + &
-        ( 919060 * rho(4) - 3230856 * rho(6) - 1120 - 52640 * rho(2) + &
-        5925737 * rho(8) - 6313456 * rho(10) + 3967600 * rho(12)  &
-        - 1370880 * rho(14) + 201600 * rho(16) )/560/root**14
-      end if
+      DeltaCharmDer = res(r)
 
     end if
 
-    res = - res/3
+  contains
+
+    real (dp) function res(r)
+      real (dp), intent(in) :: r
+
+      if (self%n == 1) then
+
+        if (self%l == 0) then
+          res = (  4 + 14 * rho(2) - 24 * rho(4) + 3 * pi * r * &
+          ( 4 * rho(4) - 1 - 3 * rho(2) )  )/( 2 - 2 * rho(2) ) + ( 6 * ArTan *  &
+          rho(4) * ( 4 * rho(2) - 5 ) )/root**3
+        end if
+
+      else if (self%n == 2) then
+
+        if (self%l == 0) then
+          res = - 3 * pi * ( r + 14 * rho(3) ) + (  3 * ArTan * rho(4) &
+          * (  231 * rho(2) - 110 - 192 * rho(4) + 56 * rho(6) )  )/root**7 + &
+          ( 405 * rho(4) - 464 * rho(6) + 168 * rho(8) - 4 - 60 * rho(2) )/2/root**6
+        else if (self%l == 1) then
+          res = - 3 * pi * ( r + 10 * rho(3) ) + (  3 * ArTan * rho(4) * &
+          ( 161 * rho(2) - 136 * rho(4) + 40 * rho(6) - 70 )  )/root**7 + &
+          ( 275 * rho(4) - 328 * rho(6) + 120 * rho(8) - 4 - 48 * rho(2) )/2/root**6
+        end if
+
+      else if (self%n == 3) then
+
+        if (self%l == 0) then
+          res = - 3 * pi * r * ( 3 + 92 * rho(2) )/2 + (  3 * ArTan * &
+          rho(4) *  ( 3048 * rho(2) - 1020 - 5187 * rho(4) + 4488 * rho(6) -&
+          2012 * rho(8) + 368 * rho(10) )  )/2/root**11 + ( 4402 * rho(4) - 8 &
+          - 284 * rho(2) - 9017 * rho(6) + 10048 * rho(8) - 5300 * rho(10) + &
+          1104 * rho(12) )/4/root**10
+        else if (self%l == 1) then
+          res = - 3 * pi * r * ( 3 + 80 * rho(2) )/2 + (  3 * ArTan * rho(4)&
+          * (  5376 * rho(2) - 1680 - 8943 * rho(4) + 7788 * rho(6) - 3496 * rho(8) &
+          + 640 * rho(10) )  )/4/root**11 + ( 7298 * rho(4) - 16 - 520 * rho(2) - &
+          15925 * rho(6) + 17396 * rho(8) - 9208 * rho(10) + 1920 * rho(12) )/&
+          8/root**10
+        else if (self%l == 2) then
+          res = - 3 * pi * r * ( 3 + 56 * rho(2) )/2 + (  3 * ArTan * &
+          rho(4) * ( 3696 * rho(2) - 1008 - 6171 * rho(4) + 5412 * rho(6) -  &
+          2440 * rho(8) + 448 * rho(10) )  )/4/root**11 + ( 23074 * rho(4) - 80 &
+          - 2120 * rho(2) - 54893 * rho(6) + 60364 * rho(8) - 32120 * rho(10) + &
+          6720 * rho(12) )/40/root**10
+        end if
+
+      else if (self%n == 4) then
+        if (self%l == 0) then
+          res = - 6 * pi * ( r + 54 * rho(3) ) + (  3 * ArTan * rho(4) &
+          * (  42976 * rho(2) - 12480 - 123186 * rho(4) + 169355 * rho(6) - 153040 * &
+          rho(8) + 83760 * rho(10) - 25856 * rho(12) + 3456 * rho(14) )  )/&
+          8/root**15 + ( 60084 * rho(4) - 32 - 2080 * rho(2) - 153088 * rho(6) + &
+          320641 * rho(8) - 325392 * rho(10) + 205200 * rho(12) - 70656 * rho(14)&
+          + 10368 * rho(16) )/16/root**14
+        else if (self%l == 1) then
+          res = - 6 * pi * ( r + 50 * rho(3) ) + (  3 * ArTan * rho(4) * &
+          ( 40992 * rho(2) - 11200 - 111810 * rho(4) + 157665 * rho(6) -         &
+          141440 * rho(8) + 77520 * rho(10) - 23936 * rho(12) + 3200 * rho(14) )  )&
+          /8/root**15 + ( 269140 * rho(4) - 160 - 9920 * rho(2)- 733588 * rho(6) &
+          + 1454511 * rho(8) - 1514848 * rho(10) + 949040 * rho(12) - &
+          327040 * rho(14) + 48000 * rho(16) )/80/root**14
+        else if (self%l == 2) then
+          res = - 6 * pi * ( r + 42 * rho(3) ) + (  3 * ArTan * rho(4) * &
+          ( 35952 * rho(2) - 8736 - 91566 * rho(4) + 132275 * rho(6) - &
+          118560 * rho(8) + 65040 * rho(10) - 20096 * rho(12) + 2688 * rho(14) )  )&
+          /8/root**15 + ( 210268 * rho(4) - 160 - 8960 * rho(2) - 645684 * rho(6) + &
+          1198013 * rho(8) - 1270336 * rho(10) + 796144 * rho(12) - &
+          274560 * rho(14) + 40320 * rho(16) )/80/root**14
+        else if (self%l == 3) then
+          res = - 6 * pi * ( r + 30 * rho(3) ) + (  3 * ArTan * rho(4) * &
+          ( 25872 * rho(2) - 5280 - 64350 * rho(4) + 93665 * rho(6) - 84240 * rho(8)&
+          + 46320 * rho(10) - 14336 * rho(12) + 1920 * rho(14) )  )/8/root**15 + &
+          ( 919060 * rho(4) - 3230856 * rho(6) - 1120 - 52640 * rho(2) + &
+          5925737 * rho(8) - 6313456 * rho(10) + 3967600 * rho(12)  &
+          - 1370880 * rho(14) + 201600 * rho(16) )/560/root**14
+        end if
+
+      end if
+
+      res = - res/3
+
+    end function res
 
   end function DeltaCharmDer
 
 !ccccccccccccccc
 
-  recursive real (dp) function ZeroBin(self, alpha, mb)
+  real (dp) function ZeroBin(self, alpha, mb)
     class (NRQCD), intent(in) :: self
     real (dp)    , intent(in) :: mb, alpha
     real (dp)                 :: rho, coef
