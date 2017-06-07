@@ -101,14 +101,14 @@ module NRQCDClass
       InNRQCD%harm = 0.5_dp - 1._dp/n/2 + Harmonic(n)
 
       do i = 0, n - 1
-        h2 = h2 + (2 * i + 1) * Harmonic(n + i)**2
+        h2 = h2 + (2*i + 1) * Harmonic(n + i)**2
       end do
 
       h2 = h2/n**2 - InNRQCD%harm**2
 
       do i = 0, n - 1
         do k = 0, 1
-          do jj = abs(l - k), l + k
+          do jj = abs(i - k), i + k
 
             fac = 2 * jj + 1
 
