@@ -46,7 +46,7 @@ module NRQCDClass
     character (len = *), intent(in) :: scheme, up, average
     type (VFNSMSR)     , intent(in) :: MSR
     real (dp)      , dimension(0:4) :: beta
-    real (dp)                       :: h3, harm
+    real (dp)                       :: h3, c2h, c2val, harm
     character (len = 5)             :: alphaScheme
     integer                         :: nf, nl, i, jj, k, fac
 
@@ -61,7 +61,7 @@ module NRQCDClass
     InNRQCD%mH = MSR%mass(); InNRQCD%nf = nf; InNRQCD%c = 0; InNRQCD%j = j
     InNRQCD%listFact = factList(3); InNRQCD%cnl = 0; InNRQCD%s = s; h3 = 0
     InNRQCD%alphaOb = MSR%AlphaAll(); beta = InNRQCD%Andim%betaQCD('beta')
-    InNRQCD%beta = beta;  InNRQCD%average = average; InNRQCD%h2 = 0
+    InNRQCD%beta = beta;  InNRQCD%average = average; InNRQCD%h2 = 0; c2h = 0
     InNRQCD%cnf = 0
 
     if ( up(:2) == 'up' ) then
@@ -132,19 +132,24 @@ module NRQCDClass
       end do
 
       InNRQCD%h2 = InNRQCD%h2/n**2 - InNRQCD%harm**2
-      h3         = h3/n**2         - InNRQCD%harm**3
+      h3         = h3/n**2         - InNRQCD%harm**3 - 3 * InNRQCD%harm * InNRQCD%h2
 
       do i = 0, n - 1
+
+        harm = Harmonic(n + i)
+
         do k = 0, 1
           do jj = abs(i - k), i + k
 
-            fac = 2 * jj + 1
+            fac = 2 * jj + 1; c2val = c2(nl, n, i, jj, k)
 
-            InNRQCD%c(2:,0) = InNRQCD%c(2:,0) + fac * [ c2(nl, n, i, jj, k), &
+            InNRQCD%c(2:,0) = InNRQCD%c(2:,0) + fac * [ c2val, &
             c3(nl, n, i, jj, k), c3log(nl, n, i, jj, k) ]
 
             InNRQCD%cnl(2) = InNRQCD%cnl(2) + fac * c2(nf - 1, n, i, jj, k)
             InNRQCD%cnf(2) = InNRQCD%cnf(2) + fac * c2(nf    , n, i, jj, k)
+
+            c2h = c2h + fac * harm * c2val
 
           end do
         end do
@@ -153,9 +158,13 @@ module NRQCDClass
       fac = 4 * n**2
 
       InNRQCD%c(2:,0) = InNRQCD%c(2:,0)/fac
-      InNRQCD%c(2,0)  = InNRQCD%c(2,0) + 3 * beta(0)**2 * InNRQCD%h2/4
       InNRQCD%cnf(2)  = InNRQCD%cnf(2)/fac
       InNRQCD%cnl(2)  = InNRQCD%cnl(2)/fac
+
+      c2h = c2h/fac - InNRQCD%harm * InNRQCD%c(2,0)
+
+      ! InNRQCD%c(3,0) = InNRQCD%c(3,0) + 2 * beta(0) * c2h
+      ! InNRQCD%c(2,0) = InNRQCD%c(2,0) + 3 * beta(0)**2 * InNRQCD%h2/4
 
     end if
 
@@ -174,6 +183,12 @@ module NRQCDClass
 
       end do
     end do
+
+    InNRQCD%c(3,0) = InNRQCD%c(3,0) + InNRQCD%c(3,2) * InNRQCD%h2 + &
+    InNRQCD%c(3,3) * h3 + 2 * beta(0) * c2h
+
+    InNRQCD%c(3,1) = InNRQCD%c(3,1) + 3 * InNRQCD%c(3,3) * InNRQCD%h2
+    InNRQCD%c(2,0) = InNRQCD%c(2,0) +     InNRQCD%c(2,2) * InNRQCD%h2
 
     if (nf == 5) InNRQCD%mc = InNRQCD%alphaOb%scales('mB')
     if (nf == 4) InNRQCD%mc = InNRQCD%alphaOb%scales('mC')
