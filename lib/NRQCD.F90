@@ -58,10 +58,9 @@ module NRQCDClass
     InNRQCD%n = n; nf = MSR%numFlav() ; alphaScheme = InNRQCD%alphaMass%scheme()
     InNRQCD%Andim = InNRQCD%alphaMass%adim(); InNRQCD%up = up; InNRQCD%l = l
     InNRQCD%mH = MSR%mass(); InNRQCD%nf = nf; InNRQCD%c = 0; InNRQCD%j = j
-    InNRQCD%harm = Harmonic(n + l); InNRQCD%listFact = factList(3)
+    InNRQCD%listFact = factList(3); InNRQCD%cnl = 0; InNRQCD%s = s
     InNRQCD%alphaOb = MSR%AlphaAll(); beta = InNRQCD%Andim%betaQCD('beta')
-    InNRQCD%beta = beta; InNRQCD%cnl = 0; InNRQCD%s = s
-    InNRQCD%average = average
+    InNRQCD%beta = beta;  InNRQCD%average = average
 
     if ( up(:2) == 'up' ) then
       nl = nf
@@ -87,9 +86,17 @@ module NRQCDClass
     end if
 
     if ( average(:2) == 'no' ) then
+
       InNRQCD%c(2:,0) = [ c2(nl, n, l, j, s), c3(nl, n, l, j, s), &
       c3log(nl, n, l, j, s) ]
+
+      InNRQCD%cnl(2) = c2(nf - 1, n, l, j, s)
+      InNRQCD%cnf(2) = c2(nf    , n, l, j, s)
+
+      InNRQCD%harm = Harmonic(n + l)
     else
+
+      InNRQCD%harm = 0.5_dp - 1._dp/n/2 + Harmonic(n)
 
       do i = 0, n - 1
         do k = 0, 1
