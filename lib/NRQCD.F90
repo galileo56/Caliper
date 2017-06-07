@@ -46,6 +46,7 @@ module NRQCDClass
     character (len = *), intent(in) :: scheme, up, average
     type (VFNSMSR)     , intent(in) :: MSR
     real (dp)      , dimension(0:4) :: beta
+    real (dp)                       :: h2
     character (len = 5)             :: alphaScheme
     integer                         :: nf, nl, i, jj, k, fac
 
@@ -60,7 +61,7 @@ module NRQCDClass
     InNRQCD%mH = MSR%mass(); InNRQCD%nf = nf; InNRQCD%c = 0; InNRQCD%j = j
     InNRQCD%listFact = factList(3); InNRQCD%cnl = 0; InNRQCD%s = s
     InNRQCD%alphaOb = MSR%AlphaAll(); beta = InNRQCD%Andim%betaQCD('beta')
-    InNRQCD%beta = beta;  InNRQCD%average = average
+    InNRQCD%beta = beta;  InNRQCD%average = average; h2 = 0
 
     if ( up(:2) == 'up' ) then
       nl = nf
@@ -100,6 +101,12 @@ module NRQCDClass
       InNRQCD%harm = 0.5_dp - 1._dp/n/2 + Harmonic(n)
 
       do i = 0, n - 1
+        h2 = h2 + (2 * i + 1) * Harmonic(n + i)**2
+      end do
+
+      h2 = h2/n**2 - InNRQCD%harm**2
+
+      do i = 0, n - 1
         do k = 0, 1
           do jj = abs(l - k), l + k
 
@@ -116,6 +123,7 @@ module NRQCDClass
       end do
 
       InNRQCD%c(2:,0) = InNRQCD%c(2:,0)/4/n**2
+      InNRQCD%c(2,0)  = InNRQCD%c(2,0) + 3 * h2 * beta(0)**2/4
       InNRQCD%cnf(2)  = InNRQCD%cnf(2)/4/n**2
       InNRQCD%cnl(2)  = InNRQCD%cnl(2)/4/n**2
 
