@@ -1142,7 +1142,7 @@ end function IterError
 
       do l = 0, self%n - 1
         self%l = l
-        DeltaCharmBin = DeltaCharmBin + res(r)
+        DeltaCharmBin = DeltaCharmBin + (2 * l + 1) * res(r)
       end do
 
       DeltaCharmBin = DeltaCharmBin/self%n**2; return
