@@ -3261,7 +3261,7 @@ end subroutine f90OptimalR
 
     alphaMass = Running(4, 0, alphaAll, 100._dp)
     MSR       = VFNSMSR(alphaMass)
-    Upsilon   = NRQCD( 'up', 'MSbar', MSR, n, l, 0, 0 )
+    Upsilon   = NRQCD( 'up', 'MSbar', 'yes', MSR, n, l, 0, 0 )
 
     res = Upsilon%DeltaCharm(alp, mb)
 
@@ -3291,7 +3291,7 @@ end subroutine f90OptimalR
 
     alphaMass = Running(4, 0, alphaAll, 100._dp)
     MSR       = VFNSMSR(alphaMass)
-    Upsilon   = NRQCD( 'up', 'MSbar', MSR, n, l, 0, 0 )
+    Upsilon   = NRQCD( 'up', 'MSbar', 'yes', MSR, n, l, 0, 0 )
 
     res = Upsilon%DeltaCharmBin(alp, mb)
 
@@ -3299,11 +3299,12 @@ end subroutine f90OptimalR
 
 !ccccccccccccccc
 
-  subroutine f90DeltaCharmExact(charm, type, scheme, n, l, j, s, nl, mH, mL, mu, alp, res)
+  subroutine f90DeltaCharmExact(charm, type, scheme, average, n, l, j, s, nl, &
+    mH, mL, mu, alp, res)
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
-    character (len = *), intent(in ) :: type, scheme, charm
+    character (len = *), intent(in ) :: type, scheme, average, charm
     integer            , intent(in ) :: nl, n, l, j, s
     real (dp)          , intent(in ) :: mH, mL, alp, mu
     real (dp)          , intent(out) :: res
@@ -3334,7 +3335,7 @@ end subroutine f90OptimalR
     Running(nl, 0, alphaAll, mH) ]
 
     MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm, scheme, MSR, n, l, j, s )
+    Upsilon = NRQCD( charm, scheme, average(:3), MSR, n, l, j, s )
 
     res = Upsilon%DeltaCharmExact(type, mu, alp, mH)
 
@@ -3342,14 +3343,14 @@ end subroutine f90OptimalR
 
 !ccccccccccccccc
 
-  subroutine f90NRQCD(n, l, j, s, charm, scheme, method, orderAlpha, runAlpha, &
-  order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam,   &
-  mu, R, res)
+  subroutine f90NRQCD(n, l, j, s, charm, scheme, average, method, orderAlpha, &
+  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1,   &
+  lambda2, lam, mu, R, res)
 
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
-    character (len = *), intent(in ) :: method, scheme, charm
+    character (len = *), intent(in ) :: method, scheme, charm, average
     integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nl, n,&
     l, j, s
     real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, &
@@ -3376,7 +3377,7 @@ end subroutine f90OptimalR
     Running(nl, run, alphaAll, lambda1) ]
 
     MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm(:4), scheme(:5), MSR, n, l, j, s )
+    Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
     res = Upsilon%En( charm(:6), order, mu, R, lam, method(:8) )
 
@@ -3384,14 +3385,14 @@ end subroutine f90OptimalR
 
 !ccccccccccccccc
 
-  subroutine f90FindMass(ord, n, l, j, s, iter, charm, scheme, method, orderAlpha, &
-  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, &
-  lambda2, lam, mu, R, res)
+  subroutine f90FindMass(ord, n, l, j, s, iter, charm, scheme, average, method, &
+  orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,&
+  lambda1, lambda2, lam, mu, R, res)
 
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
-    character (len = *), intent(in ) :: method, scheme, charm, iter
+    character (len = *), intent(in ) :: method, scheme, charm, iter, average
     integer            , intent(in ) :: ord, orderAlpha, runAlpha, order, run, &
     nl, n, l, j, s
     real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC,&
@@ -3418,7 +3419,7 @@ end subroutine f90OptimalR
     Running(nl, run, alphaAll, lambda1) ]
 
     MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm(:4), scheme(:5), MSR, n, l, j, s )
+    Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
     res = Upsilon%MassFitter( iter(:10), charm(:6), ord, order, mu, R, mass, &
     lam, method(:8) )
@@ -3427,14 +3428,14 @@ end subroutine f90OptimalR
 
 !ccccccccccccccc
 
-  subroutine f90MassError(ord, n, l, j, s, iter, charm, scheme, method, orderAlpha, &
-  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, &
-  lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x, res)
+  subroutine f90MassError(ord, n, l, j, s, iter, charm, scheme, average, method,&
+  orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,&
+  lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x, res)
 
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
-    character (len = *)    , intent(in ) :: method, scheme, charm, iter
+    character (len = *)    , intent(in ) :: method, scheme, charm, average, iter
     integer                , intent(in ) :: ord, orderAlpha, runAlpha, order, run, &
     nl, n, l, j, s
     real (dp)              , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, x, &
@@ -3461,7 +3462,7 @@ end subroutine f90OptimalR
     Running(nl, run, alphaAll, lambda1) ]
 
     MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm(:4), scheme(:5), MSR, n, l, j, s )
+    Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
     res = Upsilon%MassError( iter(:10), charm(:6), ord, order, mu0, mu1, &
     deltaMu, R0, R1, deltaR, x, mass, lam, method(:8) )
@@ -3470,14 +3471,14 @@ end subroutine f90OptimalR
 
 !ccccccccccccccc
 
-  subroutine f90MassList(ord, n, l, j, s, iter, charm, scheme, method, orderAlpha, &
-  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, &
-  lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, res)
+  subroutine f90MassList(ord, n, l, j, s, iter, charm, scheme, average, method, &
+  orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,&
+  lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, res)
 
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
-    character (len = *)    , intent(in ) :: method, scheme, charm, iter
+    character (len = *)    , intent(in ) :: method, scheme, charm, average, iter
     integer                , intent(in ) :: ord, orderAlpha, runAlpha, order, run, &
     nl, n, l, j, s
     real (dp)              , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, &
@@ -3507,7 +3508,7 @@ end subroutine f90OptimalR
     Running(nl, run, alphaAll, lambda1) ]
 
     MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm(:4), scheme(:5), MSR, n, l, j, s )
+    Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
     res = Upsilon%MassList( iter(:10), charm(:6), ord, order, mu0, mu1, &
     deltaMu, R0, R1, deltaR, mass, lam, method(:8) )
@@ -3516,14 +3517,14 @@ end subroutine f90OptimalR
 
 !ccccccccccccccc
 
-  subroutine f90NRQCDError(n, l, j, s, iter, charm, scheme, method, orderAlpha, &
-  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, &
-  lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x, res)
+  subroutine f90NRQCDError(n, l, j, s, iter, charm, scheme, average, method, &
+  orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, &
+  mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x, res)
 
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
-    character (len = *), intent(in ) :: method, scheme, charm, iter
+    character (len = *), intent(in ) :: method, scheme, charm, average, iter
     integer            , intent(in ) :: orderAlpha, runAlpha, order, run, &
     nl, n, l, j, s
     real (dp)          , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, muC, x, &
@@ -3550,7 +3551,7 @@ end subroutine f90OptimalR
     Running(nl, run, alphaAll, lambda1) ]
 
     MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm(:4), scheme(:5), MSR, n, l, j, s )
+    Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
     if ( iter(:10) == 'FixedOrder' ) then
 
@@ -3573,14 +3574,14 @@ end subroutine f90OptimalR
 
 !ccccccccccccccc
 
-  subroutine f90MassIter(n, l, j, s, charm, scheme, method, orderAlpha, &
+  subroutine f90MassIter(n, l, j, s, charm, scheme, average, method, orderAlpha, &
   runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, &
   lambda2, lam, mu, R, res)
 
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
-    character (len = *), intent(in ) :: method, scheme, charm
+    character (len = *), intent(in ) :: method, scheme, average, charm
     integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nl, &
     n, l, j, s
     real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC,&
@@ -3607,7 +3608,7 @@ end subroutine f90OptimalR
     Running(nl, run, alphaAll, lambda1) ]
 
     MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm(:4), scheme(:5), MSR, n, l, j, s )
+    Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
     res = Upsilon%MassIter( charm(:6), order, mu, R, mass, lam, method(:8) )
 
@@ -3615,14 +3616,14 @@ end subroutine f90OptimalR
 
 !ccccccccccccccc
 
-  subroutine f90MassExpand(n, l, j, s, charm, scheme, method, orderAlpha, &
+  subroutine f90MassExpand(n, l, j, s, charm, scheme, average, method, orderAlpha, &
   runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, &
   lambda2, lam, mu, R, res)
 
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
-    character (len = *), intent(in ) :: method, scheme, charm
+    character (len = *), intent(in ) :: method, scheme, average, charm
     integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nl, &
     n, l, j, s
     real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC,&
@@ -3649,7 +3650,7 @@ end subroutine f90OptimalR
     Running(nl, run, alphaAll, lambda1) ]
 
     MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm(:4), scheme(:5), MSR, n, l, j, s )
+    Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
     res = Upsilon%EnExpand( charm(:6), order, mu, R, mass, lam, method(:8) )
 
