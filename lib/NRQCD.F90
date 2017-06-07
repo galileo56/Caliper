@@ -94,6 +94,7 @@ module NRQCDClass
       InNRQCD%cnf(2) = c2(nf    , n, l, j, s)
 
       InNRQCD%harm = Harmonic(n + l)
+
     else
 
       InNRQCD%harm = 0.5_dp - 1._dp/n/2 + Harmonic(n)
@@ -115,8 +116,8 @@ module NRQCDClass
       end do
 
       InNRQCD%c(2:,0) = InNRQCD%c(2:,0)/4/n**2
-      InNRQCD%cnf(2) = InNRQCD%cnf(2)/4/n**2
-      InNRQCD%cnl(2) = InNRQCD%cnl(2)/4/n**2
+      InNRQCD%cnf(2)  = InNRQCD%cnf(2)/4/n**2
+      InNRQCD%cnl(2)  = InNRQCD%cnl(2)/4/n**2
 
     end if
 
