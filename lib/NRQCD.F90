@@ -114,8 +114,9 @@ module NRQCDClass
         end do
       end do
 
-      InNRQCD%c(2:,0) = InNRQCD%c(2:,0)/4/n**2; InNRQCD%cnl = InNRQCD%cnl/4/n**2
-      InNRQCD%cnf = InNRQCD%cnf/4/n**2
+      InNRQCD%c(2:,0) = InNRQCD%c(2:,0)/4/n**2
+      InNRQCD%cnf(2) = InNRQCD%cnf(2)/4/n**2
+      InNRQCD%cnl(2) = InNRQCD%cnl(2)/4/n**2
 
     end if
 
