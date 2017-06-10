@@ -25,8 +25,7 @@ module NRQCDClass
     procedure, pass(self), private :: Binomial, EnInv
     procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
     ZeroBin, DeltaCharmBin, MassIter, EnExpand, DeltaCharmBin3, DeltaCharmDer, &
-    DeltaCharmExact, DeltaCharmDerBin, MassError, IterError, EnExpandError, &
-    EnError, MassList
+    DeltaCharmExact, DeltaCharmDerBin, MassError, EnError, MassList
 
   end type NRQCD
 
@@ -246,6 +245,39 @@ module NRQCDClass
 
 !ccccccccccccccc
 
+  ! function NRQCDList(self, iter, charm, n, order, mu0, mu1, deltaMu, R0, R1, &
+  ! deltaR, mUpsilon, lambda, method) result(list)
+  !   class (NRQCD)      , intent(inout) :: self
+  !   character (len = *), intent(in)    :: method, charm, iter
+  !   integer            , intent(in)    :: order, n
+  !   real (dp)          , intent(in)    :: lambda, mUpsilon, mu0, mu1, R1, &
+  !   deltaMu, R0, deltaR
+  !
+  !   real (dp), dimension( 3, 0:Floor( (mu1 - mu0)/deltaMu ), &
+  !   0:Floor( (R1 - R0)/deltaR ))    :: list
+  !
+  !   integer                            :: imax, jmax, i, j
+  !
+  !   imax = Floor( (mu1 - mu0)/deltaMu ); jmax = Floor( (R1 - R0)/deltaR )
+  !
+  !   list = 0
+  !
+  !   do i = 0, imax
+  !
+  !     list(1,i,:) = mu0 + i * deltaMu
+  !
+  !     do j = 0, jmax
+  !       list(2,i,j) = R0 + j * deltaR
+  !       list(3,i,j) = self%MassFitter(iter, charm, n, order, list(1,i,j), &
+  !       list(2,i,j), mUpsilon, lambda, method)
+  !     end do
+  !
+  !   end do
+  !
+  ! end function NRQCDList
+
+!ccccccccccccccc
+
   function MassError(self, iter, charm, n, order, mu0, mu1, deltaMu, R0, R1, &
   deltaR, x, mUpsilon, lambda, method) result(list)
     class (NRQCD)      , intent(inout) :: self
@@ -293,19 +325,19 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  function EnError(self, charm, n, mu0, mu1, deltaMu, R0, R1, &
-  deltaR, x, lambda, method) result(list)
+  function EnError(self, iter, charm, n, mu0, mu1, deltaMu, R0, R1, &
+  deltaR, x, mUpsilon, lambda, method) result(list)
     class (NRQCD)      , intent(inout) :: self
-    character (len = *), intent(in)    :: method, charm
+    character (len = *), intent(in)    :: method, charm, iter
     integer            , intent(in)    :: n
     real (dp)          , intent(in)    :: lambda, mu0, mu1, R1, x, deltaR, R0, &
-    deltaMu
+    deltaMu, mUpsilon
     real (dp), dimension(2,0:4)        :: list
     real (dp)                          :: mu, R, xinv, rat, upMass
     real (dp), dimension(0:4)          :: mass
     integer                            :: imax, jmax, i, j, k
 
-    list(1,:) = 0; list(2,:) = 3 * self%mH; xinv = 1/x
+    list(1,:) = 0; list(2,:) = 3 * self%mH; xinv = 1/x; mass = 0
 
     imax = Floor( (mu1 - mu0)/deltaMu ); jmax = Floor( (R1 - R0)/deltaR )
 
@@ -319,7 +351,14 @@ module NRQCDClass
 
           R = R0 + j * deltaR; upMass = 0
           rat = mu/R; if ( rat > x .or.  rat < xinv ) cycle
-          mass = self%En(charm, n, mu, R, lambda, method)
+
+          if ( iter(:10) == 'FixedOrder') then
+            mass = self%En(charm, n, mu, R, lambda, method)
+          else if ( iter(:8) == 'expanded') then
+            mass = self%EnExpand(charm, n, mu, R, mUpsilon, lambda, method)
+          else if ( iter(:9) == 'iterative') then
+            mass = self%MassIter(charm, n, mu, R, mUpsilon, lambda, method)
+          end if
 
           do k = 0, 4
             upMass = upMass + mass(k)
@@ -348,124 +387,6 @@ module NRQCDClass
     end do
 
   end function EnError
-
-!ccccccccccccccc
-
-  function EnExpandError(self, charm, n, mu0, mu1, deltaMu, R0, R1, &
-  deltaR, x, mUpsilon, lambda, method) result(list)
-    class (NRQCD)      , intent(inout) :: self
-    character (len = *), intent(in)    :: method, charm
-    integer            , intent(in)    :: n
-    real (dp)          , intent(in)    :: lambda, mu0, mu1, R1, x, mUpsilon, &
-    deltaMu, R0, deltaR
-    real (dp), dimension(2,0:4)        :: list
-    real (dp)                          :: mu, R, xinv, rat, upMass
-    real (dp), dimension(0:4)          :: mass
-    integer                            :: imax, jmax, i, j, k
-
-    list(1,:) = 0; list(2,:) = 3 * self%mH; xinv = 1/x
-
-    imax = Floor( (mu1 - mu0)/deltaMu ); jmax = Floor( (R1 - R0)/deltaR )
-
-    do i = 0, imax
-
-      mu = mu0 + i * deltaMu
-
-      if ( self%scheme(:3) == 'MSR' ) then
-
-        do j = 0, jmax
-
-          R = R0 + j * deltaR; upMass = 0
-          rat = mu/R; if ( rat > x .or.  rat < xinv ) cycle
-          mass = self%EnExpand(charm, n, mu, R, mUpsilon, lambda, method)
-
-          do k = 0, 4
-            upMass = upMass + mass(k)
-            if ( upMass > list(1,k) ) list(1,k) = upMass
-            if ( upMass < list(2,k) ) list(2,k) = upMass
-          end do
-
-        end do
-
-      else
-
-        mass = self%EnExpand(charm, n, mu, mu, mUpsilon, lambda, method)
-        upMass = 0
-
-        do k = 0, 4
-          upMass = upMass + mass(k)
-          if ( upMass > list(1,k) ) list(1,k) = upMass
-          if ( upMass < list(2,k) ) list(2,k) = upMass
-        end do
-
-      end if
-
-    end do
-
-    do k = 0, 4
-      list(:,k) = [  sum( list(:,k) ), list(1,k) - list(2,k)  ]/2
-    end do
-
-  end function EnExpandError
-
-
-!ccccccccccccccc
-
-function IterError(self, charm, n, mu0, mu1, deltaMu, R0, R1, &
-deltaR, x, mUpsilon, lambda, method) result(list)
-  class (NRQCD)      , intent(inout) :: self
-  character (len = *), intent(in)    :: method, charm
-  integer            , intent(in)    :: n
-  real (dp)          , intent(in)    :: lambda, mu0, mu1, R1, x, mUpsilon, &
-  deltaMu, R0, deltaR
-  real (dp), dimension(2,0:4)        :: list
-  real (dp)                          :: mu, R, xinv, rat, upMass
-  real (dp), dimension(0:4)          :: mass
-  integer                            :: imax, jmax, i, j, k
-
-  list(1,:) = 0; list(2,:) = 3 * self%mH; xinv = 1/x
-
-  imax = Floor( (mu1 - mu0)/deltaMu ); jmax = Floor( (R1 - R0)/deltaR )
-
-  do i = 0, imax
-
-    mu = mu0 + i * deltaMu
-
-    if ( self%scheme(:3) == 'MSR' ) then
-
-      do j = 0, jmax
-
-        R = R0 + j * deltaR; upMass = 0
-        rat = mu/R; if ( rat > x .or.  rat < xinv ) cycle
-        mass = self%MassIter(charm, n, mu, R, mUpsilon, lambda, method)
-
-        do k = 0, 4
-          upMass = upMass + mass(k)
-          if ( upMass > list(1,k) ) list(1,k) = upMass
-          if ( upMass < list(2,k) ) list(2,k) = upMass
-        end do
-
-      end do
-
-    else
-
-      mass = self%MassIter(charm, n, mu, mu, mUpsilon, lambda, method); upMass = 0
-
-      do k = 0, 4
-        upMass = upMass + mass(k)
-        if ( upMass > list(1,k) ) list(1,k) = upMass
-        if ( upMass < list(2,k) ) list(2,k) = upMass
-      end do
-
-    end if
-
-  end do
-
-  do k = 0, 4
-    list(:,k) = [  sum( list(:,k) ), list(1,k) - list(2,k)  ]/2
-  end do
-
-end function IterError
 
 !ccccccccccccccc
 

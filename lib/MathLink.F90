@@ -3553,22 +3553,8 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    if ( iter(:10) == 'FixedOrder' ) then
-
-      res = Upsilon%EnError( charm(:6), order, mu0, mu1, &
-      deltaMu, R0, R1, deltaR, x, lam, method(:8) )
-
-    else if ( iter(:8) == 'expanded' ) then
-
-      res = Upsilon%EnExpandError( charm(:6), order, mu0, mu1, &
-      deltaMu, R0, R1, deltaR, x, mass, lam, method(:8) )
-
-    else if ( iter(:9) == 'iterative' ) then
-
-      res = Upsilon%IterError( charm(:6), order, mu0, mu1, &
-      deltaMu, R0, R1, deltaR, x, mass, lam, method(:8) )
-
-    end if
+    res = Upsilon%EnError( iter(:10), charm(:6), order, mu0, mu1, &
+    deltaMu, R0, R1, deltaR, x, mass, lam, method(:8) )
 
   end subroutine f90NRQCDError
 
