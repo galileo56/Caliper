@@ -1707,10 +1707,10 @@
 
 :Begin:
 :Function:      masslist
-:Pattern:       MassList[ord_, n_, l_, j_, s_, iter_, charm_, scheme_, average, method_,
-                orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_,
-                mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_, lam_, mu0_,
-                mu1_, deltaMu_, R0_, R1_, deltaR_]
+:Pattern:       MassList[ord_, n_, l_, j_, s_, iter_, charm_, scheme_, average_,
+                method_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,
+                mT_, muT_, mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_,
+                lam_, mu0_, mu1_, deltaMu_, R0_, R1_, deltaR_]
 :Arguments:     {ord, n, l, j, s, iter, charm, scheme, average, method, orderAlpha,
                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,
                  mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR}
