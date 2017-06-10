@@ -25,7 +25,7 @@ module NRQCDClass
     procedure, pass(self), private :: Binomial, EnInv
     procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
     ZeroBin, DeltaCharmBin, MassIter, EnExpand, DeltaCharmBin3, DeltaCharmDer, &
-    DeltaCharmExact, DeltaCharmDerBin, MassError, EnError, MassList
+    DeltaCharmExact, DeltaCharmDerBin, MassError, EnError, MassList, NRQCDList
 
   end type NRQCD
 
@@ -245,36 +245,47 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  ! function NRQCDList(self, iter, charm, n, order, mu0, mu1, deltaMu, R0, R1, &
-  ! deltaR, mUpsilon, lambda, method) result(list)
-  !   class (NRQCD)      , intent(inout) :: self
-  !   character (len = *), intent(in)    :: method, charm, iter
-  !   integer            , intent(in)    :: order, n
-  !   real (dp)          , intent(in)    :: lambda, mUpsilon, mu0, mu1, R1, &
-  !   deltaMu, R0, deltaR
-  !
-  !   real (dp), dimension( 3, 0:Floor( (mu1 - mu0)/deltaMu ), &
-  !   0:Floor( (R1 - R0)/deltaR ))    :: list
-  !
-  !   integer                            :: imax, jmax, i, j
-  !
-  !   imax = Floor( (mu1 - mu0)/deltaMu ); jmax = Floor( (R1 - R0)/deltaR )
-  !
-  !   list = 0
-  !
-  !   do i = 0, imax
-  !
-  !     list(1,i,:) = mu0 + i * deltaMu
-  !
-  !     do j = 0, jmax
-  !       list(2,i,j) = R0 + j * deltaR
-  !       list(3,i,j) = self%MassFitter(iter, charm, n, order, list(1,i,j), &
-  !       list(2,i,j), mUpsilon, lambda, method)
-  !     end do
-  !
-  !   end do
-  !
-  ! end function NRQCDList
+  function NRQCDList(self, iter, charm, n, mu0, mu1, deltaMu, R0, R1, &
+  deltaR, mUpsilon, lambda, method) result(list)
+    class (NRQCD)      , intent(inout) :: self
+    character (len = *), intent(in)    :: method, charm, iter
+    integer            , intent(in)    :: n
+    real (dp)          , intent(in)    :: lambda, mUpsilon, mu0, mu1, R1, &
+    deltaMu, R0, deltaR
+
+    real (dp), dimension( 7, 0:Floor( (mu1 - mu0)/deltaMu ), &
+    0:Floor( (R1 - R0)/deltaR ))       :: list
+
+    integer                            :: imax, jmax, i, j
+
+    imax = Floor( (mu1 - mu0)/deltaMu ); jmax = Floor( (R1 - R0)/deltaR )
+
+    list = 0
+
+    do i = 0, imax
+
+      list(1,i,:) = mu0 + i * deltaMu
+
+      do j = 0, jmax
+
+        list(2,i,j) = R0 + j * deltaR
+
+        if ( iter(:10) == 'FixedOrder') then
+          list(3:,i,j) = self%En(charm, n, list(1,i,j), &
+          list(2,i,j), lambda, method)
+        else if ( iter(:8) == 'expanded') then
+          list(3:,i,j) = self%EnExpand(charm, n, list(1,i,j), &
+          list(2,i,j), mUpsilon, lambda, method)
+        else if ( iter(:9) == 'iterative') then
+          list(3:,i,j) = self%MassIter(charm, n, list(1,i,j), &
+          list(2,i,j), mUpsilon, lambda, method)
+        end if
+
+      end do
+
+    end do
+
+  end function NRQCDList
 
 !ccccccccccccccc
 

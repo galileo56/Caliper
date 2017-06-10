@@ -86,6 +86,7 @@
 :Evaluate:  FindMass::usage = "FindMass[ord, n, l, j, s, iter, charm, scheme, average, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu, R] fits the quark mass from the quarkonium energy levels."
 :Evaluate:  MassError::usage = "MassError[ord, n, l, j, s, iter, charm, scheme, average, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x] fits the quark mass from the quarkonium energy levels, including perturbative error."
 :Evaluate:  MassList::usage = "MassList[ord, n, l, j, s, iter, charm, scheme, average, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR] makes a list of the quark mass from the quarkonium energy levels in a grid of mu-R values."
+:Evaluate:  NRQCDList::usage = "NRQCDList[n, l, j, s, iter, charm, scheme, average, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR] makes a list of the NRQCD prediction for the quarkonium energy levels in a grid of mu-R values."
 :Evaluate:  NRQCDError::usage = "NRQCDError[n, l, j, s, iter, charm, scheme, average, method, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x] computes the quarkonium energy levels, including perturbative error."
 :Evaluate:  OptimalR::usage = "OptimalR[type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda] computes the Optimal R scale for quarkonium."
 :Evaluate:  mmfromMSR::usage = "mmfromMSR[type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
@@ -1716,6 +1717,22 @@
                  mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR}
 :ArgumentTypes: {Integer, Integer, Integer, Integer, Integer, String, String,
                  String, String, String, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      nrqcdlist
+:Pattern:       NRQCDList[n_, l_, j_, s_, iter_, charm_, scheme_, average_,
+                method_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,
+                mT_, muT_, mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_,
+                lam_, mu0_, mu1_, deltaMu_, R0_, R1_, deltaR_]
+:Arguments:     {n, l, j, s, iter, charm, scheme, average, method, orderAlpha,
+                 runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,
+                 mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, String, String, String,
+                 String, String, Integer, Integer, Integer, Integer, Integer,
                  Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
                  Real, Real, Real, Real, Real, Real, Real, Real}
 :ReturnType:     Manual
@@ -4334,6 +4351,37 @@ double deltaMu, double R0, double R1, double deltaR){
 
    MLPutFunction(stdlink, "Partition", 2 );
    MLPutRealList(stdlink, res, 3 * imax * jmax);
+   MLPutInteger(stdlink, 3);
+   MLEndPacket(stdlink);
+
+}
+
+extern double f90nrqcdlist_(int* n, int* l, int* j, int* s, char const* iter,
+char const* charm, char const* str, char const* average, char const* method,
+int* orderAlpha, int* runAlpha, int* order, int* run, int* nf, double* Mz,
+double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+double* muC, double* mass, double* lambda1, double* lambda2, double* lam,
+double* mu0, double* mu1, double* deltaMu, double* R0, double* R1,
+double* deltaR, double* res);
+
+static void nrqcdlist(int n, int l, int j, int s, char const* iter, char const* charm,
+char const* str, char const* average, char const* method, int orderAlpha,
+int runAlpha, int order, int run, int nf, double Mz, double aMz, double mT,
+double muT, double mB, double muB, double mC, double muC, double mass,
+double lambda1, double lambda2, double lam, double mu0, double mu1,
+double deltaMu, double R0, double R1, double deltaR){
+  int imax = floor( (mu1 - mu0)/deltaMu ) + 1 ;
+  int jmax = floor( (R1 - R0)/deltaR )    + 1 ;
+
+  double res[ 7 * imax * jmax ];
+
+  f90nrqcdlist_(&n, &l, &j, &s, iter, charm, str, average, method, &orderAlpha,
+  &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
+  &mass, &lambda1, &lambda2, &lam, &mu0, &mu1, &deltaMu, &R0, &R1, &deltaR,
+  res);
+
+   MLPutFunction(stdlink, "Partition", 2 );
+   MLPutRealList(stdlink, res, 7 * imax * jmax);
    MLPutInteger(stdlink, 3);
    MLEndPacket(stdlink);
 
