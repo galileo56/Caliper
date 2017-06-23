@@ -4382,7 +4382,7 @@ double deltaMu, double R0, double R1, double deltaR){
 
    MLPutFunction(stdlink, "Partition", 2 );
    MLPutRealList(stdlink, res, 7 * imax * jmax);
-   MLPutInteger(stdlink, 3);
+   MLPutInteger(stdlink, 7);
    MLEndPacket(stdlink);
 
 }
