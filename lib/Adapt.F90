@@ -21,7 +21,7 @@ module Adapt
     integer              , parameter :: NDIM = 100
 
     real (dp), dimension(NDIM), save :: XLO, XHI, TVAL, TERS
-    integer                         , save :: NTER = 0
+    integer                   , save :: NTER = 0
 
 !     RES = Estimated Integral of F from A to B,
 !     ERR = Estimated absolute error on RES.

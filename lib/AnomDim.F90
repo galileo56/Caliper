@@ -1,14 +1,15 @@
 
 module AnomDimClass
-  use Constants, only: dp, d1mach, Pi, Pi2, ExpEuler, prec;  use QuadPack, only: qags
-  use adapt, only: dGauss; implicit none ;  private
+  use Constants, only: dp, d1mach, Pi, Pi2, ExpEuler, prec
+  use QuadPack, only: qags, qagi; use adapt, only: dGauss
+  implicit none ;  private
 
   real (dp), parameter :: al = 0.634_dp, bet = 1.035_dp, gam = - 23.6_dp, &
   ep = 1.19_dp, del = - 0.481_dp, fourPi = 4 * Pi
 
-  public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta, &
-  PowList, getInverse, MSbarDeltaPiece, AlphaExpand, alphaMatchingLog,     &
-  deltaCharm2, deltaCharm2Der, gammaRcharm2, gammaRcharm3, deltaCharm3,    &
+  public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta,   &
+  PowList, getInverse, MSbarDeltaPiece, AlphaExpand, alphaMatchingLog, pint, &
+  deltaCharm2, deltaCharm2Der, gammaRcharm2, gammaRcharm3, deltaCharm3, p,   &
   deltaCharm3Der, deltaCharmNh
 
   interface PowList
@@ -1760,6 +1761,115 @@ end function MatchingAlphaUp
   1.8424744081239024_dp * nf**4 ]
 
   end function betaFun
+
+!ccccccccccccccc
+
+  real (dp) function Pint(r)
+    real (dp), intent(in) :: r
+    real (dp)             :: abserr1, abserr2, P0, lr, r2, r4
+    integer               :: neval1, neval2, ier1, ier2
+
+    lr = log(r); r2 = r**2; r4 = r2**2
+
+    call qags( h, 0._dp, 1._dp, prec, prec, P0  , abserr1, neval1, ier1 )
+    call qagi( f, 1._dp, 1    , prec, prec, Pint, abserr2, neval2, ier2 )
+
+    Pint = 32 * (P0 + Pint + r2 * (2 + 33 * r2/4 - 21 * r2 * lr) )/27
+
+  contains
+
+    real (dp) function g(z)
+      real (dp), intent(in) :: z
+      real (dp)             :: t
+
+      t = z/2
+
+      g = ( t + (1 - t) * sqrt(1 + 4/z) ) * p(r**2/z) * ( log(z) - 5._dp/3 )
+
+    end function g
+
+!ccccccccccccccc
+
+    real (dp) function f(z)
+      real (dp), intent(in) :: z
+      real (dp)             :: lz
+
+      lz = log(z)
+
+      f = g(z) - r2 * (  6 * z - 8 - 3 * r2 + 6 * r2 * ( 2 * log(r) - lz )  ) * &
+      (3 * lz - 3)/z**3
+
+    end function f
+
+!ccccccccccccccc
+
+    real (dp) function h(z)
+      real (dp), intent(in) :: z
+      real (dp)             :: lz, sz, fac
+
+      sz = sqrt(z); lz = log(z); fac = lz - 5._dp/3
+
+      h = g(z) + fac * (  3 * sz**3 * ( 1/r4/70 + 1/r2/20 + (5 + 6 * lr - &
+      3 * lz)/64 ) - sz * (3 * lz/4 - 5._dp/4 + 2/r2/5 - 3 * lr/2) - &
+      2 * (5 + 6 * lr - 3 * lz)/3/sz - z * (5 + 6 * lr - 3 * lz)/18 )
+
+    end function h
+
+  end function Pint
+
+  !ccccccccccccccc
+
+    real (dp) function P2int(r)
+      real (dp), intent(in) :: r
+      real (dp)             :: abserr
+      integer               :: neval, ier
+
+      call qagi( f, 0._dp, 1, prec, prec, P2int, abserr, neval, ier )
+
+      P2int = 32 * P2int/27
+
+    contains
+
+      real (dp) function f(z)
+        real (dp), intent(in) :: z
+        real (dp)             :: t
+
+        t = z/2
+
+        f = ( t + (1 - t) * sqrt(1 + 4/z) ) * p(r**2/z) * ( log(z) - 5._dp/3 )
+
+      end function f
+
+    end function P2int
+
+!ccccccccccccccc
+
+  pure real (dp) function p(x)
+    real (dp), intent(in) :: x
+    real (dp)             :: t
+
+    p = 0
+
+    if (x <= tiny(1._dp) ) return
+
+    if (x <= 1e-5_dp) then
+
+      t = log(x)
+
+      p = 6 * x + (6 * t - 3) * x**2 - (8 * t + 16._dp/3) * x**3 + (16.5_dp + &
+      18 * t) * x**4 - (49.6_dp + 48 * t) * x**5 + (463._dp/3 + 140 * t) * x**6 - &
+      (496.1142857142857_dp - 432 * t) * x**7 + (1637.45_dp + 1386._dp * t) *  &
+      x**8 - (5520.0253968253965_dp + 4576 * t) * x**9 + (18930.385714285716_dp &
+      + 15444 * t) * x**10 - (65842.29437229437_dp + 53040 * t) * x**11 + &
+      (231722.7253968254_dp + 184756 * t) * x**12
+
+    else
+      t = sqrt(1 + 4 * x)
+      p = 2 + log(x) - (1 - 2 * x) * (  2 - t * log( (t + 1)/(t - 1) )  )
+
+    end if
+
+  end function p
 
 !ccccccccccccccc
 
