@@ -12,6 +12,28 @@ end subroutine f90DeltaCharm2
 
 !ccccccccccccccc
 
+subroutine f90p2(r, res)
+  use constants, only: dp; use AnomDimClass, only: p; implicit none
+  real (dp), intent(in ) :: r
+  real (dp), intent(out) :: res
+
+  res = p(r)
+
+end subroutine f90p2
+
+!ccccccccccccccc
+
+subroutine f90p2Int(r, res)
+  use constants, only: dp; use AnomDimClass, only: pInt; implicit none
+  real (dp), intent(in ) :: r
+  real (dp), intent(out) :: res
+
+  res = pInt(r)
+
+end subroutine f90p2Int
+
+!ccccccccccccccc
+
 subroutine f90DeltaCharmNh(r, res)
   use constants, only: dp; use AnomDimClass, only: deltaCharmNh; implicit none
   real (dp), intent(in ) :: r
