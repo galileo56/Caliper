@@ -10,7 +10,7 @@ module AnomDimClass
   public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta,   &
   PowList, getInverse, MSbarDeltaPiece, AlphaExpand, alphaMatchingLog, pint, &
   deltaCharm2, deltaCharm2Der, gammaRcharm2, gammaRcharm3, deltaCharm3, p,   &
-  deltaCharm3Der, deltaCharmNh
+  deltaCharm3Der, deltaCharmNh, P2int
 
   interface PowList
     module procedure   :: PowListDP, PowListInt, PowListComp
@@ -1769,12 +1769,15 @@ end function MatchingAlphaUp
     real (dp)             :: abserr1, abserr2, P0, lr, r2, r4
     integer               :: neval1, neval2, ier1, ier2
 
+    Pint = 0; if (r <= tiny(1._dp) ) return
+
     lr = log(r); r2 = r**2; r4 = r2**2
 
     call qags( h, 0._dp, 1._dp, prec, prec, P0  , abserr1, neval1, ier1 )
     call qagi( f, 1._dp, 1    , prec, prec, Pint, abserr2, neval2, ier2 )
 
-    Pint = 32 * (P0 + Pint + r2 * (2 + 33 * r2/4 - 21 * r2 * lr) )/27
+    Pint = 32 * (P0 + Pint + r2 * (2 + 33 * r2/4 - 21 * r2 * lr) - &
+    (17090689 - 8928/r4 + 125552/r2 + 7018410 * lr)/252000 )/27
 
   contains
 
@@ -1783,8 +1786,7 @@ end function MatchingAlphaUp
       real (dp)             :: t
 
       t = z/2
-
-      g = ( t + (1 - t) * sqrt(1 + 4/z) ) * p(r**2/z) * ( log(z) - 5._dp/3 )
+      g = ( t + (1 - t) * sqrt(1 + 4/z) ) * p(r2/z) * ( log(z) - 5._dp/3 )
 
     end function g
 
@@ -1797,7 +1799,7 @@ end function MatchingAlphaUp
       lz = log(z)
 
       f = g(z) - r2 * (  6 * z - 8 - 3 * r2 + 6 * r2 * ( 2 * log(r) - lz )  ) * &
-      (3 * lz - 3)/z**3
+      (3 * lz - 5)/z**3
 
     end function f
 
@@ -1809,63 +1811,107 @@ end function MatchingAlphaUp
 
       sz = sqrt(z); lz = log(z); fac = lz - 5._dp/3
 
-      h = g(z) + fac * (  3 * sz**3 * ( 1/r4/70 + 1/r2/20 + (5 + 6 * lr - &
-      3 * lz)/64 ) - sz * (3 * lz/4 - 5._dp/4 + 2/r2/5 - 3 * lr/2) - &
-      2 * (5 + 6 * lr - 3 * lz)/3/sz - z * (5 + 6 * lr - 3 * lz)/18 )
+      h = g(z) + fac * (  3 * sz**3 * ( 1/r4/70 + 1/r2/20 + 3 * (2 * lr - &
+      fac)/64 ) - sz * (3 * lz/4 - 5._dp/4 + 2/r2/5 - 3 * lr/2) - &
+      6 * (2 * lr - fac)/3/sz - z * (6 * lr - 3 * fac)/6 )
 
     end function h
 
   end function Pint
 
-  !ccccccccccccccc
+!ccccccccccccccc
 
-    real (dp) function P2int(r)
-      real (dp), intent(in) :: r
-      real (dp)             :: abserr
-      integer               :: neval, ier
+  real (dp) function P2int(r1, r2)
+    real (dp), intent(in) :: r1, r2
+    integer               :: neval1, neval2, ier1, ier2
+    real (dp)             :: abserr1, abserr2, r12, r22, r14, r24, lr1, lr2, P0
 
-      call qagi( f, 0._dp, 1, prec, prec, P2int, abserr, neval, ier )
 
-      P2int = 32 * P2int/27
+    r12 = r1**2; r22 = r2**2; r14 = r12**2; r24 = r22**2
+    lr1 = log(r1); lr2 = log(r2)
 
-    contains
+    call qags( h, 0._dp, 1._dp, prec, prec, P0   , abserr1, neval1, ier1 )
+    call qagi( f, 1._dp, 1    , prec, prec, P2int, abserr2, neval2, ier2 )
 
-      real (dp) function f(z)
-        real (dp), intent(in) :: z
-        real (dp)             :: t
+    P2int = 32 * (   P0 + P2int + 6 * r12 * r22 * (1 - 5 * r12 - 5 * r22 + &
+    12 * r12 * lr1 + 12 * r22 * lr2) + (  112 * r12 * (72 + 1121 * r12) * r22 &
+    - 8928 * r14 + 30 * lr2 * (3472 * r12 - 288 + 233947 * r14) * r24 + &
+    ( 125552 * r12 - 8928 + 17090689 * r14) * r24 + 30 * lr1 * r14 * ( 3472 * r22 &
+    + 233947 * r24 - 288 + 124110 * lr2 * r24 )  )/252000/r14/r24  )/27 + pInt(r1)
 
-        t = z/2
+  contains
 
-        f = ( t + (1 - t) * sqrt(1 + 4/z) ) * p(r**2/z) * ( log(z) - 5._dp/3 )
+    real (dp) function g(z)
+      real (dp), intent(in) :: z
+      real (dp)             :: t
 
-      end function f
+      t = z/2
 
-    end function P2int
+      g = ( t + (1 - t) * sqrt(1 + 4/z) ) * p(r12/z) * p(r22/z)
+
+    end function g
 
 !ccccccccccccccc
 
-  pure real (dp) function p(x)
-    real (dp), intent(in) :: x
-    real (dp)             :: t
+    real (dp) function f(z)
+      real (dp), intent(in) :: z
+      real (dp)             :: lz
+
+      lz = log(z)
+
+      f = g(z) - 108 * r12 *  r22/z**3 + 18 * r12 * r22 * (8 + 3 * r12 + &
+      3 * r22 - 12 * r12 * lr1 - 12 * r22 * lr2 + 6 * (r12 + r22) * lz)/z**4
+
+    end function f
+
+!ccccccccccccccc
+
+    real (dp) function h(z)
+      real (dp), intent(in) :: z
+      real (dp)             :: lz, sz, fac, fac1, fac2
+
+      sz = sqrt(z); lz = log(z); fac = 5._dp/3 - lz
+      fac1 = fac + 2 * lr1;  fac2 = fac + 2 * lr2
+
+      h = g(z) - ( 2 * fac1 * fac2/sz + (  ( 8 * r12 * fac1 - &
+      fac2 * r22 * ( 15 * fac1 * r12 - 8) ) * sz  )/20/r12/r22 - &
+      (  ( 480 * fac1 * r12 * r14 * r22 + (112 * ( 15 * fac1 * r12 - 8 ) * r14 &
+      + 15 * fac2 * (32 * r12 + 7 * (16 + 15 * fac1 * r12) * r14) * r22) * r24 ) &
+      * sz**3  )/11200/r12/r14/r22/r24 + fac1 * fac2 * z/2 )
+
+    end function h
+
+  end function P2int
+
+!ccccccccccccccc
+
+  pure real (dp) function p(z)
+    real (dp), intent(in) :: z
+    real (dp)             :: t, lz
 
     p = 0
 
-    if (x <= tiny(1._dp) ) return
+    if ( z <= tiny(1._dp) ) return
 
-    if (x <= 1e-5_dp) then
+      if (z > 20) then
 
-      t = log(x)
+        p = 5._dp/3 + 1/z**9/5819814 - 3/z**8/3695120 + 1/z**7/255255 - &
+        1/z**6/51480 + 1/z**5/10010 - 1/z**4/1848 + 1/z**3/315 - 3/z**2/140 &
+        + 1/z/5 + log(z)
 
-      p = 6 * x + (6 * t - 3) * x**2 - (8 * t + 16._dp/3) * x**3 + (16.5_dp + &
-      18 * t) * x**4 - (49.6_dp + 48 * t) * x**5 + (463._dp/3 + 140 * t) * x**6 - &
-      (496.1142857142857_dp - 432 * t) * x**7 + (1637.45_dp + 1386._dp * t) *  &
-      x**8 - (5520.0253968253965_dp + 4576 * t) * x**9 + (18930.385714285716_dp &
-      + 15444 * t) * x**10 - (65842.29437229437_dp + 53040 * t) * x**11 + &
-      (231722.7253968254_dp + 184756 * t) * x**12
+      else if (100 * z < 1) then
 
-    else
-      t = sqrt(1 + 4 * x)
-      p = 2 + log(x) - (1 - 2 * x) * (  2 - t * log( (t + 1)/(t - 1) )  )
+        lz = log(z)
+        p = 6 * z - z**9 * (1738808._dp/315 + 4576 * lz) - &
+        z**7 * (17364._dp/35 + 432 * lz) - z**5 * (248._dp/5 + 48 * lz) + &
+        z**3 * (-16._dp/3 - 8 * lz) + z**2 * (6 * lz - 3) + &
+        z**4 * (33._dp/2 + 18 * lz) + z**6 * (463._dp/3 + 140 * lz) + &
+        z**8 * (32749._dp/20 + 1386 * lz)
+
+      else
+
+      t = sqrt(1 + 4 * z)
+      p = 2 + log(z) - (1 - 2 * z) * (  2 - t * log( (t + 1)/(t - 1) )  )
 
     end if
 

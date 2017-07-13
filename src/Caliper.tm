@@ -13,7 +13,8 @@
 :Evaluate:  sin2ThetaWPythia = 0.2312
 
 :Evaluate:  P2::usage = "P2[z] integrand for massive bubble"
-:Evaluate:  P2int::usage = "P2int[r] integral for massive bubble"
+:Evaluate:  P2Double::usage = "P2Double[r1,r2] integral for double massive bubble"
+:Evaluate:  P2Int::usage = "P2Int[r] integral for massive bubble"
 :Evaluate:  DeltaCharmExact::usage = "DeltaCharmExact[charm, type, scheme, n, l, j, s, nl, mH, mL, mu, alp] computes the subleading massive charm corrections to quarkonium masses"
 :Evaluate:  UpsilonDeltaCharmBin::usage = "UpsilonDeltaCharmBin[n, l, alp, mb, mc] computes the massive charm corrections to quarkonium masses"
 :Evaluate:  UpsilonDeltaCharm::usage = "UpsilonDeltaCharm[n, l, alp, mb, mc] computes the massive charm corrections to quarkonium masses"
@@ -1457,9 +1458,17 @@
 
 :Begin:
 :Function:      p2int
-:Pattern:       P2int[z_]
+:Pattern:       P2Int[z_]
 :Arguments:     {z}
 :ArgumentTypes: {Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      p2double
+:Pattern:       P2Double[z1_, z2_]
+:Arguments:     {z1, z2}
+:ArgumentTypes: {Real, Real}
 :ReturnType:    Real
 :End:
 
@@ -3811,6 +3820,15 @@ static double p2int(double z){
   double res;
 
    f90p2int_(&z, &res);
+   return res;
+}
+
+extern double f90p2double_(double* z1, double* z2, double* result);
+
+static double p2double(double z1, double z2){
+  double res;
+
+   f90p2double_(&z1, &z2, &res);
    return res;
 }
 
