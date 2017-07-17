@@ -10,7 +10,8 @@ module AnomDimClass
   public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta,   &
   PowList, getInverse, MSbarDeltaPiece, AlphaExpand, alphaMatchingLog, pint, &
   deltaCharm2, deltaCharm2Der, gammaRcharm2, gammaRcharm3, deltaCharm3, p,   &
-  deltaCharm3Der, deltaCharmNh, P2int
+  deltaCharm3Der, deltaCharmNh, P2int, DeltaBottomCharm, DeltaBottomCharmDer, &
+  GammaRBottomCharm
 
   interface PowList
     module procedure   :: PowListDP, PowListInt, PowListComp
@@ -1710,6 +1711,87 @@ end function MatchingAlphaUp
     end if
 
   end function deltaCharm2Der
+
+!ccccccccccccccc
+
+  real (dp) function DeltaBottomCharm(r1, r2)
+    real (dp), intent(in) :: r1, r2
+    real (dp)             :: r12, r22, r13, r23, r14, r24
+
+    r12 = r1**2; r22 = r2**2; r13 = r12 * r1; r23 = r22 * r2
+    r14 = r12**2; r24 = r22**2
+
+    DeltaBottomCharm = 65.83247965752888_dp * r1 - 92.42620536124325_dp - &
+    215.90775203770013_dp * r12 + 244.90676313902233_dp * r13 - &
+    2.9318937684328708_dp * r14 + 65.83402601928171_dp * r2 + &
+    543.8791457563449_dp * r1 * r2 - 324.34445146396774_dp * r12 * r2 - &
+    284.1164781513812_dp * r13 * r2 - 215.91350387408124_dp * r22 - &
+    324.34704402750504_dp * r1 * r22 + 583.0561585791015_dp * r12 * r22 + &
+    244.90584731641692_dp * r23 - 284.10945846737485_dp * r1 * r23 - &
+    2.9266909425295937_dp * r24 + ( 60.21233693471966_dp * r2 -  &
+    16.75019820743411_dp - 0.18689291358430984_dp * r14 - 83.797044682813_dp * &
+    r22 + 49.711899190935895_dp * r23 - 10.801004006924058_dp * r24 + r13 * &
+    (102.6030775166755_dp * r2 - 78.47172899478026_dp) + &
+    r12 * (359.987022946175_dp * r2 - 171.9017611739786_dp - 164.91251720429912_dp &
+    * r22) + r1 * (-103.3916188347736_dp + 341.4673323642928_dp * r2 - &
+    316.5789506897072_dp * r22 + 74.58865577243844_dp * r23) ) * Log(r1) + &
+    ( - 16.750187667388833_dp - 10.801269372378611_dp * r14 - &
+    103.39060699907384_dp * r2 - 171.90284158953335_dp * r22 - &
+    78.47789660716492_dp * r23 - 0.18851699358339058_dp * r24 + r13 * &
+    (49.71255635399518_dp + 74.5875446495822_dp * r2) - &
+    r12 * (83.79759311185434_dp + 316.57668642437767_dp * r2 + &
+    164.91411576523632_dp * r22) + r1 * (60.21246883015491_dp + &
+    341.4642018530745_dp * r2 + 359.9823566522824_dp * r22 + &
+    102.59964044098295_dp * r23) ) * Log(r2)
+
+    DeltaBottomCharm = 0.9986433960094162_dp * r1 * r2 * DeltaBottomCharm
+
+  end function DeltaBottomCharm
+
+!ccccccccccccccc
+
+  real (dp) function DeltaBottomCharmDer(r1, r2)
+    real (dp), intent(in) :: r1, r2
+    real (dp)             :: r12, r22, r13, r23, r14, r24
+
+    r12 = r1**2; r22 = r2**2; r13 = r12 * r1; r23 = r22 * r2
+    r14 = r12**2; r24 = r22**2
+
+    DeltaBottomCharmDer = 28.273340480284165_dp * r1 - 109.17640356867736_dp &
+    - 819.6250172870789_dp * r12 + 901.1553235613092_dp * r13 - &
+    14.846361755748665_dp * r14 + 126.04636295400137_dp * r2 + &
+    1429.2256238769826_dp * r1 * r2 - 613.0463314457282_dp * r12 * r2 - &
+    1033.8628350888494_dp * r13 * r2 - 299.7105485568942_dp * r22 - &
+    965.2730387447174_dp * r1 * r22 + 1584.2559585330055_dp * r12 * r22 &
+    + 294.61774650735276_dp * r23 - 493.6302611623113_dp * r1 * r23 - &
+    13.727694949453655_dp * r24 + ( 60.21233693471966_dp * r2 - &
+    16.75019820743411_dp - 0.9344645679215491_dp * r14 - 83.797044682813_dp * &
+    r22 + 49.71189919093589_dp * r23 - 10.801004006924058_dp * r24 + &
+    r13 * (410.41231006670205_dp * r2 - 313.88691597912106_dp) + &
+    r12 * (1079.961068838525_dp * r2 - 515.7052835219358_dp - &
+    494.7375516128974_dp * r22) + r1 * (682.9346647285856_dp * r2 - &
+    206.78323766954722_dp - 633.1579013794144_dp * r22 + 149.1773115448769_dp &
+    * r23) ) * Log(r1) + ( - 16.750187667388833_dp - 54.006346861893064_dp * &
+    r14 - 103.39060699907382_dp * r2 - 171.90284158953335_dp * r22 - &
+    78.47789660716492_dp * r23 - 0.18851699358339058_dp * r24 + r13 * &
+    (198.85022541598076_dp + 298.3501785983288_dp * r2) - r12 * &
+    (251.392779335563_dp + 949.7300592731331_dp * r2 + 494.74234729570895_dp * &
+    r22) + r1 * (120.42493766030984_dp + 682.928403706149_dp * r2 + &
+    719.9647133045648_dp * r22 + 205.19928088196585_dp * r23) ) * Log(r2)
+
+    DeltaBottomCharmDer = 0.9986433960094162_dp * r2 * DeltaBottomCharmDer
+
+  end function DeltaBottomCharmDer
+
+!ccccccccccccccc
+
+  real (dp) function gammaRBottomCharm(r1, r2)
+    real (dp), intent(in) :: r1, r2
+
+    gammaRBottomCharm = 64 * ( DeltaBottomCharm(r1,r2) &
+    - r1 * DeltaBottomCharmDer(r1, r2) - r2 * DeltaBottomCharmDer(r2, r1) )
+
+  end function gammaRBottomCharm
 
 !ccccccccccccccc
 

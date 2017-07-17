@@ -12,6 +12,9 @@
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
 
+:Evaluate:  DeltaBottomCharm::usage = "DeltaBottomCharm[r1,r2] double massive bubble"
+:Evaluate:  GammaRBottomCharm::usage = "GammaRBottomCharm[r1,r2] R-anomalous dimension from the double massive bubble"
+:Evaluate:  DeltaBottomCharmDer::usage = "DeltaBottomCharmDer[r1,r2] derivative of the double massive bubble"
 :Evaluate:  P2::usage = "P2[z] integrand for massive bubble"
 :Evaluate:  P2Double::usage = "P2Double[r1,r2] integral for double massive bubble"
 :Evaluate:  P2Int::usage = "P2Int[r] integral for massive bubble"
@@ -1461,6 +1464,30 @@
 :Pattern:       P2Int[z_]
 :Arguments:     {z}
 :ArgumentTypes: {Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      deltabottomcharm
+:Pattern:       DeltaBottomCharm[z1_, z2_]
+:Arguments:     {z1, z2}
+:ArgumentTypes: {Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      deltabottomcharmder
+:Pattern:       DeltaBottomCharmDer[z1_, z2_]
+:Arguments:     {z1, z2}
+:ArgumentTypes: {Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      gammarbottomcharm
+:Pattern:       GammaRBottomCharm[z1_, z2_]
+:Arguments:     {z1, z2}
+:ArgumentTypes: {Real, Real}
 :ReturnType:    Real
 :End:
 
@@ -2965,43 +2992,43 @@ f90massivebinlist_(terms, hard, shape, Eshape, setup, gap, space, cum, scheme, a
 
 }
 
-extern double f90massivediffprof_(char const* terms, char const* hard, char const* shape,
- char const* Eshape, char const* setup, char const* gap, char const* space,
- char const* cum, char const* scheme, char const* abs, char const* current, double* xi,
- double* xiB, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order,
- int* run, int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz,
- double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
- double* muLambda1, double* muLambda2, double* Q, double* beta, double* mu0,
- double* deltaLambda, double* Rat0, double* n0, double* delta0, double* n1, double* delta1,
- double* t2, double* ts, double* slope, double* cnt, double* eH, double* eS, double* eJ,
- double* mass, double* muM, int* ns, double* width, double* c, int* clen, double* lambda,
- double* R0, double* muR0, double* del0, double* h, double* gammaZ, double* sinW,
- double* tau, double* tau2, double* res);
-
-static double massivediffprof(char const* terms, char const* hard, char const* shape,
- char const* Eshape, char const* setup, char const* gap, char const* space,
- char const* cum, char const* scheme, char const* abs, char const* current, double xi,
- double xiB, int orderAlpha, int runAlpha, int orderMass, int runMass, int order, int run,
- int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
- double mB, double muB, double mC, double muC, double muLambda1, double muLambda2,
- double Q, double beta, double mu0, double deltaLambda, double Rat0, double n0,
- double delta0, double n1, double delta1, double t2, double ts, double slope, double cnt,
- double eH, double eS, double eJ, double mass, double muM, int ns, double width,
- double c[], long len, double lambda, double R0, double muR0, double del0, double h,
- double gammaZ, double sinW, double tau, double tau2){
-  double res;
-  int clen = len;
-
-f90massivediffprof_(terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs,
- current, &xi, &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3,
- &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &beta,
- &mu0, &deltaLambda, &Rat0, &n0, &delta0, &n1, &delta1, &t2, &ts, &slope, &cnt, &eH, &eS,
- &eJ, &mass, &muM, &ns, &width, c, &clen, &lambda, &R0, &muR0, &del0, &h, &gammaZ, &sinW,
- &tau, &tau2, &res);
-
-return res;
-
-}
+// extern double f90massivediffprof_(char const* terms, char const* hard, char const* shape,
+//  char const* Eshape, char const* setup, char const* gap, char const* space,
+//  char const* cum, char const* scheme, char const* abs, char const* current, double* xi,
+//  double* xiB, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass, int* order,
+//  int* run, int* nf, double* j3, double* s3, double* G3, double* mZ, double* aMz,
+//  double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
+//  double* muLambda1, double* muLambda2, double* Q, double* beta, double* mu0,
+//  double* deltaLambda, double* Rat0, double* n0, double* delta0, double* n1, double* delta1,
+//  double* t2, double* ts, double* slope, double* cnt, double* eH, double* eS, double* eJ,
+//  double* mass, double* muM, int* ns, double* width, double* c, int* clen, double* lambda,
+//  double* R0, double* muR0, double* del0, double* h, double* gammaZ, double* sinW,
+//  double* tau, double* tau2, double* res);
+//
+// static double massivediffprof(char const* terms, char const* hard, char const* shape,
+//  char const* Eshape, char const* setup, char const* gap, char const* space,
+//  char const* cum, char const* scheme, char const* abs, char const* current, double xi,
+//  double xiB, int orderAlpha, int runAlpha, int orderMass, int runMass, int order, int run,
+//  int nf, double j3, double s3, double G3, double mZ, double aMz, double mT, double muT,
+//  double mB, double muB, double mC, double muC, double muLambda1, double muLambda2,
+//  double Q, double beta, double mu0, double deltaLambda, double Rat0, double n0,
+//  double delta0, double n1, double delta1, double t2, double ts, double slope, double cnt,
+//  double eH, double eS, double eJ, double mass, double muM, int ns, double width,
+//  double c[], long len, double lambda, double R0, double muR0, double del0, double h,
+//  double gammaZ, double sinW, double tau, double tau2){
+//   double res;
+//   int clen = len;
+//
+// f90massivediffprof_(terms, hard, shape, Eshape, setup, gap, space, cum, scheme, abs,
+//  current, &xi, &xiB, &orderAlpha, &runAlpha, &orderMass, &runMass, &order, &run, &nf, &j3,
+//  &s3, &G3, &mZ, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &muLambda1, &muLambda2, &Q, &beta,
+//  &mu0, &deltaLambda, &Rat0, &n0, &delta0, &n1, &delta1, &t2, &ts, &slope, &cnt, &eH, &eS,
+//  &eJ, &mass, &muM, &ns, &width, c, &clen, &lambda, &R0, &muR0, &del0, &h, &gammaZ, &sinW,
+//  &tau, &tau2, &res);
+//
+// return res;
+//
+// }
 
 extern double f90massivemoment_(char const* terms, char const* hard, char const* shape,
  char const* Eshape, char const* setup, char const* gap, char const* space,
@@ -3829,6 +3856,33 @@ static double p2double(double z1, double z2){
   double res;
 
    f90p2double_(&z1, &z2, &res);
+   return res;
+}
+
+extern double f90deltabottomcharm_(double* z1, double* z2, double* result);
+
+static double deltabottomcharm(double z1, double z2){
+  double res;
+
+   f90deltabottomcharm_(&z1, &z2, &res);
+   return res;
+}
+
+extern double f90deltabottomcharmder_(double* z1, double* z2, double* result);
+
+static double deltabottomcharmder(double z1, double z2){
+  double res;
+
+   f90deltabottomcharmder_(&z1, &z2, &res);
+   return res;
+}
+
+extern double f90gammarbottomcharm_(double* z1, double* z2, double* result);
+
+static double gammarbottomcharm(double z1, double z2){
+  double res;
+
+   f90gammarbottomcharm_(&z1, &z2, &res);
    return res;
 }
 
