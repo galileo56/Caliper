@@ -171,11 +171,15 @@ contains
         alphaM = self%AlphaMass(2)%alphaQCD(self%mL)/Pi
         a = self%AlphaMass(2)%MSRMatching('charm'); i = min(order, 4)
         matching = dot_product( a(:i), PowList(alphaM, i) ) - 1
+      else if ( type(:4) == 'MSRh' ) then
+        res = self%MSRMass('up', 'MSRn', order, self%mL, lambda, method) + &
+        self%AlphaMass(1)%MSREvol('MSRp', order, R, lambda, method)
+        return
       else
         matching = - 1
       end if
 
-      res = self%MSRMass('up', type, order, self%mL, lambda, method)  + &
+      res = self%MSRMass('up', type, order, self%mL, lambda, method) + &
       self%AlphaMass(1)%MSRMass(type, order, R, lambda, method) + &
       self%mL * matching
       return
