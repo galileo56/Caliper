@@ -1108,6 +1108,8 @@ module NRQCDClass
     real (dp)                      :: r, lg
     integer                        :: l
 
+      ! DeltaCharmBin = self%l; return
+
     if ( self%up(:4) == 'down' ) then
       DeltaCharmBin = self%DeltaCharm(alpha, mb); return
     end if
@@ -1218,12 +1220,12 @@ module NRQCDClass
     integer                        :: l
 
     DeltaCharm = 0
-    r = 3 * self%n * self%mc/2/mb/alpha; rho = powList(r,4*self%n)
+    r = 3 * self%n * self%mc/2/mb/alpha; rho = powList(r, 4 * self%n)
 
     if ( r > 1 ) then
       ArTan = Atan(  sqrt( (r - 1)/(r + 1) )  ); root = sqrt( rho(2) - 1 )
     else
-      root = sqrt( 1 - rho(2) ); ArTan = log( (1 + root)/r  )/2
+      root = sqrt( 1 - rho(2) ); ArTan = log( (1 + root)/r )/2
     end if
 
     if ( self%average(:3) == 'yes' ) then
@@ -1275,12 +1277,14 @@ module NRQCDClass
           - 1620 * rho(10) + 368 * rho(12) - 8 )/2/root**9 + ( 64 + &
           224 * rho(2) - 3111 * rho(4) + 5528 * rho(6) - 4124 * rho(8) + &
           1104 * rho(10) )/12/root**8
+          ! res = 10
         else if (self%l == 1) then
           res = - pi * r * ( 9 + 80 * rho(2) )/2 + ArTan * &
           ( 72 * rho(2) + 1134 * rho(4) - 3633 * rho(6) + 4716 * rho(8) &
           - 2808 * rho(10) + 640 * rho(12) - 16 )/4/root**9 + ( 140 + &
           328 * rho(2) - 5115 * rho(4) + 9556 * rho(6) - 7144 * rho(8) + &
           1920 * rho(10) )/24/root**8
+          ! res = 20
         else if (self%l == 2) then
           res = - pi * r * ( 9 + 56 * rho(2) )/2 + ArTan * &
           ( 72 * rho(2) + 630 * rho(4) - 2373 * rho(6) + 3204 * rho(8) &

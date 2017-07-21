@@ -3327,7 +3327,7 @@ end subroutine f90OptimalR
 
     alphaMass = Running(4, 0, alphaAll, 100._dp)
     MSR       = VFNSMSR(alphaMass)
-    Upsilon   = NRQCD( 'up', 'MSbar', 'yes', MSR, n, l, 0, 0 )
+    Upsilon   = NRQCD( 'up', 'MSbar', 'no', MSR, n, l, 0, 0 )
 
     res = Upsilon%DeltaCharm(alp, mb)
 
@@ -3357,7 +3357,7 @@ end subroutine f90OptimalR
 
     alphaMass = Running(4, 0, alphaAll, 100._dp)
     MSR       = VFNSMSR(alphaMass)
-    Upsilon   = NRQCD( 'up', 'MSbar', 'yes', MSR, n, l, 0, 0 )
+    Upsilon   = NRQCD( 'up', 'MSbar', 'no', MSR, n, l, 0, 0 )
 
     res = Upsilon%DeltaCharmBin(alp, mb)
 
