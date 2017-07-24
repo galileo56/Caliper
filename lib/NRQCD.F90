@@ -1108,8 +1108,6 @@ module NRQCDClass
     real (dp)                      :: r, lg
     integer                        :: l
 
-      ! DeltaCharmBin = self%l; return
-
     if ( self%up(:4) == 'down' ) then
       DeltaCharmBin = self%DeltaCharm(alpha, mb); return
     end if
