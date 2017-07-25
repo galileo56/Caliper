@@ -14,7 +14,6 @@
 
 :Evaluate:  DeltaBottomCharm::usage = "DeltaBottomCharm[r1,r2] double massive bubble"
 :Evaluate:  GammaRBottomCharm::usage = "GammaRBottomCharm[r1,r2] R-anomalous dimension from the double massive bubble"
-:Evaluate:  DeltaBottomCharmDer::usage = "DeltaBottomCharmDer[r1,r2] derivative of the double massive bubble"
 :Evaluate:  P2::usage = "P2[z] integrand for massive bubble"
 :Evaluate:  P2Double::usage = "P2Double[r1,r2] integral for double massive bubble"
 :Evaluate:  P2Int::usage = "P2Int[r] integral for massive bubble"
@@ -1470,14 +1469,6 @@
 :Begin:
 :Function:      deltabottomcharm
 :Pattern:       DeltaBottomCharm[z1_, z2_]
-:Arguments:     {z1, z2}
-:ArgumentTypes: {Real, Real}
-:ReturnType:    Real
-:End:
-
-:Begin:
-:Function:      deltabottomcharmder
-:Pattern:       DeltaBottomCharmDer[z1_, z2_]
 :Arguments:     {z1, z2}
 :ArgumentTypes: {Real, Real}
 :ReturnType:    Real
@@ -3865,15 +3856,6 @@ static double deltabottomcharm(double z1, double z2){
   double res;
 
    f90deltabottomcharm_(&z1, &z2, &res);
-   return res;
-}
-
-extern double f90deltabottomcharmder_(double* z1, double* z2, double* result);
-
-static double deltabottomcharmder(double z1, double z2){
-  double res;
-
-   f90deltabottomcharmder_(&z1, &z2, &res);
    return res;
 }
 

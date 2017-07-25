@@ -23,17 +23,6 @@ end subroutine f90gammaRBottomCharm
 
 !ccccccccccccccc
 
-subroutine f90DeltaBottomCharmDer(r1, r2, res)
-  use constants, only: dp; use AnomDimClass, only: DeltaBottomCharmDer; implicit none
-  real (dp), intent(in ) :: r1, r2
-  real (dp), intent(out) :: res
-
-  res = DeltaBottomCharmDer(r1,r2)
-
-end subroutine f90DeltaBottomCharmDer
-
-!ccccccccccccccc
-
 subroutine f90DeltaCharm2(r, res)
   use constants, only: dp; use AnomDimClass, only: deltaCharm2; implicit none
   real (dp), intent(in ) :: r
