@@ -1,10 +1,10 @@
 
 module SigmaClass
-  use AnomDimClass;  use RunningClass;  use ElectroWeakClass; use Constants, only: dp, Pi
-  implicit none
-  private
+  use AnomDimClass;  use RunningClass;  use ElectroWeakClass; use Chaplin
+  use Constants, only: dp, Pi, Pi2, Zeta3;  implicit none;  private
+
   real (dp), dimension(2)               :: EWfact
-  public                                :: setEWfact
+  public                                :: setEWfact, Pi0, Pi1
 
 !ccccccccccccccc
 
@@ -317,6 +317,73 @@ module SigmaClass
     real (dp), dimension(2) :: EW
     EWfact = EW
   end subroutine setEWfact
+
+!ccccccccccccccc
+
+  complex (dp) function u(z)
+    complex (dp), intent(in) :: z
+
+    u = 1 + 2 * Sqrt(z - 1) *  Sqrt(z) - 2 * z
+
+  end function u
+
+!ccccccccccccccc
+
+  complex (dp) function Gz(u)
+    complex (dp), intent(in) :: u
+
+    Gz = ( 2 * u * Log(u) )/(u**2 - 1)
+
+  end function Gz
+
+!ccccccccccccccc
+
+  complex (dp) function Iz(u)
+    complex (dp), intent(in) :: u
+
+    Iz = 6 * ( Zeta3 + 4 * cli3(-u) + 2 * cli3(u) ) - 8 * ( 2 * cli2(-u) + &
+    cli2(u) ) * Log(u) - 2 * ( 2 * Log(1 + u) + Log(1 - u) ) * Log(u)**2
+
+  end function Iz
+
+!ccccccccccccccc
+
+complex (dp) function DIz(z, u)
+  complex (dp), intent(in) :: z, u
+  complex (dp) :: lu, u21, sz, c2, c21, lu1, lu2
+
+  lu = log(u); u21 = u**2 - 1; sz = Sqrt(z - 1); c2 = cli2(u); c21 = cli2(-u)
+  lu1 = Log(1 - u); lu2 = Log(1 + u)
+
+  DIz = 2 * (   u21 * sz * lu**2 * ( lu1 + 2 * lu2 ) + 4 * u21 * sz * lu * &
+  ( 2 * c21 + c2 ) - (  Sqrt(z) * (lu * ( 4 * u21 * lu1 + (3 - 4 * u - 3 * u**2 &
+  + 12 * u * z) * lu + 8 * u21 * lu2 ) + 8 * u21 * c21 + 4 * u21 * c2)  )/2 - &
+  3 * u21 * sz * (4 * cli3(-u) + 2 * cli3(u) + Zeta3)   )/u21/sz/z
+
+end function DIz
+
+!ccccccccccccccc
+
+complex (dp) function Pi0(z)
+  complex (dp), intent(in) :: z
+
+  Pi0 = 3 * (  20._dp/9 + 4/z/3 - 4 * (1 - z) * (1 + 2 * z)/3/z * Gz( u(z) )  )/16/Pi2
+
+end function Pi0
+
+!ccccccccccccccc
+
+complex (dp) function Pi1(z)
+  complex (dp), intent(in) :: z
+  complex (dp) :: uu, Gzuu
+
+  uu = u(z); Gzuu = Gz(uu)
+
+  Pi1 = 3 * (  5._dp/6 + 13/z/6 - (1 - z) * (3 + 2 * z) * Gzuu/z + &
+  (1 - z) * (1 - 16 * z) * Gzuu**2/z/6 - (1 + 2 * z)/z/6 * ( Iz(uu)/z + &
+  2 * (1 - z) * DIz(z, uu)  )   )/16/Pi2
+
+end function Pi1
 
 !ccccccccccccccc
 

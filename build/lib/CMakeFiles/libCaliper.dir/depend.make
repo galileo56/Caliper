@@ -245,6 +245,8 @@ lib/CMakeFiles/libCaliper.dir/build: lib/CMakeFiles/libCaliper.dir/Profiles.F90.
 
 lib/CMakeFiles/libCaliper.dir/Rhad.F90.o.requires: lib/CMakeFiles/libCaliper.dir/anomdimclass.mod.proxy
 lib/CMakeFiles/libCaliper.dir/Rhad.F90.o: lib/CMakeFiles/libCaliper.dir/anomdimclass.mod.stamp
+lib/CMakeFiles/libCaliper.dir/Rhad.F90.o.requires: lib/CMakeFiles/libCaliper.dir/chaplin.mod.proxy
+lib/CMakeFiles/libCaliper.dir/Rhad.F90.o: lib/CMakeFiles/libCaliper.dir/chaplin.mod.stamp
 lib/CMakeFiles/libCaliper.dir/Rhad.F90.o.requires: lib/CMakeFiles/libCaliper.dir/constants.mod.proxy
 lib/CMakeFiles/libCaliper.dir/Rhad.F90.o: lib/CMakeFiles/libCaliper.dir/constants.mod.stamp
 lib/CMakeFiles/libCaliper.dir/Rhad.F90.o.requires: lib/CMakeFiles/libCaliper.dir/electroweakclass.mod.proxy

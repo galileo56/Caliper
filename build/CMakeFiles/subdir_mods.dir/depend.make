@@ -245,6 +245,8 @@ CMakeFiles/subdir_mods.dir/build: CMakeFiles/subdir_mods.dir/lib/Profiles.F90.o.
 
 CMakeFiles/subdir_mods.dir/lib/Rhad.F90.o.requires: CMakeFiles/subdir_mods.dir/anomdimclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/Rhad.F90.o: CMakeFiles/subdir_mods.dir/anomdimclass.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/Rhad.F90.o.requires: CMakeFiles/subdir_mods.dir/chaplin.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/Rhad.F90.o: CMakeFiles/subdir_mods.dir/chaplin.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/Rhad.F90.o.requires: CMakeFiles/subdir_mods.dir/constants.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/Rhad.F90.o: CMakeFiles/subdir_mods.dir/constants.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/Rhad.F90.o.requires: CMakeFiles/subdir_mods.dir/electroweakclass.mod.proxy

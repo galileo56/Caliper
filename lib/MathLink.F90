@@ -1,6 +1,34 @@
 
 !ccccccccccccccc
 
+subroutine f90Pi0(zr, zi, res)
+  use SigmaClass, only: Pi0; use constants, only: dp; implicit none
+  real (dp), intent(in) :: zr, zi
+  real (dp), intent(out), dimension(2) :: res
+  complex (dp) :: resul
+
+  resul = Pi0( cmplx(zr, zi, kind = dp) )
+
+  res = [ RealPart(resul), ImagPart(resul) ]
+
+end subroutine f90Pi0
+
+!ccccccccccccccc
+
+subroutine f90Pi1(zr, zi, res)
+  use SigmaClass, only: Pi1; use constants, only: dp; implicit none
+  real (dp), intent(in) :: zr, zi
+  real (dp), intent(out), dimension(2) :: res
+  complex (dp) :: resul
+
+  resul = Pi1( cmplx(zr, zi, kind = dp) )
+
+  res = [ RealPart(resul), ImagPart(resul) ]
+
+end subroutine f90Pi1
+
+!ccccccccccccccc
+
 subroutine f90DeltaBottomCharm(r1, r2, res)
   use constants, only: dp; use AnomDimClass, only: DeltaBottomCharm; implicit none
   real (dp), intent(in ) :: r1, r2

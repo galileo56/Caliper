@@ -1319,7 +1319,7 @@ module Chaplin
 
     integer, parameter :: Nmax = 29 ! this is half the order we want (coz odd bernoulli numbers are zero except BernoulliB(1)=-0.5_dp)
     integer            :: i
-    complex (dp) :: ris, zb
+    complex (dp)       :: ris, zb
 
     real (dp), dimension(29), parameter :: zeta = [                                       &
     -0.01388888888888889_dp, 0.00006944444444444444_dp, -7.873519778281683e-7_dp,         &
@@ -1333,13 +1333,13 @@ module Chaplin
      -9.671557036081102e-44_dp, 2.266718701676613e-45_dp, -5.327956311328254e-47_dp,      &
      1.255724838956433e-48_dp, -2.967000542247094e-50_dp]
 
-    zb = log(z); ris = dcmplx(zeta2, 0_dp) + zb * ( 1 - log(-zb) ) + zb**2 * zeta2
+    zb = log(z); ris = Zeta2 + zb * ( 1 - log(-zb) ) - zb**2/4
 
     do i = 1, Nmax
       ris = ris + zb**(2 * i + 1) * zeta(i)
     enddo
 
-    bsli2_outside=ris
+    bsli2_outside = ris
 
   end function bsli2_outside
 
@@ -1361,7 +1361,7 @@ module Chaplin
    9.471165533842511e-13_dp, -1.432311114490360e-14_dp, -2.372464515550457e-15_dp,    &
    3.846565792753191e-16_dp]
 
-   zb = dcmplx(1_dp,0_dp) - z;  zb = - log(zb);  ris = dcmplx(0_dp, 0_dp)
+   zb = 1 - z;  zb = - log(zb);  ris = dcmplx(0_dp, 0_dp)
 
    do i = 1, Nmax
      ris = ris + zb**i * bern(i)/i
@@ -1393,7 +1393,8 @@ module Chaplin
     2.165042825786954e-50_dp, -4.945000903745158e-52_dp]
 
    zb = log(z)
-   ris = dcmplx(zeta2, 0_dp) + zb * zeta2 + zb**3 * zeta3 + zb**2 * ( 1.5_dp -log(-zb) )/2
+
+   ris = Zeta3 + zb * Zeta2 - zb**3/12 + zb**2 * ( 1.5_dp -log(-zb) )/2
 
    do i = 2, Nmax
      ris = ris + zb**(2*i) * zeta(i - 1)
@@ -3198,7 +3199,7 @@ end module Poly
 !C     P. 200.
 
 real (dp) function DILOG(X)
- use constants, only: dp
+ use constants, only: dp, zeta2
 
 !C REAL PART OF THE DILOGARITHM FUNCTION FOR A REAL
 !C ARGUMENT. REF. NO. 1=L. LEWIN, *DILOGARITHMS +
@@ -3242,19 +3243,19 @@ real (dp) function DILOG(X)
    20 Y = 1._dp - 1._dp/X
       DX = log(X)
       BY = 1._dp + Y*(4._dp+Y)
-      DILOG = 1.64493406684822643_dp + &
+      DILOG = zeta2 + &
    DX*(.5_dp*DX-log(X-1._dp)) + &
    (Y*(4._dp+5.75_dp*Y)-3._dp*(1._dp+Y)*DX/X)/BY
       go to 80
 !C DILOG COMPUTED FROM REF. NO. 1, P.244, EQ(2).
-   30 DILOG = 1.64493406684822643_dp
+   30 DILOG = zeta2
       RETURN
 !C DILOG COMPUTED FROM REF. NO. 1, P.244, EQ(7),
 !C AND DESCRIPTION OF THIS ALGORITHM, EQ(4).
    40 Y = 1._dp - X
       DX = log(X)
       BY = -1._dp - Y*(4._dp+Y)
-      DILOG = 1.64493406684822643_dp - DX*log(Y) + (Y*(4._dp+5.75_dp*Y)+3._dp*(1._dp+Y)*DX*X)/BY
+      DILOG = zeta2 - DX*log(Y) + (Y*(4._dp+5.75_dp*Y)+3._dp*(1._dp+Y)*DX*X)/BY
       go to 80
 !C DILOG COMPUTED FROM DESCRIPTION OF THIS ALGORITHM,
 !C EQ(4)
@@ -3269,7 +3270,7 @@ real (dp) function DILOG(X)
       DX = log(-X)
       DY = log(Y)
       BY = 1._dp + Y*(4._dp+Y)
-      DILOG = -1.64493406684822643_dp + 0.5_dp*DY*(DY+2._dp*DX) + (Y*(4._dp+5.75_dp*Y) &
+      DILOG = -zeta2 + 0.5_dp*DY*(DY+2._dp*DX) + (Y*(4._dp+5.75_dp*Y) &
    + 3._dp*(1._dp+Y)*(1._dp-Y)*(DX+DY))/BY
       if (DILOG+4._dp*Y == DILOG) RETURN
       go to 80

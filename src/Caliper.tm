@@ -14,6 +14,8 @@
 
 :Evaluate:  DeltaBottomCharm::usage = "DeltaBottomCharm[r1,r2] double massive bubble"
 :Evaluate:  GammaRBottomCharm::usage = "GammaRBottomCharm[r1,r2] R-anomalous dimension from the double massive bubble"
+:Evaluate:  Pi0::usage = "Pi0[z] tree-level massive vacuum polarization function"
+:Evaluate:  Pi1::usage = "Pi1[z] one-loop massive vacuum polarization function"
 :Evaluate:  P2::usage = "P2[z] integrand for massive bubble"
 :Evaluate:  P2Double::usage = "P2Double[r1,r2] integral for double massive bubble"
 :Evaluate:  P2Int::usage = "P2Int[r] integral for massive bubble"
@@ -1456,6 +1458,22 @@
 :Arguments:     {z}
 :ArgumentTypes: {Real}
 :ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      pi0
+:Pattern:       Pi0[z_]
+:Arguments:     {Re[z], Im[z]}
+:ArgumentTypes: {Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      pi1
+:Pattern:       Pi1[z_]
+:Arguments:     {Re[z], Im[z]}
+:ArgumentTypes: {Real, Real}
+:ReturnType:    Manual
 :End:
 
 :Begin:
@@ -3830,6 +3848,32 @@ static double p2(double z){
 
    f90p2_(&z, &res);
    return res;
+}
+
+extern double f90pi0_(double* zr, double* zi, double* result);
+
+static void pi0(double zr, double zi){
+  double res[2];
+
+   f90pi0_(&zr, &zi, res);
+
+   MLPutFunction(stdlink, "Complex", 2);
+   MLPutReal(stdlink, res[0]); MLPutReal(stdlink, res[1]);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90pi1_(double* zr, double* zi, double* result);
+
+static void pi1(double zr, double zi){
+  double res[2];
+
+   f90pi1_(&zr, &zi, res);
+
+   MLPutFunction(stdlink, "Complex", 2);
+   MLPutReal(stdlink, res[0]); MLPutReal(stdlink, res[1]);
+
+   MLEndPacket(stdlink);
 }
 
 extern double f90p2int_(double* z, double* result);
