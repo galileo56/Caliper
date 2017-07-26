@@ -688,6 +688,9 @@ module RunningClass
     scales = 0
 
     if ( str(:2) == 'mZ'       ) scales = self%AlphaOb%scales('mZ')
+    if ( str(:2) == 'mC'       ) scales = self%AlphaOb%scales('mC')
+    if ( str(:2) == 'mB'       ) scales = self%AlphaOb%scales('mB')
+    if ( str(:2) == 'mT'       ) scales = self%AlphaOb%scales('mT')
     if ( str(:2) == 'mH'       ) scales = self%mH
     if ( str(:2) == 'mL'       ) scales = self%mL
     if ( str(:3) == 'amZ'      ) scales = self%AlphaOb%scales('amZ')

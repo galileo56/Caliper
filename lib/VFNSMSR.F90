@@ -11,8 +11,8 @@ module VFNSMSRClass
     private
 
     integer                      :: nf, nl, run
-    type (Running), dimension(2) :: AlphaMass
-    type (AnomDim), dimension(2) :: AnDim
+    type (Running), dimension(3) :: AlphaMass
+    type (AnomDim), dimension(3) :: AnDim
     type (Alpha)                 :: AlphaOb
     real (dp)                    :: mH, mL, beta0, rat
     real (dp), dimension(0:4)    :: bHat
@@ -26,9 +26,30 @@ module VFNSMSRClass
 
 !ccccccccccccccc
 
+  type, extends(VFNSMSR), public :: topMSR
+    private
+
+    integer                      :: nT
+    real (dp), dimension(0:4)    :: bHTop
+    real (dp)                    :: mC, mB, mT, betaTop, ratBottom, ratCharm
+
+    contains
+
+    procedure, pass(self), public :: MSRTop
+
+  end type topMSR
+
+!ccccccccccccccc
+
   interface VFNSMSR
     module procedure  InitMSR
   end interface VFNSMSR
+
+!ccccccccccccccc
+
+  interface topMSR
+    module procedure  InitMSRtop
+  end interface topMSR
 
 contains
 
@@ -39,16 +60,44 @@ contains
      type (AnomDim), dimension(2)             :: AnDim
      real (dp), dimension(0:4)                :: bHat
 
-     InitMSR%AlphaMass = AlphaMass      ; InitMSR%run = AlphaMass(2)%orders('runMass')
-     InitMSR%nf  = AlphaMass(2)%numFlav()     ; InitMSR%nl = AlphaMass(1)%numFlav()
-     InitMSR%mH  = AlphaMass(2)%scales('mH')  ; InitMSR%mL = AlphaMass(1)%scales('mH')
+     InitMSR%AlphaMass(:2) = AlphaMass; InitMSR%nf = AlphaMass(2)%numFlav()
+     InitMSR%run = AlphaMass(2)%orders('runMass')
+     InitMSR%nl = AlphaMass(1)%numFlav(); InitMSR%mL = AlphaMass(1)%scales('mH')
+     InitMSR%mH  = AlphaMass(2)%scales('mH')
      AnDim       = [ AlphaMass(1)%adim(), AlphaMass(2)%adim() ]
-     InitMSR%bHat = AnDim(2)%betaQCD('bHat')
-     InitMSR%AnDim = AnDim; bHat = AnDim(2)%betaQCD('beta'); InitMSR%beta0 = bHat(0)
+     InitMSR%bHat = AnDim(2)%betaQCD('bHat'); InitMSR%AnDim(:2) = AnDim
+     bHat = AnDim(2)%betaQCD('beta'); InitMSR%beta0 = bHat(0)
      InitMSR%rat = InitMSR%mL/InitMSR%mH
      InitMSR%AlphaOb = AlphaMass(1)%AlphaAll()
 
    end function InitMSR
+
+!ccccccccccccccc
+
+   type (topMSR) function InitMSRtop(AlphaMass)
+     type (Running), dimension(3), intent(in) :: AlphaMass
+     type (AnomDim), dimension(3)             :: AnDim
+     real (dp), dimension(0:4)                :: bHat, bHTop
+
+     InitMSRtop%AlphaMass = AlphaMass
+     InitMSRtop%run = AlphaMass(2)%orders('runMass')
+     InitMSRtop%nf  = AlphaMass(2)%numFlav()
+     InitMSRtop%nl  = AlphaMass(1)%numFlav()
+     InitMSRtop%nT  = AlphaMass(3)%numFlav()
+     InitMSRtop%mT  = AlphaMass(3)%scales('mH')
+     InitMSRtop%mH  = AlphaMass(2)%scales('mH') ; InitMSRtop%mB = InitMSRtop%mH
+     InitMSRtop%mL  = AlphaMass(1)%scales('mH') ; InitMSRtop%mC = InitMSRtop%mL
+     AnDim = [ AlphaMass(1)%adim(), AlphaMass(2)%adim(), AlphaMass(3)%adim() ]
+     InitMSRtop%bHat = AnDim(2)%betaQCD('bHat'); InitMSRtop%AnDim = AnDim
+     bHat = AnDim(2)%betaQCD('beta'); InitMSRtop%beta0 = bHat(0)
+     InitMSRtop%rat = InitMSRtop%mL/InitMSRtop%mH
+     InitMSRtop%ratCharm = InitMSRtop%mC/InitMSRtop%mT
+     InitMSRtop%ratBottom = InitMSRtop%mB/InitMSRtop%mT
+     InitMSRtop%AlphaOb = AlphaMass(1)%AlphaAll()
+     bHTop = AnDim(3)%betaQCD('beta'); InitMSRtop%betaTop = bHTop(0)
+     InitMSRtop%bHTop = AnDim(3)%betaQCD('bHat')
+
+   end function InitMSRtop
 
 !ccccccccccccccc
 
@@ -150,18 +199,179 @@ contains
 
 !ccccccccccccccc
 
+  recursive real (dp) function MSRTop(self, up, type, order, R, lambda, method) result(res)
+    class (topMSR)     , intent(in) :: self
+    real (dp)          , intent(in) :: R
+    real (dp), optional, intent(in) :: lambda
+    character (len = *), intent(in) :: type, up, method
+    integer            , intent(in) :: order
+    real (dp)          , dimension(4) :: a
+    real (dp)          , dimension(2) :: bet2
+    integer                           :: neval, ier, i
+    real (dp)                         :: corr, abserr, lambdaQCD, t0, rat1C  , &
+    delta, mu, Rstep, delta1, delta2, alpha, alpha2, alpha3, matching, alphaM, &
+    rat1, rat2, t1, b1, b2, mol, molC, rat2C
+
+    res = 0; b1 = self%bHTop(1); b2 = self%bHTop(2)
+
+    res = self%AlphaMass(3)%MSRMass(type, order, R, lambda, method)
+
+    if ( self%mL < tiny(1._dp) .and. self%mC < tiny(1._dp) ) return
+
+    if ( type(:4) == 'MSRn' .and. order >= 3 ) then
+
+      res = res + self%mT * ( deltaCharmNh(self%ratBottom) + deltaCharmNh(self%ratCharm) ) * &
+      ( self%AlphaOb%alphaQCD(self%nT + 1, self%mT)/Pi )**3
+
+    end if
+
+    if (self%run < 2) return
+
+    if ( method(:7) == 'numeric' ) then
+
+      call qags( InteNum, R/lambda, self%mT/lambda, prec, prec, corr, &
+      abserr, neval, ier )
+
+      res = res + corr
+
+    else if ( method(:8) == 'analytic' ) then
+
+      t0 = - 2 * pi/self%beta0/lambda;  t1 = t0/self%AlphaMass(3)%alphaQCD(self%mT)
+      t0 = t0/self%AlphaMass(3)%alphaQCD(R);  bet2(2) = 2 * self%betaTop
+      lambdaQCD = self%AlphaMass(3)%lambdaQCD( self%run )
+      mol = self%mB/lambdaQCD; bet2(1) = bet2(2)**2; bet2(2) = Product(bet2)
+      molC = self%mC/lambdaQCD
+
+      call qags( InteAn, t1, t0, prec, prec, corr, abserr, neval, ier )
+
+      res = res + lambdaQCD * corr
+
+    else if ( method(:4) == 'diff' ) then
+
+      delta = 0.1_dp;   neval = abs(  Nint( ( self%mT - R )/delta )  )
+      delta = (self%mT - R)/neval; corr = 0; Rstep = self%mT + delta
+
+      do ier = 1, neval
+
+        Rstep  = Rstep - delta; mu = (Rstep - delta/2)/lambda
+        alpha  = self%AlphaMass(3)%alphaQCD(mu)/Pi;  alpha2 = alpha**2
+        rat1 = self%mB/Rstep; rat2 = self%mB/(Rstep - delta )
+        rat1C = self%mC/Rstep; rat2C = self%mC/(Rstep - delta )
+
+        delta1 = alpha2 * ( deltaCharm2(rat1) + deltaCharm2(rat1C) )
+        delta2 = alpha2 * ( deltaCharm2(rat2) + deltaCharm2(rat2C) )
+
+        if (self%run >= 3) then
+
+          alpha3 = alpha * alpha2
+
+          if ( type(:4) == 'MSRp' ) then
+
+            delta1 = delta1 + alpha3 * (  deltaCharm3(self%nT, 1, rat1) + &
+            deltaCharm3(self%nT, 1, rat1C) )
+
+            delta2 = delta2 + alpha3 * ( deltaCharm3(self%nT, 1, rat2) + &
+            deltaCharm3(self%nT, 1, rat2C) )
+
+          else if ( type(:4) == 'MSRn' ) then
+
+            delta1 = delta1 + alpha3 * ( deltaCharm3(self%nT, 0, rat1) + &
+            deltaCharm3(self%nT, 0, rat1C) )
+
+            delta2 = delta2 + alpha3 * ( deltaCharm3(self%nT, 0, rat2) + &
+            deltaCharm3(self%nT, 0, rat2C) )
+
+          end if
+
+        end if
+
+        corr = corr + Rstep * delta1 - (Rstep - delta) * delta2
+
+      end do
+
+      res = res + corr
+
+    end if
+
+  contains
+
+!ccccccccccccccc
+
+    real (dp) function InteNum(mu)
+      real (dp), intent(in) :: mu
+      real (dp)             :: aPi, api2, api3
+
+      aPi = self%AlphaMass(3)%alphaQCD(mu)/4/Pi; aPi2 = aPi**2
+
+      InteNum = ( gammaRcharm2(self%mB/mu) + gammaRcharm2(self%mC/mu) ) * aPi2
+
+      if (self%run >= 3) then
+
+        aPi3 = aPi * aPi2
+
+        if ( type(:4) == 'MSRp' ) then
+          InteNum = InteNum + ( gammaRcharm3(self%nT, 1, self%mB/mu) + &
+          gammaRcharm3(self%nT, 1, self%mC/mu) ) * aPi3
+        else if ( type(:4) == 'MSRn' ) then
+          InteNum = InteNum + ( gammaRcharm3(self%nT, 0, self%mB/mu) + &
+          gammaRcharm3(self%nT, 0, self%mC/mu) ) * aPi3
+        end if
+
+        InteNum = InteNum + aPi3 * GammaRBottomCharm(self%mB/mu, self%mC/mu)
+
+      end if
+
+    end function InteNum
+
+!ccccccccccccccc
+
+    real (dp) function InteAn(t)
+      real (dp), intent(in) :: t
+      real (dp)             :: gammaR, gammaR2
+
+      gammaR = (  gammaRcharm2(mol * self%Andim(3)%Gfun(self%run,t) ) + &
+      gammaRcharm2(molC * self%Andim(3)%Gfun(self%run,t) )  )/bet2(1)
+
+      InteAn = (-t)**(- 2 - b1) * gammaR
+
+      if (self%run >= 3) then
+
+        if ( type(:4) == 'MSRp' ) then
+          gammaR2 = gammaRcharm3(self%nT, 1, mol * self%Andim(3)%Gfun(self%run,t) ) &
+          + gammaRcharm3(self%nT, 1, molC * self%Andim(3)%Gfun(self%run,t) )
+        else if ( type(:4) == 'MSRn' ) then
+          gammaR2 = gammaRcharm3(self%nT, 0, mol * self%Andim(3)%Gfun(self%run,t) ) &
+          + gammaRcharm3(self%nT, 0, molC * self%Andim(3)%Gfun(self%run,t) )
+        end if
+
+        gammaR2 = gammaR2 + GammaRBottomCharm(mol * self%Andim(3)%Gfun(self%run,t), &
+        molC * self%Andim(3)%Gfun(self%run,t) )
+
+        gammaR = gammaR2/bet2(2) - (b1 + b2) * gammaR
+        InteAn = InteAn + (-t)**(- 3 - b1) * gammaR
+
+      end if
+
+      InteAn = Exp(-t) * InteAn
+
+    end function InteAn
+
+  end function MSRTop
+
+!ccccccccccccccc
+
   recursive real (dp) function MSRMass(self, up, type, order, R, lambda, method) result(res)
-    class (VFNSMSR)              , intent(in) :: self
-    real (dp)                    , intent(in) :: R
-    real (dp), optional          , intent(in) :: lambda
-    character (len = *)          , intent(in) :: type, up, method
-    integer                      , intent(in) :: order
-    real (dp)                  , dimension(4) :: a
-    real (dp)                  , dimension(2) :: bet2
-    integer                                   :: neval, ier, i
-    real (dp)                                 :: corr, abserr, lambdaQCD, t0, &
+    class (VFNSMSR)     , intent(in) :: self
+    real (dp)           , intent(in) :: R
+    real (dp), optional , intent(in) :: lambda
+    character (len = *) , intent(in) :: type, up, method
+    integer             , intent(in) :: order
+    real (dp)         , dimension(4) :: a
+    real (dp)         , dimension(2) :: bet2
+    integer                          :: neval, ier, i
+    real (dp)                        :: corr, abserr, lambdaQCD, t0, t1, b1, &
     delta, mu, Rstep, delta1, delta2, alpha, alpha2, alpha3, matching, alphaM,&
-    rat1, rat2, t1, b1, b2, mol
+    rat1, rat2, mol, b2
 
     res = 0; b1 = self%bHat(1); b2 = self%bHat(2)
 
@@ -183,6 +393,7 @@ contains
       self%AlphaMass(1)%MSRMass(type, order, R, lambda, method) + &
       self%mL * matching
       return
+
     end if
 
     res = self%AlphaMass(2)%MSRMass(type, order, R, lambda, method)
@@ -316,9 +527,17 @@ contains
     self%mH = m ; self%rat = self%mL/m
 
     if (self%nf == 5) then
+
       call self%alphaMass(1)%SetMTop(m, mu)
       call self%alphaMass(2)%SetMTop(m, mu)
+
+      select type (self)
+      class is (topMSR)
+        call self%alphaMass(3)%SetMTop(m, mu)
+      end select
+
       call self%alphaOb%SetMTop(m, mu)
+
     else if (self%nf == 4) then
       call self%alphaMass(1)%SetMBottom(m, mu)
       call self%alphaMass(2)%SetMBottom(m, mu)
