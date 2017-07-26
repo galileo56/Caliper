@@ -7,10 +7,11 @@ module AnomDimClass
   real (dp), parameter :: al = 0.634_dp, bet = 1.035_dp, gam = - 23.6_dp, &
   ep = 1.19_dp, del = - 0.481_dp, fourPi = 4 * Pi
 
-  public               :: inteCorre, alphaReExpand, deltaMass, MSbarDelta,   &
+  public :: inteCorre, alphaReExpand, deltaMass, MSbarDelta, deltaCharmGlue, &
   PowList, getInverse, MSbarDeltaPiece, AlphaExpand, alphaMatchingLog, pint, &
   deltaCharm2, deltaCharm2Der, gammaRcharm2, gammaRcharm3, deltaCharm3, p,   &
-  deltaCharm3Der, deltaCharmNh, P2int, DeltaBottomCharm, GammaRBottomCharm
+  deltaCharm3Der, deltaCharmNh, deltaCharmNhDer, P2int, DeltaBottomCharm,    &
+  GammaRBottomCharm, deltaCharmNL, deltaCharmNLDer, deltaCharmGlueDer
 
   interface PowList
     module procedure   :: PowListDP, PowListInt, PowListComp
@@ -1577,32 +1578,144 @@ end function MatchingAlphaUp
 
 !ccccccccccccccc
 
-  real (dp) function deltaCharmNh(r)
-    real (dp), intent(in) :: r
-    real (dp) :: lr, r2, r3, r4
+  real (dp) function deltaCharmGlue(r)
+    real (dp), intent(in)   :: r
+    real (dp)               :: lr
+    real (dp), dimension(8) :: rPow
 
-    r2 = r**2; r3 = r * r2; r4 = r2**2
+    rPow = PowList(r,8); lr = log(r)
 
-    deltaCharmNh = 0.220910123297541_dp * r2 - 0.28938380134538777_dp * r3 &
-    + 0.17440585865363573_dp * r4 - 0.11323785074517619_dp * lr * r4 + &
-    0.02418707381415922_dp * lr**2 * r4
+    deltaCharmGlue = r * ( 146.55437276141436_dp - 68.5502265986958_dp * r + &
+    72.20843181777957_dp * rPow(2) + 44.70786258835728_dp * rPow(3) + &
+    17.872638638242837_dp * rpow(4) - 0.6287605934381015_dp * rPow(5) + &
+    1.1859159626883737_dp * rPow(6) + 0.673242497280189_dp * rPow(7) + &
+    1.9017595879357783_dp * rPow(8) )/(6.5849022304691935_dp + r) + &
+   lr * r * (      -18.056564104234784_dp + lr * rPow(3) * ( -1.2733398103055087_dp + &
+   0.4074074503956954_dp * lr - 0.852006762408542_dp * rpow(2) - &
+   0.30539079178379064_dp * rPow(4) ) + r * (     -10.686984081790198_dp + &
+   r * (    -18.66917624034727_dp + r * (   -0.2506821619225726_dp + r * &
+   (  -2.8512190595320313_dp + r * ( 0.5518674634880775_dp + &
+   (-0.5451781523380799_dp - 0.09796100275651486_dp * r) * r )  )   )    )     )      )
 
-  end function deltaCharmNh
+  end function deltaCharmGlue
 
 !ccccccccccccccc
 
-  real (dp) function deltaCharmNl(r)
-    real (dp), intent(in) :: r
-    real (dp) :: lr, r2, r3, r4
+  real (dp) function deltaCharmGlueDer(r)
+    real (dp), intent(in)   :: r
+    real (dp)               :: lr
+    real (dp), dimension(9) :: rPow
 
-    r2 = r**2; r3 = r * r2; r4 = r2**2
+    rPow = PowList(r,9); lr = log(r)
 
-    deltaCharmNl = - 1.0479013780116122_dp * r + 1.0950478812032618 * lr * r &
-    - 0.12399994427438359_dp * r2 - 0.11682981796156806_dp * lr * r2 &
-    + 0.3611961566069619_dp * r3 + 0.4783975462847179_dp * lr * r3   &
-    - 0.47243160008417545_dp * r4 + 0.16775998088724456_dp * lr * r**4
+    deltaCharmGlueDer = (  182.09667057261015_dp - 1603.9921461502795_dp * r + &
+    389.59112788526295_dp * rpow(2) + 1054.578281805314_dp * rPow(3) + &
+    576.9693355262091_dp * rPow(4) + 32.777403225777135_dp * rPow(5) + &
+    32.29751350364612_dp * rPow(6) + 31.705680846164665_dp * rPow(7) + &
+    115.5835006492528_dp * rPow(8) + 15.116115700729708_dp * rPow(9) + &
+    lr**3 * rPow(3) * ( 70.66227578689724_dp + 21.461905830563058_dp * r + &
+    1.6296298015827817_dp * rPow(2) ) + lr**2 * rPow(3) * ( -167.85612429694254_dp &
+    - 50.98211588328542_dp * r - 225.53400814756782_dp * rPow(2) - &
+    67.32457476190613_dp * rPow(3) - 111.048288577996_dp * rPow(4) - &
+    32.17549609570938_dp * rPow(5) - 2.443126334270325_dp * rPow(6) ) + lr * &
+    ( -782.9495455090408_dp - 1164.5967136957051_dp * r - 2728.0864913255296_dp &
+    * rPow(2) - 912.8878394351315_dp * rPow(3) - 720.9101971207356_dp * rPow(4) &
+    - 121.61007629328383_dp * rPow(5) - 158.565750813136_dp * rPow(6) - &
+    109.11754563690172_dp * rPow(7) - 22.181139099099877_dp * rPow(8) - &
+    1.3944696056197_dp * rPow(9) )  )/(6.5849022304691935_dp + r)**2
 
-  end function deltaCharmNl
+  end function deltaCharmGlueDer
+
+!ccccccccccccccc
+
+  real (dp) function deltaCharmNL(r)
+    real (dp), intent(in)   :: r
+    real (dp)               :: lr
+    real (dp), dimension(8) :: rPow
+
+    rPow = PowList(r,8); lr = log(r)
+
+    deltaCharmNL = - 0.0025170068027210884_dp * lr * r * ( -435.6852393273681_dp &
+    - 435.6852393273681_dp * rPow(2) - 112.12030500101459_dp * rPow(3) - &
+    95.64564564564564_dp * lr * rPow(3) + 29.42942942942943_dp * lr**2 * rPow(3) &
+    + 10.594594594594595_dp * rPow(5) + rPow(7) ) + (  r * ( -1.5169370316230057_dp &
+    - 0.7139583194060264_dp * r + 0.5740149072765712_dp * rPow(2) - &
+    0.28690147708463154_dp * rPow(3) - 1.0821107015842863_dp * rPow(4) - &
+    0.2198718445207236_dp * rPow(5) + 0.09197784283922195_dp * rPow(6) - &
+    0.01027610419769106_dp * rPow(7) + 0.006725122803730151_dp * rPow(8) )  )&
+    /(1.4606375667533493_dp + r)
+
+  end function deltaCharmNL
+
+!ccccccccccccccc
+
+  real (dp) function deltaCharmNLDer(r)
+    real (dp), intent(in)   :: r
+    real (dp)               :: lr
+    real (dp), dimension(9) :: rPow
+
+    rPow = PowList(r,9); lr = log(r)
+
+    deltaCharmNLDer = (  0.12390777917265539_dp + 1.1178679723201213_dp * r + &
+    5.237550598120457_dp * rPow(2) + 3.277409326369551_dp * rPow(3) - &
+    6.842533472692735_dp * rPow(4) - 6.030046014500649_dp * rPow(5) - &
+    0.2368358449111415_dp * rPow(6) + 0.3997531410979107_dp * rPow(7) + &
+    0.009121104305927087_dp * rPow(8) + 0.05128397562712011_dp * rPow(9) + &
+    lr**3 * rPow(3) * ( -0.6321369189366356_dp - 0.8655630025205033_dp * r - &
+    0.2962962962962963_dp * rPow(2) ) + lr**2 * rPow(3) * ( 1.5803422973415886_dp &
+    + 2.1639075063012583_dp * r + 0.7407407407407407_dp * rPow(2) ) + &
+    lr * ( 2.339602993960532_dp + 3.2035366571611794_dp * r + &
+    8.115431693113747_dp * rPow(2) + 13.046149089565898_dp * rPow(3) + &
+    7.994031844504943_dp * rPow(4) + 1.2689578268985664_dp * rPow(5) - &
+    0.46740402136107173_dp * rPow(6) - 0.20295950898079584_dp * rPow(7) - &
+    0.05882295506925053_dp * rPow(8) - 0.020136054421768707_dp * rPow(9) )  )&
+    /(1.4606375667533493_dp + r)**2
+
+  end function deltaCharmNLDer
+
+!ccccccccccccccc
+
+  real (dp) function deltaCharmNH(r)
+    real (dp), intent(in)   :: r
+    real (dp)               :: lr
+    real (dp), dimension(7) :: rPow
+
+    rPow = PowList(r,7); lr = log(r)
+
+    deltaCharmNH = rPow(2) * (   ( 0.327412590226266_dp - 0.6530803188815482_dp * r &
+    + 0.4620726956320225_dp * rPow(2) - 0.11513821076485932_dp * rPow(3) + &
+    0.09025690005091372_dp * rPow(4) - 0.061259252872525434_dp * rPow(5) + &
+    0.001927757595523288_dp * rPow(6) - 0.0020551485377330423_dp * rPow(7) )/&
+    (1.4733594652016009_dp - r) + lr * (  3.5253490810187646e-7_dp - &
+    0.1741826695338979906286_dp * rPow(2) - 0.05629628654108489566051_dp * rPow(4)&
+     - 0.00120748327054723502409_dp * rPow(6) + lr * rPow(4) * &
+     ( 0.02962963801364881794712_dp + 0.007142868560795129282328_dp * rPow(2) )  )   )
+
+  end function deltaCharmNH
+
+!ccccccccccccccc
+
+  real (dp) function deltaCharmNHDer(r)
+    real (dp), intent(in)   :: r
+    real (dp)               :: lr
+    real (dp), dimension(8) :: rPow
+
+    rPow = PowList(r,8); lr = log(r)
+
+    deltaCharmNHDer = r * (  0.9647936429506729_dp - 3.2140798371305803_dp * r + &
+    3.651244040544068_dp * rpow(2) - 1.7211505804162772_dp * rpow(3) + &
+    0.9620480117953624_dp * rpow(4) - 0.9171934673489468_dp * rpow(5) + &
+    0.33136027956270137_dp * rpow(6) - 0.03718794231137417_dp * rpow(7) + &
+    0.015233705031317102_dp * rpow(8) + lr**2 * rPow(4) * ( 0.3859179960794236_dp &
+    - 0.5238612914148798_dp * r + 0.3018230614378081_dp * rPow(2) - &
+    0.16838420804381504_dp * rPow(3) + 0.057142948486361034_dp * rPow(4) ) + &
+   lr * ( 1.5305571763431494e-6_dp - 2.077642574663505e-6_dp * r - &
+   1.5124539694764731_dp * rPow(2) + 2.0530694786548094_dp * rPow(3) - &
+   1.301335204121848_dp * rPow(4) + 0.8207155691004806_dp * rPow(5) - &
+   0.26847665752978905_dp * rPow(6) - 0.013631141519220097_dp * rPow(7) + &
+   0.004625870957212379_dp * rPow(8) )  )/(1.4733594652016009_dp - r)**2
+
+ end function deltaCharmNHDer
 
 !ccccccccccccccc
 
@@ -1615,10 +1728,8 @@ end function MatchingAlphaUp
 
     lr = log(r)
 
-    deltaCharm3 = ( 205687._dp/9000 - 737._dp * nl/750 + lr * (413._dp * nl/375&
-    - 18049._dp/1000) ) * r + (40._dp/9 - 3136 * lr/1125 - 901._dp * nl/3000) *&
-    r**2 + ( 1316._dp/1125 + 31 * lr/900 ) * r**3 + nh * deltaCharmNh(r) + &
-    2 * deltaCharm2(r)/3
+    deltaCharm3 = deltaCharmGlue(r) + nl * deltaCharmNl(r) + &
+    nh * deltaCharmNh(r) + 2 * deltaCharm2(r)/3
 
   end function deltaCharm3
 
@@ -1633,10 +1744,8 @@ end function MatchingAlphaUp
 
     lr = log(r)
 
-    deltaCharm3Der = 21623._dp/4500 + 89._dp * nl/750 + lr * (-18049._dp/1000 &
-    + 413._dp * nl/375 ) + (2288._dp/375 - 6272 * lr/1125 + 51._dp * nh/125 - &
-    901._dp * nl/1500 ) * r + (15947._dp/4500 + 31 * lr/300 - &
-    443._dp * nh/1000) * r**2 + 74 * nh * r**3/375 + 2 * deltaCharm2Der(r)/3
+    deltaCharm3Der = deltaCharmGlueDer(r) + nl * deltaCharmNlDer(r) + &
+    nh * deltaCharmNhDer(r) + 2 * deltaCharm2Der(r)/3
 
   end function deltaCharm3Der
 

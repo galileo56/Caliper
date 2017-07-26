@@ -106,6 +106,61 @@ end subroutine f90DeltaCharmNh
 
 !ccccccccccccccc
 
+subroutine f90DeltaCharmGlue(r, res)
+  use constants, only: dp; use AnomDimClass, only: deltaCharmGlue; implicit none
+  real (dp), intent(in ) :: r
+  real (dp), intent(out) :: res
+
+  res = deltaCharmGlue(r)
+
+end subroutine f90DeltaCharmGlue
+
+!ccccccccccccccc
+
+subroutine f90DeltaCharmGlueDer(r, res)
+  use constants, only: dp; use AnomDimClass, only: deltaCharmGlueDer; implicit none
+  real (dp), intent(in ) :: r
+  real (dp), intent(out) :: res
+
+  res = deltaCharmGlueDer(r)
+
+end subroutine f90DeltaCharmGlueDer
+
+!ccccccccccccccc
+
+subroutine f90DeltaCharmNhDer(r, res)
+  use constants, only: dp; use AnomDimClass, only: deltaCharmNhDer; implicit none
+  real (dp), intent(in ) :: r
+  real (dp), intent(out) :: res
+
+  res = deltaCharmNhDer(r)
+
+end subroutine f90DeltaCharmNhDer
+
+!ccccccccccccccc
+
+subroutine f90DeltaCharmNL(r, res)
+  use constants, only: dp; use AnomDimClass, only: deltaCharmNL; implicit none
+  real (dp), intent(in ) :: r
+  real (dp), intent(out) :: res
+
+  res = deltaCharmNL(r)
+
+end subroutine f90DeltaCharmNL
+
+!ccccccccccccccc
+
+subroutine f90DeltaCharmNLDer(r, res)
+  use constants, only: dp; use AnomDimClass, only: deltaCharmNLDer; implicit none
+  real (dp), intent(in ) :: r
+  real (dp), intent(out) :: res
+
+  res = deltaCharmNLDer(r)
+
+end subroutine f90DeltaCharmNLDer
+
+!ccccccccccccccc
+
 subroutine f90DeltaCharm3(nl, nh, r, res)
   use constants, only: dp; use AnomDimClass, only: deltaCharm3; implicit none
   real (dp), intent(in ) :: r
