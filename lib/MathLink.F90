@@ -15,6 +15,21 @@ end subroutine f90Pi0
 
 !ccccccccccccccc
 
+subroutine f90Pi0Der(i, zr, zi, res)
+  use SigmaClass, only: Pi0Der; use constants, only: dp; implicit none
+  real (dp), intent(in) :: zr, zi
+  integer  , intent(in) :: i
+  real (dp), intent(out), dimension(2) :: res
+  complex (dp) :: resul
+
+  resul = Pi0Der( i, cmplx(zr, zi, kind = dp) )
+
+  res = [ RealPart(resul), ImagPart(resul) ]
+
+end subroutine f90Pi0Der
+
+!ccccccccccccccc
+
 subroutine f90Pi1(zr, zi, res)
   use SigmaClass, only: Pi1; use constants, only: dp; implicit none
   real (dp), intent(in) :: zr, zi

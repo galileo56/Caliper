@@ -4,7 +4,7 @@ module SigmaClass
   use Constants, only: dp, Pi, Pi2, Zeta3;  implicit none;  private
 
   real (dp), dimension(2)               :: EWfact
-  public                                :: setEWfact, Pi0, Pi1
+  public                                :: setEWfact, Pi0, Pi1, Pi0Der
 
 !ccccccccccccccc
 
@@ -329,12 +329,54 @@ module SigmaClass
 
 !ccccccccccccccc
 
+  complex (dp) function uDer(i, u)
+    integer     , intent(in) :: i
+    complex (dp), intent(in) :: u
+
+    uDer = 0
+
+    if ( i == 0 ) then
+      uder = u
+    else if (i == 1) then
+      uDer = 4 * u**2/(1 - u**2)
+    else if (i == 2) then
+      uDer = 32 * u**3/(1 - u**2)**3
+    else if (i == 3) then
+      uDer = 384 * u**4*(1 + u**2)/(1 - u**2)**5
+    end if
+
+  end function uDer
+
+!ccccccccccccccc
+
   complex (dp) function Gz(u)
     complex (dp), intent(in) :: u
 
     Gz = ( 2 * u * Log(u) )/(u**2 - 1)
 
   end function Gz
+
+!ccccccccccccccc
+
+  complex (dp) function GzDer(i, u)
+    integer     , intent(in) :: i
+    complex (dp), intent(in) :: u
+
+    GzDer = 0
+
+    if ( i == 0 ) then
+      GzDer = Gz(u)
+    else if (i == 1) then
+      GzDer = - 2 * ( 1 - u**2 + (1 + u**2) * log(u) )/(1 - u**2)**2
+    else if (i == 2) then
+      GzDer = ( 2 + 4 * u**2 - 6 * u**4 + 4 * u**2 * (3 + u**2) * log(u) )&
+      /u/(u**2 - 1)**3
+    else if (i == 3) then
+      GzDer = - 2 * ( 15 * u**2 - 1 - 3 * u**4 - 11 * u**6 + 6 * (u**2 + &
+      6 * u**4 + u**6) * log(u) )/u**2/(u**2 - 1)**4
+    end if
+
+  end function GzDer
 
 !ccccccccccccccc
 
@@ -373,6 +415,45 @@ end function Pi0
 
 !ccccccccccccccc
 
+complex (dp) function Pi0Der(i, z)
+  integer     , intent(in) :: i
+  complex (dp), intent(in) :: z
+  complex (dp) :: uu, uuDer, uuDer2, uuDer3
+
+  Pi0Der = 0; if (i > 0) uu = u(z); if (i > 0) uuDer = uDer(1,uu)
+  if (i > 1) uuDer2 = uDer(2,uu);  if (i > 2) uuDer3 = uDer(3,uu)
+
+  if ( i == 0 ) then
+
+    Pi0Der = Pi0(z)
+
+  else if (i == 1) then
+
+    Pi0Der = 4 * ( (1 + 2 * z**2) * Gz(uu) - 1 + z * (2 * z**2 - 1 - z) * &
+    Gzder(1,uu) * uuDer )/3/z**2
+
+  else if (i == 2) then
+
+    Pi0Der = 4 * (  2 - 2 * Gz(uu) + (z - 1) * z**2 * (1 + 2 * z) * uuDer**2 * &
+    Gzder(2,uu) + z * Gzder(1,uu) * ( 2 * (1 + 2 * z**2) * uuDer + (z - 1) * &
+    z * (1 + 2 * z) * uuDer2 )  )/3/z**3
+
+  else if (i == 3) then
+
+    Pi0Der = 4 * (   6 * Gz(uu) - 6 + z * (   z * ( uuDer3 * (z - 1) * z * &
+    (1 + 2 * z) + uuDer2 * (3 + 6 * z**2) ) - 6 * uuDer  ) * GZDer(1,uu) + &
+    uuDer * z**2 * (  3 * ( uuDer2 * (z - 1) * z * (1 + 2 * z) + uuDer * &
+    (1 + 2 * z**2) ) * GZDer(2, uu) + uuDer**2 * (z - 1) * z * (1 + 2 * z) *&
+     GZDer(3, uu)  )   )/3/z**4
+
+  end if
+
+  if (i > 0) Pi0Der = 3 * Pi0Der/16/Pi2
+
+end function Pi0Der
+
+!ccccccccccccccc
+
 complex (dp) function Pi1(z)
   complex (dp), intent(in) :: z
   complex (dp) :: uu, Gzuu
@@ -386,5 +467,17 @@ complex (dp) function Pi1(z)
 end function Pi1
 
 !ccccccccccccccc
+
+recursive function fact(i) result(prod)
+  integer      , intent(in) :: i
+  real (dp)                 :: prod
+
+  select case(i)
+  case(:-1);     prod = 0
+  case(0:1);     prod = 1
+  case default;  prod = i * fact(i - 1)
+  end select
+
+end function fact
 
 end module SigmaClass

@@ -289,7 +289,7 @@ MLYDEFN( devyield_result, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
-# line 2015 "/Users/vicent/GitHub/Caliper/src/Caliper.tm"
+# line 2024 "/Users/vicent/GitHub/Caliper/src/Caliper.tm"
 #include "mathlink.h"
 #include "ftypes.h"
 #include <stdio.h>
@@ -2186,6 +2186,19 @@ static void pi0(double zr, double zi){
    MLEndPacket(stdlink);
 }
 
+extern double f90pi0der_(int* i, double* zr, double* zi, double* result);
+
+static void pi0der(int i, double zr, double zi){
+  double res[2];
+
+   f90pi0der_(&i, &zr, &zi, res);
+
+   MLPutFunction(stdlink, "Complex", 2);
+   MLPutReal(stdlink, res[0]); MLPutReal(stdlink, res[1]);
+
+   MLEndPacket(stdlink);
+}
+
 extern double f90pi1_(double* zr, double* zi, double* result);
 
 static void pi1(double zr, double zi){
@@ -3118,7 +3131,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 3122 "/Users/vicent/GitHub/Caliper/src/Caliper.tm.c"
+# line 3135 "/Users/vicent/GitHub/Caliper/src/Caliper.tm.c"
 
 
 void ewfactors P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5));
@@ -10299,12 +10312,37 @@ L0:	return res;
 } /* _tr98 */
 
 
-void pi1 P(( double _tp1, double _tp2));
+void pi0der P(( int _tp1, double _tp2, double _tp3));
 
 #if MLPROTOTYPES
 static int _tr99( MLINK mlp)
 #else
 static int _tr99(mlp) MLINK mlp;
+#endif
+{
+	int	res = 0;
+	int _tp1;
+	double _tp2;
+	double _tp3;
+	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
+	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
+	if ( ! MLNewPacket(mlp) ) goto L3;
+
+	pi0der(_tp1, _tp2, _tp3);
+
+	res = 1;
+L3: L2: L1: 
+L0:	return res;
+} /* _tr99 */
+
+
+void pi1 P(( double _tp1, double _tp2));
+
+#if MLPROTOTYPES
+static int _tr100( MLINK mlp)
+#else
+static int _tr100(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10319,15 +10357,15 @@ static int _tr99(mlp) MLINK mlp;
 	res = 1;
 L2: L1: 
 L0:	return res;
-} /* _tr99 */
+} /* _tr100 */
 
 
 double p2int P(( double _tp1));
 
 #if MLPROTOTYPES
-static int _tr100( MLINK mlp)
+static int _tr101( MLINK mlp)
 #else
-static int _tr100(mlp) MLINK mlp;
+static int _tr101(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10342,15 +10380,15 @@ static int _tr100(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L1: 
 L0:	return res;
-} /* _tr100 */
+} /* _tr101 */
 
 
 double deltabottomcharm P(( double _tp1, double _tp2));
 
 #if MLPROTOTYPES
-static int _tr101( MLINK mlp)
+static int _tr102( MLINK mlp)
 #else
-static int _tr101(mlp) MLINK mlp;
+static int _tr102(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10367,15 +10405,15 @@ static int _tr101(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L2: L1: 
 L0:	return res;
-} /* _tr101 */
+} /* _tr102 */
 
 
 double gammarbottomcharm P(( double _tp1, double _tp2));
 
 #if MLPROTOTYPES
-static int _tr102( MLINK mlp)
+static int _tr103( MLINK mlp)
 #else
-static int _tr102(mlp) MLINK mlp;
+static int _tr103(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10392,15 +10430,15 @@ static int _tr102(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L2: L1: 
 L0:	return res;
-} /* _tr102 */
+} /* _tr103 */
 
 
 double p2double P(( double _tp1, double _tp2));
 
 #if MLPROTOTYPES
-static int _tr103( MLINK mlp)
+static int _tr104( MLINK mlp)
 #else
-static int _tr103(mlp) MLINK mlp;
+static int _tr104(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10417,15 +10455,15 @@ static int _tr103(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L2: L1: 
 L0:	return res;
-} /* _tr103 */
+} /* _tr104 */
 
 
 double deltacharmnh P(( double _tp1));
 
 #if MLPROTOTYPES
-static int _tr104( MLINK mlp)
+static int _tr105( MLINK mlp)
 #else
-static int _tr104(mlp) MLINK mlp;
+static int _tr105(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10440,15 +10478,15 @@ static int _tr104(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L1: 
 L0:	return res;
-} /* _tr104 */
+} /* _tr105 */
 
 
 double deltacharmglue P(( double _tp1));
 
 #if MLPROTOTYPES
-static int _tr105( MLINK mlp)
+static int _tr106( MLINK mlp)
 #else
-static int _tr105(mlp) MLINK mlp;
+static int _tr106(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10463,15 +10501,15 @@ static int _tr105(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L1: 
 L0:	return res;
-} /* _tr105 */
+} /* _tr106 */
 
 
 double deltacharmglueder P(( double _tp1));
 
 #if MLPROTOTYPES
-static int _tr106( MLINK mlp)
+static int _tr107( MLINK mlp)
 #else
-static int _tr106(mlp) MLINK mlp;
+static int _tr107(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10486,15 +10524,15 @@ static int _tr106(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L1: 
 L0:	return res;
-} /* _tr106 */
+} /* _tr107 */
 
 
 double deltacharmnl P(( double _tp1));
 
 #if MLPROTOTYPES
-static int _tr107( MLINK mlp)
+static int _tr108( MLINK mlp)
 #else
-static int _tr107(mlp) MLINK mlp;
+static int _tr108(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10509,15 +10547,15 @@ static int _tr107(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L1: 
 L0:	return res;
-} /* _tr107 */
+} /* _tr108 */
 
 
 double deltacharmnhder P(( double _tp1));
 
 #if MLPROTOTYPES
-static int _tr108( MLINK mlp)
+static int _tr109( MLINK mlp)
 #else
-static int _tr108(mlp) MLINK mlp;
+static int _tr109(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10532,15 +10570,15 @@ static int _tr108(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L1: 
 L0:	return res;
-} /* _tr108 */
+} /* _tr109 */
 
 
 double deltacharmnlder P(( double _tp1));
 
 #if MLPROTOTYPES
-static int _tr109( MLINK mlp)
+static int _tr110( MLINK mlp)
 #else
-static int _tr109(mlp) MLINK mlp;
+static int _tr110(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10555,15 +10593,15 @@ static int _tr109(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L1: 
 L0:	return res;
-} /* _tr109 */
+} /* _tr110 */
 
 
 double gammarcharm2 P(( double _tp1));
 
 #if MLPROTOTYPES
-static int _tr110( MLINK mlp)
+static int _tr111( MLINK mlp)
 #else
-static int _tr110(mlp) MLINK mlp;
+static int _tr111(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10578,15 +10616,15 @@ static int _tr110(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L1: 
 L0:	return res;
-} /* _tr110 */
+} /* _tr111 */
 
 
 double deltacharm2der P(( double _tp1));
 
 #if MLPROTOTYPES
-static int _tr111( MLINK mlp)
+static int _tr112( MLINK mlp)
 #else
-static int _tr111(mlp) MLINK mlp;
+static int _tr112(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10601,15 +10639,15 @@ static int _tr111(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L1: 
 L0:	return res;
-} /* _tr111 */
+} /* _tr112 */
 
 
 void thrustns1loop P(( double _tp1));
 
 #if MLPROTOTYPES
-static int _tr112( MLINK mlp)
+static int _tr113( MLINK mlp)
 #else
-static int _tr112(mlp) MLINK mlp;
+static int _tr113(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10622,15 +10660,15 @@ static int _tr112(mlp) MLINK mlp;
 	res = 1;
 L1: 
 L0:	return res;
-} /* _tr112 */
+} /* _tr113 */
 
 
 double fomass P(( const char * _tp1, const char * _tp2, double _tp3, double _tp4, double _tp5, double _tp6, double _tp7, double _tp8));
 
 #if MLPROTOTYPES
-static int _tr113( MLINK mlp)
+static int _tr114( MLINK mlp)
 #else
-static int _tr113(mlp) MLINK mlp;
+static int _tr114(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10661,33 +10699,10 @@ L8: L7: L6: L5: L4: L3: L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr113 */
-
-
-void thrustns2loop P(( double _tp1, double _tp2));
-
-#if MLPROTOTYPES
-static int _tr114( MLINK mlp)
-#else
-static int _tr114(mlp) MLINK mlp;
-#endif
-{
-	int	res = 0;
-	double _tp1;
-	double _tp2;
-	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
-	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
-	if ( ! MLNewPacket(mlp) ) goto L2;
-
-	thrustns2loop(_tp1, _tp2);
-
-	res = 1;
-L2: L1: 
-L0:	return res;
 } /* _tr114 */
 
 
-void cli3 P(( double _tp1, double _tp2));
+void thrustns2loop P(( double _tp1, double _tp2));
 
 #if MLPROTOTYPES
 static int _tr115( MLINK mlp)
@@ -10702,7 +10717,7 @@ static int _tr115(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
 	if ( ! MLNewPacket(mlp) ) goto L2;
 
-	cli3(_tp1, _tp2);
+	thrustns2loop(_tp1, _tp2);
 
 	res = 1;
 L2: L1: 
@@ -10710,12 +10725,35 @@ L0:	return res;
 } /* _tr115 */
 
 
-void delta P(( const char * _tp1, int _tp2, double _tp3, double _tp4));
+void cli3 P(( double _tp1, double _tp2));
 
 #if MLPROTOTYPES
 static int _tr116( MLINK mlp)
 #else
 static int _tr116(mlp) MLINK mlp;
+#endif
+{
+	int	res = 0;
+	double _tp1;
+	double _tp2;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
+	if ( ! MLNewPacket(mlp) ) goto L2;
+
+	cli3(_tp1, _tp2);
+
+	res = 1;
+L2: L1: 
+L0:	return res;
+} /* _tr116 */
+
+
+void delta P(( const char * _tp1, int _tp2, double _tp3, double _tp4));
+
+#if MLPROTOTYPES
+static int _tr117( MLINK mlp)
+#else
+static int _tr117(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10735,15 +10773,15 @@ static int _tr116(mlp) MLINK mlp;
 L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr116 */
+} /* _tr117 */
 
 
 void deltagap P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15));
 
 #if MLPROTOTYPES
-static int _tr117( MLINK mlp)
+static int _tr118( MLINK mlp)
 #else
-static int _tr117(mlp) MLINK mlp;
+static int _tr118(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10785,15 +10823,15 @@ static int _tr117(mlp) MLINK mlp;
 L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr117 */
+} /* _tr118 */
 
 
 void psdelta P(( int _tp1, int _tp2, int _tp3, double _tp4, double _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14));
 
 #if MLPROTOTYPES
-static int _tr118( MLINK mlp)
+static int _tr119( MLINK mlp)
 #else
-static int _tr118(mlp) MLINK mlp;
+static int _tr119(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10832,15 +10870,15 @@ static int _tr118(mlp) MLINK mlp;
 	res = 1;
 L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr118 */
+} /* _tr119 */
 
 
 void coefmat P(( const char * _tp1, int _tp2, double _tp3));
 
 #if MLPROTOTYPES
-static int _tr119( MLINK mlp)
+static int _tr120( MLINK mlp)
 #else
-static int _tr119(mlp) MLINK mlp;
+static int _tr120(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10858,15 +10896,15 @@ static int _tr119(mlp) MLINK mlp;
 L3: L2: L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr119 */
+} /* _tr120 */
 
 
 double wtilde P(( int _tp1, int _tp2, double * _tp3, long _tpl3, double _tp4, double _tp5));
 
 #if MLPROTOTYPES
-static int _tr120( MLINK mlp)
+static int _tr121( MLINK mlp)
 #else
-static int _tr120(mlp) MLINK mlp;
+static int _tr121(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10891,15 +10929,15 @@ static int _tr120(mlp) MLINK mlp;
 L5: L4: L3:	MLReleaseReal64List(mlp, _tp3, _tpl3);
 L2: L1: 
 L0:	return res;
-} /* _tr120 */
+} /* _tr121 */
 
 
 double ktilde P(( int _tp1, int _tp2, double * _tp3, long _tpl3, double _tp4, double _tp5));
 
 #if MLPROTOTYPES
-static int _tr121( MLINK mlp)
+static int _tr122( MLINK mlp)
 #else
-static int _tr121(mlp) MLINK mlp;
+static int _tr122(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10924,15 +10962,15 @@ static int _tr121(mlp) MLINK mlp;
 L5: L4: L3:	MLReleaseReal64List(mlp, _tp3, _tpl3);
 L2: L1: 
 L0:	return res;
-} /* _tr121 */
+} /* _tr122 */
 
 
 double alphaqcd P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14));
 
 #if MLPROTOTYPES
-static int _tr122( MLINK mlp)
+static int _tr123( MLINK mlp)
 #else
-static int _tr122(mlp) MLINK mlp;
+static int _tr123(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -10975,15 +11013,15 @@ L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2:	MLReleaseString(mlp, _t
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr122 */
+} /* _tr123 */
 
 
 void alphacomplex P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15));
 
 #if MLPROTOTYPES
-static int _tr123( MLINK mlp)
+static int _tr124( MLINK mlp)
 #else
-static int _tr123(mlp) MLINK mlp;
+static int _tr124(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -11026,15 +11064,15 @@ L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2:	MLReleaseString(ml
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr123 */
+} /* _tr124 */
 
 
 double msbarmass P(( int _tp1, int _tp2, int _tp3, int _tp4, double _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13));
 
 #if MLPROTOTYPES
-static int _tr124( MLINK mlp)
+static int _tr125( MLINK mlp)
 #else
-static int _tr124(mlp) MLINK mlp;
+static int _tr125(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -11073,15 +11111,15 @@ static int _tr124(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr124 */
+} /* _tr125 */
 
 
 double polemass P(( int _tp1, int _tp2, int _tp3, int _tp4, int _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14));
 
 #if MLPROTOTYPES
-static int _tr125( MLINK mlp)
+static int _tr126( MLINK mlp)
 #else
-static int _tr125(mlp) MLINK mlp;
+static int _tr126(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -11122,15 +11160,15 @@ static int _tr125(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr125 */
+} /* _tr126 */
 
 
 double msbarmasslow P(( int _tp1, int _tp2, int _tp3, int _tp4, double _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13));
 
 #if MLPROTOTYPES
-static int _tr126( MLINK mlp)
+static int _tr127( MLINK mlp)
 #else
-static int _tr126(mlp) MLINK mlp;
+static int _tr127(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -11169,15 +11207,15 @@ static int _tr126(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr126 */
+} /* _tr127 */
 
 
 double msrmass P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, int _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18));
 
 #if MLPROTOTYPES
-static int _tr127( MLINK mlp)
+static int _tr128( MLINK mlp)
 #else
-static int _tr127(mlp) MLINK mlp;
+static int _tr128(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -11228,15 +11266,15 @@ L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2:	MLR
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr127 */
+} /* _tr128 */
 
 
 double msrvfns P(( const char * _tp1, const char * _tp2, const char * _tp3, int _tp4, int _tp5, int _tp6, int _tp7, int _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20));
 
 #if MLPROTOTYPES
-static int _tr128( MLINK mlp)
+static int _tr129( MLINK mlp)
 #else
-static int _tr128(mlp) MLINK mlp;
+static int _tr129(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -11292,15 +11330,15 @@ L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr128 */
+} /* _tr129 */
 
 
 void nrqcd P(( int _tp1, int _tp2, int _tp3, int _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, int _tp9, int _tp10, int _tp11, int _tp12, int _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26));
 
 #if MLPROTOTYPES
-static int _tr129( MLINK mlp)
+static int _tr130( MLINK mlp)
 #else
-static int _tr129(mlp) MLINK mlp;
+static int _tr130(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -11367,15 +11405,15 @@ L6:	MLReleaseString(mlp, _tp6);
 L5:	MLReleaseString(mlp, _tp5);
 L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr129 */
+} /* _tr130 */
 
 
 void massiter P(( int _tp1, int _tp2, int _tp3, int _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, int _tp9, int _tp10, int _tp11, int _tp12, int _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double _tp27));
 
 #if MLPROTOTYPES
-static int _tr130( MLINK mlp)
+static int _tr131( MLINK mlp)
 #else
-static int _tr130(mlp) MLINK mlp;
+static int _tr131(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -11444,15 +11482,15 @@ L6:	MLReleaseString(mlp, _tp6);
 L5:	MLReleaseString(mlp, _tp5);
 L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr130 */
+} /* _tr131 */
 
 
 void massexpand P(( int _tp1, int _tp2, int _tp3, int _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, int _tp9, int _tp10, int _tp11, int _tp12, int _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double _tp27));
 
 #if MLPROTOTYPES
-static int _tr131( MLINK mlp)
+static int _tr132( MLINK mlp)
 #else
-static int _tr131(mlp) MLINK mlp;
+static int _tr132(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -11521,15 +11559,15 @@ L6:	MLReleaseString(mlp, _tp6);
 L5:	MLReleaseString(mlp, _tp5);
 L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr131 */
+} /* _tr132 */
 
 
 double findmass P(( int _tp1, int _tp2, int _tp3, int _tp4, int _tp5, const char * _tp6, const char * _tp7, const char * _tp8, const char * _tp9, const char * _tp10, int _tp11, int _tp12, int _tp13, int _tp14, int _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double _tp27, double _tp28, double _tp29));
 
 #if MLPROTOTYPES
-static int _tr132( MLINK mlp)
+static int _tr133( MLINK mlp)
 #else
-static int _tr132(mlp) MLINK mlp;
+static int _tr133(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -11605,15 +11643,15 @@ L7:	MLReleaseString(mlp, _tp7);
 L6:	MLReleaseString(mlp, _tp6);
 L5: L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr132 */
+} /* _tr133 */
 
 
 void masserror P(( int _tp1, int _tp2, int _tp3, int _tp4, int _tp5, const char * _tp6, const char * _tp7, const char * _tp8, const char * _tp9, const char * _tp10, int _tp11, int _tp12, int _tp13, int _tp14, int _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double _tp27, double _tp28, double _tp29, double _tp30, double _tp31, double _tp32, double _tp33, double _tp34));
 
 #if MLPROTOTYPES
-static int _tr133( MLINK mlp)
+static int _tr134( MLINK mlp)
 #else
-static int _tr133(mlp) MLINK mlp;
+static int _tr134(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -11697,15 +11735,15 @@ L7:	MLReleaseString(mlp, _tp7);
 L6:	MLReleaseString(mlp, _tp6);
 L5: L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr133 */
+} /* _tr134 */
 
 
 void masslist P(( int _tp1, int _tp2, int _tp3, int _tp4, int _tp5, const char * _tp6, const char * _tp7, const char * _tp8, const char * _tp9, const char * _tp10, int _tp11, int _tp12, int _tp13, int _tp14, int _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double _tp27, double _tp28, double _tp29, double _tp30, double _tp31, double _tp32, double _tp33));
 
 #if MLPROTOTYPES
-static int _tr134( MLINK mlp)
+static int _tr135( MLINK mlp)
 #else
-static int _tr134(mlp) MLINK mlp;
+static int _tr135(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -11787,15 +11825,15 @@ L7:	MLReleaseString(mlp, _tp7);
 L6:	MLReleaseString(mlp, _tp6);
 L5: L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr134 */
+} /* _tr135 */
 
 
 void nrqcdlist P(( int _tp1, int _tp2, int _tp3, int _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, const char * _tp9, int _tp10, int _tp11, int _tp12, int _tp13, int _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double _tp27, double _tp28, double _tp29, double _tp30, double _tp31, double _tp32));
 
 #if MLPROTOTYPES
-static int _tr135( MLINK mlp)
+static int _tr136( MLINK mlp)
 #else
-static int _tr135(mlp) MLINK mlp;
+static int _tr136(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -11875,15 +11913,15 @@ L6:	MLReleaseString(mlp, _tp6);
 L5:	MLReleaseString(mlp, _tp5);
 L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr135 */
+} /* _tr136 */
 
 
 void nrqcderror P(( int _tp1, int _tp2, int _tp3, int _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, const char * _tp9, int _tp10, int _tp11, int _tp12, int _tp13, int _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double _tp27, double _tp28, double _tp29, double _tp30, double _tp31, double _tp32, double _tp33));
 
 #if MLPROTOTYPES
-static int _tr136( MLINK mlp)
+static int _tr137( MLINK mlp)
 #else
-static int _tr136(mlp) MLINK mlp;
+static int _tr137(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -11965,15 +12003,15 @@ L6:	MLReleaseString(mlp, _tp6);
 L5:	MLReleaseString(mlp, _tp5);
 L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr136 */
+} /* _tr137 */
 
 
 double optimalr P(( const char * _tp1, double _tp2, const char * _tp3, int _tp4, int _tp5, int _tp6, int _tp7, int _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18));
 
 #if MLPROTOTYPES
-static int _tr137( MLINK mlp)
+static int _tr138( MLINK mlp)
 #else
-static int _tr137(mlp) MLINK mlp;
+static int _tr138(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -12024,15 +12062,15 @@ L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3:	MLRelea
 L2: L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr137 */
+} /* _tr138 */
 
 
 double mmfrommsr P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16));
 
 #if MLPROTOTYPES
-static int _tr138( MLINK mlp)
+static int _tr139( MLINK mlp)
 #else
-static int _tr138(mlp) MLINK mlp;
+static int _tr139(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -12078,15 +12116,15 @@ static int _tr138(mlp) MLINK mlp;
 L16: L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr138 */
+} /* _tr139 */
 
 
 double jetmass P(( int _tp1, int _tp2, int _tp3, int _tp4, int _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16));
 
 #if MLPROTOTYPES
-static int _tr139( MLINK mlp)
+static int _tr140( MLINK mlp)
 #else
-static int _tr139(mlp) MLINK mlp;
+static int _tr140(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -12131,15 +12169,15 @@ static int _tr139(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L16: L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr139 */
+} /* _tr140 */
 
 
 double mmfromjetmass P(( int _tp1, int _tp2, int _tp3, int _tp4, int _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16));
 
 #if MLPROTOTYPES
-static int _tr140( MLINK mlp)
+static int _tr141( MLINK mlp)
 #else
-static int _tr140(mlp) MLINK mlp;
+static int _tr141(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -12184,15 +12222,15 @@ static int _tr140(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L16: L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr140 */
+} /* _tr141 */
 
 
 void deltamsbar P(( int _tp1, int _tp2, int _tp3, int _tp4, double _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13));
 
 #if MLPROTOTYPES
-static int _tr141( MLINK mlp)
+static int _tr142( MLINK mlp)
 #else
-static int _tr141(mlp) MLINK mlp;
+static int _tr142(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -12229,15 +12267,15 @@ static int _tr141(mlp) MLINK mlp;
 	res = 1;
 L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr141 */
+} /* _tr142 */
 
 
 double rhad P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15));
 
 #if MLPROTOTYPES
-static int _tr142( MLINK mlp)
+static int _tr143( MLINK mlp)
 #else
-static int _tr142(mlp) MLINK mlp;
+static int _tr143(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -12281,15 +12319,15 @@ static int _tr142(mlp) MLINK mlp;
 L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr142 */
+} /* _tr143 */
 
 
 void rhadcoefs P(( int _tp1));
 
 #if MLPROTOTYPES
-static int _tr143( MLINK mlp)
+static int _tr144( MLINK mlp)
 #else
-static int _tr143(mlp) MLINK mlp;
+static int _tr144(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -12302,15 +12340,15 @@ static int _tr143(mlp) MLINK mlp;
 	res = 1;
 L1: 
 L0:	return res;
-} /* _tr143 */
+} /* _tr144 */
 
 
 double rhadmass P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, int _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19));
 
 #if MLPROTOTYPES
-static int _tr144( MLINK mlp)
+static int _tr145( MLINK mlp)
 #else
-static int _tr144(mlp) MLINK mlp;
+static int _tr145(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -12363,15 +12401,15 @@ L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr144 */
+} /* _tr145 */
 
 
 double lambdaqcd P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14));
 
 #if MLPROTOTYPES
-static int _tr145( MLINK mlp)
+static int _tr146( MLINK mlp)
 #else
-static int _tr145(mlp) MLINK mlp;
+static int _tr146(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -12413,15 +12451,15 @@ static int _tr145(mlp) MLINK mlp;
 L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr145 */
+} /* _tr146 */
 
 
 void kernels P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5));
 
 #if MLPROTOTYPES
-static int _tr146( MLINK mlp)
+static int _tr147( MLINK mlp)
 #else
-static int _tr146(mlp) MLINK mlp;
+static int _tr147(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -12442,33 +12480,10 @@ static int _tr146(mlp) MLINK mlp;
 	res = 1;
 L5: L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr146 */
-
-
-void gammaderlist P(( int _tp1, double _tp2));
-
-#if MLPROTOTYPES
-static int _tr147( MLINK mlp)
-#else
-static int _tr147(mlp) MLINK mlp;
-#endif
-{
-	int	res = 0;
-	int _tp1;
-	double _tp2;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
-	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
-	if ( ! MLNewPacket(mlp) ) goto L2;
-
-	gammaderlist(_tp1, _tp2);
-
-	res = 1;
-L2: L1: 
-L0:	return res;
 } /* _tr147 */
 
 
-void polygamma P(( int _tp1, double _tp2));
+void gammaderlist P(( int _tp1, double _tp2));
 
 #if MLPROTOTYPES
 static int _tr148( MLINK mlp)
@@ -12483,7 +12498,7 @@ static int _tr148(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
 	if ( ! MLNewPacket(mlp) ) goto L2;
 
-	polygamma(_tp1, _tp2);
+	gammaderlist(_tp1, _tp2);
 
 	res = 1;
 L2: L1: 
@@ -12491,12 +12506,35 @@ L0:	return res;
 } /* _tr148 */
 
 
-void nglkernels P(( int _tp1, int _tp2, int _tp3, double _tp4, double * _tp5, long _tpl5, double _tp6, double * _tp7, long _tpl7));
+void polygamma P(( int _tp1, double _tp2));
 
 #if MLPROTOTYPES
 static int _tr149( MLINK mlp)
 #else
 static int _tr149(mlp) MLINK mlp;
+#endif
+{
+	int	res = 0;
+	int _tp1;
+	double _tp2;
+	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
+	if ( ! MLNewPacket(mlp) ) goto L2;
+
+	polygamma(_tp1, _tp2);
+
+	res = 1;
+L2: L1: 
+L0:	return res;
+} /* _tr149 */
+
+
+void nglkernels P(( int _tp1, int _tp2, int _tp3, double _tp4, double * _tp5, long _tpl5, double _tp6, double * _tp7, long _tpl7));
+
+#if MLPROTOTYPES
+static int _tr150( MLINK mlp)
+#else
+static int _tr150(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -12525,15 +12563,15 @@ L7:	MLReleaseReal64List(mlp, _tp7, _tpl7);
 L6: L5:	MLReleaseReal64List(mlp, _tp5, _tpl5);
 L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr149 */
+} /* _tr150 */
 
 
 double nglintegral P(( int _tp1, int _tp2, double _tp3, double _tp4));
 
 #if MLPROTOTYPES
-static int _tr150( MLINK mlp)
+static int _tr151( MLINK mlp)
 #else
-static int _tr150(mlp) MLINK mlp;
+static int _tr151(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -12554,15 +12592,15 @@ static int _tr150(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr150 */
+} /* _tr151 */
 
 
 double ngldoubleintegral P(( int _tp1, int _tp2, double _tp3, double _tp4, double _tp5));
 
 #if MLPROTOTYPES
-static int _tr151( MLINK mlp)
+static int _tr152( MLINK mlp)
 #else
-static int _tr151(mlp) MLINK mlp;
+static int _tr152(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -12585,7 +12623,7 @@ static int _tr151(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L5: L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr151 */
+} /* _tr152 */
 
 
 static struct func {
@@ -12593,7 +12631,7 @@ static struct func {
 	int   manual;
 	int   (*f_func)P((MLINK));
 	const char  *f_name;
-	} _tramps[152] = {
+	} _tramps[153] = {
 		{ 5, 0, _tr0, "ewfactors" },
 		{ 3, 0, _tr1, "legendrelist" },
 		{ 2, 0, _tr2, "qlegendrelist" },
@@ -12693,59 +12731,60 @@ static struct func {
 		{ 1, 0, _tr96, "deltacharm2" },
 		{ 1, 0, _tr97, "p2" },
 		{ 2, 0, _tr98, "pi0" },
-		{ 2, 0, _tr99, "pi1" },
-		{ 1, 0, _tr100, "p2int" },
-		{ 2, 0, _tr101, "deltabottomcharm" },
-		{ 2, 0, _tr102, "gammarbottomcharm" },
-		{ 2, 0, _tr103, "p2double" },
-		{ 1, 0, _tr104, "deltacharmnh" },
-		{ 1, 0, _tr105, "deltacharmglue" },
-		{ 1, 0, _tr106, "deltacharmglueder" },
-		{ 1, 0, _tr107, "deltacharmnl" },
-		{ 1, 0, _tr108, "deltacharmnhder" },
-		{ 1, 0, _tr109, "deltacharmnlder" },
-		{ 1, 0, _tr110, "gammarcharm2" },
-		{ 1, 0, _tr111, "deltacharm2der" },
-		{ 1, 0, _tr112, "thrustns1loop" },
-		{ 8, 0, _tr113, "fomass" },
-		{ 2, 0, _tr114, "thrustns2loop" },
-		{ 2, 0, _tr115, "cli3" },
-		{ 4, 0, _tr116, "delta" },
-		{15, 0, _tr117, "deltagap" },
-		{14, 0, _tr118, "psdelta" },
-		{ 3, 0, _tr119, "coefmat" },
-		{ 5, 0, _tr120, "wtilde" },
-		{ 5, 0, _tr121, "ktilde" },
-		{14, 0, _tr122, "alphaqcd" },
-		{15, 0, _tr123, "alphacomplex" },
-		{13, 0, _tr124, "msbarmass" },
-		{14, 0, _tr125, "polemass" },
-		{13, 0, _tr126, "msbarmasslow" },
-		{18, 0, _tr127, "msrmass" },
-		{20, 0, _tr128, "msrvfns" },
-		{26, 0, _tr129, "nrqcd" },
-		{27, 0, _tr130, "massiter" },
-		{27, 0, _tr131, "massexpand" },
-		{29, 0, _tr132, "findmass" },
-		{34, 0, _tr133, "masserror" },
-		{33, 0, _tr134, "masslist" },
-		{32, 0, _tr135, "nrqcdlist" },
-		{33, 0, _tr136, "nrqcderror" },
-		{18, 0, _tr137, "optimalr" },
-		{16, 0, _tr138, "mmfrommsr" },
-		{16, 0, _tr139, "jetmass" },
-		{16, 0, _tr140, "mmfromjetmass" },
-		{13, 0, _tr141, "deltamsbar" },
-		{15, 0, _tr142, "rhad" },
-		{ 1, 0, _tr143, "rhadcoefs" },
-		{19, 0, _tr144, "rhadmass" },
-		{14, 0, _tr145, "lambdaqcd" },
-		{ 5, 0, _tr146, "kernels" },
-		{ 2, 0, _tr147, "gammaderlist" },
-		{ 2, 0, _tr148, "polygamma" },
-		{ 7, 0, _tr149, "nglkernels" },
-		{ 4, 0, _tr150, "nglintegral" },
-		{ 5, 0, _tr151, "ngldoubleintegral" }
+		{ 3, 0, _tr99, "pi0der" },
+		{ 2, 0, _tr100, "pi1" },
+		{ 1, 0, _tr101, "p2int" },
+		{ 2, 0, _tr102, "deltabottomcharm" },
+		{ 2, 0, _tr103, "gammarbottomcharm" },
+		{ 2, 0, _tr104, "p2double" },
+		{ 1, 0, _tr105, "deltacharmnh" },
+		{ 1, 0, _tr106, "deltacharmglue" },
+		{ 1, 0, _tr107, "deltacharmglueder" },
+		{ 1, 0, _tr108, "deltacharmnl" },
+		{ 1, 0, _tr109, "deltacharmnhder" },
+		{ 1, 0, _tr110, "deltacharmnlder" },
+		{ 1, 0, _tr111, "gammarcharm2" },
+		{ 1, 0, _tr112, "deltacharm2der" },
+		{ 1, 0, _tr113, "thrustns1loop" },
+		{ 8, 0, _tr114, "fomass" },
+		{ 2, 0, _tr115, "thrustns2loop" },
+		{ 2, 0, _tr116, "cli3" },
+		{ 4, 0, _tr117, "delta" },
+		{15, 0, _tr118, "deltagap" },
+		{14, 0, _tr119, "psdelta" },
+		{ 3, 0, _tr120, "coefmat" },
+		{ 5, 0, _tr121, "wtilde" },
+		{ 5, 0, _tr122, "ktilde" },
+		{14, 0, _tr123, "alphaqcd" },
+		{15, 0, _tr124, "alphacomplex" },
+		{13, 0, _tr125, "msbarmass" },
+		{14, 0, _tr126, "polemass" },
+		{13, 0, _tr127, "msbarmasslow" },
+		{18, 0, _tr128, "msrmass" },
+		{20, 0, _tr129, "msrvfns" },
+		{26, 0, _tr130, "nrqcd" },
+		{27, 0, _tr131, "massiter" },
+		{27, 0, _tr132, "massexpand" },
+		{29, 0, _tr133, "findmass" },
+		{34, 0, _tr134, "masserror" },
+		{33, 0, _tr135, "masslist" },
+		{32, 0, _tr136, "nrqcdlist" },
+		{33, 0, _tr137, "nrqcderror" },
+		{18, 0, _tr138, "optimalr" },
+		{16, 0, _tr139, "mmfrommsr" },
+		{16, 0, _tr140, "jetmass" },
+		{16, 0, _tr141, "mmfromjetmass" },
+		{13, 0, _tr142, "deltamsbar" },
+		{15, 0, _tr143, "rhad" },
+		{ 1, 0, _tr144, "rhadcoefs" },
+		{19, 0, _tr145, "rhadmass" },
+		{14, 0, _tr146, "lambdaqcd" },
+		{ 5, 0, _tr147, "kernels" },
+		{ 2, 0, _tr148, "gammaderlist" },
+		{ 2, 0, _tr149, "polygamma" },
+		{ 7, 0, _tr150, "nglkernels" },
+		{ 4, 0, _tr151, "nglintegral" },
+		{ 5, 0, _tr152, "ngldoubleintegral" }
 		};
 
 static const char* evalstrs[] = {
@@ -12779,6 +12818,9 @@ static const char* evalstrs[] = {
 	(const char*)0,
 	"Pi0::usage = \"Pi0[z] tree-level massive vacuum polarization func",
 	"tion\"",
+	(const char*)0,
+	"Pi0Der::usage = \"Pi0Der[i,z] i-th derivative of the tree-level m",
+	"assive vacuum polarization function\"",
 	(const char*)0,
 	"Pi1::usage = \"Pi1[z] one-loop massive vacuum polarization functi",
 	"on\"",
@@ -13385,7 +13427,7 @@ static const char* evalstrs[] = {
 	(const char*)0,
 	(const char*)0
 };
-#define CARDOF_EVALSTRS 152
+#define CARDOF_EVALSTRS 153
 
 static int _definepattern P(( MLINK, char*, char*, int));
 
@@ -13551,6 +13593,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _doevalstr( mlp, 146);
 	if (_res) _res = _doevalstr( mlp, 147);
 	if (_res) _res = _doevalstr( mlp, 148);
+	if (_res) _res = _doevalstr( mlp, 149);
 	if (_res) _res = _definepattern(mlp, (char *)"EWFactors[nf_, Q_, Mz_, GammaZ_, sin2ThetaW_]", (char *)"{nf, Q, Mz, GammaZ, sin2ThetaW}", 0);
 	if (_res) _res = _definepattern(mlp, (char *)"LegendreList[n_, k_, x_]", (char *)"{n, k, x}", 1);
 	if (_res) _res = _definepattern(mlp, (char *)"QLegendreList[n_, x_]", (char *)"{n, x}", 2);
@@ -13650,62 +13693,63 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharm2[z_]", (char *)"{z}", 96);
 	if (_res) _res = _definepattern(mlp, (char *)"P2[z_]", (char *)"{z}", 97);
 	if (_res) _res = _definepattern(mlp, (char *)"Pi0[z_]", (char *)"{Re[z], Im[z]}", 98);
-	if (_res) _res = _definepattern(mlp, (char *)"Pi1[z_]", (char *)"{Re[z], Im[z]}", 99);
-	if (_res) _res = _definepattern(mlp, (char *)"P2Int[z_]", (char *)"{z}", 100);
-	if (_res) _res = _definepattern(mlp, (char *)"DeltaBottomCharm[z1_, z2_]", (char *)"{z1, z2}", 101);
-	if (_res) _res = _definepattern(mlp, (char *)"GammaRBottomCharm[z1_, z2_]", (char *)"{z1, z2}", 102);
-	if (_res) _res = _definepattern(mlp, (char *)"P2Double[z1_, z2_]", (char *)"{z1, z2}", 103);
-	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharmNh[z_]", (char *)"{z}", 104);
-	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharmGlue[z_]", (char *)"{z}", 105);
-	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharmGlueDer[z_]", (char *)"{z}", 106);
-	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharmNl[z_]", (char *)"{z}", 107);
-	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharmNhDer[z_]", (char *)"{z}", 108);
-	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharmNlDer[z_]", (char *)"{z}", 109);
-	if (_res) _res = _definepattern(mlp, (char *)"GammaRCharm2[z_]", (char *)"{z}", 110);
-	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharm2Der[z_]", (char *)"{z}", 111);
-	if (_res) _res = _definepattern(mlp, (char *)"ThrustNS1loop[t_]", (char *)"{t}", 112);
-	if (_res) _res = _definepattern(mlp, (char *)"FOMass[shape_, current_, m_, Q_, Mz_, gammaZ_, sin2ThetaW_, t_]", (char *)"{shape, current, m, Q, Mz, gammaZ, sin2ThetaW, t}", 113);
-	if (_res) _res = _definepattern(mlp, (char *)"ThrustNS2loop[er_, t_]", (char *)"{er, t}", 114);
-	if (_res) _res = _definepattern(mlp, (char *)"CLi3[z_]", (char *)"{Re[z], Im[z]}", 115);
-	if (_res) _res = _definepattern(mlp, (char *)"Delta[str_, nf_, mu_, R_]", (char *)"{str, nf, mu, R}", 116);
-	if (_res) _res = _definepattern(mlp, (char *)"DeltaGap[str_, orderAlpha_, runAlpha_, runMass_, nf_, mZ_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, mu_, R_]", (char *)"{str, orderAlpha, runAlpha, runMass, nf, mZ, aMz, mT, muT, mB, muB, mC,                  muC, mu, R}", 117);
-	if (_res) _res = _definepattern(mlp, (char *)"PSDelta[orderAlpha_, runAlpha_, nf_, mZ_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, mu_, R_, lg_]", (char *)"{orderAlpha, runAlpha, nf, mZ, aMz, mT, muT, mB, muB,                  mC, muC, mu, R, lg}", 118);
-	if (_res) _res = _definepattern(mlp, (char *)"CoefMat[str_, nf_, s3_]", (char *)"{str, nf, s3}", 119);
-	if (_res) _res = _definepattern(mlp, (char *)"wTilde[order_, nf_, gamma_, a0_, a1_]", (char *)"{order, nf, gamma, a0, a1}", 120);
-	if (_res) _res = _definepattern(mlp, (char *)"kTilde[order_, nf_, gamma_, a0_, a1_]", (char *)"{order, nf, gamma, a0, a1}", 121);
-	if (_res) _res = _definepattern(mlp, (char *)"AlphaQCD[str_, method_, order_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_,                  muC_, mu_]", (char *)"{str, method, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 122);
-	if (_res) _res = _definepattern(mlp, (char *)"AlphaComplex[str_, method_, order_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, mu_]", (char *)"{str, method, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC,                 muC, Re[mu], Im[mu]}", 123);
-	if (_res) _res = _definepattern(mlp, (char *)"MSbarMass[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,                 mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 124);
-	if (_res) _res = _definepattern(mlp, (char *)"PoleMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_, muT_,                 mB_, muB_, mC_, muC_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC,                  mu}", 125);
-	if (_res) _res = _definepattern(mlp, (char *)"MSbarMassLow[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_,                 muB_, mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 126);
-	if (_res) _res = _definepattern(mlp, (char *)"MSRMass[type_, method_, orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, lambda_, mu_, R_]", (char *)"{type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB,                  mC, muC, lambda, mu, R}", 127);
-	if (_res) _res = _definepattern(mlp, (char *)"MSRVFNS[up_, type_, method_, orderAlpha_, runAlpha_, order_,                 run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_,                 mu1_, mu2_, R_]", (char *)"{up, type, method, orderAlpha, runAlpha, order, run, nf, Mz,                  aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R}", 128);
-	if (_res) _res = _definepattern(mlp, (char *)"NRQCD[n_, l_, j_, s_, charm_, scheme_, average_, method_, orderAlpha_,                 runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_,                 mC_, muC_, lambda1_, lambda2_, lam_, mu_, R_]", (char *)"{n, l, j, s, charm, scheme, average, method, orderAlpha, runAlpha, order,                  run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu, R}", 129);
-	if (_res) _res = _definepattern(mlp, (char *)"MassIter[n_, l_, j_, s_, charm_, scheme_, average_, method_, orderAlpha_,                 runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_,                 mC_, muC_, mass_, lambda1_, lambda2_, lam_, mu_, R_]", (char *)"{n, l, j, s, charm, scheme, average, method, orderAlpha, runAlpha, order,                  run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1,                  lambda2, lam, mu, R}", 130);
-	if (_res) _res = _definepattern(mlp, (char *)"MassExpand[n_, l_, j_, s_, charm_, scheme_, average_, method_, orderAlpha_,                 runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_,                 mC_, muC_, mass_, lambda1_, lambda2_, lam_, mu_, R_]", (char *)"{n, l, j, s, charm, scheme, average, method, orderAlpha, runAlpha, order,                  run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1,                  lambda2, lam, mu, R}", 131);
-	if (_res) _res = _definepattern(mlp, (char *)"FindMass[ord_, n_, l_, j_, s_, iter_, charm_, scheme_, average_, method_,                 orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_,                 mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_, lam_, mu_, R_]", (char *)"{ord, n, l, j, s, iter, charm, scheme, average, method, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  mass, lambda1, lambda2, lam, mu, R}", 132);
-	if (_res) _res = _definepattern(mlp, (char *)"MassError[ord_, n_, l_, j_, s_, iter_, charm_, scheme_, average_, method_,                 orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_,                 mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_, lam_, mu0_,                 mu1_, deltaMu_, R0_, R1_, deltaR_, x_]", (char *)"{ord, n, l, j, s, iter, charm, scheme, average, method, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR,                  x}", 133);
-	if (_res) _res = _definepattern(mlp, (char *)"MassList[ord_, n_, l_, j_, s_, iter_, charm_, scheme_, average_,                 method_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,                 mT_, muT_, mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_,                 lam_, mu0_, mu1_, deltaMu_, R0_, R1_, deltaR_]", (char *)"{ord, n, l, j, s, iter, charm, scheme, average, method, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR}", 134);
-	if (_res) _res = _definepattern(mlp, (char *)"NRQCDList[n_, l_, j_, s_, iter_, charm_, scheme_, average_,                 method_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,                 mT_, muT_, mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_,                 lam_, mu0_, mu1_, deltaMu_, R0_, R1_, deltaR_]", (char *)"{n, l, j, s, iter, charm, scheme, average, method, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR}", 135);
-	if (_res) _res = _definepattern(mlp, (char *)"NRQCDError[n_, l_, j_, s_, iter_, charm_, scheme_, average_, method_,                 orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_,                 mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_, lam_, mu0_,                 mu1_, deltaMu_, R0_, R1_, deltaR_, x_]", (char *)"{n, l, j, s, iter, charm, scheme, average, method, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR,                  x}", 136);
-	if (_res) _res = _definepattern(mlp, (char *)"OptimalR[type_, n_, method_, orderAlpha_, runAlpha_, order_, run_,                 nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_, mu_]", (char *)"{type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz,                  mT, muT, mB, muB, mC, muC, lambda, mu}", 137);
-	if (_res) _res = _definepattern(mlp, (char *)"mmfromMSR[type_, orderAlpha_, runAlpha_, order_, run_, nf_, Mz_,                 aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mu_, R_]", (char *)"{type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT,                  mB, muB, mC, muC, mu, R}", 138);
-	if (_res) _res = _definepattern(mlp, (char *)"JetMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, muLambda_, R_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC,                  muC, muLambda, R, mu}", 139);
-	if (_res) _res = _definepattern(mlp, (char *)"mmFromJetMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, muLambda_, R_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC,                  muC, muLambda, R, mu}", 140);
-	if (_res) _res = _definepattern(mlp, (char *)"DeltaMSbar[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,                  mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 141);
-	if (_res) _res = _definepattern(mlp, (char *)"Rhad[scheme_, orderAlpha_, runAlpha_, order_, nf_, Mz_, aMz_, mT_, muT_,                  mB_, muB_, mC_, muC_, mu_, Q_]", (char *)"{scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB, muB, mC,                  muC, mu, Q}", 142);
-	if (_res) _res = _definepattern(mlp, (char *)"RhadCoefs[nf_]", (char *)"{nf}", 143);
-	if (_res) _res = _definepattern(mlp, (char *)"RhadMass[scheme_, current_, orderAlpha_, runAlpha_, runMass_, order_, nf_,                 Mz_, GammaZ_, sin2ThetaW_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mu_, Q_]", (char *)"{scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ,                 sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q}", 144);
-	if (_res) _res = _definepattern(mlp, (char *)"LambdaQCD[scheme_, order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_,                  mB_, muB_, mC_, muC_, mu_]", (char *)"{scheme, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 145);
-	if (_res) _res = _definepattern(mlp, (char *)"Kernel[n_, width_, w_, mu_, p_]", (char *)"{n, width, w, mu, p}", 146);
-	if (_res) _res = _definepattern(mlp, (char *)"GammaDerList[n_, w_]", (char *)"{n, w}", 147);
-	if (_res) _res = _definepattern(mlp, (char *)"polyGamma[n_, w_]", (char *)"{n, w}", 148);
-	if (_res) _res = _definepattern(mlp, (char *)"NGLKernel[n_, n1_, n2_, width_, w_, mu_, p_]", (char *)"{n, n1, n2, width, w, mu, p}", 149);
-	if (_res) _res = _definepattern(mlp, (char *)"NGLIntegral[nf_, pow_, w1_, w2_]", (char *)"{nf, pow, w1, w2}", 150);
-	if (_res) _res = _definepattern(mlp, (char *)"NGLDoubleIntegral[nf_, pow_, w1_, w2_, r_]", (char *)"{nf, pow, w1, w2, r}", 151);
-	if (_res) _res = _doevalstr( mlp, 149);
+	if (_res) _res = _definepattern(mlp, (char *)"Pi0Der[i_, z_]", (char *)"{i, Re[z], Im[z]}", 99);
+	if (_res) _res = _definepattern(mlp, (char *)"Pi1[z_]", (char *)"{Re[z], Im[z]}", 100);
+	if (_res) _res = _definepattern(mlp, (char *)"P2Int[z_]", (char *)"{z}", 101);
+	if (_res) _res = _definepattern(mlp, (char *)"DeltaBottomCharm[z1_, z2_]", (char *)"{z1, z2}", 102);
+	if (_res) _res = _definepattern(mlp, (char *)"GammaRBottomCharm[z1_, z2_]", (char *)"{z1, z2}", 103);
+	if (_res) _res = _definepattern(mlp, (char *)"P2Double[z1_, z2_]", (char *)"{z1, z2}", 104);
+	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharmNh[z_]", (char *)"{z}", 105);
+	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharmGlue[z_]", (char *)"{z}", 106);
+	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharmGlueDer[z_]", (char *)"{z}", 107);
+	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharmNl[z_]", (char *)"{z}", 108);
+	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharmNhDer[z_]", (char *)"{z}", 109);
+	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharmNlDer[z_]", (char *)"{z}", 110);
+	if (_res) _res = _definepattern(mlp, (char *)"GammaRCharm2[z_]", (char *)"{z}", 111);
+	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharm2Der[z_]", (char *)"{z}", 112);
+	if (_res) _res = _definepattern(mlp, (char *)"ThrustNS1loop[t_]", (char *)"{t}", 113);
+	if (_res) _res = _definepattern(mlp, (char *)"FOMass[shape_, current_, m_, Q_, Mz_, gammaZ_, sin2ThetaW_, t_]", (char *)"{shape, current, m, Q, Mz, gammaZ, sin2ThetaW, t}", 114);
+	if (_res) _res = _definepattern(mlp, (char *)"ThrustNS2loop[er_, t_]", (char *)"{er, t}", 115);
+	if (_res) _res = _definepattern(mlp, (char *)"CLi3[z_]", (char *)"{Re[z], Im[z]}", 116);
+	if (_res) _res = _definepattern(mlp, (char *)"Delta[str_, nf_, mu_, R_]", (char *)"{str, nf, mu, R}", 117);
+	if (_res) _res = _definepattern(mlp, (char *)"DeltaGap[str_, orderAlpha_, runAlpha_, runMass_, nf_, mZ_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, mu_, R_]", (char *)"{str, orderAlpha, runAlpha, runMass, nf, mZ, aMz, mT, muT, mB, muB, mC,                  muC, mu, R}", 118);
+	if (_res) _res = _definepattern(mlp, (char *)"PSDelta[orderAlpha_, runAlpha_, nf_, mZ_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, mu_, R_, lg_]", (char *)"{orderAlpha, runAlpha, nf, mZ, aMz, mT, muT, mB, muB,                  mC, muC, mu, R, lg}", 119);
+	if (_res) _res = _definepattern(mlp, (char *)"CoefMat[str_, nf_, s3_]", (char *)"{str, nf, s3}", 120);
+	if (_res) _res = _definepattern(mlp, (char *)"wTilde[order_, nf_, gamma_, a0_, a1_]", (char *)"{order, nf, gamma, a0, a1}", 121);
+	if (_res) _res = _definepattern(mlp, (char *)"kTilde[order_, nf_, gamma_, a0_, a1_]", (char *)"{order, nf, gamma, a0, a1}", 122);
+	if (_res) _res = _definepattern(mlp, (char *)"AlphaQCD[str_, method_, order_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_,                  muC_, mu_]", (char *)"{str, method, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 123);
+	if (_res) _res = _definepattern(mlp, (char *)"AlphaComplex[str_, method_, order_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, mu_]", (char *)"{str, method, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC,                 muC, Re[mu], Im[mu]}", 124);
+	if (_res) _res = _definepattern(mlp, (char *)"MSbarMass[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,                 mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 125);
+	if (_res) _res = _definepattern(mlp, (char *)"PoleMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_, muT_,                 mB_, muB_, mC_, muC_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC,                  mu}", 126);
+	if (_res) _res = _definepattern(mlp, (char *)"MSbarMassLow[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_,                 muB_, mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 127);
+	if (_res) _res = _definepattern(mlp, (char *)"MSRMass[type_, method_, orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, lambda_, mu_, R_]", (char *)"{type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB,                  mC, muC, lambda, mu, R}", 128);
+	if (_res) _res = _definepattern(mlp, (char *)"MSRVFNS[up_, type_, method_, orderAlpha_, runAlpha_, order_,                 run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_,                 mu1_, mu2_, R_]", (char *)"{up, type, method, orderAlpha, runAlpha, order, run, nf, Mz,                  aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R}", 129);
+	if (_res) _res = _definepattern(mlp, (char *)"NRQCD[n_, l_, j_, s_, charm_, scheme_, average_, method_, orderAlpha_,                 runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_,                 mC_, muC_, lambda1_, lambda2_, lam_, mu_, R_]", (char *)"{n, l, j, s, charm, scheme, average, method, orderAlpha, runAlpha, order,                  run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu, R}", 130);
+	if (_res) _res = _definepattern(mlp, (char *)"MassIter[n_, l_, j_, s_, charm_, scheme_, average_, method_, orderAlpha_,                 runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_,                 mC_, muC_, mass_, lambda1_, lambda2_, lam_, mu_, R_]", (char *)"{n, l, j, s, charm, scheme, average, method, orderAlpha, runAlpha, order,                  run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1,                  lambda2, lam, mu, R}", 131);
+	if (_res) _res = _definepattern(mlp, (char *)"MassExpand[n_, l_, j_, s_, charm_, scheme_, average_, method_, orderAlpha_,                 runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_,                 mC_, muC_, mass_, lambda1_, lambda2_, lam_, mu_, R_]", (char *)"{n, l, j, s, charm, scheme, average, method, orderAlpha, runAlpha, order,                  run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1,                  lambda2, lam, mu, R}", 132);
+	if (_res) _res = _definepattern(mlp, (char *)"FindMass[ord_, n_, l_, j_, s_, iter_, charm_, scheme_, average_, method_,                 orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_,                 mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_, lam_, mu_, R_]", (char *)"{ord, n, l, j, s, iter, charm, scheme, average, method, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  mass, lambda1, lambda2, lam, mu, R}", 133);
+	if (_res) _res = _definepattern(mlp, (char *)"MassError[ord_, n_, l_, j_, s_, iter_, charm_, scheme_, average_, method_,                 orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_,                 mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_, lam_, mu0_,                 mu1_, deltaMu_, R0_, R1_, deltaR_, x_]", (char *)"{ord, n, l, j, s, iter, charm, scheme, average, method, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR,                  x}", 134);
+	if (_res) _res = _definepattern(mlp, (char *)"MassList[ord_, n_, l_, j_, s_, iter_, charm_, scheme_, average_,                 method_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,                 mT_, muT_, mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_,                 lam_, mu0_, mu1_, deltaMu_, R0_, R1_, deltaR_]", (char *)"{ord, n, l, j, s, iter, charm, scheme, average, method, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR}", 135);
+	if (_res) _res = _definepattern(mlp, (char *)"NRQCDList[n_, l_, j_, s_, iter_, charm_, scheme_, average_,                 method_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,                 mT_, muT_, mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_,                 lam_, mu0_, mu1_, deltaMu_, R0_, R1_, deltaR_]", (char *)"{n, l, j, s, iter, charm, scheme, average, method, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR}", 136);
+	if (_res) _res = _definepattern(mlp, (char *)"NRQCDError[n_, l_, j_, s_, iter_, charm_, scheme_, average_, method_,                 orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_,                 mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_, lam_, mu0_,                 mu1_, deltaMu_, R0_, R1_, deltaR_, x_]", (char *)"{n, l, j, s, iter, charm, scheme, average, method, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR,                  x}", 137);
+	if (_res) _res = _definepattern(mlp, (char *)"OptimalR[type_, n_, method_, orderAlpha_, runAlpha_, order_, run_,                 nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_, mu_]", (char *)"{type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz,                  mT, muT, mB, muB, mC, muC, lambda, mu}", 138);
+	if (_res) _res = _definepattern(mlp, (char *)"mmfromMSR[type_, orderAlpha_, runAlpha_, order_, run_, nf_, Mz_,                 aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mu_, R_]", (char *)"{type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT,                  mB, muB, mC, muC, mu, R}", 139);
+	if (_res) _res = _definepattern(mlp, (char *)"JetMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, muLambda_, R_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC,                  muC, muLambda, R, mu}", 140);
+	if (_res) _res = _definepattern(mlp, (char *)"mmFromJetMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, muLambda_, R_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC,                  muC, muLambda, R, mu}", 141);
+	if (_res) _res = _definepattern(mlp, (char *)"DeltaMSbar[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,                  mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 142);
+	if (_res) _res = _definepattern(mlp, (char *)"Rhad[scheme_, orderAlpha_, runAlpha_, order_, nf_, Mz_, aMz_, mT_, muT_,                  mB_, muB_, mC_, muC_, mu_, Q_]", (char *)"{scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB, muB, mC,                  muC, mu, Q}", 143);
+	if (_res) _res = _definepattern(mlp, (char *)"RhadCoefs[nf_]", (char *)"{nf}", 144);
+	if (_res) _res = _definepattern(mlp, (char *)"RhadMass[scheme_, current_, orderAlpha_, runAlpha_, runMass_, order_, nf_,                 Mz_, GammaZ_, sin2ThetaW_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mu_, Q_]", (char *)"{scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ,                 sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q}", 145);
+	if (_res) _res = _definepattern(mlp, (char *)"LambdaQCD[scheme_, order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_,                  mB_, muB_, mC_, muC_, mu_]", (char *)"{scheme, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 146);
+	if (_res) _res = _definepattern(mlp, (char *)"Kernel[n_, width_, w_, mu_, p_]", (char *)"{n, width, w, mu, p}", 147);
+	if (_res) _res = _definepattern(mlp, (char *)"GammaDerList[n_, w_]", (char *)"{n, w}", 148);
+	if (_res) _res = _definepattern(mlp, (char *)"polyGamma[n_, w_]", (char *)"{n, w}", 149);
+	if (_res) _res = _definepattern(mlp, (char *)"NGLKernel[n_, n1_, n2_, width_, w_, mu_, p_]", (char *)"{n, n1, n2, width, w, mu, p}", 150);
+	if (_res) _res = _definepattern(mlp, (char *)"NGLIntegral[nf_, pow_, w1_, w2_]", (char *)"{nf, pow, w1, w2}", 151);
+	if (_res) _res = _definepattern(mlp, (char *)"NGLDoubleIntegral[nf_, pow_, w1_, w2_, r_]", (char *)"{nf, pow, w1, w2, r}", 152);
 	if (_res) _res = _doevalstr( mlp, 150);
 	if (_res) _res = _doevalstr( mlp, 151);
+	if (_res) _res = _doevalstr( mlp, 152);
 	if (_res) _res = MLPutSymbol( mlp, "End");
 	if (_res) _res = MLFlush( mlp);
 	return _res;
@@ -13718,7 +13762,7 @@ int MLDoCallPacket( MLINK mlp)
 int MLDoCallPacket( mlp) MLINK mlp;
 #endif
 {
-	return _MLDoCallPacket( mlp, _tramps, 152);
+	return _MLDoCallPacket( mlp, _tramps, 153);
 } /* MLDoCallPacket */
 
 /******************************* begin trailer ********************************/
