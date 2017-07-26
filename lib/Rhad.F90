@@ -4,7 +4,7 @@ module SigmaClass
   use Constants, only: dp, Pi, Pi2, Zeta3;  implicit none;  private
 
   real (dp), dimension(2)               :: EWfact
-  public                                :: setEWfact, Pi0, Pi1, Pi0Der
+  public                                :: setEWfact, Pi0, Pi1, Pi0Der, Pi1Der
 
 !ccccccccccccccc
 
@@ -390,6 +390,40 @@ module SigmaClass
 
 !ccccccccccccccc
 
+  complex (dp) function IzDer(i, u)
+    integer     , intent(in) :: i
+    complex (dp), intent(in) :: u
+
+    if (i == 0) then
+
+      IzDer = Iz(u)
+
+    else if (i == 1) then
+
+      IzDer = 2 * (  Log(u) * ( 2 * (u**2 - 1) * Log(1 - u) + (1 - 3 * u) * u &
+      * Log(u) + 4 * (u**2 - 1) * Log(1 + u) ) + 4 * (u**2 - 1) * cli2(-u) +  &
+      2 * (u**2 - 1) * cli2(u)  )/u/(u**2 - 1)
+
+    else if (i == 2) then
+
+      IzDer = (  2 * Log(u) * ( - 2 * (u**2 - 1)**2 * Log(1 - u) + u**2 * &
+      ( 3 + u * (3 * u - 2) ) * Log(u) - 4 * (u**2 - 1)**2 * Log(1 + u) ) + &
+      4 * (u**2 - 1)**2 * cli2(u) - 4 * (u**2 - 1)**2 * cli2(u**2)  )&
+      /u**2/(u**2 - 1)**2
+
+    else if (i == 3) then
+
+      IzDer = 4 * (  Log(u) * ( 2 * (u**2 - 1)**3 * Log(1 - u) + u * (1 - &
+      u * (6 + (u - 6) * u**2) + u**2 * ( 1 - 3 * u * (3 + (u - 1) * u) ) * &
+      Log(u)) + 4 * (u**2 - 1)**3 * Log(1 + u) ) - 2 * (u**2 - 1)**3 * cli2(u) &
+      + 2 * (u**2 - 1)**3 * cli2(u**2)  )/u**3/(u**2 - 1)**3
+
+    end if
+
+  end function IzDer
+
+!ccccccccccccccc
+
 complex (dp) function DIz(z, u)
   complex (dp), intent(in) :: z, u
   complex (dp) :: lu, u21, sz, c2, c21, lu1, lu2
@@ -454,15 +488,54 @@ end function Pi0Der
 
 !ccccccccccccccc
 
+complex (dp) function Pi1Der(i, z)
+  integer     , intent(in) :: i
+  complex (dp), intent(in) :: z
+  complex (dp) :: uu, uuDer, uuDer2, uuDer3
+
+  Pi1Der = 0; if (i > 0) uu = u(z); if (i > 0) uuDer = uDer(1,uu)
+  if (i > 0) uuDer2 = uDer(2,uu);  if (i > 1) uuDer3 = uDer(3,uu)
+
+  if ( i == 0 ) then
+
+    Pi1Der = Pi1(z)
+
+  else if (i == 1) then
+
+    Pi1Der = (z*(-1 + 16*z**2)*Gz(uu)**2 + 2*z*Gz(uu)*(9 + 6*z**2 + &
+    uuDer*(-1 + z)*z*(-1 + 16*z)*GZDer(1,uu)) - 2*Iz(U(z)) +  &
+    z*(-13 + 2*uuDer2*(-1 + z)*z*(1 + 2*z)*IzDer(1,uu) + uuDer*(3*IzDer(1,uu) &
+    + 2*(-1 + z)*z*((9 + 6*z)*GZDer(1,uu) + uuDer*(1 + 2*z)*IzDer(2,uu)))))/ &
+    (6*z**3)
+
+  else if (i == 2) then
+
+    Pi1Der = (2*z*Gz(uu)**2 + 2*z*Gz(uu)*(-18 + z*(uuDer2*(-1 + z)*z*(-1 + 16*z)  &
+    + uuDer*(-2 + 32*z**2))*GZDer(1,uu) + uuDer**2*(-1 + z)*z**2*(-1 + 16*z)* &
+    GZDer(2,uu)) + 6*Iz(U(z)) + z*(26 + 6*z*(uuDer2*z*(-3 + z + 2*z**2) + &
+    uuDer*(6 + 4*z**2))*GZDer(1,uu) + 2*uuDer**2*(-1 + z)*z**2*(-1 + 16*z)* &
+    GZDer(1,uu)**2 + (-8*uuDer + z*(2*uuDer3*(-1 + z)*z*(1 + 2*z) + &
+    uuDer2*(5 + 4*z**2)))*IzDer(1,uu) + uuDer*z*(6*uuDer2*(-1 + z)*z*(1 + 2*z) &
+    *IzDer(2,uu) + uuDer*(6*(-1 + z)*z*(3 + 2*z)*GZDer(2,uu) + &
+    (5 + 4*z**2)*IzDer(2,uu)) + 2*uuDer**2*(-1 + z)*z*(1 + 2*z)*IzDer(3,uu))))/(6*z**4)
+
+  end if
+
+  if (i > 0) Pi1Der = 3 * Pi1Der/16/Pi2
+
+end function Pi1Der
+
+!ccccccccccccccc
+
 complex (dp) function Pi1(z)
   complex (dp), intent(in) :: z
-  complex (dp) :: uu, Gzuu
+  complex (dp) :: uu, Gzuu, IIz
 
-  uu = u(z); Gzuu = Gz(uu)
+  uu = u(z); Gzuu = Gz(uu); IIz = Iz(uu)
 
   Pi1 = 3 * (  5._dp/6 + 13/z/6 - (1 - z) * (3 + 2 * z) * Gzuu/z + &
-  (1 - z) * (1 - 16 * z) * Gzuu**2/z/6 - (1 + 2 * z)/z/6 * ( Iz(uu)/z + &
-  2 * (1 - z) * DIz(z, uu)  )   )/16/Pi2
+  (1 - z) * (1 - 16 * z) * Gzuu**2/z/6 - (1 + 2 * z)/z/6 * ( IIz/z + &
+  2 * (1 - z) * ( IzDer(1,uu) * uDer(1,uu) - IIz/z )  )   )/16/Pi2
 
 end function Pi1
 
