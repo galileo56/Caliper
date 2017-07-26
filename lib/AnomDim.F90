@@ -1579,10 +1579,30 @@ end function MatchingAlphaUp
 
   real (dp) function deltaCharmNh(r)
     real (dp), intent(in) :: r
+    real (dp) :: lr, r2, r3, r4
 
-    deltaCharmNh = r**2 * ( 51._dp/250 + (37 * r/750 - 443._dp/3000) * r )
+    r2 = r**2; r3 = r * r2; r4 = r2**2
+
+    deltaCharmNh = 0.220910123297541_dp * r2 - 0.28938380134538777_dp * r3 &
+    + 0.17440585865363573_dp * r4 - 0.11323785074517619_dp * lr * r4 + &
+    0.02418707381415922_dp * lr**2 * r4
 
   end function deltaCharmNh
+
+!ccccccccccccccc
+
+  real (dp) function deltaCharmNl(r)
+    real (dp), intent(in) :: r
+    real (dp) :: lr, r2, r3, r4
+
+    r2 = r**2; r3 = r * r2; r4 = r2**2
+
+    deltaCharmNl = - 1.0479013780116122_dp * r + 1.0950478812032618 * lr * r &
+    - 0.12399994427438359_dp * r2 - 0.11682981796156806_dp * lr * r2 &
+    + 0.3611961566069619_dp * r3 + 0.4783975462847179_dp * lr * r3   &
+    - 0.47243160008417545_dp * r4 + 0.16775998088724456_dp * lr * r**4
+
+  end function deltaCharmNl
 
 !ccccccccccccccc
 
@@ -1735,8 +1755,8 @@ end function MatchingAlphaUp
 
     lg = log(a); a2 = a**2; r2 = r**2
 
-    DeltaBottomFunDer = a2 * (-13.407339285356375_dp - 0.7994215175732678_dp * a &
-    + 6.562504757079997_dp * a2) * r2 + (10.068212741421073_dp - &
+    DeltaBottomFunDer = a2 * (13.407339285356375_dp + 0.7994215175732678_dp * a &
+    + 6.562504757079997_dp * a2) * r2 - (10.068212741421073_dp - &
     14.630200980712981_dp * a) * a2 * r2 * lg
 
   end function DeltaBottomFunDer
