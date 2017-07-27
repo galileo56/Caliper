@@ -22,6 +22,8 @@ module VFNSMSRClass
     procedure, pass(self), public :: MSRMass, setMass, RunArray, numFlav, &
     MSRDelta, alphaAll, deltaM, mass, DeltaM2
 
+    procedure, pass(self), private :: LowMass, LowRevol
+
   end type VFNSMSR
 
 !ccccccccccccccc
@@ -35,7 +37,7 @@ module VFNSMSRClass
 
     contains
 
-    procedure, pass(self), public :: MSRTop
+    procedure, pass(self), private :: MSRTop
 
   end type topMSR
 
@@ -199,6 +201,24 @@ contains
 
 !ccccccccccccccc
 
+  real (dp) function MSRMass(self, up, type, order, R, lambda, method)
+    class (VFNSMSR)     , intent(in) :: self
+    real (dp)           , intent(in) :: R
+    real (dp), optional , intent(in) :: lambda
+    character (len = *) , intent(in) :: type, up, method
+    integer             , intent(in) :: order
+
+    select type (self)
+    type is (VFNSMSR)
+      MSRMass = self%LowMass(up, type, order, R, lambda, method)
+    type is (topMSR)
+      MSRMass = self%MSRTop(up, type, order, R, lambda, method)
+    end select
+
+  end function MSRMass
+
+!ccccccccccccccc
+
   recursive real (dp) function MSRTop(self, up, type, order, R, lambda, method) result(res)
     class (topMSR)     , intent(in) :: self
     real (dp)          , intent(in) :: R
@@ -207,6 +227,7 @@ contains
     integer            , intent(in) :: order
     real (dp)          , dimension(4) :: a
     real (dp)          , dimension(2) :: bet2
+    character (len = 5)               :: upLow
     integer                           :: neval, ier, i
     real (dp)                         :: corr, abserr, lambdaQCD, t0, rat1C  , &
     delta, mu, Rstep, delta1, delta2, alpha, alpha2, alpha3, matching, alphaM, &
@@ -214,9 +235,36 @@ contains
 
     res = 0; b1 = self%bHTop(1); b2 = self%bHTop(2)
 
+    if ( up(:2) /= 'up' ) then
+
+      if ( up(:4) == 'down' ) then
+        upLow = 'up'
+      else
+        upLow = 'down'
+      end if
+
+      if ( type(:4) == 'MSRp' ) then
+        alphaM = self%AlphaMass(3)%alphaQCD(self%mB)/Pi
+        a = self%AlphaMass(3)%MSRMatching('charm'); i = min(order, 4)
+        matching = dot_product( a(:i), PowList(alphaM, i) ) - 1
+      else if ( type(:4) == 'MSRh' ) then
+        res = self%MSRTop('up', 'MSRn', order, self%mB, lambda, method) + &
+        self%LowMass(upLow, 'MSRp', order, R, lambda, method) - self%mB
+        return
+      else
+        matching = - 1
+      end if
+
+      res = self%MSRTop('up', type, order, self%mB, lambda, method) + &
+      self%LowMass(upLow, type, order, R, lambda, method) + &
+      self%mB * matching
+      return
+
+    end if
+
     res = self%AlphaMass(3)%MSRMass(type, order, R, lambda, method)
 
-    if ( self%mL < tiny(1._dp) .and. self%mC < tiny(1._dp) ) return
+    if ( self%mB < tiny(1._dp) .and. self%mC < tiny(1._dp) ) return
 
     if ( type(:4) == 'MSRn' .and. order >= 3 ) then
 
@@ -236,7 +284,7 @@ contains
 
     else if ( method(:8) == 'analytic' ) then
 
-      t0 = - 2 * pi/self%beta0/lambda;  t1 = t0/self%AlphaMass(3)%alphaQCD(self%mT)
+      t0 = - 2 * pi/self%betaTop/lambda;  t1 = t0/self%AlphaMass(3)%alphaQCD(self%mT)
       t0 = t0/self%AlphaMass(3)%alphaQCD(R);  bet2(2) = 2 * self%betaTop
       lambdaQCD = self%AlphaMass(3)%lambdaQCD( self%run )
       mol = self%mB/lambdaQCD; bet2(1) = bet2(2)**2; bet2(2) = Product(bet2)
@@ -282,6 +330,9 @@ contains
             deltaCharm3(self%nT, 0, rat2C) )
 
           end if
+
+          delta1 = delta1 + alpha3 * deltaBottomCharm(rat1, rat1C)
+          delta2 = delta2 + alpha3 * deltaBottomCharm(rat2, rat2C)
 
         end if
 
@@ -360,20 +411,17 @@ contains
 
 !ccccccccccccccc
 
-  recursive real (dp) function MSRMass(self, up, type, order, R, lambda, method) result(res)
+  recursive real (dp) function LowMass(self, up, type, order, R, lambda, method) result(res)
     class (VFNSMSR)     , intent(in) :: self
     real (dp)           , intent(in) :: R
     real (dp), optional , intent(in) :: lambda
     character (len = *) , intent(in) :: type, up, method
     integer             , intent(in) :: order
     real (dp)         , dimension(4) :: a
-    real (dp)         , dimension(2) :: bet2
-    integer                          :: neval, ier, i
-    real (dp)                        :: corr, abserr, lambdaQCD, t0, t1, b1, &
-    delta, mu, Rstep, delta1, delta2, alpha, alpha2, alpha3, matching, alphaM,&
-    rat1, rat2, mol, b2
+    integer                          :: i
+    real (dp)                        :: matching, alphaM
 
-    res = 0; b1 = self%bHat(1); b2 = self%bHat(2)
+    res = 0
 
     if ( up(:4) == 'down' ) then
 
@@ -409,28 +457,44 @@ contains
 
     if (self%run < 2) return
 
+    res = res + self%LowRevol(type, self%mH, R, lambda, method)
+
+  end function LowMass
+
+!ccccccccccccccc
+
+  real (dp) function LowRevol(self, type, R0, R, lambda, method)
+    class (VFNSMSR)     , intent(in) :: self
+    real (dp)           , intent(in) :: R0, R
+    real (dp), optional , intent(in) :: lambda
+    character (len = *) , intent(in) :: type, method
+    real (dp)         , dimension(2) :: bet2
+    integer                          :: neval, ier
+    real (dp)                        :: abserr, t0, t1, lambdaQCD, b1, delta, &
+    mu, Rstep, delta1, delta2, alpha, alpha2, alpha3, rat1, rat2, mol, b2
+
+    LowRevol = 0; b1 = self%bHat(1); b2 = self%bHat(2)
+
     if ( method(:7) == 'numeric' ) then
 
-      call qags( InteNum, R/lambda, self%mH/lambda, prec, prec, corr, &
+      call qags( InteNum, R/lambda, R0, prec, prec, LowRevol, &
       abserr, neval, ier )
-
-      res = res + corr
 
     else if ( method(:8) == 'analytic' ) then
 
-      t0 = - 2 * pi/self%beta0/lambda;  t1 = t0/self%AlphaMass(2)%alphaQCD(self%mH)
+      t0 = - 2 * pi/self%beta0/lambda;  t1 = t0/self%AlphaMass(2)%alphaQCD(R0)
       t0 = t0/self%AlphaMass(2)%alphaQCD(R);  bet2(2) = 2 * self%beta0
       lambdaQCD = self%AlphaMass(2)%lambdaQCD( self%run )
       mol = self%mL/lambdaQCD; bet2(1) = bet2(2)**2; bet2(2) = Product(bet2)
 
-      call qags( InteAn, t1, t0, prec, prec, corr, abserr, neval, ier )
+      call qags( InteAn, t1, t0, prec, prec, LowRevol, abserr, neval, ier )
 
-      res = res + lambdaQCD * corr
+      LowRevol = lambdaQCD * LowRevol
 
     else if ( method(:4) == 'diff' ) then
 
-      delta = 0.1_dp;   neval = abs(  Nint( ( self%mH - R )/delta )  )
-      delta = (self%mH - R)/neval; corr = 0; Rstep = self%mH + delta
+      delta = 0.1_dp;   neval = abs(  Nint( (R0 - R)/delta )  )
+      delta = (R0 - R)/neval; LowRevol = 0; Rstep = R0 + delta
 
       do ier = 1, neval
 
@@ -455,12 +519,9 @@ contains
 
         end if
 
-        corr = corr + Rstep * delta1 - (Rstep - delta) * delta2
+        LowRevol = LowRevol + Rstep * delta1 - (Rstep - delta) * delta2
 
       end do
-
-      res = res + corr
-
     end if
 
   contains
@@ -516,7 +577,7 @@ contains
 
     end function InteAn
 
-  end function MSRMass
+  end function LowRevol
 
 !ccccccccccccccc
 
@@ -532,7 +593,7 @@ contains
       call self%alphaMass(2)%SetMTop(m, mu)
 
       select type (self)
-      class is (topMSR)
+      type is (topMSR)
         call self%alphaMass(3)%SetMTop(m, mu)
       end select
 
