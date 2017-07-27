@@ -1583,7 +1583,9 @@ end function MatchingAlphaUp
     real (dp)               :: lr
     real (dp), dimension(8) :: rPow
 
-    rPow = PowList(r,8); lr = log(r)
+    rPow = PowList(r,8); lr = log(r); deltaCharmGlue = 0
+
+    if ( r <= tiny(1._dp) ) return
 
     deltaCharmGlue = r * ( 146.55437276141436_dp - 68.5502265986958_dp * r + &
     72.20843181777957_dp * rPow(2) + 44.70786258835728_dp * rPow(3) + &
@@ -1606,7 +1608,9 @@ end function MatchingAlphaUp
     real (dp)               :: lr
     real (dp), dimension(9) :: rPow
 
-    rPow = PowList(r,9); lr = log(r)
+    rPow = PowList(r,9); lr = log(r); deltaCharmGlueDer = 0
+
+    if ( r <= tiny(1._dp) ) return
 
     deltaCharmGlueDer = (  182.09667057261015_dp - 1603.9921461502795_dp * r + &
     389.59112788526295_dp * rpow(2) + 1054.578281805314_dp * rPow(3) + &
@@ -1633,7 +1637,9 @@ end function MatchingAlphaUp
     real (dp)               :: lr
     real (dp), dimension(8) :: rPow
 
-    rPow = PowList(r,8); lr = log(r)
+    rPow = PowList(r,8); lr = log(r); deltaCharmNL = 0
+
+    if ( r <= tiny(1._dp) ) return
 
     deltaCharmNL = - 0.0025170068027210884_dp * lr * r * ( -435.6852393273681_dp &
     - 435.6852393273681_dp * rPow(2) - 112.12030500101459_dp * rPow(3) - &
@@ -1654,7 +1660,9 @@ end function MatchingAlphaUp
     real (dp)               :: lr
     real (dp), dimension(9) :: rPow
 
-    rPow = PowList(r,9); lr = log(r)
+    rPow = PowList(r,9); lr = log(r); deltaCharmNLDer = 0
+
+    if ( r <= tiny(1._dp) ) return
 
     deltaCharmNLDer = (  0.12390777917265539_dp + 1.1178679723201213_dp * r + &
     5.237550598120457_dp * rPow(2) + 3.277409326369551_dp * rPow(3) - &
@@ -1680,7 +1688,9 @@ end function MatchingAlphaUp
     real (dp)               :: lr
     real (dp), dimension(7) :: rPow
 
-    rPow = PowList(r,7); lr = log(r)
+    rPow = PowList(r,7); lr = log(r); deltaCharmNH = 0
+
+    if ( r <= tiny(1._dp) ) return
 
     deltaCharmNH = rPow(2) * (   ( 0.327412590226266_dp - 0.6530803188815482_dp * r &
     + 0.4620726956320225_dp * rPow(2) - 0.11513821076485932_dp * rPow(3) + &
@@ -1700,7 +1710,9 @@ end function MatchingAlphaUp
     real (dp)               :: lr
     real (dp), dimension(8) :: rPow
 
-    rPow = PowList(r,8); lr = log(r)
+    rPow = PowList(r,8); lr = log(r); deltaCharmNHDer = 0
+
+    if ( r <= tiny(1._dp) ) return
 
     deltaCharmNHDer = r * (  0.9647936429506729_dp - 3.2140798371305803_dp * r + &
     3.651244040544068_dp * rpow(2) - 1.7211505804162772_dp * rpow(3) + &
@@ -1848,6 +1860,8 @@ end function MatchingAlphaUp
 
     lg = log(a); a2 = a**2; a3 = a2 * a; a4 = a2**2; r2 = r**2
 
+    DeltaBottomFun = 0;  if ( r <= tiny(1._dp) ) return
+
     DeltaBottomFun = 64.94343831699491_dp * a * r + 31.76898209724912_dp * a2 * r &
     - 0.16416623684141785_dp * a3 * r - 13.407339285356375_dp * a2 * r2 - &
     0.7994215175732678_dp * a3 * r2 + 6.562504757079997_dp * a4 * r2 &
@@ -1864,6 +1878,8 @@ end function MatchingAlphaUp
 
     lg = log(a); a2 = a**2; r2 = r**2
 
+    DeltaBottomFunDer = 0;  if ( r <= tiny(1._dp) ) return
+
     DeltaBottomFunDer = a2 * (13.407339285356375_dp + 0.7994215175732678_dp * a &
     + 6.562504757079997_dp * a2) * r2 - (10.068212741421073_dp - &
     14.630200980712981_dp * a) * a2 * r2 * lg
@@ -1874,6 +1890,10 @@ end function MatchingAlphaUp
 
   real (dp) function DeltaBottomCharm(r1, r2)
     real (dp), intent(in) :: r1, r2
+
+    DeltaBottomCharm = 0
+
+    if ( r1 * r2 <= tiny(1.d0) ) return
 
     if (r1 >= r2) then
       DeltaBottomCharm = DeltaBottomFun(r1, r2/r1)
@@ -1889,6 +1909,10 @@ end function MatchingAlphaUp
 
   real (dp) function gammaRBottomCharm(r1, r2)
     real (dp), intent(in) :: r1, r2
+
+    gammaRBottomCharm = 0
+
+    if ( r1 * r2 <= tiny(1.d0) ) return
 
     if (r1 >= r2) then
       gammaRBottomCharm = DeltaBottomFunDer(r1, r2/r1)
