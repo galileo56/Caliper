@@ -202,11 +202,11 @@ contains
 !ccccccccccccccc
 
   real (dp) function MSRMass(self, up, type, order, R, lambda, method)
-    class (VFNSMSR)     , intent(in) :: self
-    real (dp)           , intent(in) :: R
-    real (dp), optional , intent(in) :: lambda
-    character (len = *) , intent(in) :: type, up, method
-    integer             , intent(in) :: order
+    class (VFNSMSR)    , intent(in) :: self
+    real (dp)          , intent(in) :: R
+    real (dp), optional, intent(in) :: lambda
+    character (len = *), intent(in) :: type, up, method
+    integer            , intent(in) :: order
 
     select type (self)
     type is (VFNSMSR)
@@ -220,11 +220,11 @@ contains
 !ccccccccccccccc
 
   recursive real (dp) function MSRTop(self, up, type, order, R, lambda, method) result(res)
-    class (topMSR)     , intent(in) :: self
-    real (dp)          , intent(in) :: R
-    real (dp), optional, intent(in) :: lambda
-    character (len = *), intent(in) :: type, up, method
-    integer            , intent(in) :: order
+    class (topMSR)       , intent(in) :: self
+    real (dp)            , intent(in) :: R
+    real (dp), optional  , intent(in) :: lambda
+    character (len = *)  , intent(in) :: type, up, method
+    integer              , intent(in) :: order
     real (dp)          , dimension(4) :: a
     real (dp)          , dimension(2) :: bet2
     character (len = 5)               :: upLow
@@ -244,9 +244,12 @@ contains
       end if
 
       if ( type(:4) == 'MSRp' ) then
+
         alphaM = self%AlphaMass(3)%alphaQCD(self%mB)/Pi
         a = self%AlphaMass(3)%MSRMatching('charm'); i = min(order, 4)
         matching = dot_product( a(:i), PowList(alphaM, i) ) - 1
+        if (i > 2) matching = matching + deltaCharmNh(self%ratCharm) * alphaM**3
+
       else if ( type(:4) == 'MSRh' ) then
         res = self%MSRTop('up', 'MSRn', order, self%mB, lambda, method) + &
         self%LowMass(upLow, 'MSRp', order, R, lambda, method) - self%mB
@@ -266,7 +269,7 @@ contains
 
     if ( self%mB < tiny(1._dp) .and. self%mC < tiny(1._dp) ) return
 
-    if ( type(:4) == 'MSRn' .and. order >= 3 ) then
+    if ( type(:4) == 'MSRn' .and. order > 2 ) then
 
       res = res + self%mT * ( deltaCharmNh(self%ratBottom) + deltaCharmNh(self%ratCharm) ) * &
       ( self%AlphaOb%alphaQCD(self%nT + 1, self%mT)/Pi )**3
