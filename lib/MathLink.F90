@@ -3955,8 +3955,8 @@ amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, mu3, R, res)
   use AnomDimClass;  use VFNSMSRClass ;  implicit none
 
   character (len = *), intent(in) :: method, type, up
-  integer           , intent(in ) :: orderAlpha, runAlpha, order, run, nf
-  real (dp)         , intent(in ) :: mZ, amZ, mu1, mu2, mT, muT, mB, muB, mC, &
+  integer            , intent(in) :: orderAlpha, runAlpha, order, run, nf
+  real (dp)          , intent(in) :: mZ, amZ, mu1, mu2, mT, muT, mB, muB, mC, &
   muC, R, lambda, mu3
   real (dp)         , intent(out) :: res
   type (Running), dimension(3)    :: alphaMass

@@ -306,9 +306,9 @@ contains
     real (dp)          , dimension(2) :: bet2
     character (len = 5)               :: upLow
     integer                           :: neval, ier, i
-    real (dp)                         :: corr, abserr, lambdaQCD, t0, rat1C  , &
-    delta, mu, Rstep, delta1, delta2, alpha, alpha2, alpha3, matching, alphaM, &
-    rat1, rat2, t1, b1, b2, mol, molC, rat2C
+    real (dp)                         :: corr, abserr, lambdaQCD, t0, ratC, mu,&
+    delta, Rstep, delta1, delta2, alpha, alpha2, alpha3, matching, alphaM, rat,&
+    rat1, rat2, t1, b1, b2, mol, molC, rat2C, ratB, alphaQ, rat1C
 
     res = 0; b1 = self%bHTop(1); b2 = self%bHTop(2)
 
@@ -330,12 +330,44 @@ contains
       else if ( type(:4) == 'MSRh' ) then
         res = self%MSRTop('up', 'MSRn', order, self%mB, lambda, method) + &
         self%LowMass(upLow, 'MSRp', order, R, lambda, method) - self%mB
-        return
       else
         matching = - 1
       end if
 
-      res = self%MSRTop('up', type, order, self%mB, lambda, method) + &
+      if ( type(5:5) == 'V' .and. i > 1 ) then
+
+        rat = self%mB/self%mT;  ratC = self%mC/self%mT;  ratB = self%mC/self%mB
+        alphaQ = self%AlphaMass(3)%alphaQCD(self%mT)/Pi
+
+        if ( type(:4) /= 'MSRp' ) alphaM = self%AlphaMass(3)%alphaQCD(self%mB)/Pi
+
+        res = res + self%mT * ( deltaCharm2(rat) + deltaCharm2(ratC) ) * alphaQ**2 &
+        - self%mB * ( deltaCharm2(1._dp) + deltaCharm2(ratB) ) * alphaM**2
+
+        if (i > 2) then
+          if ( type(:4) == 'MSRp' ) then
+
+            res = res + self%mT * alphaQ**3 * ( deltaCharm3(self%nT, 1, rat) + &
+            deltaCharm3(self%nT, 1, ratC) ) - self%mB * alphaM**3 * &
+            ( deltaCharm3(self%nT, 1, 1._dp) + deltaCharm3(self%nT, 1, ratB) )
+
+          else if ( type(:4) == 'MSRn' .or.  type(:4) == 'MSRh' ) then
+
+            res = res + self%mT * alphaQ**3 * ( deltaCharm3(self%nT, 0, rat) + &
+            deltaCharm3(self%nT, 0, ratC) ) - self%mB * alphaM**3 * &
+            ( deltaCharm3(self%nT, 0, 1._dp) + deltaCharm3(self%nT, 0, ratB) )
+
+          end if
+
+          res = res + self%mT * alphaQ**3 * deltaBottomCharm(rat, ratC) - &
+          self%mB * alphaM**3 * deltaBottomCharm(1._dp, ratB)
+
+        end if
+      end if
+
+      if ( type(:4) == 'MSRh' ) return
+
+      res = res + self%MSRTop('up', type, order, self%mB, lambda, method) + &
       self%LowMass(upLow, type, order, R, lambda, method) + &
       self%mB * matching
       return
@@ -353,7 +385,7 @@ contains
 
     end if
 
-    if (self%run < 2 .or. type(5:5) == 'V') return
+    if ( self%run < 2 .or. type(5:5) == 'V' ) return
 
     if ( method(:7) == 'numeric' ) then
 
@@ -528,13 +560,13 @@ contains
         if (i > 2) then
           if ( type(:4) == 'MSRp' ) then
 
-            res = res + self%mH * deltaCharm3(self%nl, 1, rat) * alphaQ**3 &
-            - self%mL * deltaCharm3(self%nl, 1, 1._dp) * alphaM**3
+            res = res + self%mH * deltaCharm3(self%nf, 1, rat) * alphaQ**3 &
+            - self%mL * deltaCharm3(self%nf, 1, 1._dp) * alphaM**3
 
           else if ( type(:4) == 'MSRn' .or.  type(:4) == 'MSRh' ) then
 
-            res = res + self%mH * deltaCharm3(self%nl, 0, rat) * alphaQ**3 &
-            - self%mL * deltaCharm3(self%nl, 0, 1._dp) * alphaM**3
+            res = res + self%mH * deltaCharm3(self%nf, 0, rat) * alphaQ**3 &
+            - self%mL * deltaCharm3(self%nf, 0, 1._dp) * alphaM**3
 
           end if
         end if
