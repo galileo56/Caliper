@@ -138,9 +138,17 @@ contains
     character (len = *), intent(in) :: up
     real (dp)          , intent(in) :: R
 
-    DeltaM = 0; if ( self%mL <= tiny(1._dp) ) return
+    DeltaM = 0
 
-    if ( up(:2) == 'up' ) DeltaM = deltaCharm2(self%mL/R)
+    select type (self)
+    type is (VFNSMSR)
+      if ( self%mL <= tiny(1._dp) ) return
+      if ( up(:2) == 'up' ) DeltaM = deltaCharm2(self%mL/R)
+    type is (topMSR)
+      if ( self%mB <= tiny(1._dp) .and. self%mC <= tiny(1._dp) ) return
+      if ( up(:2) == 'up'   ) DeltaM = deltaCharm2(self%mB/R) + deltaCharm2(self%mC/R)
+      if ( up(:4) == 'down' ) DeltaM = deltaCharm2(self%mC/R)
+    end select
 
   end function DeltaM
 
@@ -151,17 +159,51 @@ contains
     character (len = *), intent(in) :: up, type
     real (dp)          , intent(in) :: R
 
-    DeltaM2 = 0; if ( self%mL <= tiny(1._dp) ) return
+    DeltaM2 = 0
 
-    if ( up(:2) == 'up' ) then
+    select type (self)
+    type is (VFNSMSR)
 
-      if ( type(:4) == 'MSRn' ) then
-        DeltaM2 = deltaCharm3(self%nf, 0, self%mL/R)
-      else if ( type(:4) == 'MSRp' .or. type(:5) == 'MSbar' ) then
-        DeltaM2 = deltaCharm3(self%nf, 1, self%mL/R)
+      if ( self%mL <= tiny(1._dp) ) return
+
+      if ( up(:2) == 'up' ) then
+
+        if ( type(:4) == 'MSRn' ) then
+          DeltaM2 = deltaCharm3(self%nf, 0, self%mL/R)
+        else if ( type(:4) == 'MSRp' .or. type(:5) == 'MSbar' ) then
+          DeltaM2 = deltaCharm3(self%nf, 1, self%mL/R)
+        end if
       end if
 
-    end if
+    type is (topMSR)
+
+      if ( up(:2) == 'up' ) then
+
+        if ( type(:4) == 'MSRn' ) then
+
+          DeltaM2 = deltaCharm3(self%nT, 0, self%mB/R) + &
+          deltaCharm3(self%nf, 0, self%mC/R)
+
+        else if ( type(:4) == 'MSRp' .or. type(:5) == 'MSbar' ) then
+
+          DeltaM2 = deltaCharm3(self%nT, 1, self%mB/R) + &
+          deltaCharm3(self%nT, 1, self%mC/R)
+
+        end if
+
+        DeltaM2 = DeltaM2 + deltaBottomCharm(self%mB/R, self%mC/R)
+
+      else if ( up(:4) == 'down' ) then
+
+        if ( type(:4) == 'MSRn' ) then
+          DeltaM2 = deltaCharm3(self%nf, 0, self%mC/R)
+        else if ( type(:4) == 'MSRp' .or. type(:5) == 'MSbar' ) then
+          DeltaM2 = deltaCharm3(self%nf, 1, self%mC/R)
+        end if
+
+      end if
+
+    end select
 
   end function DeltaM2
 
@@ -170,7 +212,10 @@ contains
   real (dp) function mass(self)
     class (VFNSMSR), intent(in) :: self
 
-    mass = self%mH
+    select type (self)
+    type is (VFNSMSR); mass = self%mH
+    type is (topMSR) ; mass = self%mT
+    end select
 
   end function mass
 
@@ -181,21 +226,53 @@ contains
     character (len = *), intent(in) :: type, up
     real (dp)          , intent(in) :: R
     real (dp)        , dimension(4) :: res
-    real (dp)                       :: rat
+    real (dp)                       :: rat, ratC
 
-    if ( up(:2) == 'up' ) then
-      res = self%AnDim(2)%MSRDelta(type)        ; rat = self%mL/R
-      res(2) = res(2) + deltaCharm2(rat)
+    select type (self)
+    type is (VFNSMSR)
 
-      if ( type(:4) == 'MSRn' ) then
-        res(3) = res(3) + deltaCharm3(self%nf, 0, rat)
-      else if ( type(:4) == 'MSRp' ) then
-        res(3) = res(3) + deltaCharm3(self%nf, 1, rat)
+      if ( up(:2) == 'up' ) then
+
+        res = self%AnDim(2)%MSRDelta(type)        ; rat = self%mL/R
+        res(2) = res(2) + deltaCharm2(rat)
+
+        if ( type(:4) == 'MSRn' ) then
+          res(3) = res(3) + deltaCharm3(self%nf, 0, rat)
+        else if ( type(:4) == 'MSRp' ) then
+          res(3) = res(3) + deltaCharm3(self%nf, 1, rat)
+        end if
+
+      else
+        res = self%AnDim(1)%MSRDelta(type)
       end if
 
-    else
-      res = self%AnDim(1)%MSRDelta(type)
-    end if
+    type is (topMSR)
+
+      if ( up(:2) == 'up' ) then
+        res = self%AnDim(3)%MSRDelta(type) ; rat = self%mB/R ; ratC = self%mC/R
+        res(2) = res(2) + deltaCharm2(rat) + deltaCharm2(ratC)
+
+        if ( type(:4) == 'MSRn' ) then
+          res(3) = res(3) + deltaCharm3(self%nT, 0, rat) + deltaCharm3(self%nT, 0, ratC)
+        else if ( type(:4) == 'MSRp' ) then
+          res(3) = res(3) + deltaCharm3(self%nT, 1, rat) + deltaCharm3(self%nT, 1, ratC)
+        end if
+
+        res(3) = res(3) + deltaBottomCharm(rat, ratC)
+
+      else if ( up(:4) == 'down' ) then
+
+        res = self%AnDim(2)%MSRDelta(type)        ; rat = self%mC/R
+        res(2) = res(2) + deltaCharm2(rat)
+
+        if ( type(:4) == 'MSRn' ) then
+          res(3) = res(3) + deltaCharm3(self%nf, 0, rat)
+        else if ( type(:4) == 'MSRp' ) then
+          res(3) = res(3) + deltaCharm3(self%nf, 1, rat)
+        end if
+
+      end if
+    end select
 
   end function MSRDelta
 
