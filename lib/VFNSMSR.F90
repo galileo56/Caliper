@@ -353,7 +353,7 @@ contains
 
     end if
 
-    if (self%run < 2) return
+    if (self%run < 2 .or. type(5:5) == 'V') return
 
     if ( method(:7) == 'numeric' ) then
 
@@ -499,7 +499,7 @@ contains
     integer             , intent(in) :: order
     real (dp)         , dimension(4) :: a
     integer                          :: i
-    real (dp)                        :: matching, alphaM
+    real (dp)                        :: matching, alphaM, rat, alphaQ
 
     res = 0
 
@@ -512,14 +512,40 @@ contains
       else if ( type(:4) == 'MSRh' ) then
         res = self%MSRMass('up', 'MSRn', order, self%mL, lambda, method) + &
         self%AlphaMass(1)%MSREvol('MSRp', order, R, lambda, method)
-        return
       else
         matching = - 1
       end if
 
-      res = self%MSRMass('up', type, order, self%mL, lambda, method) + &
+      if ( type(5:5) == 'V' .and. i > 1 ) then
+
+        rat = self%mL/self%mH; alphaQ = self%AlphaMass(2)%alphaQCD(self%mH)/Pi
+
+        if ( type(:4) /= 'MSRp' ) alphaM = self%AlphaMass(2)%alphaQCD(self%mL)/Pi
+
+        res = res + self%mH * deltaCharm2(rat) * alphaQ**2 &
+        - self%mL * deltaCharm2(1._dp) * alphaM**2
+
+        if (i > 2) then
+          if ( type(:4) == 'MSRp' ) then
+
+            res = res + self%mH * deltaCharm3(self%nl, 1, rat) * alphaQ**3 &
+            - self%mL * deltaCharm3(self%nl, 1, 1._dp) * alphaM**3
+
+          else if ( type(:4) == 'MSRn' .or.  type(:4) == 'MSRh' ) then
+
+            res = res + self%mH * deltaCharm3(self%nl, 0, rat) * alphaQ**3 &
+            - self%mL * deltaCharm3(self%nl, 0, 1._dp) * alphaM**3
+
+          end if
+        end if
+      end if
+
+      if ( type(:4) == 'MSRh' ) return
+
+      res = res + self%MSRMass('up', type, order, self%mL, lambda, method) + &
       self%AlphaMass(1)%MSRMass(type, order, R, lambda, method) + &
       self%mL * matching
+
       return
 
     end if
@@ -535,7 +561,7 @@ contains
 
     end if
 
-    if (self%run < 2) return
+    if (self%run < 2 .or.  type(5:5) == 'V' ) return
 
     res = res + self%LowRevol(type, self%mH, R, lambda, method)
 

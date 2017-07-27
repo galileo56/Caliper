@@ -3943,7 +3943,7 @@ amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R, res)
   alphaMass(1) = Running(nf - 1, run, alphaAll, mu2)
   alphaMass(2) = Running(nf    , run, alphaAll, mu1)
   MSRVFNS      = VFNSMSR( alphaMass )
-  res          = MSRVFNS%MSRMass( up(:4), type(:4), order, R, lambda, method(:8) )
+  res          = MSRVFNS%MSRMass( up(:4), type(:5), order, R, lambda, method(:8) )
 
 end subroutine f90MSRVFNS
 
@@ -3976,7 +3976,7 @@ amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, mu3, R, res)
   alphaMass(2) = Running(nf - 1, run, alphaAll, mu2)
   alphaMass(3) = Running(nf    , run, alphaAll, mu1)
   MSRVFNS      = topMSR( alphaMass )
-  res          = MSRVFNS%MSRMass( up(:5), type(:4), order, R, lambda, method(:8) )
+  res          = MSRVFNS%MSRMass( up(:5), type(:5), order, R, lambda, method(:8) )
 
 end subroutine f90MSRTop
 
