@@ -404,19 +404,19 @@ contains
       call qags( InteNum, R/lambda, self%mT/lambda, prec, prec, corr, &
       abserr, neval, ier )
 
-      res = res + corr
+      res = res + lambda * corr
 
     else if ( method(:8) == 'analytic' ) then
 
       t0 = - 2 * pi/self%betaTop/lambda;  t1 = t0/self%AlphaMass(3)%alphaQCD(self%mT)
       t0 = t0/self%AlphaMass(3)%alphaQCD(R);  bet2(2) = 2 * self%betaTop
-      lambdaQCD = self%AlphaMass(3)%lambdaQCD( self%run )
+      lambdaQCD = self%AlphaMass(3)%lambdaQCD(self%run)
       mol = self%mB/lambdaQCD; bet2(1) = bet2(2)**2; bet2(2) = Product(bet2)
       molC = self%mC/lambdaQCD
 
       call qags( InteAn, t1, t0, prec, prec, corr, abserr, neval, ier )
 
-      res = res + lambdaQCD * corr
+      res = res + lambda * lambdaQCD * corr
 
     else if ( method(:4) == 'diff' ) then
 
@@ -472,27 +472,30 @@ contains
 
 !ccccccccccccccc
 
-    real (dp) function InteNum(mu)
-      real (dp), intent(in) :: mu
+    real (dp) function InteNum(R)
+      real (dp), intent(in) :: R
       real (dp)             :: aPi, api2, api3
 
-      aPi = self%AlphaMass(3)%alphaQCD(mu)/4/Pi; aPi2 = aPi**2
+      aPi = self%AlphaMass(3)%alphaQCD(R)/4/Pi; aPi2 = aPi**2
 
-      InteNum = ( gammaRcharm2(self%mB/mu) + gammaRcharm2(self%mC/mu) ) * aPi2
+      InteNum = ( gammaRcharm2(self%mB/R/lambda) + gammaRcharm2(self%mC/R/lambda) ) * aPi2
 
       if (self%run >= 3) then
+
+        if ( abs(lambda - 1) >= tiny(1._dp) ) &
+        InteNum = InteNum - 4 * log(lambda) * InteNum * aPi
 
         aPi3 = aPi * aPi2
 
         if ( type(:4) == 'MSRp' ) then
-          InteNum = InteNum + ( gammaRcharm3(self%nT, 1, self%mB/mu) + &
-          gammaRcharm3(self%nT, 1, self%mC/mu) ) * aPi3
+          InteNum = InteNum + ( gammaRcharm3(self%nT, 1, self%mB/R/lambda) + &
+          gammaRcharm3(self%nT, 1, self%mC/R/lambda) ) * aPi3
         else if ( type(:4) == 'MSRn' ) then
-          InteNum = InteNum + ( gammaRcharm3(self%nT, 0, self%mB/mu) + &
-          gammaRcharm3(self%nT, 0, self%mC/mu) ) * aPi3
+          InteNum = InteNum + ( gammaRcharm3(self%nT, 0, self%mB/R/lambda) + &
+          gammaRcharm3(self%nT, 0, self%mC/R/lambda) ) * aPi3
         end if
 
-        InteNum = InteNum + aPi3 * GammaRBottomCharm(self%mB/mu, self%mC/mu)
+        InteNum = InteNum + aPi3 * GammaRBottomCharm(self%mB/R/lambda, self%mC/R/lambda)
 
       end if
 
@@ -521,6 +524,9 @@ contains
 
         gammaR2 = gammaR2 + GammaRBottomCharm(mol * self%Andim(3)%Gfun(self%run,t), &
         molC * self%Andim(3)%Gfun(self%run,t) )
+
+        if ( abs(lambda - 1) >= tiny(1._dp) ) &
+        gammaR2 = gammaR2 - 4 * log(lambda) * gammaR
 
         gammaR = gammaR2/bet2(2) - (b1 + b2) * gammaR
         InteAn = InteAn + (-t)**(- 3 - b1) * gammaR
@@ -617,7 +623,7 @@ contains
 
     end if
 
-    if (self%run < 2 .or.  type(5:5) == 'V' ) return
+    if (self%run < 2 .or. type(5:5) == 'V' ) return
 
     res = res + self%LowRevol(type, self%mH, R, lambda, method)
 
@@ -639,19 +645,21 @@ contains
 
     if ( method(:7) == 'numeric' ) then
 
-      call qags( InteNum, R/lambda, R0, prec, prec, LowRevol, &
+      call qags( InteNum, R/lambda, R0/lambda, prec, prec, LowRevol, &
       abserr, neval, ier )
+
+      LowRevol = lambda * LowRevol
 
     else if ( method(:8) == 'analytic' ) then
 
-      t0 = - 2 * pi/self%beta0/lambda;  t1 = t0/self%AlphaMass(2)%alphaQCD(R0)
-      t0 = t0/self%AlphaMass(2)%alphaQCD(R);  bet2(2) = 2 * self%beta0
-      lambdaQCD = self%AlphaMass(2)%lambdaQCD( self%run )
+      t0 = - 2 * pi/self%beta0;  t1 = t0/self%AlphaMass(2)%alphaQCD(R0/lambda)
+      t0 = t0/self%AlphaMass(2)%alphaQCD(R/lambda);  bet2(2) = 2 * self%beta0
+      lambdaQCD = self%AlphaMass(2)%lambdaQCD(self%run)
       mol = self%mL/lambdaQCD; bet2(1) = bet2(2)**2; bet2(2) = Product(bet2)
 
       call qags( InteAn, t1, t0, prec, prec, LowRevol, abserr, neval, ier )
 
-      LowRevol = lambdaQCD * LowRevol
+      LowRevol = lambda * lambdaQCD * LowRevol
 
     else if ( method(:4) == 'diff' ) then
 
@@ -690,22 +698,25 @@ contains
 
 !ccccccccccccccc
 
-    real (dp) function InteNum(mu)
-      real (dp), intent(in) :: mu
+    real (dp) function InteNum(R)
+      real (dp), intent(in) :: R
       real (dp)             :: aPi, api2, api3
 
-      aPi = self%AlphaMass(2)%alphaQCD(mu)/4/Pi; aPi2 = aPi**2
+      aPi = self%AlphaMass(2)%alphaQCD(R)/4/Pi; aPi2 = aPi**2
 
-      InteNum = gammaRcharm2(self%mL/mu) * aPi2
+      InteNum = gammaRcharm2(self%mL/R/lambda) * aPi2
 
       if (self%run >= 3) then
+
+        if ( abs(lambda - 1) >= tiny(1._dp) ) &
+        InteNum = InteNum - 4 * log(lambda) * InteNum * aPi
 
         aPi3 = aPi * aPi2
 
         if ( type(:4) == 'MSRp' ) then
-          InteNum = InteNum + gammaRcharm3(self%nf, 1, self%mL/mu) * aPi3
+          InteNum = InteNum + gammaRcharm3(self%nf, 1, self%mL/R/lambda) * aPi3
         else if ( type(:4) == 'MSRn' ) then
-          InteNum = InteNum + gammaRcharm3(self%nf, 0, self%mL/mu) * aPi3
+          InteNum = InteNum + gammaRcharm3(self%nf, 0, self%mL/R/lambda) * aPi3
         end if
 
       end if
@@ -718,17 +729,20 @@ contains
       real (dp), intent(in) :: t
       real (dp)             :: gammaR, gammaR2
 
-      gammaR = gammaRcharm2(mol * self%Andim(2)%Gfun(self%run,t) )/bet2(1)
+      gammaR = gammaRcharm2(mol/lambda * self%Andim(2)%Gfun(self%run,t) )/bet2(1)
 
       InteAn = (-t)**(- 2 - b1) * gammaR
 
       if (self%run >= 3) then
 
         if ( type(:4) == 'MSRp' ) then
-          gammaR2 = gammaRcharm3(self%nf, 1, mol * self%Andim(2)%Gfun(self%run,t) )
+          gammaR2 = gammaRcharm3(self%nf, 1, mol/lambda * self%Andim(2)%Gfun(self%run,t) )
         else if ( type(:4) == 'MSRn' ) then
-          gammaR2 = gammaRcharm3(self%nf, 0, mol * self%Andim(2)%Gfun(self%run,t) )
+          gammaR2 = gammaRcharm3(self%nf, 0, mol/lambda * self%Andim(2)%Gfun(self%run,t) )
         end if
+
+        if ( abs(lambda - 1) >= tiny(1._dp) ) &
+        gammaR2 = gammaR2 - 4 * log(lambda) * gammaR * bet2(1)
 
         gammaR = gammaR2/bet2(2) - (b1 + b2) * gammaR
         InteAn = InteAn + (-t)**(- 3 - b1) * gammaR
