@@ -343,7 +343,7 @@ contains
       if ( type(5:5) == 'V' .and. order > 1 ) then
 
         rat = self%mB/self%mT;  ratC = self%mC/self%mT;  ratB = self%mC/self%mB
-        mu = (  (lambda - 0.5_dp) * self%mT + (2 - lambda) * self%mB  )/1.5_dp
+        mu = 2 * (  (2 * lambda - 1) * self%mT/2 + (2 - lambda) * self%mB  )/3
         alphaQ = self%AlphaMass(3)%alphaQCD(mu)/Pi
 
         res = res + (  self%mT * ( deltaCharm2(rat) + deltaCharm2(ratC) ) &
@@ -576,7 +576,7 @@ contains
       if ( type(5:5) == 'V' .and. order > 1 ) then
 
         rat = self%mL/self%mH
-        mu = (  (lambda - 0.5_dp) * self%mH + (2 - lambda) * self%mL  )/1.5_dp
+        mu = 2 * (  (2 * lambda - 1)/2 * self%mH + (2 - lambda) * self%mL  )/3
         alphaQ = self%AlphaMass(2)%alphaQCD(mu)/Pi
 
         res = res + ( self%mH * deltaCharm2(rat) - &
