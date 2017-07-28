@@ -308,7 +308,7 @@ contains
     integer                           :: neval, ier, i
     real (dp)                         :: corr, abserr, lambdaQCD, t0, ratC, mu,&
     delta, Rstep, delta1, delta2, alpha, alpha2, alpha3, matching, alphaM, rat,&
-    rat1, rat2, t1, b1, b2, mol, molC, rat2C, ratB, rat1C
+    rat1, rat2, t1, b1, b2, mol, molC, rat2C, ratB, rat1C, alphaQ
 
     res = 0; b1 = self%bHTop(1); b2 = self%bHTop(2)
 
@@ -343,33 +343,35 @@ contains
       if ( type(5:5) == 'V' .and. order > 1 ) then
 
         rat = self%mB/self%mT;  ratC = self%mC/self%mT;  ratB = self%mC/self%mB
-
-        if ( type(:4) /= 'MSRp' ) alphaM = self%AlphaMass(3)%alphaQCD(self%mB)/Pi
+        mu = (  (lambda - 0.5_dp) * self%mT + (2 - lambda) * self%mB  )/1.5_dp
+        alphaQ = self%AlphaMass(3)%alphaQCD(mu)/Pi
 
         res = res + (  self%mT * ( deltaCharm2(rat) + deltaCharm2(ratC) ) &
-        - self%mB * ( deltaCharm2(1._dp) + deltaCharm2(ratB) )  ) * alphaM**2
+        - self%mB * ( deltaCharm2(1._dp) + deltaCharm2(ratB) )  ) * alphaQ**2
 
         if (order > 2) then
-          if ( type(:4) == 'MSRp' ) then
+          if ( type(:4) == 'MSRp' .or. type(:4) == 'MSRh' ) then
 
             res = res + (   self%mT * (  deltaCharm3(self%nT, 1, rat) + &
-            deltaCharm3(self%nT, 1, ratC) + self%betaTop * log(self%mB/self%mT) &
+            deltaCharm3(self%nT, 1, ratC) + self%betaTop * log(mu/self%mT) &
             * ( deltaCharm2(rat) + deltaCharm2(ratC) )  ) &
-            - self%mB * ( deltaCharm3(self%nT, 1, 1._dp) + &
-            deltaCharm3(self%nT, 1, ratB) )   ) * alphaM**3
+            - self%mB * (  deltaCharm3(self%nT, 1, 1._dp) + &
+            deltaCharm3(self%nT, 1, ratB) + self%betaTop * log(mu/self%mB) &
+            * ( deltaCharm2(1._dp) + deltaCharm2(ratB) )  )   ) * alphaQ**3
 
-          else if ( type(:4) == 'MSRn' .or.  type(:4) == 'MSRh' ) then
+          else if ( type(:4) == 'MSRn' ) then
 
-            res = res + (  self%mT * ( deltaCharm3(self%nT, 0, rat) + &
-            deltaCharm3(self%nT, 0, ratC) + self%betaTop * log(self%mB/self%mT) &
+            res = res + (   self%mT * ( deltaCharm3(self%nT, 0, rat) + &
+            deltaCharm3(self%nT, 0, ratC) + self%betaTop * log(mu/self%mT) &
             * ( deltaCharm2(rat) + deltaCharm2(ratC) )  ) &
-            - self%mB * ( deltaCharm3(self%nT, 0, 1._dp) + &
-            deltaCharm3(self%nT, 0, ratB) )  ) * alphaM**3
+            - self%mB * (  deltaCharm3(self%nT, 0, 1._dp) + &
+            deltaCharm3(self%nT, 0, ratB) + self%betaTop * log(mu/self%mB) &
+            * ( deltaCharm2(1._dp) + deltaCharm2(ratB) )  )   ) * alphaQ**3
 
           end if
 
           res = res + ( self%mT * deltaBottomCharm(rat, ratC) - &
-          self%mB * deltaBottomCharm(1._dp, ratB) ) * alphaM**3
+          self%mB * deltaBottomCharm(1._dp, ratB) ) * alphaQ**3
 
         end if
       end if
@@ -541,7 +543,7 @@ contains
     integer             , intent(in) :: order
     real (dp)         , dimension(4) :: a
     integer                          :: i
-    real (dp)                        :: matching, alphaM, rat
+    real (dp)                        :: matching, alphaM, rat, alphaQ, mu
 
     res = 0
 
@@ -568,24 +570,26 @@ contains
       if ( type(5:5) == 'V' .and. order > 1 ) then
 
         rat = self%mL/self%mH
-
-        if ( type(:4) /= 'MSRp' ) alphaM = self%AlphaMass(2)%alphaQCD(self%mL)/Pi
+        mu = (  (lambda - 0.5_dp) * self%mH + (2 - lambda) * self%mL  )/1.5_dp
+        alphaQ = self%AlphaMass(2)%alphaQCD(mu)/Pi
 
         res = res + ( self%mH * deltaCharm2(rat) - &
-        self%mL * deltaCharm2(1._dp) ) * alphaM**2
+        self%mL * deltaCharm2(1._dp) ) * alphaQ**2
 
         if (order > 2) then
-          if ( type(:4) == 'MSRp' ) then
+          if ( type(:4) == 'MSRp' .or. type(:4) == 'MSRh' ) then
 
             res = res + (  self%mH * ( deltaCharm3(self%nf, 1, rat) + &
-            self%beta0 * deltaCharm2(rat) * log(self%mL/self%mH) )  - &
-            self%mL * deltaCharm3(self%nf, 1, 1._dp)  ) * alphaM**3
+            self%beta0 * deltaCharm2(rat) * log(mu/self%mH) )  - &
+            self%mL * ( deltaCharm3(self%nf, 1, 1._dp) + &
+            self%beta0 * deltaCharm2(1._dp) * log(mu/self%mL) )  ) * alphaQ**3
 
-          else if ( type(:4) == 'MSRn' .or.  type(:4) == 'MSRh' ) then
+          else if ( type(:4) == 'MSRn' ) then
 
             res = res + (  self%mH * ( deltaCharm3(self%nf, 0, rat) + &
-            self%beta0 * deltaCharm2(rat) * log(self%mL/self%mH) )  - &
-            self%mL * deltaCharm3(self%nf, 0, 1._dp)  ) * alphaM**3
+            self%beta0 * deltaCharm2(rat) * log(mu/self%mH) )  - &
+            self%mL * ( deltaCharm3(self%nf, 0, 1._dp) + &
+            self%beta0 * deltaCharm2(1._dp) * log(mu/self%mL) )  ) * alphaQ**3
 
           end if
         end if
