@@ -57,49 +57,49 @@ contains
 
 !ccccccccccccccc
 
-   type (VFNSMSR) function InitMSR(AlphaMass)
-     type (Running), dimension(2), intent(in) :: AlphaMass
-     type (AnomDim), dimension(2)             :: AnDim
-     real (dp), dimension(0:4)                :: bHat
+  type (VFNSMSR) function InitMSR(AlphaMass)
+    type (Running), dimension(2), intent(in) :: AlphaMass
+    type (AnomDim), dimension(2)             :: AnDim
+    real (dp), dimension(0:4)                :: bHat
 
-     InitMSR%AlphaMass(:2) = AlphaMass; InitMSR%nf = AlphaMass(2)%numFlav()
-     InitMSR%run = AlphaMass(2)%orders('runMass')
-     InitMSR%nl = AlphaMass(1)%numFlav(); InitMSR%mL = AlphaMass(1)%scales('mH')
-     InitMSR%mH  = AlphaMass(2)%scales('mH')
-     AnDim       = [ AlphaMass(1)%adim(), AlphaMass(2)%adim() ]
-     InitMSR%bHat = AnDim(2)%betaQCD('bHat'); InitMSR%AnDim(:2) = AnDim
-     bHat = AnDim(2)%betaQCD('beta'); InitMSR%beta0 = bHat(0)
-     InitMSR%rat = InitMSR%mL/InitMSR%mH
-     InitMSR%AlphaOb = AlphaMass(1)%AlphaAll()
+    InitMSR%AlphaMass(:2) = AlphaMass; InitMSR%nf = AlphaMass(2)%numFlav()
+    InitMSR%run = AlphaMass(2)%orders('runMass')
+    InitMSR%nl  = AlphaMass(1)%numFlav(); InitMSR%mL = AlphaMass(1)%scales('mH')
+    InitMSR%mH  = AlphaMass(2)%scales('mH')
+    AnDim       = [ AlphaMass(1)%adim(), AlphaMass(2)%adim() ]
+    InitMSR%bHat = AnDim(2)%betaQCD('bHat'); InitMSR%AnDim(:2) = AnDim
+    bHat = AnDim(2)%betaQCD('beta'); InitMSR%beta0 = bHat(0)
+    InitMSR%rat = InitMSR%mL/InitMSR%mH
+    InitMSR%AlphaOb = AlphaMass(1)%AlphaAll()
 
    end function InitMSR
 
 !ccccccccccccccc
 
    type (topMSR) function InitMSRtop(AlphaMass)
-     type (Running), dimension(3), intent(in) :: AlphaMass
-     type (AnomDim), dimension(3)             :: AnDim
-     real (dp), dimension(0:4)                :: bHat, bHTop
+    type (Running), dimension(3), intent(in) :: AlphaMass
+    type (AnomDim), dimension(3)             :: AnDim
+    real (dp), dimension(0:4)                :: bHat, bHTop
 
-     InitMSRtop%AlphaMass = AlphaMass
-     InitMSRtop%run = AlphaMass(2)%orders('runMass')
-     InitMSRtop%nf  = AlphaMass(2)%numFlav()
-     InitMSRtop%nl  = AlphaMass(1)%numFlav()
-     InitMSRtop%nT  = AlphaMass(3)%numFlav()
-     InitMSRtop%mT  = AlphaMass(3)%scales('mH')
-     InitMSRtop%mH  = AlphaMass(2)%scales('mH') ; InitMSRtop%mB = InitMSRtop%mH
-     InitMSRtop%mL  = AlphaMass(1)%scales('mH') ; InitMSRtop%mC = InitMSRtop%mL
-     AnDim = [ AlphaMass(1)%adim(), AlphaMass(2)%adim(), AlphaMass(3)%adim() ]
-     InitMSRtop%bHat = AnDim(2)%betaQCD('bHat'); InitMSRtop%AnDim = AnDim
-     bHat = AnDim(2)%betaQCD('beta'); InitMSRtop%beta0 = bHat(0)
-     InitMSRtop%rat = InitMSRtop%mL/InitMSRtop%mH
-     InitMSRtop%ratCharm = InitMSRtop%mC/InitMSRtop%mT
-     InitMSRtop%ratBottom = InitMSRtop%mB/InitMSRtop%mT
-     InitMSRtop%AlphaOb = AlphaMass(1)%AlphaAll()
-     bHTop = AnDim(3)%betaQCD('beta'); InitMSRtop%betaTop = bHTop(0)
-     InitMSRtop%bHTop = AnDim(3)%betaQCD('bHat')
+    InitMSRtop%AlphaMass = AlphaMass
+    InitMSRtop%run = AlphaMass(2)%orders('runMass')
+    InitMSRtop%nf  = AlphaMass(2)%numFlav()
+    InitMSRtop%nl  = AlphaMass(1)%numFlav()
+    InitMSRtop%nT  = AlphaMass(3)%numFlav()
+    InitMSRtop%mT  = AlphaMass(3)%scales('mH')
+    InitMSRtop%mH  = AlphaMass(2)%scales('mH') ; InitMSRtop%mB = InitMSRtop%mH
+    InitMSRtop%mL  = AlphaMass(1)%scales('mH') ; InitMSRtop%mC = InitMSRtop%mL
+    AnDim = [ AlphaMass(1)%adim(), AlphaMass(2)%adim(), AlphaMass(3)%adim() ]
+    InitMSRtop%bHat = AnDim(2)%betaQCD('bHat'); InitMSRtop%AnDim = AnDim
+    bHat = AnDim(2)%betaQCD('beta'); InitMSRtop%beta0 = bHat(0)
+    InitMSRtop%rat = InitMSRtop%mL/InitMSRtop%mH
+    InitMSRtop%ratCharm = InitMSRtop%mC/InitMSRtop%mT
+    InitMSRtop%ratBottom = InitMSRtop%mB/InitMSRtop%mT
+    InitMSRtop%AlphaOb = AlphaMass(1)%AlphaAll()
+    bHTop = AnDim(3)%betaQCD('beta'); InitMSRtop%betaTop = bHTop(0)
+    InitMSRtop%bHTop = AnDim(3)%betaQCD('bHat')
 
-   end function InitMSRtop
+  end function InitMSRtop
 
 !ccccccccccccccc
 
@@ -370,6 +370,7 @@ contains
       res = res + self%MSRTop('up', type, order, self%mB, lambda, method) + &
       self%LowMass(upLow, type, order, R, lambda, method) + &
       self%mB * matching
+
       return
 
     end if
@@ -542,7 +543,7 @@ contains
         a = self%AlphaMass(2)%MSRMatching('charm'); i = min(order, 4)
         matching = dot_product( a(:i), PowList(alphaM, i) ) - 1
       else if ( type(:4) == 'MSRh' ) then
-        res = self%MSRMass('up', 'MSRn', order, self%mL, lambda, method) + &
+        res = self%LowMass('up', 'MSRn', order, self%mL, lambda, method) + &
         self%AlphaMass(1)%MSREvol('MSRp', order, R, lambda, method)
       else
         matching = - 1
@@ -570,11 +571,13 @@ contains
 
           end if
         end if
+
+        return
       end if
 
       if ( type(:4) == 'MSRh' ) return
 
-      res = res + self%MSRMass('up', type, order, self%mL, lambda, method) + &
+      res = res + self%LowMass('up', type, order, self%mL, lambda, method) + &
       self%AlphaMass(1)%MSRMass(type, order, R, lambda, method) + &
       self%mL * matching
 
