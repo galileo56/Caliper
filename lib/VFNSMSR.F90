@@ -328,13 +328,19 @@ contains
         if (i > 2) matching = matching + deltaCharmNh(self%ratCharm) * alphaM**3
 
       else if ( type(:4) == 'MSRh' ) then
-        res = self%MSRTop('up', 'MSRn', order, self%mB, lambda, method) + &
-        self%LowMass(upLow, 'MSRp', order, R, lambda, method) - self%mB
+        if ( type(5:5) == 'V' ) then
+          res = self%MSRTop('up', 'MSRnV', order, self%mB, lambda, method) + &
+          self%LowMass(upLow, 'MSRpV', order, R, lambda, method) - self%mB
+        else
+          res = self%MSRTop('up', 'MSRn', order, self%mB, lambda, method) + &
+          self%LowMass(upLow, 'MSRp', order, R, lambda, method) - self%mB
+        end if
+
       else
         matching = - 1
       end if
 
-      if ( type(5:5) == 'V' .and. i > 1 ) then
+      if ( type(5:5) == 'V' .and. order > 1 ) then
 
         rat = self%mB/self%mT;  ratC = self%mC/self%mT;  ratB = self%mC/self%mB
 
@@ -343,7 +349,7 @@ contains
         res = res + (  self%mT * ( deltaCharm2(rat) + deltaCharm2(ratC) ) &
         - self%mB * ( deltaCharm2(1._dp) + deltaCharm2(ratB) )  ) * alphaM**2
 
-        if (i > 2) then
+        if (order > 2) then
           if ( type(:4) == 'MSRp' ) then
 
             res = res + (   self%mT * (  deltaCharm3(self%nT, 1, rat) + &
@@ -546,13 +552,20 @@ contains
         a = self%AlphaMass(2)%MSRMatching('charm'); i = min(order, 4)
         matching = dot_product( a(:i), PowList(alphaM, i) ) - 1
       else if ( type(:4) == 'MSRh' ) then
-        res = self%LowMass('up', 'MSRn', order, self%mL, lambda, method) + &
-        self%AlphaMass(1)%MSREvol('MSRp', order, R, lambda, method)
+
+        if ( type(5:5) == 'V' ) then
+          res = self%LowMass('up', 'MSRnV', order, self%mL, lambda, method)
+        else
+          res = self%LowMass('up', 'MSRn', order, self%mL, lambda, method)
+        end if
+
+        res = res + self%AlphaMass(1)%MSREvol('MSRp', order, R, lambda, method)
+
       else
         matching = - 1
       end if
 
-      if ( type(5:5) == 'V' .and. i > 1 ) then
+      if ( type(5:5) == 'V' .and. order > 1 ) then
 
         rat = self%mL/self%mH
 
@@ -561,7 +574,7 @@ contains
         res = res + ( self%mH * deltaCharm2(rat) - &
         self%mL * deltaCharm2(1._dp) ) * alphaM**2
 
-        if (i > 2) then
+        if (order > 2) then
           if ( type(:4) == 'MSRp' ) then
 
             res = res + (  self%mH * ( deltaCharm3(self%nf, 1, rat) + &
@@ -577,7 +590,6 @@ contains
           end if
         end if
 
-        return
       end if
 
       if ( type(:4) == 'MSRh' ) return
