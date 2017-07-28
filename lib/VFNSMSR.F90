@@ -408,9 +408,9 @@ contains
 
     else if ( method(:8) == 'analytic' ) then
 
-      t0 = - 2 * pi/self%betaTop/lambda;  t1 = t0/self%AlphaMass(3)%alphaQCD(self%mT)
-      t0 = t0/self%AlphaMass(3)%alphaQCD(R);  bet2(2) = 2 * self%betaTop
-      lambdaQCD = self%AlphaMass(3)%lambdaQCD(self%run)
+      t0 = - 2 * pi/self%betaTop;  t1 = t0/self%AlphaMass(3)%alphaQCD(self%mT/lambda)
+      t0 = t0/self%AlphaMass(3)%alphaQCD(R/lambda);  bet2(2) = 2 * self%betaTop
+      lambdaQCD = lambda * self%AlphaMass(3)%lambdaQCD(self%run)
       mol = self%mB/lambdaQCD; bet2(1) = bet2(2)**2; bet2(2) = Product(bet2)
       molC = self%mC/lambdaQCD
 
@@ -507,10 +507,10 @@ contains
       real (dp), intent(in) :: t
       real (dp)             :: gammaR, gammaR2
 
-      gammaR = (  gammaRcharm2(mol * self%Andim(3)%Gfun(self%run,t) ) + &
-      gammaRcharm2(molC * self%Andim(3)%Gfun(self%run,t) )  )/bet2(1)
+      gammaR = gammaRcharm2(mol * self%Andim(3)%Gfun(self%run,t) ) + &
+      gammaRcharm2(molC * self%Andim(3)%Gfun(self%run,t) )
 
-      InteAn = (-t)**(- 2 - b1) * gammaR
+      InteAn = (-t)**(- 2 - b1) * gammaR/bet2(1)
 
       if (self%run >= 3) then
 
@@ -528,7 +528,7 @@ contains
         if ( abs(lambda - 1) >= tiny(1._dp) ) &
         gammaR2 = gammaR2 - 4 * log(lambda) * gammaR
 
-        gammaR = gammaR2/bet2(2) - (b1 + b2) * gammaR
+        gammaR = gammaR2/bet2(2) - (b1 + b2) * gammaR/bet2(1)
         InteAn = InteAn + (-t)**(- 3 - b1) * gammaR
 
       end if
@@ -654,12 +654,12 @@ contains
 
       t0 = - 2 * pi/self%beta0;  t1 = t0/self%AlphaMass(2)%alphaQCD(R0/lambda)
       t0 = t0/self%AlphaMass(2)%alphaQCD(R/lambda);  bet2(2) = 2 * self%beta0
-      lambdaQCD = self%AlphaMass(2)%lambdaQCD(self%run)
+      lambdaQCD = lambda * self%AlphaMass(2)%lambdaQCD(self%run)
       mol = self%mL/lambdaQCD; bet2(1) = bet2(2)**2; bet2(2) = Product(bet2)
 
       call qags( InteAn, t1, t0, prec, prec, LowRevol, abserr, neval, ier )
 
-      LowRevol = lambda * lambdaQCD * LowRevol
+      LowRevol = lambdaQCD * LowRevol
 
     else if ( method(:4) == 'diff' ) then
 
@@ -729,22 +729,22 @@ contains
       real (dp), intent(in) :: t
       real (dp)             :: gammaR, gammaR2
 
-      gammaR = gammaRcharm2(mol/lambda * self%Andim(2)%Gfun(self%run,t) )/bet2(1)
+      gammaR = gammaRcharm2(mol * self%Andim(2)%Gfun(self%run,t) )
 
-      InteAn = (-t)**(- 2 - b1) * gammaR
+      InteAn = (-t)**(- 2 - b1) * gammaR/bet2(1)
 
       if (self%run >= 3) then
 
         if ( type(:4) == 'MSRp' ) then
-          gammaR2 = gammaRcharm3(self%nf, 1, mol/lambda * self%Andim(2)%Gfun(self%run,t) )
+          gammaR2 = gammaRcharm3(self%nf, 1, mol * self%Andim(2)%Gfun(self%run,t) )
         else if ( type(:4) == 'MSRn' ) then
-          gammaR2 = gammaRcharm3(self%nf, 0, mol/lambda * self%Andim(2)%Gfun(self%run,t) )
+          gammaR2 = gammaRcharm3(self%nf, 0, mol * self%Andim(2)%Gfun(self%run,t) )
         end if
 
         if ( abs(lambda - 1) >= tiny(1._dp) ) &
-        gammaR2 = gammaR2 - 4 * log(lambda) * gammaR * bet2(1)
+        gammaR2 = gammaR2 - 4 * log(lambda) * gammaR
 
-        gammaR = gammaR2/bet2(2) - (b1 + b2) * gammaR
+        gammaR = gammaR2/bet2(2) - (b1 + b2) * gammaR/bet2(1)
         InteAn = InteAn + (-t)**(- 3 - b1) * gammaR
 
       end if
