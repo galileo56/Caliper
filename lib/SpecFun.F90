@@ -3,7 +3,7 @@ module Constants
   use iso_fortran_env, only: error_unit, dp => real64
   implicit none
   real (dp), parameter :: Pi = 3.141592653589793_dp , prec = 1e-10_dp, &
-  Zeta3 = 1.2020569031595942   , Zeta2    = 1.6449340668482262_dp,     &
+  Zeta3 = 1.2020569031595942_dp, Zeta2    = 1.6449340668482262_dp,     &
   Euler = 0.5772156649015329_dp, l2       = 0.6931471805599453_dp,     &
   Pio2  = 1.5707963267948966_dp, Pi2      = 9.869604401089358_dp ,     &
   sr2   = 1.4142135623730951_dp, ExpEuler = 1.781072417990198_dp
