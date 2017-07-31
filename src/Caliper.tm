@@ -12,6 +12,7 @@
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
 
+:Evaluate:  rNRQCD::usage = "rNRQCD[nl, order, scheme, orderAlpha, runAlpha, mZ, aMz, Q, mtpole, gt, h, nu]"
 :Evaluate:  A1Pole::usage = "A1Pole[nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft]"
 :Evaluate:  TTbar::usage = "ttbar[energy, topmass, topgamma, alphas0, mue0, cutn, cutv, c0, c1, c2, cdeltapotc, cdeltapot1, cfullc, cfull1, crm2, kincm, kinca, ijknflg, ijgcflg, kincv, ijvflg] cross section"
 :Evaluate:  TTbarList::usage = "ttbarList[energy, topmass, topgamma, alphas0, mue0, cutn, cutv, c0, c1, c2, cdeltapotc, cdeltapot1, cfullc, cfull1, crm2, kincm, kinca, ijknflg, ijgcflg, kincv, ijvflg] cross section and distribution list"
@@ -243,6 +244,17 @@
 :Pattern:       VceffsNNLL[nl_, asNNLL_, ah_, as_]
 :Arguments:     {nl, asNNLL, ah, as}
 :ArgumentTypes: {Integer, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      rnrqcd
+:Pattern:       rNRQCD[nl_, order_, scheme_, orderAlpha_, runAlpha_, mZ_, aMz_,
+                mtpole_, Q_, gt_, h_, nu_]
+:Arguments:     {nl, order, scheme, orderAlpha, runAlpha, mZ, aMz, Q, mtpole,
+                 gt, h, nu}
+:ArgumentTypes: {Integer, String, String, Integer, Integer, Real, Real, Real,
+                 Real, Real, Real, Real}
 :ReturnType:    Real
 :End:
 
@@ -2506,6 +2518,21 @@ double gamtop, double asoft, double VcsNNLL, double musoft){
   double res;
 
    f90a1pole_(&nl, order, &En, &mtpole, &gamtop, &asoft, &VcsNNLL, &musoft, &res);
+
+   return res;
+}
+
+extern double f90rnrqcd_(int* nl, char const* order, char const* scheme,
+int* orderAlpha, int* runAlpha, double* mZ, double* aMz, double* Q, double* mt,
+double* gt, double* h, double* nu, double* res);
+
+static double rnrqcd(int nl, char const* order, char const* scheme,
+int orderAlpha, int runAlpha, double mZ, double aMz, double Q, double mt,
+double gt, double h, double nu){
+  double res;
+
+   f90rnrqcd_(&nl, order, scheme, &orderAlpha, &runAlpha, &mZ, &aMz, &Q, &mt,
+     &gt, &h, &nu, &res);
 
    return res;
 }

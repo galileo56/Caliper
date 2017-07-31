@@ -1,6 +1,37 @@
 
 ! cccccccccccccccccccc
 
+subroutine f90RNRQCD(nl, order, scheme, orderAlpha, runAlpha, mZ, aMz, Q, &
+  mtpole, gt, h, nu, res)
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass;  implicit none
+  real (dp)          , intent(in)  :: Q, mtpole, gt, h, nu, mZ, aMz
+  character (len = *), intent(in)  :: order, scheme
+  integer            , intent(in)  :: nl, orderAlpha, runAlpha
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (RNRQCD)                    :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running)                   :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
+
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, aMz, mtpole, mtpole, &
+  mtpole, mtpole, 0._dp, 0._dp)
+
+  alphaMass = Running(5, 0, alphaAll, 0._dp)
+
+  NRQCD = RNRQCD(alphaMass)
+
+  res = NRQCD%NRQCD(order(:4), scheme(:4), q, gt, h, nu)
+
+end subroutine f90RNRQCD
+
+! cccccccccccccccccccc
+
 subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass;  implicit none
