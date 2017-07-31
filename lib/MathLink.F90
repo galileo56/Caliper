@@ -1,6 +1,34 @@
 
 ! cccccccccccccccccccc
 
+subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass;  implicit none
+  real (dp)          , intent(in)  :: En, mtpole, gamtop, asoft, VcsNNLL, musoft
+  character (len = *), intent(in)  :: order
+  integer            , intent(in)  :: nl
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (RNRQCD)                    :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running)                   :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
+
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaMass = Running(5, 0, alphaAll, 0._dp)
+
+  NRQCD = RNRQCD(alphaMass)
+
+  res = NRQCD%A1pole(order(:4), En, mtpole, gamtop, asoft, VcsNNLL, musoft)
+
+end subroutine f90A1Pole
+
+! cccccccccccccccccccc
+
 subroutine f90CDigamma(zr, zi, res)
   use Constants; use DeriGamma; implicit none
   real (dp)              , intent(in)  :: zr, zi
@@ -58,13 +86,25 @@ end subroutine f90SwitchOff
 ! cccccccccccccccccccc
 
 subroutine f90VssLL(nl, ah, as, res)
-  use Constants; use RNRQCDClass; implicit none
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass;  implicit none
   real (dp), intent(in)  :: ah, as
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
+  integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running)                   :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
 
-  NRQCD = RNRQCD(nl)
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaMass = Running(5, 0, alphaAll, 0._dp)
+
+  NRQCD = RNRQCD(alphaMass)
 
   res = NRQCD%VssLL(ah, as)
 
@@ -73,13 +113,25 @@ end subroutine f90VssLL
 ! cccccccccccccccccccc
 
 subroutine f90Vk1sLL(nl, as, au, res)
-  use Constants; use RNRQCDClass; implicit none
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass;  implicit none
   real (dp), intent(in)  :: as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
+  integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running)                   :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
 
-  NRQCD = RNRQCD(nl)
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaMass = Running(5, 0, alphaAll, 0._dp)
+
+  NRQCD = RNRQCD(alphaMass)
 
   res = NRQCD%Vk1sLL(as, au)
 
@@ -88,13 +140,25 @@ end subroutine f90Vk1sLL
 ! cccccccccccccccccccc
 
 subroutine f90Vk2sLL(nl, as, au, res)
-  use Constants; use RNRQCDClass; implicit none
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass;  implicit none
   real (dp), intent(in)  :: as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
+  integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running)                   :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
 
-  NRQCD = RNRQCD(nl)
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaMass = Running(5, 0, alphaAll, 0._dp)
+
+  NRQCD = RNRQCD(alphaMass)
 
   res = NRQCD%Vk2sLL(as, au)
 
@@ -103,13 +167,25 @@ end subroutine f90Vk2sLL
 ! cccccccccccccccccccc
 
 subroutine f90VkeffsLL(nl, as, au, res)
-  use Constants; use RNRQCDClass; implicit none
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass;  implicit none
   real (dp), intent(in)  :: as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
+  integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running)                   :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
 
-  NRQCD = RNRQCD(nl)
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaMass = Running(5, 0, alphaAll, 0._dp)
+
+  NRQCD = RNRQCD(alphaMass)
 
   res = NRQCD%VkeffsLL(as, au)
 
@@ -129,13 +205,25 @@ end subroutine f90VcsLL
 ! cccccccccccccccccccc
 
 subroutine f90VrsLL(nl, as, au, res)
-  use Constants; use RNRQCDClass; implicit none
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass;  implicit none
   real (dp), intent(in)  :: as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
+  integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running)                   :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
 
-  NRQCD = RNRQCD(nl)
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaMass = Running(5, 0, alphaAll, 0._dp)
+
+  NRQCD = RNRQCD(alphaMass)
 
   res = NRQCD%VrsLL(as, au)
 
@@ -144,13 +232,25 @@ end subroutine f90VrsLL
 ! cccccccccccccccccccc
 
 subroutine f90V2sLL(nl, ah, as, au, res)
-  use Constants; use RNRQCDClass; implicit none
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass;  implicit none
   real (dp), intent(in)  :: as, au, ah
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
+  integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running)                   :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
 
-  NRQCD = RNRQCD(nl)
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaMass = Running(5, 0, alphaAll, 0._dp)
+
+  NRQCD = RNRQCD(alphaMass)
 
   res = NRQCD%V2sLL(ah, as, au)
 
@@ -159,13 +259,25 @@ end subroutine f90V2sLL
 ! cccccccccccccccccccc
 
 subroutine f90VceffsNNLL(nl, asNNLL, as, au, res)
-  use Constants; use RNRQCDClass; implicit none
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass;  implicit none
   real (dp), intent(in)  :: as, au, asNNLL
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
+  integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running)                   :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
 
-  NRQCD = RNRQCD(nl)
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaMass = Running(5, 0, alphaAll, 0._dp)
+
+  NRQCD = RNRQCD(alphaMass)
 
   res = NRQCD%VceffsNNLL(asNNLL, as, au)
 
@@ -174,13 +286,25 @@ end subroutine f90VceffsNNLL
 ! cccccccccccccccccccc
 
 subroutine f90XiNLL(nl, ah, as, au, res)
-  use Constants; use RNRQCDClass; implicit none
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass;  implicit none
   real (dp), intent(in)  :: ah, as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
+  integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running)                   :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
 
-  NRQCD = RNRQCD(nl)
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaMass = Running(5, 0, alphaAll, 0._dp)
+
+  NRQCD = RNRQCD(alphaMass)
 
   res = NRQCD%XiNLL(ah, as, au)
 
@@ -189,13 +313,25 @@ end subroutine f90XiNLL
 ! cccccccccccccccccccc
 
 subroutine f90XiNNLLmixUsoft(nl, ah, as, res)
-  use Constants; use RNRQCDClass; implicit none
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass;  implicit none
   real (dp), intent(in)  :: ah, as
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
+  integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running)                   :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
 
-  NRQCD = RNRQCD(nl)
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaMass = Running(5, 0, alphaAll, 0._dp)
+
+  NRQCD = RNRQCD(alphaMass)
 
   res = NRQCD%XiNNLLmixUsoft(ah, as)
 
@@ -204,13 +340,25 @@ end subroutine f90XiNNLLmixUsoft
 ! cccccccccccccccccccc
 
 subroutine f90MLLc2(nl, ah, au, res)
-  use Constants; use RNRQCDClass; implicit none
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass;  implicit none
   real (dp), intent(in)  :: ah, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
+  integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running)                   :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
 
-  NRQCD = RNRQCD(nl)
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaMass = Running(5, 0, alphaAll, 0._dp)
+
+  NRQCD = RNRQCD(alphaMass)
 
   res = NRQCD%MLLc2(ah, au)
 
@@ -219,13 +367,25 @@ end subroutine f90MLLc2
 ! cccccccccccccccccccc
 
 subroutine f90MNLLc1(nl, ah, as, au, res)
-  use Constants; use RNRQCDClass; implicit none
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass;  implicit none
   real (dp), intent(in)  :: ah, as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
+  integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running)                   :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
 
-  NRQCD = RNRQCD(nl)
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaMass = Running(5, 0, alphaAll, 0._dp)
+
+  NRQCD = RNRQCD(alphaMass)
 
   res = NRQCD%MNLLc1(ah, as, au)
 
@@ -234,13 +394,25 @@ end subroutine f90MNLLc1
 ! cccccccccccccccccccc
 
 subroutine f90MNLLplusNNLLnonmixc1(nl, ah, as, au, res)
-  use Constants; use RNRQCDClass; implicit none
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass;  implicit none
   real (dp), intent(in)  :: ah, as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
+  integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running)                   :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
 
-  NRQCD = RNRQCD(nl)
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaMass = Running(5, 0, alphaAll, 0._dp)
+
+  NRQCD = RNRQCD(alphaMass)
 
   res = NRQCD%MNLLplusNNLLnonmixc1(ah, as, au)
 
@@ -249,13 +421,25 @@ end subroutine f90MNLLplusNNLLnonmixc1
 ! cccccccccccccccccccc
 
 subroutine f90MNNLLAllc1InclSoftMixLog(nl, ah, as, au, nu, hh, ss, res)
-  use Constants; use RNRQCDClass; implicit none
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass;  implicit none
   real (dp), intent(in)  :: ah, as, au, nu, hh, ss
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
+  integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running)                   :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
 
-  NRQCD = RNRQCD(nl)
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaMass = Running(5, 0, alphaAll, 0._dp)
+
+  NRQCD = RNRQCD(alphaMass)
 
   res = NRQCD%MNNLLAllc1InclSoftMixLog(ah, as, au, nu, hh, ss)
 
@@ -268,7 +452,6 @@ subroutine f90XiNNLLSoftMixLogc1(ah, nu, hh, res)
   real (dp), intent(in)  :: ah, nu, hh
   real (dp), intent(out) :: res
 
-
   res = XiNNLLSoftMixLogc1(ah, nu, hh)
 
 end subroutine f90XiNNLLSoftMixLogc1
@@ -276,13 +459,25 @@ end subroutine f90XiNNLLSoftMixLogc1
 ! cccccccccccccccccccc
 
 subroutine f90XiNNLLnonmix(nl, ah, as, au, hh, ss, res)
-  use Constants; use RNRQCDClass; implicit none
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass;  implicit none
   real (dp), intent(in)  :: ah, as, au, hh, ss
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   type (RNRQCD)          :: NRQCD
+  integer                :: i
+  type (Alpha)                     :: alphaAll
+  type (Running)                   :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
 
-  NRQCD = RNRQCD(nl)
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaMass = Running(5, 0, alphaAll, 0._dp)
+
+  NRQCD = RNRQCD(alphaMass)
 
   res = NRQCD%XiNNLLnonmix(ah, as, au, hh, ss)
 

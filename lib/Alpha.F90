@@ -28,9 +28,10 @@ module AlphaClass
 
    generic                          :: alphaQCD     => alphaQCDReal, alphaQCDComplex
    generic, public                  :: alphaGeneric => alphaGenericReal, alphaGenericComplex
+   generic, public                  :: alphaGenericFlavor => alphaGenericRealFlavor, alphaGenericComplexFlavor
 
    procedure, pass(self)            :: alphaQCDReal, alphaQCDComplex, alphaGenericReal, &
-   alphaGenericComplex, thresholdMatching
+   alphaGenericComplex, thresholdMatching, alphaGenericRealFlavor, alphaGenericComplexFlavor
 
    procedure, pass(self), public    :: scales, orders, scheme, SetAlpha, SetMTop, &
    SetMBottom, SetMCharm, adim
@@ -126,7 +127,6 @@ module AlphaClass
     aS  = self%alphaGeneric(self%andim(5), self%muRef(5), self%alphaRef(5), muT)
 
     self%alphaRef(6) = pi * sum(   PowList(aS/Pi, self%n+1) * &
-    ! getInverse(  self%thresholdMatching( 6, log(muT/mT) )  )   )
     self%thresholdMatching( 'up', 6, log(muT/mT) )  )
 
   end subroutine SetMTop
@@ -270,6 +270,29 @@ module AlphaClass
     dot_product(  beta, powList( a, size(beta) )  )
 
   end function PiBetaComplex
+
+!ccccccccccccccc
+
+pure real (dp) function alphaGenericRealFlavor(self, nf, mZ, amZ, mu)
+  class (Alpha), intent(in) :: self
+  real (dp)    , intent(in) :: mZ, amZ, mu
+  integer      , intent(in) :: nf
+
+  alphaGenericRealFlavor = self%alphaGeneric( self%adim(nf), mZ, amZ, mu )
+
+end function alphaGenericRealFlavor
+
+!ccccccccccccccc
+
+complex (dp) function alphaGenericComplexFlavor(self, nf, mZ, amZ, mu)
+  class (Alpha), intent(in) :: self
+  real (dp)    , intent(in) :: mZ, amZ
+  complex (dp) , intent(in) :: mu
+  integer      , intent(in) :: nf
+
+  alphaGenericComplexFlavor = self%alphaGeneric( self%adim(nf), mZ, amZ, mu )
+
+end function alphaGenericComplexFlavor
 
 !ccccccccccccccc
 

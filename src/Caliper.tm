@@ -12,6 +12,7 @@
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
 
+:Evaluate:  A1Pole::usage = "A1Pole[nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft]"
 :Evaluate:  TTbar::usage = "ttbar[energy, topmass, topgamma, alphas0, mue0, cutn, cutv, c0, c1, c2, cdeltapotc, cdeltapot1, cfullc, cfull1, crm2, kincm, kinca, ijknflg, ijgcflg, kincv, ijvflg] cross section"
 :Evaluate:  TTbarList::usage = "ttbarList[energy, topmass, topgamma, alphas0, mue0, cutn, cutv, c0, c1, c2, cdeltapotc, cdeltapot1, cfullc, cfull1, crm2, kincm, kinca, ijknflg, ijgcflg, kincv, ijvflg] cross section and distribution list"
 :Evaluate:  CdiGamma::usage = "CdiGamma[x]"
@@ -242,6 +243,14 @@
 :Pattern:       VceffsNNLL[nl_, asNNLL_, ah_, as_]
 :Arguments:     {nl, asNNLL, ah, as}
 :ArgumentTypes: {Integer, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      a1pole
+:Pattern:       A1Pole[nl_, order_, En_, mtpole_, gamtop_, asoft_, VcsNNLL_, musoft_]
+:Arguments:     {nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft}
+:ArgumentTypes: {Integer, String, Real, Real, Real, Real, Real, Real}
 :ReturnType:    Real
 :End:
 
@@ -2485,6 +2494,18 @@ static double vceffsnnll(int nl, double ah, double au, double as){
   double res;
 
    f90vceffsnnll_(&nl, &ah, &au, &as, &res);
+
+   return res;
+}
+
+extern double f90a1pole_(int* nl, char const* order, double* En, double* mtpole,
+double* gamtop, double* asoft, double* VcsNNLL, double* musoft, double* result);
+
+static double a1pole(int nl, char const* order, double En, double mtpole,
+double gamtop, double asoft, double VcsNNLL, double musoft){
+  double res;
+
+   f90a1pole_(&nl, order, &En, &mtpole, &gamtop, &asoft, &VcsNNLL, &musoft, &res);
 
    return res;
 }
