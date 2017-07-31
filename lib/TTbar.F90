@@ -14,7 +14,7 @@ module RNRQCDClass
 
   type, public :: RNRQCD
     integer                   :: nl
-    real (dp)                 :: a1, a2
+    real (dp)                 :: a1, a2, mass
     real (dp), dimension(0:4) :: beta
     type (Running)            :: run
     type (Alpha)              :: AlphaOb
@@ -44,6 +44,7 @@ contains
 
     nl = run%numFlav(); adim = run%adim(); RNRQCDIn%run = run; RNRQCDIn%nl = nl
     RNRQCDIn%beta = adim%betaQCD('beta') ; RNRQCDIn%AlphaOb = run%alphaAll()
+    RNRQCDIn%mass = run%scales('mH')
 
     RNRQCDIn%a1 = 31._dp/3 - 10._dp * nl/9
     RNRQCDIn%a2 = 456.74883699902244_dp - 66.35417150661816_dp * nl + &
@@ -53,30 +54,42 @@ contains
 
 ! ccccccccccc
 
-  real (dp) function NRQCD(self, order, scheme, q, mp, gt, h, nu)
+  real (dp) function NRQCD(self, order, scheme, q, gt, h, nu)
     class (RNRQCD)     , intent(in) :: self
     character (len = *), intent(in) :: order, scheme
-    real (dp)          , intent(in) :: gt, h, nu, q, mp
-    real (dp)                       :: ac, ah, inM, asLL
+    real (dp)          , intent(in) :: gt, h, nu, q
+    real (dp)                       :: ac, ah, asLL
     complex (dp)                    :: v
 
-    ah = self%run%AlphaQCD(h * mp)
-    ! asLL = self%AlphaOb%alphaGenericFlavor()
-    v = vC(q, mp, gt)
-    ac = 4 * asLL
+    NRQCD = 0
 
-    ! NRQCD =  18 * (Qt * mp/q)**2 *  ImagPart(  (0,1) * v - ac * (  Euler - &
-    ! 0.5_dp + l2 + Log( - (0,1) * mp * v/(h * inM * nu) )  ) + &
-    ! DiGam( 1 - (0,1) * ac/(2 * v) )  )
+    if ( scheme(:4) == 'pole') then
+
+      if ( order(:2) == 'LL' ) then
+
+        ah = self%run%AlphaQCD(h * self%mass); v = vC(q, self%mass, gt)
+
+        asLL = self%AlphaOb%alphaGenericFlavor('inverse', self%nl, &
+        h * self%mass, ah, h * self%mass * nu)
+
+        ac = 4 * asLL/3
+
+        NRQCD =  18 * (Qt * self%mass/q)**2 *  ImagPart(  (0,1) * v - ac * (  &
+        Euler - 0.5_dp + l2 + Log( - (0,1) * self%mass * v/(h * self%mass * nu) )  ) + &
+        DiGam( 1 - (0,1) * ac/(2 * v) )  )
+
+      end if
+
+    end if
 
   end function NRQCD
 
 ! ccccccccccc
 
-  real (dp) function A1pole(self, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft)
+  real (dp) function A1pole(self, order, En, gamtop, asoft, VcsNNLL, musoft)
     class (RNRQCD)     , intent(in) :: self
     character (len = *), intent(in) :: order
-    real (dp)          , intent(in) :: En, mtpole, gamtop, asoft, musoft, VcsNNLL
+    real (dp)          , intent(in) :: En, gamtop, asoft, musoft, VcsNNLL
     type (Toppik)                   :: TP
     real (dp), dimension(2)         :: res
     real (dp)                       :: x0, x1, x2, aSuPi
@@ -92,7 +105,7 @@ contains
       x0 = self%a1 * asuPi + self%a2 * asuPi**2 - 3 * VcsNNLL/16/asoft/Pi
     end if
 
-    TP = Toppik(self%nl, En, mtpole, gamtop, asoft, musoft, 175000000._dp, &
+    TP = Toppik(self%nl, En, self%mass, gamtop, asoft, musoft, 175000000._dp, &
     175000000._dp, x0, x1, x2, 0._dp, 0._dp, 0._dp, &
     0._dp, 0._dp, 0._dp, 0._dp, 0, 0, 0._dp, 0)
 

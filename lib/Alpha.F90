@@ -124,7 +124,7 @@ module AlphaClass
 
     self%mT = mT; self%muRef(6) = muT; alphaList(0) = 1
 
-    aS  = self%alphaGeneric(self%andim(5), self%muRef(5), self%alphaRef(5), muT)
+    aS  = self%alphaGeneric(self%method, self%andim(5), self%muRef(5), self%alphaRef(5), muT)
 
     self%alphaRef(6) = pi * sum(   PowList(aS/Pi, self%n+1) * &
     self%thresholdMatching( 'up', 6, log(muT/mT) )  )
@@ -141,7 +141,7 @@ module AlphaClass
 
     self%mB = mB; self%muRef(4) = muB; alphaList(0) = 1
 
-    aS  = self%alphaGeneric(self%andim(5), self%muRef(5), self%alphaRef(5), muB )
+    aS  = self%alphaGeneric(self%method, self%andim(5), self%muRef(5), self%alphaRef(5), muB )
 
     self%alphaRef(4) = pi * sum(  self%thresholdMatching( 'down', 5, log(muB/mB) ) &
     * PowList(aS/Pi, self%n+1)  )
@@ -162,7 +162,7 @@ module AlphaClass
 
     self%mC = mC; self%muRef(3) = muC; alphaList(0) = 1
 
-    aS  = self%alphaGeneric(self%andim(4), self%muRef(4), self%alphaRef(4), muC)
+    aS  = self%alphaGeneric(self%method, self%andim(4), self%muRef(4), self%alphaRef(4), muC)
 
     self%alphaRef(3) = pi * sum(  self%thresholdMatching( 'down', 4, log(muC/mC) ) &
     * PowList(aS/Pi, self%n+1)  )
@@ -189,7 +189,7 @@ module AlphaClass
     if ( self%muRef(5) <= d1mach(1) ) then
       alphaQCDReal = Pi
     else
-      alphaQCDReal = self%alphaGeneric(self%andim(n), self%muRef(n), self%alphaRef(n), mu )
+      alphaQCDReal = self%alphaGeneric(self%method, self%andim(n), self%muRef(n), self%alphaRef(n), mu )
     end if
 
    end function alphaQCDReal
@@ -207,7 +207,7 @@ module AlphaClass
     if ( self%muRef(5) <= d1mach(1) ) then
       alphaQCDComplex = Pi
     else
-      alphaQCDComplex = self%alphaGeneric(self%andim(n), self%muRef(n), self%alphaRef(n), mu )
+      alphaQCDComplex = self%alphaGeneric(self%method, self%andim(n), self%muRef(n), self%alphaRef(n), mu )
     end if
 
    end function alphaQCDComplex
@@ -273,31 +273,34 @@ module AlphaClass
 
 !ccccccccccccccc
 
-pure real (dp) function alphaGenericRealFlavor(self, nf, mZ, amZ, mu)
-  class (Alpha), intent(in) :: self
-  real (dp)    , intent(in) :: mZ, amZ, mu
-  integer      , intent(in) :: nf
+pure real (dp) function alphaGenericRealFlavor(self, method, nf, mZ, amZ, mu)
+  class (Alpha)      , intent(in) :: self
+  character (len = *), intent(in) :: method
+  real (dp)          , intent(in) :: mZ, amZ, mu
+  integer            , intent(in) :: nf
 
-  alphaGenericRealFlavor = self%alphaGeneric( self%adim(nf), mZ, amZ, mu )
+  alphaGenericRealFlavor = self%alphaGeneric( method, self%adim(nf), mZ, amZ, mu )
 
 end function alphaGenericRealFlavor
 
 !ccccccccccccccc
 
-complex (dp) function alphaGenericComplexFlavor(self, nf, mZ, amZ, mu)
-  class (Alpha), intent(in) :: self
-  real (dp)    , intent(in) :: mZ, amZ
-  complex (dp) , intent(in) :: mu
-  integer      , intent(in) :: nf
+complex (dp) function alphaGenericComplexFlavor(self, method, nf, mZ, amZ, mu)
+  class (Alpha)      , intent(in) :: self
+  character (len = *), intent(in) :: method
+  real (dp)          , intent(in) :: mZ, amZ
+  complex (dp)       , intent(in) :: mu
+  integer            , intent(in) :: nf
 
-  alphaGenericComplexFlavor = self%alphaGeneric( self%adim(nf), mZ, amZ, mu )
+  alphaGenericComplexFlavor = self%alphaGeneric( method, self%adim(nf), mZ, amZ, mu )
 
 end function alphaGenericComplexFlavor
 
 !ccccccccccccccc
 
- pure real (dp) function alphaGenericReal(self, adim, mZ, amZ, mu)
+ pure real (dp) function alphaGenericReal(self, method, adim, mZ, amZ, mu)
    class (Alpha)            , intent(in) :: self
+   character (len = *)      , intent(in) :: method
    type (AnomDim)           , intent(in) :: adim
    real (dp)                , intent(in) :: mZ, amZ, mu
    integer                               :: n, i, ord
@@ -313,7 +316,7 @@ end function alphaGenericComplexFlavor
 
     beta  = adim%betaQCD('beta') ; cCoef(:4) = adim%betaQCD('cCoef')
 
-    if ( self%method(:6) == 'series' ) then
+    if ( method(:6) == 'series' ) then
       a0 = amZ/fourPi;  b = 0; b(:1,0) = 1
       cCoef = adim%cCoeff(self%run - 1, 20)
 
@@ -359,7 +362,7 @@ end function alphaGenericComplexFlavor
 
     end if
 
-    if ( self%method(:8) == 'analytic' .or. self%method(:7) == 'inverse' ) then
+    if ( method(:8) == 'analytic' .or. method(:7) == 'inverse' ) then
 
       a0 = amZ/fourPi;  b = 0; b(:1,0) = 1
 
@@ -392,7 +395,7 @@ end function alphaGenericComplexFlavor
 
       end do
 
-      if ( self%method(:8) == 'analytic') then
+      if ( method(:8) == 'analytic') then
         alphaGenericReal = fourpi * aLL/Sum( b(1,:self%run-1) )
       else
 
@@ -403,7 +406,7 @@ end function alphaGenericComplexFlavor
 
       end if
 
-    else if ( self%method(:7) == 'numeric' ) then
+    else if ( method(:7) == 'numeric' ) then
 
       L = Log(Mz/mu);  h = 0.04_dp; n = max(  1, Abs(  Nint(L/h)  )  )
 
@@ -420,7 +423,7 @@ end function alphaGenericComplexFlavor
 
       end do
 
-    else if ( self%method(:9) == 'iterative' ) then
+    else if ( method(:9) == 'iterative' ) then
 
       if (self%run <= 0) then
         alphaGenericReal = aMz; return
@@ -440,7 +443,7 @@ end function alphaGenericComplexFlavor
         alphaGenericReal = corr
       end do
 
-    else if ( self%method(:4) == 'root' ) then
+    else if ( method(:4) == 'root' ) then
 
       if (self%run <= 0) then
         alphaGenericReal = aMz; return
@@ -458,7 +461,7 @@ end function alphaGenericComplexFlavor
         alphaGenericReal = corr
       end do
 
-    else if ( self%method(:6) == 'expand' ) then
+    else if ( method(:6) == 'expand' ) then
 
       if (self%run <= 0) then
         alphaGenericReal = aMz; return
@@ -540,8 +543,9 @@ end function alphaGenericComplexFlavor
 
 !ccccccccccccccc
 
-  pure complex (dp) function alphaGenericComplex(self, adim, mZ, amZ, mu)
+  pure complex (dp) function alphaGenericComplex(self, method, adim, mZ, amZ, mu)
     class (Alpha)            , intent(in) :: self
+    character (len = *)      , intent(in) :: method
     type (AnomDim)           , intent(in) :: adim
     real    (dp)             , intent(in) :: mZ, amZ
     complex (dp)             , intent(in) :: mu
@@ -557,7 +561,7 @@ end function alphaGenericComplexFlavor
 
     beta = adim%betaQCD('beta'); cCoef(:4) = adim%betaQCD('cCoef')
 
-    if ( self%method(:6) == 'series' ) then
+    if ( method(:6) == 'series' ) then
       a0 = amZ/fourPi;  b = 0; b(:1,0) = 1
       cCoef = adim%cCoeff(self%run - 1, 20)
 
@@ -603,7 +607,7 @@ end function alphaGenericComplexFlavor
 
     end if
 
-    if ( self%method(:8) == 'analytic' .or. self%method(:7) == 'inverse' ) then
+    if ( method(:8) == 'analytic' .or. method(:7) == 'inverse' ) then
 
       a0 = amZ/fourPi;  b = 0; b(:1,0) = 1
 
@@ -636,7 +640,7 @@ end function alphaGenericComplexFlavor
 
       end do
 
-      if ( self%method(:8) == 'analytic') then
+      if ( method(:8) == 'analytic') then
         alphaGenericComplex = fourpi * aLL/Sum( b(1,:self%run-1) )
       else
 
@@ -647,11 +651,11 @@ end function alphaGenericComplexFlavor
 
       end if
 
-    else if ( self%method(:7) == 'numeric' ) then
+    else if ( method(:7) == 'numeric' ) then
 
       mod = abs(mu); theta = IMAGPART( log(mu) - log(mod) ); ord = min(self%run,5)
 
-      alphaGenericComplex = self%alphaGenericReal(adim, mZ, amZ, mod)
+      alphaGenericComplex = self%alphaGenericReal(method, adim, mZ, amZ, mod)
 
       h = 0.04_dp; n = max(  1, Abs( Nint(theta/h) )  )
 
@@ -668,7 +672,7 @@ end function alphaGenericComplexFlavor
 
       end do
 
-    else if ( self%method(:9) == 'iterative' ) then
+    else if ( method(:9) == 'iterative' ) then
 
       if (self%run <= 0) then
         alphaGenericComplex = aMz; return
@@ -689,7 +693,7 @@ end function alphaGenericComplexFlavor
 
       end do
 
-    else if ( self%method(:4) == 'root' ) then
+    else if ( method(:4) == 'root' ) then
 
       if (self%run <= 0) then
         alphaGenericComplex = aMz; return
@@ -707,7 +711,7 @@ end function alphaGenericComplexFlavor
         alphaGenericComplex = corr
       end do
 
-    else if ( self%method(:6) == 'expand' ) then
+    else if ( method(:6) == 'expand' ) then
 
       if (self%run <= 0) then
         alphaGenericComplex = aMz; return
