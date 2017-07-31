@@ -3975,8 +3975,8 @@ real (dp) function Elliptic3(c, phi, k)
   integer                      :: ier
 
   Elliptic3 = Sin(phi) * drf( Cos(phi)**2, 1 - k * Sin(phi)**2, 1._dp, ier ) + &
-              1._dp/3 * Sin(phi)**3 * c * drj( Cos(phi)**2, 1._dp, 1 - k * Sin(phi)**2, &
-                                              1 - c * Sin(phi)**2, ier )
+  Sin(phi)**3 * c * drj( Cos(phi)**2, 1._dp, 1 - k * Sin(phi)**2, &
+  1 - c * Sin(phi)**2, ier )/3
 
 end function Elliptic3
 
@@ -3993,8 +3993,8 @@ subroutine f90Elliptic2(phi, k, res)
 
   res(1) = Sin(phi) * drf( Cos(phi)**2, 1 - k * Sin(phi)**2, 1._dp, ier )
 
-  res(2) = res(1) - 1._dp/3 * Sin(phi)**3 * k * drj( Cos(phi)**2, 1 - k * Sin(phi)**2, &
-                                                    1._dp, 1._dp, ier )
+  res(2) = res(1) - Sin(phi)**3 * k * drj( Cos(phi)**2, 1 - k * Sin(phi)**2, &
+  1._dp, 1._dp, ier )/3
 
 end subroutine f90Elliptic2
 
