@@ -250,7 +250,7 @@
 :Begin:
 :Function:      rnrqcd
 :Pattern:       rNRQCD[nl_, order_, scheme_, orderAlpha_, runAlpha_, mZ_, aMz_,
-                mtpole_, Q_, gt_, h_, nu_]
+                Q_, mtpole_, gt_, h_, nu_]
 :Arguments:     {nl, order, scheme, orderAlpha, runAlpha, mZ, aMz, Q, mtpole,
                  gt, h, nu}
 :ArgumentTypes: {Integer, String, String, Integer, Integer, Real, Real, Real,

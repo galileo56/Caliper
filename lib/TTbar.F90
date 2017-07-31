@@ -70,17 +70,19 @@ contains
         ah = self%run%AlphaQCD(h * self%mass); v = vC(q, self%mass, gt)
 
         asLL = self%AlphaOb%alphaGenericFlavor('inverse', self%nl, &
-        h * self%mass, ah, h * self%mass * nu)
+        h * self%mass, ah, h * nu * self%mass)
 
         ac = 4 * asLL/3
 
         NRQCD =  18 * (Qt * self%mass/q)**2 *  ImagPart(  (0,1) * v - ac * (  &
-        Euler - 0.5_dp + l2 + Log( - (0,1) * self%mass * v/(h * self%mass * nu) )  ) + &
-        DiGam( 1 - (0,1) * ac/(2 * v) )  )
+        Euler - 0.5_dp + l2 + Log( - (0,1) * v/(h * nu) ) + &
+        DiGam( 1 - (0,1) * ac/(2 * v) )  )  )
 
       end if
 
     end if
+
+    NRQCD = asLL
 
   end function NRQCD
 

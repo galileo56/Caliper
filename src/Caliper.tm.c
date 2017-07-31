@@ -15026,7 +15026,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"MNLLplusNNLLnonmixc1[nl_, ah_, as_, au_]", (char *)"{nl, ah, as, au}", 5);
 	if (_res) _res = _definepattern(mlp, (char *)"MNLLc1[nl_, ah_, as_, au_]", (char *)"{nl, ah, as, au}", 6);
 	if (_res) _res = _definepattern(mlp, (char *)"VceffsNNLL[nl_, asNNLL_, ah_, as_]", (char *)"{nl, asNNLL, ah, as}", 7);
-	if (_res) _res = _definepattern(mlp, (char *)"rNRQCD[nl_, order_, scheme_, orderAlpha_, runAlpha_, mZ_, aMz_,                 mtpole_, Q_, gt_, h_, nu_]", (char *)"{nl, order, scheme, orderAlpha, runAlpha, mZ, aMz, Q, mtpole,                  gt, h, nu}", 8);
+	if (_res) _res = _definepattern(mlp, (char *)"rNRQCD[nl_, order_, scheme_, orderAlpha_, runAlpha_, mZ_, aMz_,                 Q_, mtpole_, gt_, h_, nu_]", (char *)"{nl, order, scheme, orderAlpha, runAlpha, mZ, aMz, Q, mtpole,                  gt, h, nu}", 8);
 	if (_res) _res = _definepattern(mlp, (char *)"A1Pole[nl_, order_, En_, mtpole_, gamtop_, asoft_, VcsNNLL_, musoft_]", (char *)"{nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft}", 9);
 	if (_res) _res = _definepattern(mlp, (char *)"XiNNLLmixUsoft[nl_, ah_, au_]", (char *)"{nl, ah, au}", 10);
 	if (_res) _res = _definepattern(mlp, (char *)"MLLc2[nl_, ah_, as_]", (char *)"{nl, ah, as}", 11);
