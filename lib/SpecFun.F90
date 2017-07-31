@@ -601,43 +601,6 @@ subroutine GAULEG(X1, X2, X, W, N)
 
 end subroutine GAULEG
 
-! cccccccccccccccccccc
-
-recursive complex (dp) function cdigam(Z) result(res)
-  use Constants; implicit none
-  complex (dp), intent(in) :: z
-  real (dp)                :: x, y
-  integer                  :: n, i
-
-  real (dp), dimension(13), parameter :: B = [1._dp/12, -1._dp/120, 1._dp/252, &
-  -1._dp/240, 1._dp/132, -691._dp/32760, 1._dp/12, -3617._dp/8160, &
-  43867._dp/14364, -174611._dp/6600, 77683._dp/276, -236364091._dp/65520, &
-  657931._dp/12]
-
-  x = realpart(z); y = imagpart(z); n = 7 - floor(x)
-
-  if (x < 0) then
-    res = cdigam(1 - Z) - PI/tan(Pi*z)
-  else if (x < 7) then
-
-    res = cdigam(z + n)
-
-    do i = 0, n - 1
-      res = res - 1/(z + i)
-    end do
-
-  else
-
-    res = log(z) - 1/z/2
-
-    do i = 1, 7
-      res = res - B(i)/z**(2*i)
-    end do
-
-  end if
-
-end function cdigam
-
 !ccccccccccccccc
 
 module Legendre
@@ -2023,7 +1986,79 @@ module DeriGamma
 use constants
 Private :: I1MACH, J4SAVE
 
+real (dp), dimension(13), parameter :: Bern = [1._dp/12, -1._dp/120, 1._dp/252, &
+-1._dp/240, 1._dp/132, -691._dp/32760, 1._dp/12, -3617._dp/8160, &
+43867._dp/14364, -174611._dp/6600, 77683._dp/276, -236364091._dp/65520, &
+657931._dp/12]
+
+interface DiGam
+  module procedure :: CDiGam, RDiGam
+end interface DiGam
+
 contains
+
+! cccccccccccccccccccc
+
+recursive complex (dp) function cdigam(z) result(res)
+  use Constants; implicit none
+  complex (dp), intent(in) :: z
+  real (dp)                :: x, y
+  integer                  :: n, i
+
+  x = realpart(z); y = imagpart(z); n = 7 - floor(x)
+
+  if (x < 0) then
+    res = cdigam(1 - z) - PI/tan(Pi*z)
+  else if (x < 7) then
+
+    res = cdigam(z + n)
+
+    do i = 0, n - 1
+      res = res - 1/(z + i)
+    end do
+
+  else
+
+    res = log(z) - 1/z/2
+
+    do i = 1, 7
+      res = res - Bern(i)/z**(2*i)
+    end do
+
+  end if
+
+end function cdigam
+
+! cccccccccccccccccccc
+
+recursive real (dp) function rdigam(z) result(res)
+  use Constants; implicit none
+  real (dp), intent(in) :: z
+  integer               :: n, i
+
+  n = 7 - floor(z)
+
+  if (z < 0) then
+    res = rdigam(1 - z) - PI/tan(Pi*z)
+  else if (z < 7) then
+
+    res = rdigam(z + n)
+
+    do i = 0, n - 1
+      res = res - 1/(z + i)
+    end do
+
+  else
+
+    res = log(z) - 1/z/2
+
+    do i = 1, 7
+      res = res - Bern(i)/z**(2*i)
+    end do
+
+  end if
+
+end function rdigam
 
 recursive subroutine DPSifN(X, N, KODE, M, ANS, NZ, IERR)
 !

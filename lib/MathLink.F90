@@ -2,11 +2,11 @@
 ! cccccccccccccccccccc
 
 subroutine f90CDigamma(zr, zi, res)
-  use Constants; implicit none
+  use Constants; use DeriGamma; implicit none
   real (dp)              , intent(in)  :: zr, zi
   real (dp), dimension(2), intent(out) :: res
-  complex (dp)                         :: z, CDIGAM
-  z = CDIGAM( cmplx(zr, zi, kind = dp) ); res = [ realpart(z), imagpart(z) ]
+  complex (dp)                         :: z
+  z = DIGAM( cmplx(zr, zi, kind = dp) ); res = [ realpart(z), imagpart(z) ]
 end subroutine f90CDigamma
 
 ! cccccccccccccccccccc
