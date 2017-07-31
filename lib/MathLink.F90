@@ -18,12 +18,12 @@ subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, mtpole, mtpole, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = Running(5, 0, alphaAll, 0._dp)
 
   NRQCD = RNRQCD(alphaMass)
 
-  res = NRQCD%A1pole(order(:4), En, mtpole, gamtop, asoft, VcsNNLL, musoft)
+  res = NRQCD%A1pole(order(:4), En, gamtop, asoft, VcsNNLL, musoft)
 
 end subroutine f90A1Pole
 
