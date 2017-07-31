@@ -62,7 +62,7 @@
 :Evaluate:  ProfilesMass::usage = "ProfilesMass[Q, beta, mu0, delLamb, R0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, def, EShape, tau], computes the Renormalization scales for massive event shapes"
 :Evaluate:  Profiles::usage = "Profiles[Q, mu0, R0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, tau], computes the Renormalization scales for massless event shapes"
 :Evaluate:  GammaR::usage = "GammaR[str, nf] computes the soft R anomalous Dimension"
-:Evaluate:  DiLog::usage = "DiLog[n,z] computes the polylogarithm"
+:Evaluate:  DiLog::usage = "DiLog[z] computes the polylogarithm"
 :Evaluate:  Elliptic3::usage = "Elliptic3[psi, k, c] computes the elliptic function of the third kind, using Carlson forms"
 :Evaluate:  Polylog::usage = "Polylog[n,z] computes the polylogarithm"
 :Evaluate:  NGLFunction::usage = "NGLFunction[n,z] computes the non-global part of the soft function"
