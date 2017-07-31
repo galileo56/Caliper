@@ -1,4 +1,341 @@
 
+! cccccccccccccccccccc
+
+subroutine f90CDigamma(zr, zi, res)
+  use Constants; implicit none
+  real (dp)              , intent(in)  :: zr, zi
+  real (dp), dimension(2), intent(out) :: res
+  complex (dp)                         :: z, CDIGAM
+  z = CDIGAM( cmplx(zr, zi, kind = dp) ); res = [ realpart(z), imagpart(z) ]
+end subroutine f90CDigamma
+
+! cccccccccccccccccccc
+
+subroutine f90qFromV(v, m, gt, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: v, m, gt
+  real (dp), intent(out) :: res
+  res = qFromV(v, m, gt)
+end subroutine f90qFromV
+
+! cccccccccccccccccccc
+
+subroutine f90vC(q, m, gt, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp)              , intent(in)  :: q, m, gt
+  real (dp), dimension(2), intent(out) :: res
+  complex (dp)                         :: v
+  v = vC(q, m, gt); res = [ realpart(v), imagpart(v) ]
+end subroutine f90vC
+
+! cccccccccccccccccccc
+
+subroutine f90vStar(q, m, gt, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: q, m, gt
+  real (dp), intent(out) :: res
+  res = vStar(q, m, gt)
+end subroutine f90vStar
+
+! cccccccccccccccccccc
+
+subroutine f90vRootStar(q, m, gt, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: q, m, gt
+  real (dp), intent(out) :: res
+  res = vRootStar(q, m, gt)
+end subroutine f90vRootStar
+
+! cccccccccccccccccccc
+
+subroutine f90SwitchOff(q, m, gt, v0, v1, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: q, m, gt, v0, v1
+  real (dp), intent(out) :: res
+  res = SwitchOff(q, m, gt, v0, v1)
+end subroutine f90SwitchOff
+
+! cccccccccccccccccccc
+
+subroutine f90VssLL(nl, ah, as, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: ah, as
+  integer  , intent(in)  :: nl
+  real (dp), intent(out) :: res
+  type (RNRQCD)          :: NRQCD
+
+  NRQCD = RNRQCD(nl)
+
+  res = NRQCD%VssLL(ah, as)
+
+end subroutine f90VssLL
+
+! cccccccccccccccccccc
+
+subroutine f90Vk1sLL(nl, as, au, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: as, au
+  integer  , intent(in)  :: nl
+  real (dp), intent(out) :: res
+  type (RNRQCD)          :: NRQCD
+
+  NRQCD = RNRQCD(nl)
+
+  res = NRQCD%Vk1sLL(as, au)
+
+end subroutine f90Vk1sLL
+
+! cccccccccccccccccccc
+
+subroutine f90Vk2sLL(nl, as, au, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: as, au
+  integer  , intent(in)  :: nl
+  real (dp), intent(out) :: res
+  type (RNRQCD)          :: NRQCD
+
+  NRQCD = RNRQCD(nl)
+
+  res = NRQCD%Vk2sLL(as, au)
+
+end subroutine f90Vk2sLL
+
+! cccccccccccccccccccc
+
+subroutine f90VkeffsLL(nl, as, au, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: as, au
+  integer  , intent(in)  :: nl
+  real (dp), intent(out) :: res
+  type (RNRQCD)          :: NRQCD
+
+  NRQCD = RNRQCD(nl)
+
+  res = NRQCD%VkeffsLL(as, au)
+
+end subroutine f90VkeffsLL
+
+! cccccccccccccccccccc
+
+subroutine f90VcsLL(as, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: as
+  real (dp), intent(out) :: res
+
+  res = VcsLL(as)
+
+end subroutine f90VcsLL
+
+! cccccccccccccccccccc
+
+subroutine f90VrsLL(nl, as, au, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: as, au
+  integer  , intent(in)  :: nl
+  real (dp), intent(out) :: res
+  type (RNRQCD)          :: NRQCD
+
+  NRQCD = RNRQCD(nl)
+
+  res = NRQCD%VrsLL(as, au)
+
+end subroutine f90VrsLL
+
+! cccccccccccccccccccc
+
+subroutine f90V2sLL(nl, ah, as, au, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: as, au, ah
+  integer  , intent(in)  :: nl
+  real (dp), intent(out) :: res
+  type (RNRQCD)          :: NRQCD
+
+  NRQCD = RNRQCD(nl)
+
+  res = NRQCD%V2sLL(ah, as, au)
+
+end subroutine f90V2sLL
+
+! cccccccccccccccccccc
+
+subroutine f90VceffsNNLL(nl, asNNLL, as, au, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: as, au, asNNLL
+  integer  , intent(in)  :: nl
+  real (dp), intent(out) :: res
+  type (RNRQCD)          :: NRQCD
+
+  NRQCD = RNRQCD(nl)
+
+  res = NRQCD%VceffsNNLL(asNNLL, as, au)
+
+end subroutine f90VceffsNNLL
+
+! cccccccccccccccccccc
+
+subroutine f90XiNLL(nl, ah, as, au, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: ah, as, au
+  integer  , intent(in)  :: nl
+  real (dp), intent(out) :: res
+  type (RNRQCD)          :: NRQCD
+
+  NRQCD = RNRQCD(nl)
+
+  res = NRQCD%XiNLL(ah, as, au)
+
+end subroutine f90XiNLL
+
+! cccccccccccccccccccc
+
+subroutine f90XiNNLLmixUsoft(nl, ah, as, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: ah, as
+  integer  , intent(in)  :: nl
+  real (dp), intent(out) :: res
+  type (RNRQCD)          :: NRQCD
+
+  NRQCD = RNRQCD(nl)
+
+  res = NRQCD%XiNNLLmixUsoft(ah, as)
+
+end subroutine f90XiNNLLmixUsoft
+
+! cccccccccccccccccccc
+
+subroutine f90MLLc2(nl, ah, au, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: ah, au
+  integer  , intent(in)  :: nl
+  real (dp), intent(out) :: res
+  type (RNRQCD)          :: NRQCD
+
+  NRQCD = RNRQCD(nl)
+
+  res = NRQCD%MLLc2(ah, au)
+
+end subroutine f90MLLc2
+
+! cccccccccccccccccccc
+
+subroutine f90MNLLc1(nl, ah, as, au, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: ah, as, au
+  integer  , intent(in)  :: nl
+  real (dp), intent(out) :: res
+  type (RNRQCD)          :: NRQCD
+
+  NRQCD = RNRQCD(nl)
+
+  res = NRQCD%MNLLc1(ah, as, au)
+
+end subroutine f90MNLLc1
+
+! cccccccccccccccccccc
+
+subroutine f90MNLLplusNNLLnonmixc1(nl, ah, as, au, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: ah, as, au
+  integer  , intent(in)  :: nl
+  real (dp), intent(out) :: res
+  type (RNRQCD)          :: NRQCD
+
+  NRQCD = RNRQCD(nl)
+
+  res = NRQCD%MNLLplusNNLLnonmixc1(ah, as, au)
+
+end subroutine f90MNLLplusNNLLnonmixc1
+
+! cccccccccccccccccccc
+
+subroutine f90MNNLLAllc1InclSoftMixLog(nl, ah, as, au, nu, hh, ss, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: ah, as, au, nu, hh, ss
+  integer  , intent(in)  :: nl
+  real (dp), intent(out) :: res
+  type (RNRQCD)          :: NRQCD
+
+  NRQCD = RNRQCD(nl)
+
+  res = NRQCD%MNNLLAllc1InclSoftMixLog(ah, as, au, nu, hh, ss)
+
+end subroutine f90MNNLLAllc1InclSoftMixLog
+
+! cccccccccccccccccccc
+
+subroutine f90XiNNLLSoftMixLogc1(ah, nu, hh, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: ah, nu, hh
+  real (dp), intent(out) :: res
+
+
+  res = XiNNLLSoftMixLogc1(ah, nu, hh)
+
+end subroutine f90XiNNLLSoftMixLogc1
+
+! cccccccccccccccccccc
+
+subroutine f90XiNNLLnonmix(nl, ah, as, au, hh, ss, res)
+  use Constants; use RNRQCDClass; implicit none
+  real (dp), intent(in)  :: ah, as, au, hh, ss
+  integer  , intent(in)  :: nl
+  real (dp), intent(out) :: res
+  type (RNRQCD)          :: NRQCD
+
+  NRQCD = RNRQCD(nl)
+
+  res = NRQCD%XiNNLLnonmix(ah, as, au, hh, ss)
+
+end subroutine f90XiNNLLnonmix
+
+! cccccccccccccccccccc
+
+subroutine f90Toppik(energy, tm, tg, alphas, scale, cutn, cutv, c0,  &
+c1, c2, cdeltc, cdeltl, cfullc, cfulll, crm2, kincm, kinca, jknflg, &
+jgcflg, xkincv, jvflg, res)
+  use constants, only: dp; use ToppikClass; implicit none
+  integer  , intent(in)  :: jknflg, jgcflg, jvflg
+  real (dp), intent(out), dimension(2) :: res
+  real (dp), intent(in)  :: energy, tm, tg, alphas, scale, cutn, cutv, &
+  c0, c1, c2, cdeltc, cdeltl, cfullc, cfulll, crm2
+
+  real (dp)                     :: kincm, kinca, xkincv
+  type (Toppik)                 :: ttbar
+
+  ttbar = Toppik(5, energy, tm, tg, alphas, scale, cutn, cutv, c0, c1, &
+  c2, cdeltc, cdeltl, cfullc, cfulll, crm2, kincm, kinca, jknflg,   &
+  jgcflg, xkincv, jvflg)
+
+  res = ttbar%CrossSec()
+
+end subroutine f90Toppik
+
+! cccccccccccccccccccc
+
+subroutine f90ToppikList(energy, tm, tg, alphas, scale, cutn, cutv, c0,  &
+c1, c2, cdeltc, cdeltl, cfullc, cfulll, crm2, kincm, kinca, jknflg, &
+jgcflg, xkincv, jvflg, res, list)
+  use constants, only: dp; use ToppikClass; implicit none
+  integer  , intent(in)  :: jknflg, jgcflg, jvflg
+  real (dp), intent(out), dimension(2) :: res
+  real (dp), intent(out), dimension(5,nmax) :: list
+  real (dp), intent(in)  :: energy, tm, tg, alphas, scale, cutn, cutv, &
+  c0, c1, c2, cdeltc, cdeltl, cfullc, cfulll, crm2
+
+  real (dp)                     :: kincm, kinca, xkincv
+  type (Toppik)                 :: ttbar
+
+  ttbar = Toppik(5, energy, tm, tg, alphas, scale, cutn, cutv, c0, c1, &
+  c2, cdeltc, cdeltl, cfullc, cfulll, crm2, kincm, kinca, jknflg,   &
+  jgcflg, xkincv, jvflg)
+
+  res = ttbar%CrossSec()
+
+  list(1,:) = ttbar%pGrid(); list(2,:) = ttbar%Weight(); list(3,:) = ttbar%Sigma()
+  list(4,:) = realpart( ttbar%Kernel() ); list(5,:) = imagpart( ttbar%Kernel() )
+
+end subroutine f90ToppikList
+
 !ccccccccccccccc
 
 subroutine f90Pi0(zr, zi, res)

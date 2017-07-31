@@ -19,6 +19,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/subdir_mods.dir/lib/Singular.F90.o"
   "CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o"
   "CMakeFiles/subdir_mods.dir/lib/Spline.F90.o"
+  "CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o"
+  "CMakeFiles/subdir_mods.dir/lib/Toppik.F90.o"
   "CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o"
   "CMakeFiles/subdir_mods.dir/lib/quadpack.F90.o"
   "libsubdir_mods.pdb"

@@ -44,6 +44,10 @@ FILE(REMOVE
   "HYPER.mod"
   "CMakeFiles/libCaliper.dir/hyper.mod.stamp"
 
+  "hypergeo.mod"
+  "HYPERGEO.mod"
+  "CMakeFiles/libCaliper.dir/hypergeo.mod.stamp"
+
   "kernelsclass.mod"
   "KERNELSCLASS.mod"
   "CMakeFiles/libCaliper.dir/kernelsclass.mod.stamp"
@@ -88,6 +92,10 @@ FILE(REMOVE
   "QUADPACK.mod"
   "CMakeFiles/libCaliper.dir/quadpack.mod.stamp"
 
+  "rnrqcdclass.mod"
+  "RNRQCDCLASS.mod"
+  "CMakeFiles/libCaliper.dir/rnrqcdclass.mod.stamp"
+
   "runningclass.mod"
   "RUNNINGCLASS.mod"
   "CMakeFiles/libCaliper.dir/runningclass.mod.stamp"
@@ -99,6 +107,10 @@ FILE(REMOVE
   "singularclass.mod"
   "SINGULARCLASS.mod"
   "CMakeFiles/libCaliper.dir/singularclass.mod.stamp"
+
+  "toppikclass.mod"
+  "TOPPIKCLASS.mod"
+  "CMakeFiles/libCaliper.dir/toppikclass.mod.stamp"
 
   "vfnsmsrclass.mod"
   "VFNSMSRCLASS.mod"

@@ -735,6 +735,60 @@ lib/Spline.F90.s:
 	$(MAKE) -f CMakeFiles/subdir_mods.dir/build.make CMakeFiles/subdir_mods.dir/lib/Spline.F90.s
 .PHONY : lib/Spline.F90.s
 
+lib/TTbar.o: lib/TTbar.F90.o
+
+.PHONY : lib/TTbar.o
+
+# target to build an object file
+lib/TTbar.F90.o:
+	$(MAKE) -f CMakeFiles/subdir_mods.dir/build.make CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o
+.PHONY : lib/TTbar.F90.o
+
+lib/TTbar.i: lib/TTbar.F90.i
+
+.PHONY : lib/TTbar.i
+
+# target to preprocess a source file
+lib/TTbar.F90.i:
+	$(MAKE) -f CMakeFiles/subdir_mods.dir/build.make CMakeFiles/subdir_mods.dir/lib/TTbar.F90.i
+.PHONY : lib/TTbar.F90.i
+
+lib/TTbar.s: lib/TTbar.F90.s
+
+.PHONY : lib/TTbar.s
+
+# target to generate assembly for a file
+lib/TTbar.F90.s:
+	$(MAKE) -f CMakeFiles/subdir_mods.dir/build.make CMakeFiles/subdir_mods.dir/lib/TTbar.F90.s
+.PHONY : lib/TTbar.F90.s
+
+lib/Toppik.o: lib/Toppik.F90.o
+
+.PHONY : lib/Toppik.o
+
+# target to build an object file
+lib/Toppik.F90.o:
+	$(MAKE) -f CMakeFiles/subdir_mods.dir/build.make CMakeFiles/subdir_mods.dir/lib/Toppik.F90.o
+.PHONY : lib/Toppik.F90.o
+
+lib/Toppik.i: lib/Toppik.F90.i
+
+.PHONY : lib/Toppik.i
+
+# target to preprocess a source file
+lib/Toppik.F90.i:
+	$(MAKE) -f CMakeFiles/subdir_mods.dir/build.make CMakeFiles/subdir_mods.dir/lib/Toppik.F90.i
+.PHONY : lib/Toppik.F90.i
+
+lib/Toppik.s: lib/Toppik.F90.s
+
+.PHONY : lib/Toppik.s
+
+# target to generate assembly for a file
+lib/Toppik.F90.s:
+	$(MAKE) -f CMakeFiles/subdir_mods.dir/build.make CMakeFiles/subdir_mods.dir/lib/Toppik.F90.s
+.PHONY : lib/Toppik.F90.s
+
 lib/VFNSMSR.o: lib/VFNSMSR.F90.o
 
 .PHONY : lib/VFNSMSR.o
@@ -891,6 +945,12 @@ help:
 	@echo "... lib/Spline.o"
 	@echo "... lib/Spline.i"
 	@echo "... lib/Spline.s"
+	@echo "... lib/TTbar.o"
+	@echo "... lib/TTbar.i"
+	@echo "... lib/TTbar.s"
+	@echo "... lib/Toppik.o"
+	@echo "... lib/Toppik.i"
+	@echo "... lib/Toppik.s"
 	@echo "... lib/VFNSMSR.o"
 	@echo "... lib/VFNSMSR.i"
 	@echo "... lib/VFNSMSR.s"

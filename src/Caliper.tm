@@ -12,6 +12,31 @@
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
 
+:Evaluate:  TTbar::usage = "ttbar[energy, topmass, topgamma, alphas0, mue0, cutn, cutv, c0, c1, c2, cdeltapotc, cdeltapot1, cfullc, cfull1, crm2, kincm, kinca, ijknflg, ijgcflg, kincv, ijvflg] cross section"
+:Evaluate:  TTbarList::usage = "ttbarList[energy, topmass, topgamma, alphas0, mue0, cutn, cutv, c0, c1, c2, cdeltapotc, cdeltapot1, cfullc, cfull1, crm2, kincm, kinca, ijknflg, ijgcflg, kincv, ijvflg] cross section and distribution list"
+:Evaluate:  CdiGamma::usage = "CdiGamma[x]"
+:Evaluate:  HypGeo::usage = "HypGeo[a,b,c,z]"
+:Evaluate:  QFromV::usage = "QFromV[v, m, gt]"
+:Evaluate:  VC::usage = "VC[q, m, gt]"
+:Evaluate:  VStar::usage = "VStar[q, m, gt]"
+:Evaluate:  VRootStar::usage = "VRootStar[q, m, gt]"
+:Evaluate:  SwitchOff::usage = "SwitchOff[q, m, gt, v0, v1]"
+:Evaluate:  VssLL::usage = "VssLL[nl, ah, as]"
+:Evaluate:  Vk1sLL::usage = "Vk1sLL[nl, as, au]"
+:Evaluate:  Vk2sLL::usage = "Vk2sLL[nl, ah, as]"
+:Evaluate:  VkeffsLL::usage = "VkeffsLL[nl, ah, as]"
+:Evaluate:  VcsLL::usage = "VcsLL[as]"
+:Evaluate:  VrsLL::usage = "VrsLL[nl, as, au]"
+:Evaluate:  V2sLL::usage = "V2sLL[nl, ah, as, au]"
+:Evaluate:  XiNLL::usage = "XiNLL[nl, ah, as, au]"
+:Evaluate:  VceffsNNLL::usage = "VceffsNNLL[nl, asNNLL, as, au]"
+:Evaluate:  XiNNLLmixUsoft::usage = "XiNNLLmixUsoft[nl, ah, as]"
+:Evaluate:  MLLc2::usage = "MLLc2[nl, ah, au]"
+:Evaluate:  MNLLc1::usage = "MNLLc1[nl, ah, as, au]"
+:Evaluate:  MNLLplusNNLLnonmixc1::usage = "MNLLplusNNLLnonmixc1[nl, ah, as, au]"
+:Evaluate:  MNNLLAllc1InclSoftMixLog::usage = "MNNLLAllc1InclSoftMixLog[nl, ah, as, au, nu, hh, ss]"
+:Evaluate:  XiNNLLSoftMixLogc1::usage = "XiNNLLSoftMixLogc1[ah, nu, hh]"
+:Evaluate:  XiNNLLnonmix::usage = "XiNNLLnonmix[nl, ah, as, au, hh, ss]"
 :Evaluate:  DeltaBottomCharm::usage = "DeltaBottomCharm[r1,r2] double massive bubble"
 :Evaluate:  GammaRBottomCharm::usage = "GammaRBottomCharm[r1,r2] R-anomalous dimension from the double massive bubble"
 :Evaluate:  Pi0::usage = "Pi0[z] tree-level massive vacuum polarization function"
@@ -155,6 +180,222 @@
 :Evaluate:  Begin["`Private`"]
 
 :Evaluate:  Print["You can access the complete function list typing '?Caliper`*' "]
+
+:Begin:
+:Function:      hypgeo
+:Pattern:       HypGeo[a_, b_, c_, z_]
+:Arguments:     {Re[a], Im[a], Re[b], Im[b], Re[c], Im[c], Re[z], Im[z]}
+:ArgumentTypes: {Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      cdigamma
+:Pattern:       CdiGamma[z_]
+:Arguments:     {Re[z], Im[z]}
+:ArgumentTypes: {Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      xinnllnonmix
+:Pattern:       XiNNLLnonmix[nl_, ah_, as_, au_, hh_, ss_]
+:Arguments:     {nl, ah, as, au, hh, ss}
+:ArgumentTypes: {Integer, Real, Real, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      xinnllsoftmixlogc1
+:Pattern:       XiNNLLSoftMixLogc1[ah_, nu_, hh_]
+:Arguments:     {ah, nu, hh}
+:ArgumentTypes: {Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      mnnllallc1inclsoftmixlog
+:Pattern:       MNNLLAllc1InclSoftMixLog[nl_, ah_, as_, au_, nu_, hh_, ss_]
+:Arguments:     {nl, ah, as, au, nu, hh, ss}
+:ArgumentTypes: {Integer, Real, Real, Real, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      mnllplusnnllnonmixc1
+:Pattern:       MNLLplusNNLLnonmixc1[nl_, ah_, as_, au_]
+:Arguments:     {nl, ah, as, au}
+:ArgumentTypes: {Integer, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      mnllc1
+:Pattern:       MNLLc1[nl_, ah_, as_, au_]
+:Arguments:     {nl, ah, as, au}
+:ArgumentTypes: {Integer, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      vceffsnnll
+:Pattern:       VceffsNNLL[nl_, asNNLL_, ah_, as_]
+:Arguments:     {nl, asNNLL, ah, as}
+:ArgumentTypes: {Integer, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      xinnllmixusoft
+:Pattern:       XiNNLLmixUsoft[nl_, ah_, au_]
+:Arguments:     {nl, ah, au}
+:ArgumentTypes: {Integer, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      mllc2
+:Pattern:       MLLc2[nl_, ah_, as_]
+:Arguments:     {nl, ah, as}
+:ArgumentTypes: {Integer, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      vssll
+:Pattern:       VssLL[nl_, ah_, as_]
+:Arguments:     {nl, ah, as}
+:ArgumentTypes: {Integer, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      vcsll
+:Pattern:       VcsLL[as_]
+:Arguments:     {as}
+:ArgumentTypes: {Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      vrsll
+:Pattern:       VrsLL[nl_, as_, au_]
+:Arguments:     {nl, as, au}
+:ArgumentTypes: {Integer, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      v2sll
+:Pattern:       V2sLL[nl_, ah_, au_, as_]
+:Arguments:     {nl, ah, au, as}
+:ArgumentTypes: {Integer, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      xinll
+:Pattern:       XiNLL[nl_, ah_, au_, as_]
+:Arguments:     {nl, ah, au, as}
+:ArgumentTypes: {Integer, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      vk1sll
+:Pattern:       Vk1sLL[nl_, ah_, as_]
+:Arguments:     {nl, ah, as}
+:ArgumentTypes: {Integer, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      vk2sll
+:Pattern:       Vk2sLL[nl_, ah_, as_]
+:Arguments:     {nl, ah, as}
+:ArgumentTypes: {Integer, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      vkeffsll
+:Pattern:       VkeffsLL[nl_, ah_, as_]
+:Arguments:     {nl, ah, as}
+:ArgumentTypes: {Integer, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      qfromv
+:Pattern:       QFromV[v_, m_, gt_]
+:Arguments:     {v, m, gt}
+:ArgumentTypes: {Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      switchoff
+:Pattern:       SwitchOff[q_, m_, gt_, v0_, v1_]
+:Arguments:     {q, m, gt, v0, v1}
+:ArgumentTypes: {Real, Real, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      vc
+:Pattern:       VC[v_, m_, gt_]
+:Arguments:     {v, m, gt}
+:ArgumentTypes: {Real, Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      vstar
+:Pattern:       VStar[v_, m_, gt_]
+:Arguments:     {v, m, gt}
+:ArgumentTypes: {Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      vrootstar
+:Pattern:       VRootStar[v_, m_, gt_]
+:Arguments:     {v, m, gt}
+:ArgumentTypes: {Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      ttbar
+:Pattern:       TTbar[energy_, topmass_, topgamma_, alphas0_, mue0_, cutn_,
+                cutv_,  c0_, c1_, c2_, cdeltapotc_, cdeltapot1_, cfullc_,
+                cfull1_, crm2_, kincm_, kinca_, ijknflg_, ijgcflg_, kincv_,
+                ijvflg_]
+
+:Arguments:     {energy, topmass, topgamma, alphas0, mue0, cutn, cutv, c0, c1,
+                 c2, cdeltapotc, cdeltapot1, cfullc, cfull1, crm2, kincm, kinca,
+                 ijknflg, ijgcflg, kincv, ijvflg}
+:ArgumentTypes:	{Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Integer, Integer,
+                 Real, Integer}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      ttbarlist
+:Pattern:       TTbarList[energy_, topmass_, topgamma_, alphas0_, mue0_, cutn_,
+                cutv_,  c0_, c1_, c2_, cdeltapotc_, cdeltapot1_, cfullc_,
+                cfull1_, crm2_, kincm_, kinca_, ijknflg_, ijgcflg_, kincv_,
+                ijvflg_]
+
+:Arguments:     {energy, topmass, topgamma, alphas0, mue0, cutn, cutv, c0, c1,
+                 c2, cdeltapotc, cdeltapot1, cfullc, cfull1, crm2, kincm, kinca,
+                 ijknflg, ijgcflg, kincv, ijvflg}
+:ArgumentTypes:	{Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Integer, Integer,
+                 Real, Integer}
+:ReturnType:    Manual
+:End:
 
 :Begin:
 :Function:      ewfactors
@@ -2049,6 +2290,296 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <math.h>
+
+extern double f90toppik_(double* energy, double* tm, double* tg,
+double* alphas, double* scale, double* cutn, double* cutv, double* c0,
+double* c1, double* c2, double* cdeltc, double* cdeltl, double* cfullc,
+double* cfulll, double* crm2, double* kincm, double* kinca, int* jknflg,
+int* jgcflg, double* kincv, int* jvflg, double* res);
+
+static void ttbar(double energy,double tm, double tg, double alphas,
+double scale, double cutn, double cutv, double c0, double c1, double c2,
+double cdeltc, double cdeltl, double cfullc, double cfulll, double crm2,
+double kincm, double kinca, int jknflg, int jgcflg, double kincv, int jvflg){
+double res[2];
+
+ f90toppik_(&energy, &tm, &tg, &alphas, &scale, &cutn, &cutv, &c0, &c1,
+ &c2, &cdeltc, &cdeltl, &cfullc, &cfulll, &crm2, &kincm, &kinca,
+ &jknflg, &jgcflg, &kincv, &jvflg, res);
+
+ MLPutRealList(stdlink, res, 2);
+
+ MLEndPacket(stdlink);
+}
+
+extern double f90toppiklist_(double* energy, double* tm, double* tg,
+double* alphas, double* scale, double* cutn, double* cutv, double* c0,
+double* c1, double* c2, double* cdeltc, double* cdeltl, double* cfullc,
+double* cfulll, double* crm2, double* kincm, double* kinca, int* jknflg,
+int* jgcflg, double* kincv, int* jvflg, double* res, double* list);
+
+static void ttbarlist(double energy,double tm, double tg, double alphas,
+double scale, double cutn, double cutv, double c0, double c1, double c2,
+double cdeltc, double cdeltl, double cfullc, double cfulll, double crm2,
+double kincm, double kinca, int jknflg, int jgcflg, double kincv, int jvflg){
+double res[2]; double list[5*360];
+
+ f90toppiklist_(&energy, &tm, &tg, &alphas, &scale, &cutn, &cutv, &c0,
+ &c1, &c2, &cdeltc, &cdeltl, &cfullc, &cfulll, &crm2, &kincm, &kinca,
+ &jknflg, &jgcflg, &kincv, &jvflg, res, list);
+
+   MLPutFunction(stdlink, "List", 2 ); MLPutRealList(stdlink, res, 2);
+   MLPutFunction(stdlink, "Partition", 2 ); MLPutRealList(stdlink, list, 5*360);
+   MLPutInteger(stdlink, 5);
+
+ MLEndPacket(stdlink);
+}
+
+extern double f90vssll_(int* nl, double* ah, double* as, double* result);
+
+static double vssll(int nl, double ah, double as){
+  double res;
+
+   f90vssll_(&nl, &ah, &as, &res);
+
+   return res;
+}
+
+extern double f90mnllplusnnllnonmixc1_(int* nl, double* ah, double* as, double* au, double* result);
+
+static double mnllplusnnllnonmixc1(int nl, double ah, double as, double au){
+  double res;
+
+   f90mnllplusnnllnonmixc1_(&nl, &ah, &as, &au, &res);
+
+   return res;
+}
+
+extern double f90mnnllallc1inclsoftmixlog_(int* nl, double* ah, double* as, double* au,
+double* nu, double* hh, double* ss, double* result);
+
+static double mnnllallc1inclsoftmixlog(int nl, double ah, double as, double au,
+double nu, double hh, double ss){
+  double res;
+
+   f90mnnllallc1inclsoftmixlog_(&nl, &ah, &as, &au, &nu, &hh, &ss, &res);
+
+   return res;
+}
+
+extern double f90xinnllnonmix_(int* nl, double* ah, double* as, double* au,
+double* hh, double* ss, double* result);
+
+static double xinnllnonmix(int nl, double ah, double as, double au,
+double hh, double ss){
+  double res;
+
+   f90xinnllnonmix_(&nl, &ah, &as, &au, &hh, &ss, &res);
+
+   return res;
+}
+
+extern double f90xinnllsoftmixlogc1_(double* ah, double* nu, double* hh, double* result);
+
+static double xinnllsoftmixlogc1(double ah, double nu, double hh){
+  double res;
+
+   f90xinnllsoftmixlogc1_(&ah, &nu, &hh, &res);
+
+   return res;
+}
+
+extern double f90vk1sll_(int* nl, double* ah, double* as, double* result);
+
+static double vk1sll(int nl, double ah, double as){
+  double res;
+
+   f90vk1sll_(&nl, &ah, &as, &res);
+
+   return res;
+}
+
+extern double f90vk2sll_(int* nl, double* ah, double* as, double* result);
+
+static double vk2sll(int nl, double ah, double as){
+  double res;
+
+   f90vk2sll_(&nl, &ah, &as, &res);
+
+   return res;
+}
+
+extern double f90vkeffsll_(int* nl, double* ah, double* as, double* result);
+
+static double vkeffsll(int nl, double ah, double as){
+  double res;
+
+   f90vkeffsll_(&nl, &ah, &as, &res);
+
+   return res;
+}
+
+extern double f90vrsll_(int* nl, double* ah, double* as, double* result);
+
+static double vrsll(int nl, double ah, double as){
+  double res;
+
+   f90vrsll_(&nl, &ah, &as, &res);
+
+   return res;
+}
+
+extern double f90v2sll_(int* nl, double* ah, double* au, double* as, double* result);
+
+static double v2sll(int nl, double ah, double au, double as){
+  double res;
+
+   f90v2sll_(&nl, &ah, &au, &as, &res);
+
+   return res;
+}
+
+extern double f90xinll_(int* nl, double* ah, double* au, double* as, double* result);
+
+static double xinll(int nl, double ah, double au, double as){
+  double res;
+
+   f90xinll_(&nl, &ah, &au, &as, &res);
+
+   return res;
+}
+
+extern double f90mnllc1_(int* nl, double* ah, double* au, double* as, double* result);
+
+static double mnllc1(int nl, double ah, double au, double as){
+  double res;
+
+   f90mnllc1_(&nl, &ah, &au, &as, &res);
+
+   return res;
+}
+
+extern double f90xinnllmixusoft_(int* nl, double* ah, double* as, double* result);
+
+static double xinnllmixusoft(int nl, double ah, double as){
+  double res;
+
+   f90xinnllmixusoft_(&nl, &ah, &as, &res);
+
+   return res;
+}
+
+extern double f90mllc2_(int* nl, double* ah, double* as, double* result);
+
+static double mllc2(int nl, double ah, double as){
+  double res;
+
+   f90mllc2_(&nl, &ah, &as, &res);
+
+   return res;
+}
+
+extern double f90vceffsnnll_(int* nl, double* ah, double* au, double* as, double* result);
+
+static double vceffsnnll(int nl, double ah, double au, double as){
+  double res;
+
+   f90vceffsnnll_(&nl, &ah, &au, &as, &res);
+
+   return res;
+}
+
+extern double f90vcsll_(double* as, double* result);
+
+static double vcsll(double as){
+  double res;
+
+   f90vcsll_(&as, &res);
+
+   return res;
+}
+
+extern double f90qfromv_(double* v, double* m, double* gt, double* result);
+
+static double qfromv(double v, double m, double gt){
+  double res;
+
+   f90qfromv_(&v, &m, &gt, &res);
+
+   return res;
+}
+
+extern double f90vc_(double* v, double* m, double* gt, double* result);
+
+static void vc(double v, double m, double gt){
+  double res[2];
+
+   f90vc_(&v, &m, &gt, res);
+
+   MLPutFunction(stdlink, "Complex", 2);
+   MLPutReal(stdlink, res[0]); MLPutReal(stdlink, res[1]);
+
+   MLEndPacket(stdlink);
+ }
+
+extern double f90vstar_(double* v, double* m, double* gt, double* result);
+
+static double vstar(double v, double m, double gt){
+  double res;
+
+   f90vstar_(&v, &m, &gt, &res);
+
+   return res;
+}
+
+extern double f90vrootstar_(double* v, double* m, double* gt, double* result);
+
+static double vrootstar(double v, double m, double gt){
+  double res;
+
+   f90vrootstar_(&v, &m, &gt, &res);
+
+   return res;
+}
+
+extern double f90switchoff_(double* q, double* m, double* gt, double* v0,
+  double* v1, double* result);
+
+static double switchoff(double q, double m, double gt, double v0, double v1){
+  double res;
+
+   f90switchoff_(&q, &m, &gt, &v0, &v1, &res);
+
+   return res;
+}
+
+extern double f90hypgeo_(double* ar, double* ai, double* br, double* bi,
+  double* cr, double* ci, double* zr, double* zi, double* res);
+
+static void hypgeo(double ar, double ai, double br, double bi,
+  double cr, double ci, double zr, double zi){
+  double res[2];
+
+   f90hypgeo_(&ar, &ai, &br, &bi, &cr, &ci, &zr, &zi, res);
+
+   MLPutFunction(stdlink, "Complex", 2);
+   MLPutReal(stdlink, res[0]); MLPutReal(stdlink, res[1]);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90cdigamma_(double* zr, double* zi, double* res);
+
+static void cdigamma(double zr, double zi){
+  double res[2];
+
+   f90cdigamma_(&zr, &zi, res);
+
+   MLPutFunction(stdlink, "Complex", 2);
+   MLPutReal(stdlink, res[0]); MLPutReal(stdlink, res[1]);
+
+   MLEndPacket(stdlink);
+}
 
 extern double f90ewfactors_(int* nf, double* Q, double* Mz, double* GammaZ, double* sin2ThetaW, double* res);
 

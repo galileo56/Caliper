@@ -160,12 +160,16 @@ CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.d
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/poly.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/profilesclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/profilesclass.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/rnrqcdclass.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/rnrqcdclass.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/runningclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/runningclass.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/sigmaclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/sigmaclass.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/singularclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/singularclass.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/toppikclass.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/toppikclass.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o.requires: CMakeFiles/subdir_mods.dir/vfnsmsrclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/MathLink.F90.o: CMakeFiles/subdir_mods.dir/vfnsmsrclass.mod.stamp
 
@@ -310,6 +314,7 @@ CMakeFiles/subdir_mods.dir/chaplin.mod.proxy: CMakeFiles/subdir_mods.dir/lib/Spe
 CMakeFiles/subdir_mods.dir/constants.mod.proxy: CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides
 CMakeFiles/subdir_mods.dir/derigamma.mod.proxy: CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides
 CMakeFiles/subdir_mods.dir/hyper.mod.proxy: CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides
+CMakeFiles/subdir_mods.dir/hypergeo.mod.proxy: CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides
 CMakeFiles/subdir_mods.dir/legendre.mod.proxy: CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides
 CMakeFiles/subdir_mods.dir/poly.mod.proxy: CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides
 CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides.build:
@@ -318,11 +323,34 @@ CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides.build:
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod constants CMakeFiles/subdir_mods.dir/constants.mod.stamp GNU
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod derigamma CMakeFiles/subdir_mods.dir/derigamma.mod.stamp GNU
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod hyper CMakeFiles/subdir_mods.dir/hyper.mod.stamp GNU
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod hypergeo CMakeFiles/subdir_mods.dir/hypergeo.mod.stamp GNU
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod legendre CMakeFiles/subdir_mods.dir/legendre.mod.stamp GNU
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod poly CMakeFiles/subdir_mods.dir/poly.mod.stamp GNU
 	$(CMAKE_COMMAND) -E touch CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides.build
 CMakeFiles/subdir_mods.dir/build: CMakeFiles/subdir_mods.dir/lib/SpecFun.F90.o.provides.build
 
+
+CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o.requires: CMakeFiles/subdir_mods.dir/constants.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o: CMakeFiles/subdir_mods.dir/constants.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o.requires: CMakeFiles/subdir_mods.dir/toppikclass.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o: CMakeFiles/subdir_mods.dir/toppikclass.mod.stamp
+CMakeFiles/subdir_mods.dir/rnrqcdclass.mod.proxy: CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o.provides
+CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o.provides.build:
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod rnrqcdclass CMakeFiles/subdir_mods.dir/rnrqcdclass.mod.stamp GNU
+	$(CMAKE_COMMAND) -E touch CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o.provides.build
+CMakeFiles/subdir_mods.dir/build: CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o.provides.build
+
+CMakeFiles/subdir_mods.dir/lib/Toppik.F90.o.requires: CMakeFiles/subdir_mods.dir/constants.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/Toppik.F90.o: CMakeFiles/subdir_mods.dir/constants.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/Toppik.F90.o.requires: CMakeFiles/subdir_mods.dir/hypergeo.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/Toppik.F90.o: CMakeFiles/subdir_mods.dir/hypergeo.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/Toppik.F90.o.requires: CMakeFiles/subdir_mods.dir/quadpack.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/Toppik.F90.o: CMakeFiles/subdir_mods.dir/quadpack.mod.stamp
+CMakeFiles/subdir_mods.dir/toppikclass.mod.proxy: CMakeFiles/subdir_mods.dir/lib/Toppik.F90.o.provides
+CMakeFiles/subdir_mods.dir/lib/Toppik.F90.o.provides.build:
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod toppikclass CMakeFiles/subdir_mods.dir/toppikclass.mod.stamp GNU
+	$(CMAKE_COMMAND) -E touch CMakeFiles/subdir_mods.dir/lib/Toppik.F90.o.provides.build
+CMakeFiles/subdir_mods.dir/build: CMakeFiles/subdir_mods.dir/lib/Toppik.F90.o.provides.build
 
 CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o.requires: CMakeFiles/subdir_mods.dir/alphaclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/VFNSMSR.F90.o: CMakeFiles/subdir_mods.dir/alphaclass.mod.stamp

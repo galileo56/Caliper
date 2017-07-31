@@ -19,6 +19,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/libCaliper.dir/Singular.F90.o"
   "CMakeFiles/libCaliper.dir/SpecFun.F90.o"
   "CMakeFiles/libCaliper.dir/Spline.F90.o"
+  "CMakeFiles/libCaliper.dir/TTbar.F90.o"
+  "CMakeFiles/libCaliper.dir/Toppik.F90.o"
   "CMakeFiles/libCaliper.dir/VFNSMSR.F90.o"
   "CMakeFiles/libCaliper.dir/quadpack.F90.o"
   "liblibCaliper.pdb"

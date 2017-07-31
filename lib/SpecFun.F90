@@ -27,6 +27,617 @@ module Constants
 
 end module Constants
 
+! cccccccccccccccccccc
+
+subroutine ZLBKSB(A,N,NP,INDX,B)  ! complex version of lubksb
+  use constants, only: dp; IMPLICIT NONE
+  complex (dp), intent(in), dimension(NP,NP) :: A
+  integer     , intent(in)                   :: N, NP
+  integer     , intent(in) , dimension(N)    :: INDX
+  complex (dp), intent(out), dimension(NP)   :: B
+
+  integer                                    :: i, ii, LL
+  complex (dp)                               :: SUMA
+
+  II = 0
+
+  do I = 1, N
+
+    LL = INDX(I);  SUMA = B(LL);  B(LL) = B(I)
+
+    if (II /= 0) then
+
+      SUMA = SUMA - sum( a(i,II:I - 1) * b(II:I - 1) )
+
+    ELSE if ( SUMA /= (0._dp ,0._dp ) ) then
+      II = I
+    end if
+
+    B(I) = SUMA
+
+  end do
+
+  do I = N, 1, -1
+
+    SUMA = B(I)
+
+    if (I < N) then
+
+      SUMA = SUMA - sum( a(i,I+1:N) * b(I+1:N) )
+
+    endif
+
+    B(I) = SUMA/A(I,I)
+
+  end do
+
+end subroutine ZLBKSB
+
+! cccccccccccccccccccc
+
+subroutine ZLDCMP(A,N,NP,INDX,D) ! complex version of ludcmp
+  use constants, only: dp; IMPLICIT NONE
+  integer     , intent(in)                    :: N, NP
+  complex (dp), intent(out), dimension(NP,NP) :: A
+  integer     , intent(out) , dimension(N)    :: INDX
+  real (dp)   , intent(out)                   :: D
+
+  integer                                    :: I, IMAX, J, K
+  real (dp)                                  :: AAMAX, TIN
+  COMPLEX (dp)                               :: DUM, SUMA
+  integer  , PARAMETER                       :: NMAX = 400
+  real (dp), dimension(Nmax)                 :: VV
+
+  tin = 1.e-5_dp;  D = 1
+
+  do I = 1, N
+
+    AAMAX = 0
+
+    do J = 1, N
+      if (  CDABS( A(I,J) ) > AAMAX  ) AAMAX = CDABS( A(I,J) )
+    end do
+
+    VV(I) = 1/AAMAX
+
+  end do
+
+  do J = 1, N
+
+    if (J > 1) then
+
+      do I = 1, J - 1
+
+        SUMA = A(I,J)
+
+        if (I > 1) then
+          SUMA = SUMA - sum( A(I,:i-1) * A(:i-1,J) );  A(I,J) = SUMA
+        endif
+
+      end do
+
+    endif
+
+    AAMAX = 0
+
+    do I = J, N
+
+      SUMA = A(I,J)
+
+      if (J > 1) then
+        SUMA = SUMA - sum( A(I,:j-1) * A(:j-1,J) );  A(I,J) = SUMA
+      endif
+
+      DUM = VV(I) * CDABS(SUMA)
+
+      if ( CDABS(DUM) >= AAMAX ) then
+        IMAX = I;  AAMAX = dreal(DUM)
+      endif
+
+    end do
+
+    if (J /= IMAX) then
+
+      do K = 1, N
+        DUM = A(IMAX,K);  A(IMAX,K) = A(J,K);  A(J,K) = DUM
+      end do
+
+      D = - D;  VV(IMAX)=VV(J)
+
+    endif
+
+    INDX(J) = IMAX
+
+    if (J /= N) then
+      if ( A(J,J) == (0._dp ,0._dp ) ) A(J,J) = cmplx(tin, 0._dp, kind = dp )
+      DUM = 1/A(J,J); A(J + 1:N,J) = A(J + 1:N,J) * DUM
+    endif
+
+  end do
+
+  if ( A(N,N) == 0 ) A(N,N) = cmplx(tin, 0._dp, kind = dp )
+
+end subroutine ZLDCMP
+
+!cccccccc
+
+module hyperGeo
+  use constants; implicit none; private
+  integer            :: kmax, kount
+  integer, parameter :: MAXSTP = 10000, NMAX = 50
+  COMPLEX (dp)       :: z0, dz, aa, bb, cc
+  real (dp)          :: dxsav
+  real (dp), dimension(200) :: xp
+  real (dp), dimension(NMAX, 200) :: yp
+
+  public :: hypgeo
+
+contains
+
+  complex (dp) FUNCTION hypgeo(a, b, c, z)
+    COMPLEX (dp), intent(in) :: a, b, c, z
+    real (dp), parameter     :: EPS = 1.e-8_dp
+
+    complex (dp)               :: hp
+    complex (dp), dimension(2) :: y
+    real (dp)   , dimension(4) :: y2
+    integer                    :: nbad, nok
+
+    kmax = 0
+
+    if ( realpart(z)**2 + imagpart(z)**2 <= 0.25_dp ) then
+      call hypser(a,b,c,z,hp,y(2))
+      hypgeo = hp;  return
+    else if (realpart(z) < 0) then
+      z0 = cmplx(-0.5_dp, 0._dp, kind = dp)
+    else if (realpart(z) <= 1) then
+      z0 = cmplx(0.5_dp, 0_dp, kind = dp)
+    else
+      z0 = cmplx(  0._dp, sign( 0.5_dp,imagpart(z) ), kind = dp  )
+    endif
+    aa = a;  bb = b;  cc = c; dz = z - z0
+    call hypser( aa, bb, cc, z0, y(1),y(2) )
+    y2(1) = realpart( y(1) )
+    y2(2) = imagpart( y(1) )
+    y2(3) = realpart( y(2) )
+    y2(4) = imagpart( y(2) )
+    call odeint(y2,4,0.d0,1.d0,EPS,0.1_dp,nok,nbad)
+    hypgeo = cmplx( y2(1), y2(2), kind = dp )
+  end FUNCTION hypgeo
+
+! cccccccccccccccccccc
+
+  subroutine odeint(ystart, nvar, x1, x2, eps, h1, nok, nbad)
+    integer  , intent(in) :: nvar
+    real (dp), intent(in) :: eps, h1, x1, x2
+    integer, intent (out) :: nbad, nok
+    real (dp), intent(inout), dimension(nvar) :: yStart
+
+    integer   :: i, nstp
+    real (dp) :: h, hdid, hnext, x, xsav, dydx(NMAX), yscal(NMAX), y(NMAX)
+
+    x = x1;  h = sign(h1, x2 - x1);  nok = 0;  nbad = 0;  kount = 0
+
+    do i = 1, nvar
+      y(i) = ystart(i)
+    end do
+
+    if (kmax > 0) xsav = x - 2 * dxsav
+
+    do nstp = 1, MAXSTP
+      call hypdrv(x,y,dydx)
+
+      do i = 1, nvar
+        yscal(i) = abs( y(i) ) + abs( h * dydx(i) ) + tiny(1._dp)
+      end do
+
+      if (kmax > 0) then
+        if ( abs(x - xsav) > abs(dxsav) ) then
+          if (kount < kmax - 1) then
+
+            kount=kount + 1;  xp(kount) = x
+
+            do i = 1,nvar
+              yp(i,kount) = y(i)
+            end do
+
+            xsav = x
+          endif
+        endif
+      endif
+
+      if ( (x + h - x2) * (x + h - x1) > 0 ) h = x2 - x
+
+      call bsstep(y,dydx,nvar,x,h,eps,yscal,hdid,hnext)
+
+      if (hdid == h) then
+        nok = nok + 1
+      else
+        nbad = nbad + 1
+      endif
+
+      if ( (x - x2) * (x2 - x1) >= 0) then
+
+        do i = 1, nvar
+          ystart(i) = y(i)
+        end do
+
+        if (kmax /= 0) then
+          kount = kount + 1;  xp(kount) = x
+
+          do i = 1, nvar
+            yp(i,kount) = y(i)
+          end do
+
+        end if
+
+
+        return
+      endif
+
+      h = hnext
+
+    end do
+  end subroutine odeint
+
+! cccccccccccccccccccc
+
+  subroutine bsstep(y, dydx, nv, x, htry, eps, yscal, hdid, hnext)
+    integer  , intent(in)  :: nv
+    real (dp), intent(in)  :: eps, htry, dydx(nv), yscal(nv)
+    real (dp), intent(out) :: hnext, x, hdid
+    real (dp), intent(inout), dimension(nv) :: y
+
+    integer  , PARAMETER :: KMAXX = 8, IMAX = KMAXX + 1
+
+    real (dp), parameter :: SAFE1 = 0.25_dp, SAFE2 = 0.7_dp, &
+    REDMAX = 1e-5_dp, REDMIN = 0.7_dp, SCALMX = 0.1_dp
+
+    integer   :: i, iq, k, kk, km, kmax, kopt, nseq(IMAX)
+    real (dp) :: eps1, epsold, errmax, fact, h, red, scale, work, wrkmin, xest, &
+    xnew, a(IMAX), alf(KMAXX,KMAXX), err(KMAXX), yerr(NMAX), ysav(NMAX), yseq(NMAX)
+    LOGICAL :: first, reduct
+    SAVE    :: a, alf, epsold, first, kmax, kopt, nseq, xnew
+
+    DATA first/.true./,epsold/-1.d0/
+    DATA nseq /2,4,6,8,10,12,14,16,18/
+
+    if (eps /= epsold) then
+      hnext = -1e29_dp; xnew = -1e29_dp;  eps1 = SAFE1 * eps; a(1) = nseq(1) + 1
+
+      do k = 1, KMAXX
+        a(k+1) = a(k) + nseq(k+1)
+      end do
+
+      do iq = 2, KMAXX
+        do k = 1, iq - 1
+          alf(k,iq) = eps1**(   (a(k+1) - a(iq+1) )/(  ( a(iq+1) - a(1) + 1 ) &
+          * (2 * k + 1)  )   )
+        end do
+      end do
+
+      epsold = eps
+
+      do kopt=2,KMAXX-1
+        if ( a(kopt+1) > a(kopt) * alf(kopt - 1, kopt) ) go to 1
+      end do
+
+1     kmax = kopt
+
+    end if
+
+    h = htry
+
+    do i = 1, nv
+      ysav(i) = y(i)
+    end do
+
+    if (h /= hnext .or. x /= xnew) then
+      first = .true.;  kopt=kmax
+    endif
+
+    reduct = .false.
+
+2   do k = 1, kmax
+      xnew = x + h           ;  call mmid( ysav, dydx, nv, x, h, nseq(k), yseq )
+      xest = ( h/nseq(k) )**2;  call pzext0(k, xest, yseq, y, yerr, nv)
+
+      if (k /= 1) then
+
+        errmax = TINY(1._dp)
+
+        do i = 1, nv
+          errmax = max(  errmax, abs( yerr(i)/yscal(i) )  )
+        end do
+
+        errmax  = errmax/eps;  km = k - 1
+        err(km) = (errmax/SAFE1)**( 1._dp/(2 * km + 1) )
+      endif
+
+      if ( k /= 1 .and. (k >= kopt - 1 .or. first) ) then
+        if (errmax < 1) go to 4
+        if ( k == kmax .or. k == kopt + 1) then
+          red = SAFE2/err(km);  go to 3
+        else if (k == kopt) then
+          if (alf(kopt-1,kopt) < err(km)) then
+            red=1.d0/err(km)
+            goto 3
+          endif
+        else if (kopt == kmax) then
+          if ( alf(km, kmax-1) < err(km) ) then
+            red = alf(km, kmax - 1) * SAFE2/err(km);  go to 3
+          endif
+        else if ( alf(km,kopt) < err(km) ) then
+          red = alf(km, kopt - 1)/err(km);  goto 3
+        endif
+      endif
+    end do
+
+3   red = min(red,REDMIN)
+    red = max(red,REDMAX);  h = h*red;  reduct=.true.;  go to 2
+
+4   x = xnew;  hdid = h;  first = .false.;  wrkmin = 1.e35_dp
+
+    do kk = 1, km
+
+      fact = max( err(kk), SCALMX ); work = fact * a(kk+1)
+
+      if (work < wrkmin) then
+        scale = fact;  wrkmin = work;  kopt = kk + 1
+      endif
+
+    end do
+
+    hnext = h/scale
+
+    if (kopt >= k .and. kopt /= kmax .and. .not. reduct) then
+
+      fact = max( scale/alf(kopt-1,kopt), SCALMX )
+
+      if ( a(kopt+1)*fact <= wrkmin ) then
+        hnext = h/fact;  kopt  = kopt+1
+      endif
+
+    endif
+
+  end subroutine bsstep
+
+! cccccccccccccccccccc
+
+  subroutine hypser(a, b, c, z, series, deriv)
+    COMPLEX (dp), intent(in)  :: a, b, c, z
+    COMPLEX (dp), intent(out) :: series, deriv
+    COMPLEX (dp)              :: aa,bb,cc,fac,temp
+    integer                   :: n
+
+    deriv = 0;  fac = 1;  temp = fac;  aa = a;  bb = b;  cc = c
+
+    do n = 1, 1000
+      fac = fac * aa * bb/cc;  deriv = deriv + fac
+      fac = fac * z/n       ;  series = temp + fac
+
+      if (series == temp) return
+
+      temp = series;  aa = aa + 1; bb = bb + 1; cc = cc + 1
+
+    end do
+
+  end subroutine hypser
+
+! cccccccccccccccccccc
+
+  subroutine hypdrv(s, y2, dyds2)
+    real(dp)    , intent(in)             :: s
+    real (dp), intent(in) , dimension(4) :: y2
+    real (dp), intent(out), dimension(4) :: dyds2
+    COMPLEX (dp)                         :: z
+
+    COMPLEX (dp), dimension(2) :: y
+    COMPLEX (dp), dimension(2) :: dyds
+
+    y(1) = cmplx( y2(1), y2(2), kind = dp )
+    y(2) = cmplx( y2(3), y2(4), kind = dp )
+
+    z = z0 + s * dz
+
+    dyds(1) = y(2) * dz
+    dyds(2) = (  aa * bb * y(1) - ( cc - (aa + bb + 1) * z ) * y(2)  ) * &
+    dz/( z * (1 - z) )
+
+    dyds2(1) = dreal( dyds(1) );  dyds2(2) = dimag( dyds(1) )
+    dyds2(3) = dreal( dyds(2) );  dyds2(4) = dimag( dyds(2) )
+
+  end
+
+! cccccccccccccccccccc
+
+  subroutine mmid(y, dydx, nvar, xs, htot, nstep, yout)
+    integer  , intent(in)                   :: nstep, nvar
+    real (dp), intent(in)                   :: htot, xs, dydx(nvar)
+    real (dp), intent(out), dimension(nvar) :: yout
+    real (dp), dimension(nvar)              :: y
+    real (dp), dimension(NMAX)              :: ym, yn
+    integer                                 :: i, n
+    real (dp)                               :: h, h2, swap, x
+
+    h = htot/nstep
+
+    do i = 1, nvar
+      ym(i) = y(i);  yn(i) = y(i) + h * dydx(i)
+    end do
+
+    x = xs + h
+
+    call hypdrv(x,yn,yout); h2 = 2 * h
+
+    do n = 2, nstep
+
+      do i = 1, nvar
+        swap = ym(i) + h2 * yout(i);  ym(i) = yn(i);  yn(i)=swap
+      end do
+
+      x = x + h
+
+      call hypdrv(x,yn,yout)
+
+    end do
+
+    do i = 1, nvar
+      yout(i) = ( ym(i) + yn(i) + h * yout(i) )/2
+    end do
+
+  end subroutine mmid
+
+! cccccccccccccccccccc
+
+  subroutine pzext0(iest, xest, yest, yz, dy, nv)
+    integer  , intent(in)                 :: iest, nv
+    real (dp), intent(in)                 :: xest
+    real (dp), intent(in) , dimension(nv) :: yest(nv)
+    real (dp), intent(out), dimension(nv) :: dy, yz
+
+    integer            :: j, k1
+    integer, parameter :: IMAX = 13
+    real (dp)          :: delta, f1, f2, q, d(NMAX), qcol(NMAX,IMAX), x(IMAX)
+    SAVE               :: qcol, x
+
+    x(iest) = xest
+
+    do j = 1, nv
+      dy(j) = yest(j);  yz(j) = yest(j)
+    end do
+
+    if (iest == 1) then
+
+      do j = 1, nv
+        qcol(j,1) = yest(j)
+      end do
+
+    else
+
+      do j = 1, nv
+        d(j) = yest(j)
+      end do
+
+      do k1 = 1, iest - 1
+        delta = 1/( x(iest - k1) - xest )
+        f1 = xest * delta
+        f2 = x(iest-k1) * delta
+
+        do j = 1, nv
+          q = qcol(j,k1);  qcol(j,k1) = dy(j);  delta = d(j) - q
+          dy(j) = f1 * delta;  d(j) = f2 * delta;  yz(j) = yz(j) + dy(j)
+        end do
+
+      end do
+
+      do j = 1, nv
+        qcol(j,iest) = dy(j)
+      end do
+
+    endif
+
+  end subroutine pzext0
+
+end module hyperGeo
+
+!cccccccc
+
+subroutine f90hypgeo(ar, ai, br, bi, cr, ci, zr, zi, res)
+  use constants, only: dp; use hyperGeo; implicit none
+  real (dp), intent(in)  :: ar, ai, br, bi, cr, ci, zr, zi
+  real (dp), intent(out) :: res(2)
+  complex (dp)           :: r
+
+  r = hypgeo( cmplx(ar ,ai, kind = dp), cmplx(br, bi, kind = dp), &
+  cmplx(cr, ci, kind = dp), cmplx(zr, zi, kind = dp) )
+
+  res = [ dreal(r), dimag(r) ]
+
+end
+
+!cccccccc
+
+subroutine GAULEG(X1, X2, X, W, N)
+  use Constants, only: dp, pi; implicit none
+  real (dp), intent(in)                :: x1, x2
+  integer  , intent(in)                :: n
+  real (dp), intent(out), dimension(n) :: X(N), W(N)
+
+  real (dp) :: xm, xl, p1, p2, p3, z, z1, pp
+  integer   :: i, m, j
+
+!      Given the lower and upper limits of integration X1 and X2
+!      and given N, this routine returns arrays X(N) and W(N)
+!      containing the abscissas and weights of the Gauss-Legendre
+!      N-point quadrature formula
+
+  real (dp), PARAMETER :: EPS = 3e-14_dp
+
+  M  = (N  +  1)/2;  XM = (X2 + X1)/2;  XL = (X2 - X1)/2
+
+  do I = 1, M
+
+    Z = COS( pi * (I - 0.25_dp)/(N + 0.5_dp) )
+
+1   continue
+
+      P1 = 1;  P2 = 0
+
+      do J = 1, N
+
+        P3 = P2;  P2 = P1;  P1 = ( (2 * J - 1) * Z * P2 - (J - 1) * P3 )/J
+
+      end do
+
+      PP = N * (Z * P1 - P2)/(Z**2 - 1);  Z1 = Z;  Z = Z1 - P1/PP
+
+      if ( ABS(Z - Z1) > EPS ) GO TO 1
+
+    X(I) = XM - XL * Z;  X(N + 1 - I) = XM + XL * Z
+    W(I) = 2 * XL/( (1 - Z**2) * PP * PP );  W(N + 1 - I) = W(I)
+
+  end do
+
+end subroutine GAULEG
+
+! cccccccccccccccccccc
+
+recursive complex (dp) function cdigam(Z) result(res)
+  use Constants; implicit none
+  complex (dp), intent(in) :: z
+  real (dp)                :: x, y
+  integer                  :: n, i
+
+  real (dp), dimension(13), parameter :: B = [1._dp/12, -1._dp/120, 1._dp/252, &
+  -1._dp/240, 1._dp/132, -691._dp/32760, 1._dp/12, -3617._dp/8160, &
+  43867._dp/14364, -174611._dp/6600, 77683._dp/276, -236364091._dp/65520, &
+  657931._dp/12]
+
+  x = realpart(z); y = imagpart(z); n = 7 - floor(x)
+
+  if (x < 0) then
+    res = cdigam(1 - Z) - PI/tan(Pi*z)
+  else if (x < 7) then
+
+    res = cdigam(z + n)
+
+    do i = 0, n - 1
+      res = res - 1/(z + i)
+    end do
+
+  else
+
+    res = log(z) - 1/z/2
+
+    do i = 1, 7
+      res = res - B(i)/z**(2*i)
+    end do
+
+  end if
+
+end function cdigam
+
 !ccccccccccccccc
 
 module Legendre

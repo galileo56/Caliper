@@ -44,6 +44,10 @@ FILE(REMOVE
   "HYPER.mod"
   "CMakeFiles/subdir_mods.dir/hyper.mod.stamp"
 
+  "hypergeo.mod"
+  "HYPERGEO.mod"
+  "CMakeFiles/subdir_mods.dir/hypergeo.mod.stamp"
+
   "kernelsclass.mod"
   "KERNELSCLASS.mod"
   "CMakeFiles/subdir_mods.dir/kernelsclass.mod.stamp"
@@ -88,6 +92,10 @@ FILE(REMOVE
   "QUADPACK.mod"
   "CMakeFiles/subdir_mods.dir/quadpack.mod.stamp"
 
+  "rnrqcdclass.mod"
+  "RNRQCDCLASS.mod"
+  "CMakeFiles/subdir_mods.dir/rnrqcdclass.mod.stamp"
+
   "runningclass.mod"
   "RUNNINGCLASS.mod"
   "CMakeFiles/subdir_mods.dir/runningclass.mod.stamp"
@@ -99,6 +107,10 @@ FILE(REMOVE
   "singularclass.mod"
   "SINGULARCLASS.mod"
   "CMakeFiles/subdir_mods.dir/singularclass.mod.stamp"
+
+  "toppikclass.mod"
+  "TOPPIKCLASS.mod"
+  "CMakeFiles/subdir_mods.dir/toppikclass.mod.stamp"
 
   "vfnsmsrclass.mod"
   "VFNSMSRCLASS.mod"
