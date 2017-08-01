@@ -69,7 +69,7 @@ contains
 
         ah = self%run%AlphaQCD(h * self%mass); v = vC(q, self%mass, gt)
 
-        asLL = self%AlphaOb%alphaGenericFlavor('inverse', self%nl, &
+        asLL = self%AlphaOb%alphaGenericFlavor('inverse', 1, self%nl, &
         h * self%mass, ah, h * nu * self%mass)
 
         ac = 4 * asLL/3
@@ -81,8 +81,6 @@ contains
       end if
 
     end if
-
-    NRQCD = asLL
 
   end function NRQCD
 
