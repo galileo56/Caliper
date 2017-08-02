@@ -58,25 +58,45 @@ contains
     class (RNRQCD)     , intent(in) :: self
     character (len = *), intent(in) :: order, scheme
     real (dp)          , intent(in) :: gt, h, nu, q
-    real (dp)                       :: ac, ah, asLL
     complex (dp)                    :: v
+    real (dp)                       :: ac, ah, asLL, asNLL, auLL, En, c1run, &
+    mu1, mu2
 
     NRQCD = 0
 
     if ( scheme(:4) == 'pole') then
 
+      mu1 = h * self%mass;  mu2 = nu * mu1;  ah = self%run%AlphaQCD(mu1)
+
+      asLL = self%AlphaOb%alphaGenericFlavor('inverse', 1, self%nl, &
+      mu1, ah, mu2)
+
+      if ( order(:3) == 'NLL' .or. order(:4) == 'NNLL' ) then
+
+        asNLL = self%AlphaOb%alphaGenericFlavor('inverse', 2, self%nl, &
+        mu1, ah, mu2)
+
+        auLL = self%AlphaOb%alphaGenericFlavor('inverse', 1, self%nl, &
+        mu1, ah, mu2 * nu)
+
+        En = q - 2 * self%mass
+
+      end if
+
       if ( order(:2) == 'LL' ) then
 
-        ah = self%run%AlphaQCD(h * self%mass); v = vC(q, self%mass, gt)
-
-        asLL = self%AlphaOb%alphaGenericFlavor('inverse', 1, self%nl, &
-        h * self%mass, ah, h * nu * self%mass)
-
-        ac = 4 * asLL/3
+        v = vC(q, self%mass, gt); ac = 4 * asLL/3
 
         NRQCD =  18 * (Qt * self%mass/q)**2 *  ImagPart(  (0,1) * v - ac * (  &
         Euler - 0.5_dp + l2 + Log( - (0,1) * v/(h * nu) ) + &
         DiGam( 1 - (0,1) * ac/(2 * v) )  )  )
+
+      else if ( order(:3) == 'NLL' ) then
+
+        c1run = self%MNLLc1(ah, asLL, auLL)
+
+        NRQCD = (2 * self%mass * Qt/Q)**2 * c1run**2 * &
+        self%A1pole('NLL', En, gt, asNLL, 0._dp, mu2)
 
       end if
 
