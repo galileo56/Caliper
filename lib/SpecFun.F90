@@ -1995,6 +1995,10 @@ interface DiGam
   module procedure :: CDiGam, RDiGam
 end interface DiGam
 
+interface TriGam
+  module procedure :: CTriGam, RTriGam
+end interface TriGam
+
 contains
 
 ! cccccccccccccccccccc
@@ -2008,7 +2012,7 @@ recursive complex (dp) function cdigam(z) result(res)
   x = realpart(z); y = imagpart(z); n = 7 - floor(x)
 
   if (x < 0) then
-    res = cdigam(1 - z) - PI/tan(Pi*z)
+    res = cdigam(1 - z) - PI/tan(Pi * z)
   else if (x < 7) then
 
     res = cdigam(z + n)
@@ -2022,7 +2026,7 @@ recursive complex (dp) function cdigam(z) result(res)
     res = log(z) - 1/z/2
 
     do i = 1, 7
-      res = res - Bern(i)/z**(2*i)
+      res = res - Bern(i)/z**(2 * i)
     end do
 
   end if
@@ -2039,7 +2043,7 @@ recursive real (dp) function rdigam(z) result(res)
   n = 7 - floor(z)
 
   if (z < 0) then
-    res = rdigam(1 - z) - PI/tan(Pi*z)
+    res = rdigam(1 - z) - PI/tan(Pi * z)
   else if (z < 7) then
 
     res = rdigam(z + n)
@@ -2053,12 +2057,79 @@ recursive real (dp) function rdigam(z) result(res)
     res = log(z) - 1/z/2
 
     do i = 1, 7
-      res = res - Bern(i)/z**(2*i)
+      res = res - Bern(i)/z**(2 * i)
     end do
 
   end if
 
 end function rdigam
+
+! cccccccccccccccccccc
+
+recursive complex (dp) function ctrigam(z) result(res)
+  use Constants; implicit none
+  complex (dp), intent(in) :: z
+  real (dp)                :: x, y
+  integer                  :: n, i
+
+  x = realpart(z); y = imagpart(z); n = 7 - floor(x)
+
+  if (x < 0) then
+    res = - ctrigam(1 - z) + PI**2/Sin(Pi * z)**2
+  else if (x < 7) then
+
+    res = ctrigam(z + n)
+
+    do i = 0, n - 1
+      res = res + 1/(z + i)**2
+    end do
+
+  else
+
+    res = 1 + 1/z/2
+
+    do i = 1, 7
+      res = res + 2 * i * Bern(i)/z**(2 * i)
+    end do
+
+    res = res/z
+
+  end if
+
+end function ctrigam
+
+! cccccccccccccccccccc
+
+recursive complex (dp) function rtrigam(z) result(res)
+  use Constants; implicit none
+  real (dp), intent(in) :: z
+  integer               :: n, i
+
+  n = 7 - floor(z)
+
+  if (z < 0) then
+    res = - rtrigam(1 - z) + PI**2/Sin(Pi * z)**2
+  else if (z < 7) then
+
+    res = rtrigam(z + n)
+
+    do i = 0, n - 1
+      res = res + 1/(z + i)**2
+    end do
+
+  else
+
+    res = 1 + 1/z/2
+
+    do i = 1, 7
+      res = res + 2 * i * Bern(i)/z**(2 * i)
+    end do
+
+    res = res/z
+
+  end if
+
+end function rtrigam
 
 recursive subroutine DPSifN(X, N, KODE, M, ANS, NZ, IERR)
 !

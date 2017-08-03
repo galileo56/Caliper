@@ -17,6 +17,7 @@
 :Evaluate:  TTbar::usage = "ttbar[energy, topmass, topgamma, alphas0, mue0, cutn, cutv, c0, c1, c2, cdeltapotc, cdeltapot1, cfullc, cfull1, crm2, kincm, kinca, ijknflg, ijgcflg, kincv, ijvflg] cross section"
 :Evaluate:  TTbarList::usage = "ttbarList[energy, topmass, topgamma, alphas0, mue0, cutn, cutv, c0, c1, c2, cdeltapotc, cdeltapot1, cfullc, cfull1, crm2, kincm, kinca, ijknflg, ijgcflg, kincv, ijvflg] cross section and distribution list"
 :Evaluate:  CdiGamma::usage = "CdiGamma[x]"
+:Evaluate:  CtriGamma::usage = "CtriGamma[x]"
 :Evaluate:  HypGeo::usage = "HypGeo[a,b,c,z]"
 :Evaluate:  QFromV::usage = "QFromV[v, m, gt]"
 :Evaluate:  VC::usage = "VC[q, m, gt]"
@@ -194,6 +195,14 @@
 :Begin:
 :Function:      cdigamma
 :Pattern:       CdiGamma[z_]
+:Arguments:     {Re[z], Im[z]}
+:ArgumentTypes: {Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      ctrigamma
+:Pattern:       CtriGamma[z_]
 :Arguments:     {Re[z], Im[z]}
 :ArgumentTypes: {Real, Real}
 :ReturnType:    Manual
@@ -2622,6 +2631,19 @@ static void cdigamma(double zr, double zi){
   double res[2];
 
    f90cdigamma_(&zr, &zi, res);
+
+   MLPutFunction(stdlink, "Complex", 2);
+   MLPutReal(stdlink, res[0]); MLPutReal(stdlink, res[1]);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90ctrigamma_(double* zr, double* zi, double* res);
+
+static void ctrigamma(double zr, double zi){
+  double res[2];
+
+   f90ctrigamma_(&zr, &zi, res);
 
    MLPutFunction(stdlink, "Complex", 2);
    MLPutReal(stdlink, res[0]); MLPutReal(stdlink, res[1]);

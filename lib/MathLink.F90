@@ -70,6 +70,16 @@ end subroutine f90CDigamma
 
 ! cccccccccccccccccccc
 
+subroutine f90CTrigamma(zr, zi, res)
+  use Constants; use DeriGamma; implicit none
+  real (dp)              , intent(in)  :: zr, zi
+  real (dp), dimension(2), intent(out) :: res
+  complex (dp)                         :: z
+  z = TrIGAM( cmplx(zr, zi, kind = dp) ); res = [ realpart(z), imagpart(z) ]
+end subroutine f90CTrigamma
+
+! cccccccccccccccccccc
+
 subroutine f90qFromV(v, m, gt, res)
   use Constants; use RNRQCDClass; implicit none
   real (dp), intent(in)  :: v, m, gt
