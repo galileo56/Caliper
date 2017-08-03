@@ -6,7 +6,7 @@ module RNRQCDClass
   use DeriGamma, only: DiGam ; use RunningClass; use AnomDimClass
   use AlphaClass; implicit none ;  private
 
-  real (dp), parameter :: Qt = 2._dp/3
+  real (dp), parameter :: Qt = 2._dp/3, FPi = 4 * Pi
 
   public :: qFromV, vC, VcsLL, XiNNLLSoftMixLogc1, vStar, vRootStar, SwitchOff
 
@@ -58,9 +58,10 @@ contains
     class (RNRQCD)     , intent(in) :: self
     character (len = *), intent(in) :: order, scheme
     real (dp)          , intent(in) :: gt, h, nu, q
-    complex (dp)                    :: v
-    real (dp)                       :: ac, ah, asLL, asNLL, auLL, En, c1run, &
-    mu1, mu2
+    complex (dp)                    :: vt
+    real (dp)                       :: ac, ah, asLL, asNLL, auLL, En, c1run,   &
+    mu1, mu2, asNNLL, c2run, Vcc, V22, Vss, Vrr, VkkCACF, VkkCF2, Vkk, Vkkk1I, &
+    Vkkk2T, VcsNNLL, DelmNNLL
 
     NRQCD = 0
 
@@ -85,11 +86,11 @@ contains
 
       if ( order(:2) == 'LL' ) then
 
-        v = vC(q, self%mass, gt); ac = 4 * asLL/3
+        vt = vC(q, self%mass, gt); ac = 4 * asLL/3
 
-        NRQCD =  18 * (Qt * self%mass/q)**2 *  ImagPart(  (0,1) * v - ac * (  &
-        Euler - 0.5_dp + l2 + Log( - (0,1) * v/(h * nu) ) + &
-        DiGam( 1 - (0,1) * ac/(2 * v) )  )  )
+        NRQCD =  18 * (Qt * self%mass/q)**2 *  ImagPart(  (0,1) * vt - ac * (  &
+        Euler - 0.5_dp + l2 + Log( - (0,1) * vt/(h * nu) ) + &
+        DiGam( 1 - (0,1) * ac/(2 * vt) )  )  )
 
       else if ( order(:3) == 'NLL' ) then
 
@@ -98,9 +99,121 @@ contains
         NRQCD = (2 * self%mass * Qt/Q)**2 * c1run**2 * &
         self%A1pole('NLL', En, gt, asNLL, 0._dp, mu2)
 
+      else if ( order(:4) == 'NNLL' ) then
+
+        asNNLL = self%AlphaOb%alphaGenericFlavor('inverse', 3, self%nl, &
+        mu1, ah, mu2)
+
+        ac = - VcsLL(asLL)/FPi; Vcc = - ac
+
+        c1run = self%MNNLLAllc1InclSoftMixLog(ah, asLL, auLL, nu, h, 1._dp)
+        c2run = self%MLLc2(ah, auLL)
+        V22 = self%V2sLL(ah, asLL, auLL)/FPi
+        Vss = self%VssLL(ah, asLL)/FPi
+        Vrr = self%VrsLL(asLL, auLL)/FPi
+        Vkk = - 28 * asLL**2/9;  VkkCACF = -4 * asLL**2;  VkkCF2 = 8 * asLL**2/9
+        Vkkk1I = asLL**2 * self%Vk1sLL( asLL, auLL)
+        Vkkk2T = asLL**2 * self%Vk2sLL(asLL, auLL)
+        VcsNNLL = self%VceffsNNLL(asNNLL, asLL, auLL)
+
+        DelmNNLL = (V22/2 + Vss + 3 * Vrr/8)/2 * Vcc**3 - (Vkk + 6 * Vkkk1I + &
+        4 * Vkkk2T) * Vcc**2/8 + 5 * Vcc**4/128
+
       end if
 
     end if
+
+  contains
+
+    complex (dp) function ggg(a, v, X)
+      real (dp)   , intent(in) :: a, X
+      complex (dp), intent(in) :: v
+
+      ggg = (   (0,1) * vt - a * (  Log( - (0,1) * v/nu/h ) + X + Euler + &
+      DiGam( 1 - (0,1) * a/2/v )  )   )
+
+    end function ggg
+
+! ccccccccccc
+
+    ! complex (dp) function dggg(a, v, X)
+      ! real (dp)   , intent(in) :: a, X
+      ! complex (dp), intent(in) :: v
+
+      ! dggg = (   (0,1) * vt - a * (  Log( - (0,1) * v/nu/h ) + X + Euler + &
+      ! DiGam( 1 - (0,1) * a/2/v )  )   )
+
+    ! end function dggg
+
+! ccccccccccc
+
+  complex (dp) function dgk(a, v)
+    real (dp)   , intent(in) :: a
+    complex (dp), intent(in) :: v
+
+    dgk = - self%mass**2 * ( ggg( a, v, 2 * l2 - 2 )**2 + v**2 )/2/FPi/a
+
+    end function dgk
+
+! ccccccccccc
+
+  complex (dp) function dgkCACF(a, v)
+    real (dp)   , intent(in) :: a
+    complex (dp), intent(in) :: v
+
+    dgkCACF = - self%mass**2 * ( ggg( a, v, 2 * l2 - 1.25_dp )**2 + v**2 )/2/FPi/a
+
+    end function dgkCACF
+
+! ccccccccccc
+
+  complex (dp) function dgkk2T(a, v)
+    real (dp)   , intent(in) :: a
+    complex (dp), intent(in) :: v
+
+    dgkk2T = - self%mass**2 * ( ggg( a, v, 2 * l2 - 21._dp/16 )**2 + v**2 )/2/Pi/a
+
+    end function dgkk2T
+
+! ccccccccccc
+
+  complex (dp) function dgkCF2(a, v)
+    real (dp)   , intent(in) :: a
+    complex (dp), intent(in) :: v
+
+    dgkCF2 = - self%mass**2 * ( ggg( a, v, 2 * l2 - 1 )**2 + v**2 )/2/FPi/a
+
+    end function dgkCF2
+
+! ccccccccccc
+
+  complex (dp) function dgd(a, v)
+    real (dp)   , intent(in) :: a
+    complex (dp), intent(in) :: v
+
+    dgd = - self%mass**2 * ggg( a, v, 2 * l2 - 0.5_dp )**2/FPi**2
+
+    end function dgd
+
+! ccccccccccc
+
+  ! complex (dp) function dgr(a, v)
+  !   real (dp)   , intent(in) :: a
+  !   complex (dp), intent(in) :: v
+  !
+  !   dgr = - self%mass**2 * ggg( a, v, 2 * l2 - 0.5_dp )**2/FPi**2
+  !
+  !   end function dgr
+
+! ccccccccccc
+
+  complex (dp) function dgkk1I(a, v)
+    real (dp)   , intent(in) :: a
+    complex (dp), intent(in) :: v
+
+    dgkk1I = - 3 * self%mass**2 * ( ggg( a, v, 2 * l2 - 17._dp/12 )**2 + v**2 )/FPi/a
+
+    end function dgkk1I
 
   end function NRQCD
 
@@ -119,9 +232,9 @@ contains
     if ( order(:2) == 'LL' ) then
       x0 = 1
     else if ( order(:3) == 'NLL' ) then
-      aSuPi = asoft/4/Pi; x0 = self%xc01(aSuPi); x1 = self%xc11(aSuPi)
+      aSuPi = asoft/FPi; x0 = self%xc01(aSuPi); x1 = self%xc11(aSuPi)
     else if ( order(:4) == 'NNLL' .or. order(:4) == 'N2LL' ) then
-      aSuPi = asoft/4/Pi; x1 = self%xc12(aSuPi); x2 = self%xc22(aSuPi)
+      aSuPi = asoft/FPi; x1 = self%xc12(aSuPi); x2 = self%xc22(aSuPi)
       x0 = self%a1 * asuPi + self%a2 * asuPi**2 - 3 * VcsNNLL/16/asoft/Pi
     end if
 
@@ -184,8 +297,8 @@ contains
     class (RNRQCD), intent(in) :: self
     real (dp)     , intent(in) :: ah, as
 
-    VssLL = - 8 * ah * Pi/(6 - self%beta(0)) * ( 1 - (as/ah)**(1 - 6/self%beta(0)) &
-    * (21 - 2 * self%beta(0))/9 )
+    VssLL = - 8 * ah * Pi/( 6 - self%beta(0) ) * (  1 - (as/ah)**( 1 - 6/self%beta(0) ) &
+    * ( 21 - 2 * self%beta(0) )/9  )
 
   end function VssLL
 
@@ -285,7 +398,7 @@ contains
     class (RNRQCD), intent(in) :: self
     real (dp)     , intent(in) :: ah, au
 
-    MLLc2 = -1._dp/6 - 32 * log(au/ah)/9/self%beta(0)
+    MLLc2 = - 1._dp/6 - 32 * log(au/ah)/9/self%beta(0)
 
   end function MLLc2
 
