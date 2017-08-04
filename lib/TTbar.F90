@@ -3,7 +3,7 @@
 
 module RNRQCDClass
   use constants, only: dp, Pi, Pi2, l2, Zeta3, Euler ; use ToppikClass
-  use DeriGamma, only: DiGam ; use RunningClass; use AnomDimClass
+  use DeriGamma, only: DiGam, trigam ; use RunningClass; use AnomDimClass
   use AlphaClass; implicit none ;  private
 
   real (dp), parameter :: Qt = 2._dp/3, FPi = 4 * Pi
@@ -61,7 +61,7 @@ contains
     complex (dp)                    :: vt
     real (dp)                       :: ac, ah, asLL, asNLL, auLL, En, c1run,   &
     mu1, mu2, asNNLL, c2run, Vcc, V22, Vss, Vrr, VkkCACF, VkkCF2, Vkk, Vkkk1I, &
-    Vkkk2T, VcsNNLL, DelmNNLL
+    Vkkk2T, VcsNNLL, DelmNNLL, rCoul, r2, rd, rr, rk, rkin, r1S, pre
 
     NRQCD = 0
 
@@ -116,8 +116,29 @@ contains
         Vkkk2T = asLL**2 * self%Vk2sLL(asLL, auLL)
         VcsNNLL = self%VceffsNNLL(asNNLL, asLL, auLL)
 
-        DelmNNLL = (V22/2 + Vss + 3 * Vrr/8)/2 * Vcc**3 - (Vkk + 6 * Vkkk1I + &
+        DelmNNLL = (V22/2 + Vss + 3 * Vrr/8) * Vcc**3/2 - (Vkk + 6 * Vkkk1I + &
         4 * Vkkk2T) * Vcc**2/8 + 5 * Vcc**4/128
+
+        vt = vC(q, self%mass, gt)
+
+        rCoul = c1run**2 * self%mass**2 * self%A1pole('NNLL', En, &
+        gt, asNNLL, VcsNNLL, h * self%mass * nu)/18/Pi
+
+        r2 = 2 * c1run * c2run * self%mass**2/FPi * &
+        ImagPart(vt**2 * ggg(ac, vt, l2 - 0.5_dp) )
+
+        rd = c1run**2 * FPi * ( V22 + 2 * Vss) * ImagPart( dgd(ac, vt) )
+        rr = FPi * c1run**2 * Vrr * ImagPart( dgr(ac, vt) )
+
+        rk = c1run**2 * (  VkkCACF * ImagPart( dgkCACF(ac, vt) ) + VkkCF2 * &
+        ImagPart( dgkCF2(ac, vt) ) + Vkkk1I * ImagPart( dgkk1I(ac, vt) ) + &
+        Vkkk2T * ImagPart( dgkk2T(ac, vt) )  )
+
+        rkin = c1run**2 * ImagPart( dgkin(ac, vt) ); r1S = 0
+
+        Pre = 72 * Pi/Q**2
+
+        NRQCD = Qt**2 * pre * (rCoul + rr + r1S + r2 + rkin + rd + rk)
 
       end if
 
@@ -129,21 +150,31 @@ contains
       real (dp)   , intent(in) :: a, X
       complex (dp), intent(in) :: v
 
-      ggg = (   (0,1) * vt - a * (  Log( - (0,1) * v/nu/h ) + X + Euler + &
-      DiGam( 1 - (0,1) * a/2/v )  )   )
+      ggg = (0,1) * vt - a * (  Log( - (0,1) * v/nu/h ) + X + Euler + &
+      DiGam( 1 - (0,1) * a/2/v )  )
 
     end function ggg
 
 ! ccccccccccc
 
-    ! complex (dp) function dggg(a, v, X)
-      ! real (dp)   , intent(in) :: a, X
-      ! complex (dp), intent(in) :: v
+    complex (dp) function dggga(a, v, X)
+      real (dp)   , intent(in) :: a, X
+      complex (dp), intent(in) :: v
 
-      ! dggg = (   (0,1) * vt - a * (  Log( - (0,1) * v/nu/h ) + X + Euler + &
-      ! DiGam( 1 - (0,1) * a/2/v )  )   )
+      dggga = - Euler - X - Log( - (0,1) * v/nu/h ) - DiGam( 1 - (0,1) * a/2/v ) &
+      + (0,1) * a * TriGam( 1 - (0,1) * a/2/v )/2/v
 
-    ! end function dggg
+    end function dggga
+
+! ccccccccccc
+
+    complex (dp) function dgggv(a, v, X)
+      real (dp)   , intent(in) :: a, X
+      complex (dp), intent(in) :: v
+
+      dgggv = (0,1) - a * ( 1/v + (0,1) * a * TriGam( 1 - (0,1) * a/2/v )/2/v**2 )
+
+    end function dgggv
 
 ! ccccccccccc
 
@@ -161,7 +192,7 @@ contains
     real (dp)   , intent(in) :: a
     complex (dp), intent(in) :: v
 
-    dgkCACF = - self%mass**2 * ( ggg( a, v, 2 * l2 - 1.25_dp )**2 + v**2 )/2/FPi/a
+    dgkCACF = - self%mass**2 * ( ggg( a, v, l2 - 1.25_dp )**2 + v**2 )/2/FPi/a
 
     end function dgkCACF
 
@@ -171,7 +202,7 @@ contains
     real (dp)   , intent(in) :: a
     complex (dp), intent(in) :: v
 
-    dgkk2T = - self%mass**2 * ( ggg( a, v, 2 * l2 - 21._dp/16 )**2 + v**2 )/2/Pi/a
+    dgkk2T = - self%mass**2 * ( ggg( a, v, l2 - 21._dp/16 )**2 + v**2 )/2/Pi/a
 
     end function dgkk2T
 
@@ -181,7 +212,7 @@ contains
     real (dp)   , intent(in) :: a
     complex (dp), intent(in) :: v
 
-    dgkCF2 = - self%mass**2 * ( ggg( a, v, 2 * l2 - 1 )**2 + v**2 )/2/FPi/a
+    dgkCF2 = - self%mass**2 * ( ggg( a, v, l2 - 1 )**2 + v**2 )/2/FPi/a
 
     end function dgkCF2
 
@@ -191,19 +222,42 @@ contains
     real (dp)   , intent(in) :: a
     complex (dp), intent(in) :: v
 
-    dgd = - self%mass**2 * ggg( a, v, 2 * l2 - 0.5_dp )**2/FPi**2
+    dgd = - self%mass**2 * ggg( a, v, l2 - 0.5_dp )**2/FPi**2
 
     end function dgd
 
 ! ccccccccccc
 
-  ! complex (dp) function dgr(a, v)
-  !   real (dp)   , intent(in) :: a
-  !   complex (dp), intent(in) :: v
-  !
-  !   dgr = - self%mass**2 * ggg( a, v, 2 * l2 - 0.5_dp )**2/FPi**2
-  !
-  !   end function dgr
+  complex (dp) function dgr(a, v)
+    real (dp)   , intent(in) :: a
+    complex (dp), intent(in) :: v
+
+    dgr = - self%mass**2/FPi**2 * ( ggg(a, v, l2 - 1.5_dp)**2 + v**2 + &
+    v**2 * dggga(a, v, l2 - 0.5_dp) )
+
+    end function dgr
+
+! ccccccccccc
+
+  complex (dp) function dgkin(a, v)
+    real (dp)   , intent(in) :: a
+    complex (dp), intent(in) :: v
+
+    dgkin = self%mass**2/4/FPi * (  a * ggg(a, v, l2 - 1.5_dp)**2 + a * v**2 + &
+    2 * v**2 * ( ggg(a, v, l2 - 0.5_dp) + a * dggga(a, v, l2 - 0.5_dp) + &
+    v/4 *  dgggv(a, v, l2 - 0.5_dp) )  )
+
+    end function dgkin
+
+! ccccccccccc
+
+  complex (dp) function dggg(a, v)
+    real (dp)   , intent(in) :: a
+    complex (dp), intent(in) :: v
+
+    dggg = - dgggv(a, v, 1._dp)/v
+
+    end function dggg
 
 ! ccccccccccc
 
@@ -211,7 +265,7 @@ contains
     real (dp)   , intent(in) :: a
     complex (dp), intent(in) :: v
 
-    dgkk1I = - 3 * self%mass**2 * ( ggg( a, v, 2 * l2 - 17._dp/12 )**2 + v**2 )/FPi/a
+    dgkk1I = - 3 * self%mass**2 * ( ggg( a, v, l2 - 17._dp/12 )**2 + v**2 )/FPi/a
 
     end function dgkk1I
 
