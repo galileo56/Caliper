@@ -4,8 +4,7 @@
 module RNRQCDClass
   use constants, only: dp, Pi, Pi2, l2, Zeta3, Euler ; use ToppikClass
   use DeriGamma, only: DiGam, trigam ; use RunningClass; use AnomDimClass
-  use AlphaClass!; use NRQCDClass
-  implicit none ;  private
+  use AlphaClass; use NRQCDClass; implicit none ;  private
 
   real (dp), parameter :: Qt = 2._dp/3, FPi = 4 * Pi
 
@@ -25,7 +24,7 @@ module RNRQCDClass
 
     procedure, pass (self), public :: VceffsNNLL, VrsLL, V2sLL, VssLL, Vk1sLL, &
     Vk2sLL, VkeffsLL, XiNLL, XiNNLLnonmix, XiNNLLmixUsoft, MLLc2, MNLLc1, m1S, &
-    MNLLplusNNLLnonmixc1, MNNLLAllc1InclSoftMixLog, A1pole, NRQCD, Delta1S
+    MNLLplusNNLLnonmixc1, MNNLLAllc1InclSoftMixLog, A1pole, Xsec, Delta1S
 
     procedure, pass (self), private :: xc01, xc11, xc12, xc22
 
@@ -73,7 +72,7 @@ contains
 
 ! ccccccccccc
 
-  real (dp) function NRQCD(self, order, scheme, q, gt, h, nu)
+  real (dp) function Xsec(self, order, scheme, q, gt, h, nu)
     class (RNRQCD)     , intent(in) :: self
     character (len = *), intent(in) :: order, scheme
     real (dp)          , intent(in) :: gt, h, nu, q
@@ -82,7 +81,7 @@ contains
     mu1, mu2, asNNLL, c2run, Vcc, V22, Vss, Vrr, VkkCACF, VkkCF2, Vkk, Vkkk1I, &
     Vkkk2T, VcsNNLL, DelmNNLL, rCoul, r2, rd, rr, rk, rkin, r1S, pre
 
-    NRQCD = 0
+    Xsec = 0
 
     if ( scheme(:4) == 'pole') then
 
@@ -107,7 +106,7 @@ contains
 
         vt = vC(q, self%mass, gt); ac = 4 * asLL/3
 
-        NRQCD =  18 * (Qt * self%mass/q)**2 *  ImagPart(  (0,1) * vt - ac * (  &
+        Xsec =  18 * (Qt * self%mass/q)**2 *  ImagPart(  (0,1) * vt - ac * (  &
         Euler - 0.5_dp + l2 + Log( - (0,1) * vt/(h * nu) ) + &
         DiGam( 1 - (0,1) * ac/(2 * vt) )  )  )
 
@@ -115,7 +114,7 @@ contains
 
         c1run = self%MNLLc1(ah, asLL, auLL)
 
-        NRQCD = (2 * self%mass * Qt/Q)**2 * c1run**2 * &
+        Xsec = (2 * self%mass * Qt/Q)**2 * c1run**2 * &
         self%A1pole('NLL', En, gt, asNLL, 0._dp, mu2)
 
       else if ( order(:4) == 'NNLL' ) then
@@ -157,7 +156,7 @@ contains
 
         Pre = 72 * Pi/Q**2
 
-        NRQCD = Qt**2 * pre * (rCoul + rr + r1S + r2 + rkin + rd + rk)
+        Xsec = Qt**2 * pre * (rCoul + rr + r1S + r2 + rkin + rd + rk)
 
       end if
 
@@ -290,7 +289,7 @@ contains
 
     end function dgkk1I
 
-  end function NRQCD
+  end function Xsec
 
 ! ccccccccccc
 

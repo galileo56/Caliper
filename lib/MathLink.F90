@@ -26,7 +26,7 @@ subroutine f90RNRQCD(nl, order, scheme, orderAlpha, runAlpha, mZ, aMz, Q, &
 
   NRQCD = RNRQCD(alphaMass)
 
-  res = NRQCD%NRQCD(order(:4), scheme(:4), q, gt, h, nu)
+  res = NRQCD%Xsec(order(:4), scheme(:4), q, gt, h, nu)
 
 end subroutine f90RNRQCD
 
