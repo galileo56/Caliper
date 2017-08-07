@@ -162,9 +162,6 @@ module NRQCDClass
 
       c2h = c2h/fac - InNRQCD%harm * InNRQCD%c(2,0)
 
-      ! InNRQCD%c(3,0) = InNRQCD%c(3,0) + 2 * beta(0) * c2h
-      ! InNRQCD%c(2,0) = InNRQCD%c(2,0) + 3 * beta(0)**2 * InNRQCD%h2/4
-
     end if
 
     do k = 1, 3

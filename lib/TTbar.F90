@@ -4,7 +4,8 @@
 module RNRQCDClass
   use constants, only: dp, Pi, Pi2, l2, Zeta3, Euler ; use ToppikClass
   use DeriGamma, only: DiGam, trigam ; use RunningClass; use AnomDimClass
-  use AlphaClass; implicit none ;  private
+  use AlphaClass!; use NRQCDClass
+  implicit none ;  private
 
   real (dp), parameter :: Qt = 2._dp/3, FPi = 4 * Pi
 
@@ -18,14 +19,15 @@ module RNRQCDClass
     real (dp), dimension(0:4) :: beta
     type (Running)            :: run
     type (Alpha)              :: AlphaOb
+    ! type (NRQCD)              :: Upsilon
 
   contains
 
-    procedure, pass(self), public :: VceffsNNLL, VrsLL, V2sLL, VssLL, Vk1sLL,  &
-    Vk2sLL, VkeffsLL, XiNLL, XiNNLLnonmix, XiNNLLmixUsoft, MLLc2, MNLLc1, &
-    MNLLplusNNLLnonmixc1, MNNLLAllc1InclSoftMixLog, A1pole, NRQCD
+    procedure, pass (self), public :: VceffsNNLL, VrsLL, V2sLL, VssLL, Vk1sLL, &
+    Vk2sLL, VkeffsLL, XiNLL, XiNNLLnonmix, XiNNLLmixUsoft, MLLc2, MNLLc1, m1S, &
+    MNLLplusNNLLnonmixc1, MNNLLAllc1InclSoftMixLog, A1pole, NRQCD, Delta1S
 
-    procedure, pass(self), private :: xc01, xc11, xc12, xc22
+    procedure, pass (self), private :: xc01, xc11, xc12, xc22
 
   end type RNRQCD
 
@@ -50,7 +52,24 @@ contains
     RNRQCDIn%a2 = 456.74883699902244_dp - 66.35417150661816_dp * nl + &
     1.2345679012345678_dp * nl**2
 
+    ! RNRQCDIn%Upsilon = NRQCD('up', 'MSRn', 'no', MSR, n, l, j, s)
+
   end function RNRQCDIn
+
+! ccccccccccc
+
+  real (dp) function M1S(self)
+    class (RNRQCD), intent(in) :: self
+
+  end function M1S
+
+! ccccccccccc
+
+  function Delta1S(self) result(res)
+    class (RNRQCD), intent(in) :: self
+    real (dp), dimension(4)    :: res
+
+  end function Delta1S
 
 ! ccccccccccc
 
@@ -145,6 +164,8 @@ contains
     end if
 
   contains
+
+! ccccccccccc
 
     complex (dp) function ggg(a, v, X)
       real (dp)   , intent(in) :: a, X
