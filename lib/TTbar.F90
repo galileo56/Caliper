@@ -4,7 +4,7 @@
 module RNRQCDClass
   use constants, only: dp, Pi, Pi2, l2, Zeta3, Euler ; use ToppikClass
   use DeriGamma, only: DiGam, trigam ; use RunningClass; use AnomDimClass
-  use AlphaClass; use NRQCDClass; implicit none ;  private
+  use AlphaClass; use NRQCDClass; use VFNSMSRClass; implicit none ;  private
 
   real (dp), parameter :: Qt = 2._dp/3, FPi = 4 * Pi
 
@@ -18,7 +18,7 @@ module RNRQCDClass
     real (dp), dimension(0:4) :: beta
     type (Running)            :: run
     type (Alpha)              :: AlphaOb
-    ! type (NRQCD)              :: Upsilon
+    type (NRQCD)              :: Upsilon
 
   contains
 
@@ -38,10 +38,13 @@ module RNRQCDClass
 
 contains
 
-  type (RNRQCD) function RNRQCDIn(run)
-    type (Running), intent(in) :: run
+  type (RNRQCD) function RNRQCDIn(MSR)
+    type (VFNSMSR), intent(in) :: MSR
+    type (Running)             :: run
     type (AnomDim)             :: adim
-    integer :: nl
+    integer                    :: nl
+
+    run = MSR%RunArray(2)
 
     nl = run%numFlav(); adim = run%adim(); RNRQCDIn%run = run; RNRQCDIn%nl = nl
     RNRQCDIn%beta = adim%betaQCD('beta') ; RNRQCDIn%AlphaOb = run%alphaAll()
@@ -51,7 +54,7 @@ contains
     RNRQCDIn%a2 = 456.74883699902244_dp - 66.35417150661816_dp * nl + &
     1.2345679012345678_dp * nl**2
 
-    ! RNRQCDIn%Upsilon = NRQCD('up', 'MSRn', 'no', MSR, n, l, j, s)
+    ! RNRQCDIn%Upsilon = NRQCD('up', 'MSRn', 'no', MSR, 1, 0, 1, 1)
 
   end function RNRQCDIn
 

@@ -1,18 +1,19 @@
 
 ! cccccccccccccccccccc
 
-subroutine f90RNRQCD(nl, order, scheme, orderAlpha, runAlpha, mZ, aMz, Q, &
-  mtpole, gt, h, nu, res)
+subroutine f90RNRQCD(nl, order, scheme, orderAlpha, runAlpha, runMass, muLam, &
+  xlam, mZ, aMz, Q, mtpole, gt, h, nu, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
-  real (dp)          , intent(in)  :: Q, mtpole, gt, h, nu, mZ, aMz
+  use RunningClass; use VFNSMSRClass; implicit none
+  real (dp)          , intent(in)  :: Q, mtpole, gt, h, nu, mZ, aMz, xlam, muLam
   character (len = *), intent(in)  :: order, scheme
-  integer            , intent(in)  :: nl, orderAlpha, runAlpha
+  integer            , intent(in)  :: nl, orderAlpha, runAlpha, runMass
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (RNRQCD)                    :: NRQCD
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
+  type (VFNSMSR)                   :: MSR
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -22,9 +23,10 @@ subroutine f90RNRQCD(nl, order, scheme, orderAlpha, runAlpha, mZ, aMz, Q, &
   alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, aMz, mtpole, mtpole, &
   mtpole, mtpole, 0._dp, 0._dp)
 
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(nl - 1, runMass, alphaAll, muLam), &
+  Running(nl, runMass, alphaAll, muLam) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%Xsec(order(:4), scheme(:4), q, gt, h, nu)
 
@@ -34,7 +36,7 @@ end subroutine f90RNRQCD
 
 subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp)          , intent(in)  :: En, mtpole, gamtop, asoft, VcsNNLL, musoft
   character (len = *), intent(in)  :: order
   integer            , intent(in)  :: nl
@@ -42,7 +44,8 @@ subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
   integer                          :: i
   type (RNRQCD)                    :: NRQCD
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
+  type (VFNSMSR)                   :: MSR
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -50,9 +53,9 @@ subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, mtpole, mtpole, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%A1pole(order(:4), En, gamtop, asoft, VcsNNLL, musoft)
 
@@ -128,14 +131,15 @@ end subroutine f90SwitchOff
 
 subroutine f90VssLL(nl, ah, as, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass;  use VFNSMSRClass; implicit none
   real (dp), intent(in)  :: ah, as
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -143,9 +147,9 @@ subroutine f90VssLL(nl, ah, as, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%VssLL(ah, as)
 
@@ -155,14 +159,15 @@ end subroutine f90VssLL
 
 subroutine f90Vk1sLL(nl, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass;  use VFNSMSRClass; implicit none
   real (dp), intent(in)  :: as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -170,9 +175,9 @@ subroutine f90Vk1sLL(nl, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%Vk1sLL(as, au)
 
@@ -182,14 +187,15 @@ end subroutine f90Vk1sLL
 
 subroutine f90Vk2sLL(nl, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -197,9 +203,9 @@ subroutine f90Vk2sLL(nl, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%Vk2sLL(as, au)
 
@@ -209,14 +215,15 @@ end subroutine f90Vk2sLL
 
 subroutine f90VkeffsLL(nl, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -224,9 +231,9 @@ subroutine f90VkeffsLL(nl, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%VkeffsLL(as, au)
 
@@ -247,14 +254,15 @@ end subroutine f90VcsLL
 
 subroutine f90VrsLL(nl, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -262,9 +270,9 @@ subroutine f90VrsLL(nl, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%VrsLL(as, au)
 
@@ -274,14 +282,15 @@ end subroutine f90VrsLL
 
 subroutine f90V2sLL(nl, ah, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: as, au, ah
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -289,9 +298,9 @@ subroutine f90V2sLL(nl, ah, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%V2sLL(ah, as, au)
 
@@ -301,14 +310,15 @@ end subroutine f90V2sLL
 
 subroutine f90VceffsNNLL(nl, asNNLL, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: as, au, asNNLL
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -316,9 +326,9 @@ subroutine f90VceffsNNLL(nl, asNNLL, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%VceffsNNLL(asNNLL, as, au)
 
@@ -328,14 +338,15 @@ end subroutine f90VceffsNNLL
 
 subroutine f90XiNLL(nl, ah, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: ah, as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -343,9 +354,9 @@ subroutine f90XiNLL(nl, ah, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%XiNLL(ah, as, au)
 
@@ -355,14 +366,15 @@ end subroutine f90XiNLL
 
 subroutine f90XiNNLLmixUsoft(nl, ah, as, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: ah, as
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -370,9 +382,9 @@ subroutine f90XiNNLLmixUsoft(nl, ah, as, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%XiNNLLmixUsoft(ah, as)
 
@@ -382,14 +394,15 @@ end subroutine f90XiNNLLmixUsoft
 
 subroutine f90MLLc2(nl, ah, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: ah, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -397,9 +410,9 @@ subroutine f90MLLc2(nl, ah, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%MLLc2(ah, au)
 
@@ -409,14 +422,15 @@ end subroutine f90MLLc2
 
 subroutine f90MNLLc1(nl, ah, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: ah, as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -424,9 +438,9 @@ subroutine f90MNLLc1(nl, ah, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%MNLLc1(ah, as, au)
 
@@ -436,14 +450,15 @@ end subroutine f90MNLLc1
 
 subroutine f90MNLLplusNNLLnonmixc1(nl, ah, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: ah, as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -451,9 +466,9 @@ subroutine f90MNLLplusNNLLnonmixc1(nl, ah, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%MNLLplusNNLLnonmixc1(ah, as, au)
 
@@ -463,14 +478,15 @@ end subroutine f90MNLLplusNNLLnonmixc1
 
 subroutine f90MNNLLAllc1InclSoftMixLog(nl, ah, as, au, nu, hh, ss, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: ah, as, au, nu, hh, ss
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -480,7 +496,7 @@ subroutine f90MNNLLAllc1InclSoftMixLog(nl, ah, as, au, nu, hh, ss, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = Running(5, 0, alphaAll, 0._dp)
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%MNNLLAllc1InclSoftMixLog(ah, as, au, nu, hh, ss)
 
@@ -501,14 +517,15 @@ end subroutine f90XiNNLLSoftMixLogc1
 
 subroutine f90XiNNLLnonmix(nl, ah, as, au, hh, ss, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: ah, as, au, hh, ss
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   type (RNRQCD)          :: NRQCD
   integer                :: i
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -516,9 +533,9 @@ subroutine f90XiNNLLnonmix(nl, ah, as, au, hh, ss, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%XiNNLLnonmix(ah, as, au, hh, ss)
 
