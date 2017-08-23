@@ -543,17 +543,17 @@ end subroutine f90XiNNLLnonmix
 
 ! cccccccccccccccccccc
 
-subroutine f90Toppik(energy, tm, tg, alphas, scale, cutn, cutv, c0,  &
-c1, c2, cdeltc, cdeltl, cfullc, cfulll, crm2, kincm, kinca, jknflg, &
-jgcflg, xkincv, jvflg, res)
+subroutine f90Toppik(energy, tm, tg, alphas, scale, cutn, cutv, c0, c1, c2, &
+cdeltc, cdeltl, cfullc, cfulll, crm2, kincm, kinca, jknflg, jgcflg, xkincv, &
+jvflg, res)
   use constants, only: dp; use ToppikClass; implicit none
-  integer  , intent(in)  :: jknflg, jgcflg, jvflg
+  integer  , intent(in)                :: jknflg, jgcflg, jvflg
   real (dp), intent(out), dimension(2) :: res
-  real (dp), intent(in)  :: energy, tm, tg, alphas, scale, cutn, cutv, &
-  c0, c1, c2, cdeltc, cdeltl, cfullc, cfulll, crm2
+  real (dp), intent(in)                :: energy, tm, tg, alphas, scale, cutn, &
+  c0, c1, c2, cdeltc, cdeltl, cfullc, cfulll, crm2, cutv
 
-  real (dp)                     :: kincm, kinca, xkincv
-  type (Toppik)                 :: ttbar
+  real (dp)                            :: kincm, kinca, xkincv
+  type (Toppik)                        :: ttbar
 
   ttbar = Toppik(5, energy, tm, tg, alphas, scale, cutn, cutv, c0, c1, &
   c2, cdeltc, cdeltl, cfullc, cfulll, crm2, kincm, kinca, jknflg,   &

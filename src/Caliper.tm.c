@@ -507,16 +507,17 @@ double gamtop, double asoft, double VcsNNLL, double musoft){
 }
 
 extern double f90rnrqcd_(int* nl, char const* order, char const* scheme,
-int* orderAlpha, int* runAlpha, double* mZ, double* aMz, double* Q, double* mt,
-double* gt, double* h, double* nu, double* res);
+int* orderAlpha, int* runAlpha, int* runMass, double* muLam, double* xLam,
+double* mZ, double* aMz, double* Q, double* mt, double* gt, double* h,
+double* nu, double* res);
 
 static double rnrqcd(int nl, char const* order, char const* scheme,
-int orderAlpha, int runAlpha, double mZ, double aMz, double Q, double mt,
-double gt, double h, double nu){
+int orderAlpha, int runAlpha, int runMass, double muLam, double xLam, double mZ,
+double aMz, double Q, double mt, double gt, double h, double nu){
   double res;
 
-   f90rnrqcd_(&nl, order, scheme, &orderAlpha, &runAlpha, &mZ, &aMz, &Q, &mt,
-     &gt, &h, &nu, &res);
+   f90rnrqcd_(&nl, order, scheme, &orderAlpha, &runAlpha, &runMass, &muLam,
+   &xLam, &mZ, &aMz, &Q, &mt, &gt, &h, &nu, &res);
 
    return res;
 }
@@ -3493,7 +3494,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 3497 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
+# line 3498 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
 
 
 void hypgeo P(( double _tp1, double _tp2, double _tp3, double _tp4, double _tp5, double _tp6, double _tp7, double _tp8));
@@ -3759,7 +3760,7 @@ L0:	return res;
 } /* _tr8 */
 
 
-double rnrqcd P(( int _tp1, const char * _tp2, const char * _tp3, int _tp4, int _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12));
+double rnrqcd P(( int _tp1, const char * _tp2, const char * _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15));
 
 #if MLPROTOTYPES
 static int _tr9( MLINK mlp)
@@ -3773,33 +3774,39 @@ static int _tr9(mlp) MLINK mlp;
 	const char * _tp3;
 	int _tp4;
 	int _tp5;
-	double _tp6;
+	int _tp6;
 	double _tp7;
 	double _tp8;
 	double _tp9;
 	double _tp10;
 	double _tp11;
 	double _tp12;
+	double _tp13;
+	double _tp14;
+	double _tp15;
 	double _rp0;
 	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetString( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetString( mlp, &_tp3) ) goto L2;
 	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
 	if ( ! MLGetInteger( mlp, &_tp5) ) goto L4;
-	if ( ! MLGetReal( mlp, &_tp6) ) goto L5;
+	if ( ! MLGetInteger( mlp, &_tp6) ) goto L5;
 	if ( ! MLGetReal( mlp, &_tp7) ) goto L6;
 	if ( ! MLGetReal( mlp, &_tp8) ) goto L7;
 	if ( ! MLGetReal( mlp, &_tp9) ) goto L8;
 	if ( ! MLGetReal( mlp, &_tp10) ) goto L9;
 	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
 	if ( ! MLGetReal( mlp, &_tp12) ) goto L11;
-	if ( ! MLNewPacket(mlp) ) goto L12;
+	if ( ! MLGetReal( mlp, &_tp13) ) goto L12;
+	if ( ! MLGetReal( mlp, &_tp14) ) goto L13;
+	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
+	if ( ! MLNewPacket(mlp) ) goto L15;
 
-	_rp0 = rnrqcd(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12);
+	_rp0 = rnrqcd(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L12: L11: L10: L9: L8: L7: L6: L5: L4: L3:	MLReleaseString(mlp, _tp3);
+L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3:	MLReleaseString(mlp, _tp3);
 L2:	MLReleaseString(mlp, _tp2);
 L1: 
 L0:	return res;
@@ -13971,7 +13978,7 @@ static struct func {
 		{ 4, 0, _tr6, "mnllplusnnllnonmixc1" },
 		{ 4, 0, _tr7, "mnllc1" },
 		{ 4, 0, _tr8, "vceffsnnll" },
-		{12, 0, _tr9, "rnrqcd" },
+		{15, 0, _tr9, "rnrqcd" },
 		{ 8, 0, _tr10, "a1pole" },
 		{ 3, 0, _tr11, "xinnllmixusoft" },
 		{ 3, 0, _tr12, "mllc2" },
@@ -14171,7 +14178,7 @@ static const char* evalstrs[] = {
 	"sin2ThetaWPythia = 0.2312",
 	(const char*)0,
 	"rNRQCD::usage = \"rNRQCD[nl, order, scheme, orderAlpha, runAlpha,",
-	" mZ, aMz, Q, mtpole, gt, h, nu]\"",
+	" runMass, muLam, xLam, mZ, aMz, Q, mtpole, gt, h, nu]\"",
 	(const char*)0,
 	"A1Pole::usage = \"A1Pole[nl, order, En, mtpole, gamtop, asoft, Vc",
 	"sNNLL, musoft]\"",
@@ -15067,7 +15074,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"MNLLplusNNLLnonmixc1[nl_, ah_, as_, au_]", (char *)"{nl, ah, as, au}", 6);
 	if (_res) _res = _definepattern(mlp, (char *)"MNLLc1[nl_, ah_, as_, au_]", (char *)"{nl, ah, as, au}", 7);
 	if (_res) _res = _definepattern(mlp, (char *)"VceffsNNLL[nl_, asNNLL_, ah_, as_]", (char *)"{nl, asNNLL, ah, as}", 8);
-	if (_res) _res = _definepattern(mlp, (char *)"rNRQCD[nl_, order_, scheme_, orderAlpha_, runAlpha_, mZ_, aMz_,                 Q_, mtpole_, gt_, h_, nu_]", (char *)"{nl, order, scheme, orderAlpha, runAlpha, mZ, aMz, Q, mtpole,                  gt, h, nu}", 9);
+	if (_res) _res = _definepattern(mlp, (char *)"rNRQCD[nl_, order_, scheme_, orderAlpha_, runAlpha_, runMass_,                 muLam_, xLam_, mZ_, aMz_, Q_, mtpole_, gt_, h_, nu_]", (char *)"{nl, order, scheme, orderAlpha, runAlpha, runMass, muLam, xLam,                  mZ, aMz, Q, mtpole, gt, h, nu}", 9);
 	if (_res) _res = _definepattern(mlp, (char *)"A1Pole[nl_, order_, En_, mtpole_, gamtop_, asoft_, VcsNNLL_, musoft_]", (char *)"{nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft}", 10);
 	if (_res) _res = _definepattern(mlp, (char *)"XiNNLLmixUsoft[nl_, ah_, au_]", (char *)"{nl, ah, au}", 11);
 	if (_res) _res = _definepattern(mlp, (char *)"MLLc2[nl_, ah_, as_]", (char *)"{nl, ah, as}", 12);
