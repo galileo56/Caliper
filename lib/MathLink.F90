@@ -4137,7 +4137,7 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%En( charm(:6), order, mu, R, lam, method(:8) )
+    res = Upsilon%En( order, mu, R, lam, method(:8) )
 
   end subroutine f90NRQCD
 
@@ -4179,7 +4179,7 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%MassFitter( iter(:10), charm(:6), ord, order, mu, R, mass, &
+    res = Upsilon%MassFitter( iter(:10), ord, order, mu, R, mass, &
     lam, method(:8) )
 
   end subroutine f90FindMass
@@ -4222,7 +4222,7 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%MassError( iter(:10), charm(:6), ord, order, mu0, mu1, &
+    res = Upsilon%MassError( iter(:10), ord, order, mu0, mu1, &
     deltaMu, R0, R1, deltaR, x, mass, lam, method(:8) )
 
   end subroutine f90MassError
@@ -4268,7 +4268,7 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%MassList( iter(:10), charm(:6), ord, order, mu0, mu1, &
+    res = Upsilon%MassList( iter(:10), ord, order, mu0, mu1, &
     deltaMu, R0, R1, deltaR, mass, lam, method(:8) )
 
   end subroutine f90MassList
@@ -4314,7 +4314,7 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%NRQCDList( iter(:10), charm(:6), order, mu0, mu1, &
+    res = Upsilon%NRQCDList( iter(:10), order, mu0, mu1, &
     deltaMu, R0, R1, deltaR, mass, lam, method(:8) )
 
   end subroutine f90NRQCDList
@@ -4357,7 +4357,7 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%EnError( iter(:10), charm(:6), order, mu0, mu1, &
+    res = Upsilon%EnError( iter(:10), order, mu0, mu1, &
     deltaMu, R0, R1, deltaR, x, mass, lam, method(:8) )
 
   end subroutine f90NRQCDError
@@ -4400,7 +4400,7 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%MassIter( charm(:6), order, mu, R, mass, lam, method(:8) )
+    res = Upsilon%MassIter( order, mu, R, mass, lam, method(:8) )
 
   end subroutine f90MassIter
 
@@ -4442,7 +4442,7 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%EnExpand( charm(:6), order, mu, R, mass, lam, method(:8) )
+    res = Upsilon%EnExpand( order, mu, R, mass, lam, method(:8) )
 
   end subroutine f90MassExpand
 

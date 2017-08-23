@@ -54,7 +54,7 @@ contains
     RNRQCDIn%a2 = 456.74883699902244_dp - 66.35417150661816_dp * nl + &
     1.2345679012345678_dp * nl**2
 
-    ! RNRQCDIn%Upsilon = NRQCD('up', 'MSRn', 'no', MSR, 1, 0, 1, 1)
+    RNRQCDIn%Upsilon = NRQCD('up', 'MSRn', 'no', MSR, 1, 0, 1, 1)
 
   end function RNRQCDIn
 
@@ -70,6 +70,9 @@ contains
   function Delta1S(self) result(res)
     class (RNRQCD), intent(in) :: self
     real (dp), dimension(4)    :: res
+    real (dp), dimension(0:4)  :: list
+
+    ! list = self%Upsilon%En(order, mu, R, lambda, method)
 
   end function Delta1S
 
