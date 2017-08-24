@@ -1,12 +1,12 @@
 
 ! cccccccccccccccccccc
 
-subroutine f90Delta1S(nl, orderAlp, runAlp, orderM, runM, mulam, xlam, method, &
+subroutine f90Delta1S(nl, orderAlp, runAlp, orderM, runM, muLam, xlam, method, &
 mZ, aMz, mt, R, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; implicit none
   integer  , intent(in)                  :: nl, orderAlp, runAlp, runM, orderM
-  real (dp), intent(in)                  :: mulam, xlam, mZ, aMz, mt, R
+  real (dp), intent(in)                  :: muLam, xlam, mZ, aMz, mt, R
   character (len = *)       , intent(in) :: method
   real (dp), intent(out), dimension(0:4) :: res
   integer                                :: i
@@ -27,7 +27,7 @@ mZ, aMz, mt, R, res)
   Running(nl, runM, alphaAll, muLam) ]
 
   MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
-  res = NRQCD%Delta1S(orderM, R, xlam, method)
+  res = NRQCD%Delta1S( orderM, R, xlam, method(:8) )
 
 end subroutine f90Delta1S
 
