@@ -12,6 +12,7 @@
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
 
+:Evaluate:  Delta1S::usage = "Delta1S[nl, orderAlpha, runAlpha, orderMass, runMass, muLam, xLam, method, mZ, aMz, mt, R]"
 :Evaluate:  rNRQCD::usage = "rNRQCD[nl, order, scheme, orderAlpha, runAlpha, runMass, muLam, xLam, mZ, aMz, Q, mtpole, gt, h, nu]"
 :Evaluate:  A1Pole::usage = "A1Pole[nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft]"
 :Evaluate:  TTbar::usage = "ttbar[energy, topmass, topgamma, alphas0, mue0, cutn, cutv, c0, c1, c2, cdeltapotc, cdeltapot1, cfullc, cfull1, crm2, kincm, kinca, ijknflg, ijgcflg, kincv, ijvflg] cross section"
@@ -265,6 +266,17 @@
 :ArgumentTypes: {Integer, String, String, Integer, Integer, Integer, Real, Real,
                 Real, Real, Real, Real, Real, Real, Real}
 :ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      delta1s
+:Pattern:       Delta1S[nl_, orderAlpha_, runAlpha_, orderMass_, runMass_,
+                muLam_, xLam_, method_, mZ_, aMz_, mt_, R_]
+:Arguments:     {nl, orderAlpha, runAlpha, orderMass, runMass, muLam, xLam,
+                method, mZ, aMz, mt, R}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, Integer, Real, Real,
+                String, Real, Real, Real, Real}
+:ReturnType:    Manual
 :End:
 
 :Begin:
@@ -2545,6 +2557,22 @@ double aMz, double Q, double mt, double gt, double h, double nu){
    &xLam, &mZ, &aMz, &Q, &mt, &gt, &h, &nu, &res);
 
    return res;
+}
+
+extern double f90delta1s_(int* nl, int* orderAlpha, int* runAlpha, int* orderMass,
+int* runMass, double* muLam, double* xLam, char const* method, double* mZ,
+double* aMz, double* mt, double* R, double* res);
+
+static void delta1s(int nl, int orderAlpha, int runAlpha, int orderMass,
+int runMass, double muLam, double xLam, char const* method, double mZ,
+double aMz, double mt, double R){
+  double res[5];
+
+   f90delta1s_(&nl, &orderAlpha, &runAlpha, &orderMass, &runMass, &muLam,
+   &xLam, method, &mZ, &aMz, &mt, &R, res);
+
+  MLPutRealList(stdlink, res, 5);
+
 }
 
 extern double f90vcsll_(double* as, double* result);

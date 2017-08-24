@@ -67,12 +67,14 @@ contains
 
 ! ccccccccccc
 
-  function Delta1S(self) result(res)
-    class (RNRQCD), intent(in) :: self
-    real (dp), dimension(4)    :: res
-    real (dp), dimension(0:4)  :: list
+  function Delta1S(self, order, R, lambda, method) result(res)
+    class (RNRQCD)  , intent(inout) :: self
+    character (len = *), intent(in) :: method
+    integer            , intent(in) :: order
+    real (dp)          , intent(in) :: R, lambda
+    real (dp), dimension(0:4)       :: res
 
-    ! list = self%Upsilon%En(order, mu, R, lambda, method)
+    res = self%Upsilon%En(order, R, R, lambda, method)/2
 
   end function Delta1S
 
