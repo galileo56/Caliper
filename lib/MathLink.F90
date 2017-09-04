@@ -1,32 +1,66 @@
 
 ! cccccccccccccccccccc
 
-subroutine f90RNRQCD(nl, order, scheme, orderAlpha, runAlpha, mZ, aMz, Q, &
-  mtpole, gt, h, nu, res)
+subroutine f90Delta1S(nl, orderAlp, runAlp, orderM, runM, muLam, xlam, method, &
+mZ, aMz, mt, R, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
-  real (dp)          , intent(in)  :: Q, mtpole, gt, h, nu, mZ, aMz
+  use RunningClass; use VFNSMSRClass; implicit none
+  integer  , intent(in)                  :: nl, orderAlp, runAlp, runM, orderM
+  real (dp), intent(in)                  :: muLam, xlam, mZ, aMz, mt, R
+  character (len = *)       , intent(in) :: method
+  real (dp), intent(out), dimension(0:4) :: res
+  integer                                :: i
+  type (RNRQCD)                          :: NRQCD
+  type (Alpha)                           :: alphaAll
+  type (Running), dimension(2)           :: alphaMass
+  type (VFNSMSR)                         :: MSR
+  type (AnomDim), dimension(3:6)         :: AnDim
+
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, aMz, mt, mt, &
+  0._dp, 0._dp, 0._dp, 0._dp)
+
+  alphaMass = [ Running(nl - 1, runM, alphaAll, muLam), &
+  Running(nl, runM, alphaAll, muLam) ]
+
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
+  res = NRQCD%Delta1S( orderM, R, xlam, method(:8) )
+
+end subroutine f90Delta1S
+
+! cccccccccccccccccccc
+
+subroutine f90RNRQCD(nl, order, scheme, orderAlp, runAlp, runMass, muLam, &
+  xlam, mZ, aMz, Q, mtpole, gt, h, nu, res)
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass; use VFNSMSRClass; implicit none
+  real (dp)          , intent(in)  :: Q, mtpole, gt, h, nu, mZ, aMz, xlam, muLam
   character (len = *), intent(in)  :: order, scheme
-  integer            , intent(in)  :: nl, orderAlpha, runAlpha
+  integer            , intent(in)  :: nl, orderAlp, runAlp, runMass
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (RNRQCD)                    :: NRQCD
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
+  type (VFNSMSR)                   :: MSR
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, aMz, mtpole, mtpole, &
-  mtpole, mtpole, 0._dp, 0._dp)
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, aMz, mtpole, mtpole, &
+  0._dp, 0._dp, 0._dp, 0._dp)
 
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(nl - 1, runMass, alphaAll, muLam), &
+  Running(nl, runMass, alphaAll, muLam) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
-  res = NRQCD%NRQCD(order(:4), scheme(:4), q, gt, h, nu)
+  res = NRQCD%Xsec(order(:4), scheme(:4), q, gt, h, nu)
 
 end subroutine f90RNRQCD
 
@@ -34,7 +68,7 @@ end subroutine f90RNRQCD
 
 subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp)          , intent(in)  :: En, mtpole, gamtop, asoft, VcsNNLL, musoft
   character (len = *), intent(in)  :: order
   integer            , intent(in)  :: nl
@@ -42,7 +76,8 @@ subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
   integer                          :: i
   type (RNRQCD)                    :: NRQCD
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
+  type (VFNSMSR)                   :: MSR
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -50,9 +85,9 @@ subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, mtpole, mtpole, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%A1pole(order(:4), En, gamtop, asoft, VcsNNLL, musoft)
 
@@ -128,14 +163,15 @@ end subroutine f90SwitchOff
 
 subroutine f90VssLL(nl, ah, as, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass;  use VFNSMSRClass; implicit none
   real (dp), intent(in)  :: ah, as
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -143,9 +179,9 @@ subroutine f90VssLL(nl, ah, as, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%VssLL(ah, as)
 
@@ -155,14 +191,15 @@ end subroutine f90VssLL
 
 subroutine f90Vk1sLL(nl, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass;  use VFNSMSRClass; implicit none
   real (dp), intent(in)  :: as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -170,9 +207,9 @@ subroutine f90Vk1sLL(nl, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%Vk1sLL(as, au)
 
@@ -182,14 +219,15 @@ end subroutine f90Vk1sLL
 
 subroutine f90Vk2sLL(nl, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -197,9 +235,9 @@ subroutine f90Vk2sLL(nl, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%Vk2sLL(as, au)
 
@@ -209,14 +247,15 @@ end subroutine f90Vk2sLL
 
 subroutine f90VkeffsLL(nl, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -224,9 +263,9 @@ subroutine f90VkeffsLL(nl, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%VkeffsLL(as, au)
 
@@ -247,14 +286,15 @@ end subroutine f90VcsLL
 
 subroutine f90VrsLL(nl, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -262,9 +302,9 @@ subroutine f90VrsLL(nl, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%VrsLL(as, au)
 
@@ -274,14 +314,15 @@ end subroutine f90VrsLL
 
 subroutine f90V2sLL(nl, ah, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: as, au, ah
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -289,9 +330,9 @@ subroutine f90V2sLL(nl, ah, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%V2sLL(ah, as, au)
 
@@ -301,14 +342,15 @@ end subroutine f90V2sLL
 
 subroutine f90VceffsNNLL(nl, asNNLL, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: as, au, asNNLL
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -316,9 +358,9 @@ subroutine f90VceffsNNLL(nl, asNNLL, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%VceffsNNLL(asNNLL, as, au)
 
@@ -328,14 +370,15 @@ end subroutine f90VceffsNNLL
 
 subroutine f90XiNLL(nl, ah, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: ah, as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -343,9 +386,9 @@ subroutine f90XiNLL(nl, ah, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%XiNLL(ah, as, au)
 
@@ -355,14 +398,15 @@ end subroutine f90XiNLL
 
 subroutine f90XiNNLLmixUsoft(nl, ah, as, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: ah, as
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -370,9 +414,9 @@ subroutine f90XiNNLLmixUsoft(nl, ah, as, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%XiNNLLmixUsoft(ah, as)
 
@@ -382,14 +426,15 @@ end subroutine f90XiNNLLmixUsoft
 
 subroutine f90MLLc2(nl, ah, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: ah, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -397,9 +442,9 @@ subroutine f90MLLc2(nl, ah, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%MLLc2(ah, au)
 
@@ -409,14 +454,15 @@ end subroutine f90MLLc2
 
 subroutine f90MNLLc1(nl, ah, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: ah, as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -424,9 +470,9 @@ subroutine f90MNLLc1(nl, ah, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%MNLLc1(ah, as, au)
 
@@ -436,14 +482,15 @@ end subroutine f90MNLLc1
 
 subroutine f90MNLLplusNNLLnonmixc1(nl, ah, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: ah, as, au
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -451,9 +498,9 @@ subroutine f90MNLLplusNNLLnonmixc1(nl, ah, as, au, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%MNLLplusNNLLnonmixc1(ah, as, au)
 
@@ -463,14 +510,15 @@ end subroutine f90MNLLplusNNLLnonmixc1
 
 subroutine f90MNNLLAllc1InclSoftMixLog(nl, ah, as, au, nu, hh, ss, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: ah, as, au, nu, hh, ss
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   integer                :: i
   type (RNRQCD)          :: NRQCD
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -480,7 +528,7 @@ subroutine f90MNNLLAllc1InclSoftMixLog(nl, ah, as, au, nu, hh, ss, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = Running(5, 0, alphaAll, 0._dp)
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%MNNLLAllc1InclSoftMixLog(ah, as, au, nu, hh, ss)
 
@@ -501,14 +549,15 @@ end subroutine f90XiNNLLSoftMixLogc1
 
 subroutine f90XiNNLLnonmix(nl, ah, as, au, hh, ss, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  implicit none
+  use RunningClass; use VFNSMSRClass;  implicit none
   real (dp), intent(in)  :: ah, as, au, hh, ss
   integer  , intent(in)  :: nl
   real (dp), intent(out) :: res
   type (RNRQCD)          :: NRQCD
   integer                :: i
+  type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
-  type (Running)                   :: alphaMass
+  type (Running), dimension(2)     :: alphaMass
   type (AnomDim), dimension(3:6)   :: AnDim
 
   do i = 3, 6
@@ -516,9 +565,9 @@ subroutine f90XiNNLLnonmix(nl, ah, as, au, hh, ss, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, 0, alphaAll, 0._dp)
+  alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  NRQCD = RNRQCD(alphaMass)
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
   res = NRQCD%XiNNLLnonmix(ah, as, au, hh, ss)
 
@@ -526,17 +575,17 @@ end subroutine f90XiNNLLnonmix
 
 ! cccccccccccccccccccc
 
-subroutine f90Toppik(energy, tm, tg, alphas, scale, cutn, cutv, c0,  &
-c1, c2, cdeltc, cdeltl, cfullc, cfulll, crm2, kincm, kinca, jknflg, &
-jgcflg, xkincv, jvflg, res)
+subroutine f90Toppik(energy, tm, tg, alphas, scale, cutn, cutv, c0, c1, c2, &
+cdeltc, cdeltl, cfullc, cfulll, crm2, kincm, kinca, jknflg, jgcflg, xkincv, &
+jvflg, res)
   use constants, only: dp; use ToppikClass; implicit none
-  integer  , intent(in)  :: jknflg, jgcflg, jvflg
+  integer  , intent(in)                :: jknflg, jgcflg, jvflg
   real (dp), intent(out), dimension(2) :: res
-  real (dp), intent(in)  :: energy, tm, tg, alphas, scale, cutn, cutv, &
-  c0, c1, c2, cdeltc, cdeltl, cfullc, cfulll, crm2
+  real (dp), intent(in)                :: energy, tm, tg, alphas, scale, cutn, &
+  c0, c1, c2, cdeltc, cdeltl, cfullc, cfulll, crm2, cutv
 
-  real (dp)                     :: kincm, kinca, xkincv
-  type (Toppik)                 :: ttbar
+  real (dp)                            :: kincm, kinca, xkincv
+  type (Toppik)                        :: ttbar
 
   ttbar = Toppik(5, energy, tm, tg, alphas, scale, cutn, cutv, c0, c1, &
   c2, cdeltc, cdeltl, cfullc, cfulll, crm2, kincm, kinca, jknflg,   &
@@ -967,7 +1016,7 @@ end subroutine f90PolyGamma
 !ccccccccccccccc
 
 subroutine f90MassiveProfList(terms, hard, shape, EShape, setup, gap, space, cum, scheme, &
- abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, &
+ abs, current, xi, xiB, orderAlp, runAlp, orderMass, runMass, order, run, nf, j3, s3, &
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, &
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, c,   &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tauList, n, res)
@@ -980,7 +1029,7 @@ subroutine f90MassiveProfList(terms, hard, shape, EShape, setup, gap, space, cum
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in)    :: shape, scheme, setup, space, gap, hard, &
   cum, abs, current, Eshape, terms
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, ns, &
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, ns, &
   runMass, orderMass, n, clen
   real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC, &
   muC, Q, G3, lambda, R0, mu0, delta0, h, s3, muR0, j3, Rat0, n0, n1, t2, cnt, eS,&
@@ -1011,8 +1060,7 @@ subroutine f90MassiveProfList(terms, hard, shape, EShape, setup, gap, space, cum
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, &
   delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
-  mB, muB, mC, muC)
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC)
 
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
   muLambda1, muLambda2 )
@@ -1032,7 +1080,7 @@ end subroutine f90MassiveProfList
 !ccccccccccccccc
 
 subroutine f90MassiveProfPieceList(terms, hard, shape, EShape, setup, gap, space, cum, scheme,  &
- abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3,&
+ abs, current, xi, xiB, orderAlp, runAlp, orderMass, runMass, order, run, nf, j3, s3,&
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda,&
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width,     &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tauList, n, res)
@@ -1043,7 +1091,7 @@ subroutine f90MassiveProfPieceList(terms, hard, shape, EShape, setup, gap, space
 
   character (len = *), intent(in)    :: shape, scheme, space, gap, hard, terms, &
   cum, abs, current, setup, Eshape
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, &
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, &
   runMass, orderMass, n, clen, ns
   real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC,&
   G3, lambda, R0, mu0, delta0, s3, muR0, j3, muC, Q, Rat0, n0, n1, t2, cnt, eS,  &
@@ -1081,7 +1129,7 @@ subroutine f90MassiveProfPieceList(terms, hard, shape, EShape, setup, gap, space
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -1098,7 +1146,7 @@ end subroutine f90MassiveProfPieceList
 !ccccccccccccccc
 
 subroutine f90MassivePieceBin(terms, hard, shape, EShape, setup, gap, space, cum, scheme,  &
- abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3,&
+ abs, current, xi, xiB, orderAlp, runAlp, orderMass, runMass, order, run, nf, j3, s3,&
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda,&
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width,     &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tauList, n, res)
@@ -1109,7 +1157,7 @@ subroutine f90MassivePieceBin(terms, hard, shape, EShape, setup, gap, space, cum
 
   character (len = *), intent(in)    :: shape, scheme, space, gap, hard, terms, Eshape, &
                                         cum, abs, current, setup
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns, &
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen, ns, &
                                         runMass, orderMass, n
   real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC, muC, Q,&
                                         G3, lambda, R0, mu0, delta0, h, s3, muR0, j3, &
@@ -1148,7 +1196,7 @@ subroutine f90MassivePieceBin(terms, hard, shape, EShape, setup, gap, space, cum
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -1165,7 +1213,7 @@ end subroutine f90MassivePieceBin
 !ccccccccccccccc
 
 subroutine f90MassiveBinList(terms, hard, shape, EShape, setup, gap, space, cum, scheme, &
- abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, &
+ abs, current, xi, xiB, orderAlp, runAlp, orderMass, runMass, order, run, nf, j3, s3, &
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, &
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, c,   &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tauList, n, res)
@@ -1177,7 +1225,7 @@ subroutine f90MassiveBinList(terms, hard, shape, EShape, setup, gap, space, cum,
   real (dp), dimension (clen), intent(in) :: c
   character (len = *)        , intent(in) :: shape, scheme, setup, space, gap, &
   cum, abs, current, Eshape, terms, hard
-  integer                    , intent(in) :: orderAlpha, order, runAlpha, run, &
+  integer                    , intent(in) :: orderAlp, order, runAlp, run, &
   runMass, orderMass, n, clen, nf, ns
   real (dp)                  , intent(in) :: mZ, amZ, muLambda1, mT, muT, mB,   &
   muC, Q, G3, lambda, R0, mu0, delta0, h, s3, muR0, j3, Rat0, n0, n1, t2, cnt,  &
@@ -1206,7 +1254,7 @@ subroutine f90MassiveBinList(terms, hard, shape, EShape, setup, gap, space, cum,
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
   ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
   muLambda1, muLambda2 )
@@ -1224,7 +1272,7 @@ end subroutine f90MassiveBinList
 !ccccccccccccccc
 
 subroutine f90MassiveProf(terms, hard, shape, EShape, setup, gap, space, cum, scheme, &
- abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, &
+ abs, current, xi, xiB, orderAlp, runAlp, orderMass, runMass, order, run, nf, j3, s3, &
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, &
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, c,   &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau, res)
@@ -1236,7 +1284,7 @@ subroutine f90MassiveProf(terms, hard, shape, EShape, setup, gap, space, cum, sc
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in)    :: shape, scheme, setup, space, gap, hard, terms, &
                                         cum, abs, current, Eshape
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns, &
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen, ns, &
                                         runMass, orderMass
   real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC, muC, Q, &
                                         G3, lambda, tau, R0, mu0, delta0, h, s3, muR0, j3,&
@@ -1265,7 +1313,7 @@ subroutine f90MassiveProf(terms, hard, shape, EShape, setup, gap, space, cum, sc
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -1282,7 +1330,7 @@ end subroutine f90MassiveProf
 
 !ccccccccccccccc
 
-subroutine f90MassOrigin(shape, EShape, gap, scheme, orderAlpha, runAlpha, orderMass,  &
+subroutine f90MassOrigin(shape, EShape, gap, scheme, orderAlp, runAlp, orderMass,  &
  runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, &
  beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, &
  mass, muM, R0, muR0, del0, h, res)
@@ -1292,7 +1340,7 @@ subroutine f90MassOrigin(shape, EShape, gap, scheme, orderAlpha, runAlpha, order
   use CumulantClass, only: CumulantMass; use MassiveNSClass; implicit none
 
   character (len = *), intent(in)    :: shape, scheme, gap, Eshape
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, runMass, orderMass
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, runMass, orderMass
   real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC, muC, Q, &
                                         R0, mu0, delta0, h, muR0, Rat0, n0, n1, t2, cnt,  &
                                         eS, slope, eH, ts, muLambda2, beta, deltaLambda,  &
@@ -1318,7 +1366,7 @@ subroutine f90MassOrigin(shape, EShape, gap, scheme, orderAlpha, runAlpha, order
   EW        = ElectroWeak(mZ, 0._dp, 0._dp)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, 0, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
                                     muLambda1, muLambda2 )
@@ -1334,7 +1382,7 @@ end subroutine f90MassOrigin
 !ccccccccccccccc
 
 subroutine f90MassiveProfPiece(terms, hard, shape, EShape, setup, gap, space, cum, scheme, abs, &
- current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, &
+ current, xi, xiB, orderAlp, runAlp, orderMass, runMass, order, run, nf, j3, s3, G3, &
  mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda,    &
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width,     &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau, res)
@@ -1345,7 +1393,7 @@ subroutine f90MassiveProfPiece(terms, hard, shape, EShape, setup, gap, space, cu
 
   character (len = *), intent(in)    :: shape, scheme, space, gap, hard, terms, &
                                         cum, abs, current, Eshape, setup
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns, &
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen, ns, &
                                         runMass, orderMass
   real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC, muC, Q, &
                                         G3, lambda, tau, R0, mu0, delta0, h, s3, muR0, j3,&
@@ -1383,7 +1431,7 @@ subroutine f90MassiveProfPiece(terms, hard, shape, EShape, setup, gap, space, cu
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -1400,7 +1448,7 @@ end subroutine f90MassiveProfPiece
 !ccccccccccccccc
 
 subroutine f90MassiveProfDiffPiece(terms, hard, shape, EShape, setup, gap, space, cum, scheme,  &
- abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3,&
+ abs, current, xi, xiB, orderAlp, runAlp, orderMass, runMass, order, run, nf, j3, s3,&
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda,&
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width,     &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau, tau2, res)
@@ -1411,7 +1459,7 @@ subroutine f90MassiveProfDiffPiece(terms, hard, shape, EShape, setup, gap, space
 
   character (len = *), intent(in)    :: shape, scheme, space, gap, hard, terms, &
                                         cum, abs, current, Eshape, setup
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns, &
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen, ns, &
                                         runMass, orderMass
   real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC, muC, Q, &
                                         G3, lambda, tau, R0, mu0, delta0, h, s3, muR0, j3,&
@@ -1449,7 +1497,7 @@ subroutine f90MassiveProfDiffPiece(terms, hard, shape, EShape, setup, gap, space
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -1466,7 +1514,7 @@ end subroutine f90MassiveProfDiffPiece
 !ccccccccccccccc
 
 subroutine f90MassiveProfDiff(terms, hard, shape, EShape, setup, gap, space, cum, scheme,&
- abs, current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, &
+ abs, current, xi, xiB, orderAlp, runAlp, orderMass, runMass, order, run, nf, j3, s3, &
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, &
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, c,   &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau, tau2, res)
@@ -1478,7 +1526,7 @@ subroutine f90MassiveProfDiff(terms, hard, shape, EShape, setup, gap, space, cum
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in)    :: shape, scheme, setup, space, gap, hard, terms, &
                                         cum, abs, current, Eshape
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns, &
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen, ns, &
                                         runMass, orderMass
   real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC, muC, Q, &
                                         G3, lambda, tau, R0, mu0, delta0, h, s3, muR0, j3,&
@@ -1507,7 +1555,7 @@ subroutine f90MassiveProfDiff(terms, hard, shape, EShape, setup, gap, space, cum
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -1525,7 +1573,7 @@ end subroutine f90MassiveProfDiff
 !ccccccccccccccc
 
 subroutine f90MassiveMoment(terms, hard, shape, EShape, setup, gap, space, scheme, abs,  &
- current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3,     &
+ current, xi, xiB, orderAlp, runAlp, orderMass, runMass, order, run, nf, j3, s3,     &
  G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, beta, mu0, deltaLambda, &
  Rat0, n0, delta0, n1, delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, width, c,   &
  clen, lambda, R0, muR0, del0, h, gammaZ, sin2ThetaW, tau, tau2, pow, res)
@@ -1537,7 +1585,7 @@ subroutine f90MassiveMoment(terms, hard, shape, EShape, setup, gap, space, schem
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in)    :: shape, scheme, setup, space, gap, hard, terms, &
                                         abs, current, Eshape
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns, &
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen, ns, &
                                         runMass, orderMass, pow
   real (dp)          , intent(in)    :: mZ, amZ, muLambda1, mT, muT, mB, muB, mC, muC, Q, &
                                         G3, lambda, tau, R0, mu0, delta0, h, s3, muR0, j3,&
@@ -1566,7 +1614,7 @@ subroutine f90MassiveMoment(terms, hard, shape, EShape, setup, gap, space, schem
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -1583,8 +1631,8 @@ end subroutine f90MassiveMoment
 
 !ccccccccccccccc
 
-subroutine f90MasslessProfList(terms, hard, shape, setup, gap, space, cum, orderAlpha, &
- runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda,   &
+subroutine f90MasslessProfList(terms, hard, shape, setup, gap, space, cum, orderAlp, &
+ runAlp, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda,   &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, clen, lambda,    &
  R0, muR0, delta0, h, tauList, n, res)
 
@@ -1594,7 +1642,7 @@ subroutine f90MasslessProfList(terms, hard, shape, setup, gap, space, cum, order
 
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in)    :: shape, cum, setup, space, gap, hard, terms
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, n, ns
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen, n, ns
   real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, muC, j3, &
                                         Q, G3, lambda, ts, R0, mu0, delta0, h, s3, muR0, &
                                         Rat0, n0, n1, t2, cnt, eS, eR, tR, slope, eH, eJ
@@ -1616,7 +1664,7 @@ subroutine f90MasslessProfList(terms, hard, shape, setup, gap, space, cum, order
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, &
   eS, eJ, eR, ns)
 
-  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
 
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
@@ -1631,8 +1679,8 @@ end subroutine f90MasslessProfList
 
 !ccccccccccccccc
 
-subroutine f90MasslessProfPieceList(terms, hard, shape, setup, gap, space, cum, orderAlpha, &
- runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, &
+subroutine f90MasslessProfPieceList(terms, hard, shape, setup, gap, space, cum, orderAlp, &
+ runAlp, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen, lambda,     &
  R0, muR0, delta0, h, tauList, n, res)
 
@@ -1641,7 +1689,7 @@ subroutine f90MasslessProfPieceList(terms, hard, shape, setup, gap, space, cum, 
   use CumulantClass, only: CumulantMassless; use AnomDimClass; implicit none
 
   character (len = *), intent(in)    :: shape, cum, space, gap, hard, terms, setup
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, n, ns
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen, n, ns
   real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, muC, j3, &
                                         Q, G3, lambda, ts, R0, mu0, delta0, h, s3, muR0, &
                                         Rat0, n0, n1, t2, cnt, eS, eR, tR, slope, eH, eJ
@@ -1670,7 +1718,7 @@ subroutine f90MasslessProfPieceList(terms, hard, shape, setup, gap, space, cum, 
   end do
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
-  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -1683,8 +1731,8 @@ end subroutine f90MasslessProfPieceList
 
 !ccccccccccccccc
 
-subroutine f90MasslessPieceBin(terms, hard, shape, setup, gap, space, cum, orderAlpha, &
- runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda,   &
+subroutine f90MasslessPieceBin(terms, hard, shape, setup, gap, space, cum, orderAlp, &
+ runAlp, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda,   &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen, lambda,    &
  R0, muR0, delta0, h, tauList, n, res)
 
@@ -1693,7 +1741,7 @@ subroutine f90MasslessPieceBin(terms, hard, shape, setup, gap, space, cum, order
   use CumulantClass, only: CumulantMassless; use AnomDimClass; implicit none
 
   character (len = *), intent(in)    :: shape, cum, space, gap, hard, terms, setup
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, n, ns
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen, n, ns
   real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, &
   Q, G3, lambda, ts, R0, mu0, delta0, h, s3, muR0, Rat0, n0, n1, t2, cnt, eS, &
   eR, tR, slope, eH, eJ, muC, j3
@@ -1722,7 +1770,7 @@ subroutine f90MasslessPieceBin(terms, hard, shape, setup, gap, space, cum, order
   end do
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
-  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -1735,8 +1783,8 @@ end subroutine f90MasslessPieceBin
 
 !ccccccccccccccc
 
-subroutine f90MasslessBinList(terms, hard, shape, setup, gap, space, cum, orderAlpha, &
- runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda,  &
+subroutine f90MasslessBinList(terms, hard, shape, setup, gap, space, cum, orderAlp, &
+ runAlp, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda,  &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, clen, lambda,   &
  R0, muR0, delta0, h, tauList, n, res)
 
@@ -1746,7 +1794,7 @@ subroutine f90MasslessBinList(terms, hard, shape, setup, gap, space, cum, orderA
 
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in)    :: shape, cum, setup, space, gap, hard, terms
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, n, ns
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen, n, ns
   real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC,&
   Q, G3, lambda, ts, R0, mu0, delta0, h, s3, muR0, Rat0, n0, n1, t2, cnt, eS, &
   eR, tR, slope, eH, eJ, muC, j3
@@ -1768,7 +1816,7 @@ subroutine f90MasslessBinList(terms, hard, shape, setup, gap, space, cum, orderA
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, &
   eS, eJ, eR, ns)
 
-  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
 
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
@@ -1783,8 +1831,8 @@ end subroutine f90MasslessBinList
 
 !ccccccccccccccc
 
-subroutine f90MasslessProf(terms, hard, shape, setup, gap, space, cum, orderAlpha,   &
- runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, &
+subroutine f90MasslessProf(terms, hard, shape, setup, gap, space, cum, orderAlp,   &
+ runAlp, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, clen, lambda,  &
  R0, muR0, delta0, h, tau, res)
 
@@ -1794,7 +1842,7 @@ subroutine f90MasslessProf(terms, hard, shape, setup, gap, space, cum, orderAlph
 
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in)    :: shape, cum, setup, space, gap, hard, terms
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen, ns
   real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, &
   Q, G3, lambda, tau, R0, mu0, delta0, h, s3, muR0, Rat0, n0, n1, t2, cnt, eS, &
   eR, tR, slope, eH, eJ, ts, muC, j3
@@ -1815,7 +1863,7 @@ subroutine f90MasslessProf(terms, hard, shape, setup, gap, space, cum, orderAlph
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, &
   eS, eJ, eR, ns)
 
-  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, &
+  alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, &
   muT, mB, muB, mC, muC)
 
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
@@ -1830,8 +1878,8 @@ end subroutine f90MasslessProf
 
 !ccccccccccccccc
 
-subroutine f90MasslessProfPiece(terms, hard, shape, setup, gap, space, cum, orderAlpha,   &
- runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, &
+subroutine f90MasslessProfPiece(terms, hard, shape, setup, gap, space, cum, orderAlp,   &
+ runAlp, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen, lambda,  &
  R0, muR0, delta0, h, tau, res)
 
@@ -1840,7 +1888,7 @@ subroutine f90MasslessProfPiece(terms, hard, shape, setup, gap, space, cum, orde
   use CumulantClass, only: CumulantMassless; use AnomDimClass; implicit none
 
   character (len = *), intent(in)    :: shape, cum, space, gap, hard, terms, setup
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen, ns
   real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, muC, j3, &
                                         Q, G3, lambda, tau, R0, mu0, delta0, h, s3, muR0, &
                                         Rat0, n0, n1, t2, cnt, eS, eR, tR, slope, eH, eJ, &
@@ -1869,7 +1917,7 @@ subroutine f90MasslessProfPiece(terms, hard, shape, setup, gap, space, cum, orde
   end do
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
-  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
 
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
@@ -1883,8 +1931,8 @@ end subroutine f90MasslessProfPiece
 
 !ccccccccccccccc
 
-subroutine f90MasslessProfDiffPiece(terms, hard, shape, setup, gap, space, cum, orderAlpha, &
- runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, &
+subroutine f90MasslessProfDiffPiece(terms, hard, shape, setup, gap, space, cum, orderAlp, &
+ runAlp, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, &
  Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, clen, lambda, R0, &
  muR0, delta0, h, tau, tau2, res)
 
@@ -1893,7 +1941,7 @@ subroutine f90MasslessProfDiffPiece(terms, hard, shape, setup, gap, space, cum, 
   use CumulantClass, only: CumulantMassless; use AnomDimClass; implicit none
 
   character (len = *), intent(in)    :: shape, cum, space, gap, hard, terms, setup
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen, ns
   real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, muC, j3, &
                                         Q, G3, lambda, tau, R0, mu0, delta0, h, s3, muR0, &
                                         Rat0, n0, n1, t2, cnt, eS, eR, tR, slope, eH, eJ, &
@@ -1922,7 +1970,7 @@ subroutine f90MasslessProfDiffPiece(terms, hard, shape, setup, gap, space, cum, 
   end do
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
-  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -1935,8 +1983,8 @@ end subroutine f90MasslessProfDiffPiece
 
 !ccccccccccccccc
 
-subroutine f90MasslessProfDiff(terms, hard, shape, setup, gap, space, cum, orderAlpha,  &
- runAlpha, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, &
+subroutine f90MasslessProfDiff(terms, hard, shape, setup, gap, space, cum, orderAlp,  &
+ runAlp, order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, &
  mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, clen, lambda, R0,    &
  muR0, delta0, h, tau, tau2, res)
 
@@ -1946,7 +1994,7 @@ subroutine f90MasslessProfDiff(terms, hard, shape, setup, gap, space, cum, order
 
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in)    :: shape, cum, setup, space, gap, hard, terms
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen, ns
   real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, &
   Q, G3, lambda, tau, R0, mu0, delta0, h, s3, muR0, Rat0, n0, n1, t2, cnt, eS,   &
   eR, tR, slope, eH, eJ, ts, tau2, muC, j3
@@ -1965,7 +2013,7 @@ subroutine f90MasslessProfDiff(terms, hard, shape, setup, gap, space, cum, order
   end do
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
-  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -1979,7 +2027,7 @@ end subroutine f90MasslessProfDiff
 
 !ccccccccccccccc
 
-subroutine f90MasslessMoment(terms, hard, shape, setup, gap, space, orderAlpha, runAlpha,&
+subroutine f90MasslessMoment(terms, hard, shape, setup, gap, space, orderAlp, runAlp,&
  order, run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, &
  n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns, c, clen, lambda, R0, muR0, delta0,  &
  h, tau, tau2, pow, res)
@@ -1990,7 +2038,7 @@ subroutine f90MasslessMoment(terms, hard, shape, setup, gap, space, orderAlpha, 
 
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in)    :: shape, setup, space, gap, hard, terms
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen, ns, pow
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen, ns, pow
   real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, muC, j3, &
                                         Q, G3, lambda, tau, R0, mu0, delta0, h, s3, muR0, &
                                         Rat0, n0, n1, t2, cnt, eS, eR, tR, slope, eH, eJ, &
@@ -2010,7 +2058,7 @@ subroutine f90MasslessMoment(terms, hard, shape, setup, gap, space, orderAlpha, 
   end do
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
-  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -2024,7 +2072,7 @@ end subroutine f90MasslessMoment
 
 !ccccccccccccccc
 
-subroutine f90FindOrigin(shape, gap, orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, &
+subroutine f90FindOrigin(shape, gap, orderAlp, runAlp, order, run, nf, mZ, amZ, mT, &
  muT, mB, muB, mC, muC, muLambda, Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, &
  eR, R0, muR0, delta0, h, res)
 
@@ -2033,7 +2081,7 @@ subroutine f90FindOrigin(shape, gap, orderAlpha, runAlpha, order, run, nf, mZ, a
   use CumulantClass, only: CumulantMassless; use AnomDimClass; implicit none
 
   character (len = *), intent(in)    :: shape, gap
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf
   real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, muC, &
                                         Q, R0, mu0, delta0, h, muR0, ts, eH, slope, n0, &
                                         Rat0, n1, t2, cnt, eS, eR, tR
@@ -2051,7 +2099,7 @@ subroutine f90FindOrigin(shape, gap, orderAlpha, runAlpha, order, run, nf, mZ, a
   end do
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, 0._dp, eR, 0)
-  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl    = MatricesElements(alphaAll, nf, 0._dp, 0._dp, 0._dp, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), 'expand' )
@@ -2110,7 +2158,7 @@ end subroutine f90ProfilesMass
 !ccccccccccccccc
 
 subroutine f90SingularMass(hard, shape, Eshape, setup, gap, space, cum, scheme, abs,      &
-  current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, &
+  current, xi, xiB, orderAlp, runAlp, orderMass, runMass, order, run, nf, j3, s3, G3, &
   mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,   &
   muM, mu, width, c, clen, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, res)
 
@@ -2121,7 +2169,7 @@ subroutine f90SingularMass(hard, shape, Eshape, setup, gap, space, cum, scheme, 
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in   ) :: shape, cum, setup, space, gap, Eshape, abs, hard,&
                                         current
-  integer            , intent(in   ) :: orderAlpha, order, runAlpha, run, nf, clen,      &
+  integer            , intent(in   ) :: orderAlp, order, runAlp, run, nf, clen,      &
                                         runMass, orderMass
   real (dp)          , intent(in   ) :: mZ, amZ, muLambda1, muLambda2, mT, muT, mB, muB, &
                                         mu,  Q, G3, lambda, tau, R0, mu0, delta0, h, s3, &
@@ -2152,7 +2200,7 @@ subroutine f90SingularMass(hard, shape, Eshape, setup, gap, space, cum, scheme, 
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, &
+  alphaAll  = Alpha( AnDim, orderAlp, runAlp, mZ, amZ, &
   mT, muT, mB, muB, mC, muC )
 
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
@@ -2186,7 +2234,7 @@ end subroutine f90SingularMass
 !ccccccccccccccc
 
 subroutine f90SingularMassDiff(hard, shape, Eshape, setup, gap, space, cum, scheme, abs, &
-  current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3,&
+  current, xi, xiB, orderAlp, runAlp, orderMass, runMass, order, run, nf, j3, s3, G3,&
   mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,  &
   muM, mu, width, c, clen, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, tau2, res)
 
@@ -2197,7 +2245,7 @@ subroutine f90SingularMassDiff(hard, shape, Eshape, setup, gap, space, cum, sche
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in   ) :: shape, cum, setup, space, gap, Eshape, abs, hard,&
                                         current
-  integer            , intent(in   ) :: orderAlpha, order, runAlpha, run, nf, clen,      &
+  integer            , intent(in   ) :: orderAlp, order, runAlp, run, nf, clen,      &
                                         runMass, orderMass
   real (dp)          , intent(in   ) :: mZ, amZ, muLambda1, muLambda2, mT, muT, mB, muB, &
                                         mu,  Q, G3, lambda, tau, R0, mu0, delta0, h, s3, &
@@ -2228,7 +2276,7 @@ subroutine f90SingularMassDiff(hard, shape, Eshape, setup, gap, space, cum, sche
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlp, runAlp, mZ, amZ, mT,  &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -2259,7 +2307,7 @@ end subroutine f90SingularMassDiff
 !ccccccccccccccc
 
 subroutine f90SingularMassPiece(hard, shape, Eshape, setup, gap, space, cum, scheme, abs,        &
-  current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, &
+  current, xi, xiB, orderAlp, runAlp, orderMass, runMass, order, run, nf, j3, s3, G3, &
   mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,   &
   muM, mu, width, piece, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, res)
 
@@ -2270,7 +2318,7 @@ subroutine f90SingularMassPiece(hard, shape, Eshape, setup, gap, space, cum, sch
   integer, dimension(2), intent(in ) :: piece
   character (len = *)  , intent(in ) :: shape, cum, space, gap, Eshape, abs, current,  &
                                         hard, scheme, setup
-  integer              , intent(in ) :: orderAlpha, order, runAlpha, run, nf, runMass, &
+  integer              , intent(in ) :: orderAlp, order, runAlp, run, nf, runMass, &
                                         orderMass
   real (dp)            , intent(in ) :: mZ, amZ, muLambda1, muLambda2, mT, muT, mB, muB, &
                                         mu,  Q, G3, lambda, tau, R0, mu0, delta0, h, s3, &
@@ -2294,7 +2342,7 @@ subroutine f90SingularMassPiece(hard, shape, Eshape, setup, gap, space, cum, sch
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlp, runAlp, mZ, amZ, mT,  &
   muT, mB, muB, mC, muC )
 
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
@@ -2328,7 +2376,7 @@ end subroutine f90SingularMassPiece
 !ccccccccccccccc
 
 subroutine f90SingularMassList(hard, shape, Eshape, setup, gap, space, cum, scheme, abs, current,&
-  xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, &
+  xi, xiB, orderAlp, runAlp, orderMass, runMass, order, run, nf, j3, s3, G3, mZ, amZ, &
   mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu,   &
   width, clen, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, res)
 
@@ -2338,7 +2386,7 @@ subroutine f90SingularMassList(hard, shape, Eshape, setup, gap, space, cum, sche
 
   character (len = *)  , intent(in ) :: shape, cum, space, gap, Eshape, abs, current,  &
                                         hard, scheme, setup
-  integer              , intent(in ) :: orderAlpha, order, runAlpha, run, nf, runMass, &
+  integer              , intent(in ) :: orderAlp, order, runAlp, run, nf, runMass, &
                                         orderMass, clen
   real (dp)            , intent(in ) :: mZ, amZ, muLambda1, muLambda2, mT, muT, mB, muB, &
                                         mu,  Q, G3, lambda, tau, R0, mu0, delta0, h, s3, &
@@ -2372,7 +2420,7 @@ subroutine f90SingularMassList(hard, shape, Eshape, setup, gap, space, cum, sche
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlp, runAlp, mZ, amZ, mT,  &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -2402,7 +2450,7 @@ end subroutine f90SingularMassList
 !ccccccccccccccc
 
 subroutine f90SingularMassDiffList(hard, shape, Eshape, setup, gap, space, cum, scheme, abs,&
-  current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3, &
+  current, xi, xiB, orderAlp, runAlp, orderMass, runMass, order, run, nf, j3, s3, G3, &
   mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,   &
   muM, mu, width, clen, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, tau2, res)
 
@@ -2412,7 +2460,7 @@ subroutine f90SingularMassDiffList(hard, shape, Eshape, setup, gap, space, cum, 
 
   character (len = *)  , intent(in ) :: shape, cum, space, gap, Eshape, current,  &
   hard, scheme, setup, abs
-  integer              , intent(in ) :: orderAlpha, order, runAlpha, run, nf, runMass, &
+  integer              , intent(in ) :: orderAlp, order, runAlp, run, nf, runMass, &
                                         orderMass, clen
   real (dp)            , intent(in ) :: mZ, amZ, muLambda1, muLambda2, mT, muT, mB, muB, &
                                         mu,  Q, G3, lambda, tau, R0, mu0, delta0, h, s3, &
@@ -2446,7 +2494,7 @@ subroutine f90SingularMassDiffList(hard, shape, Eshape, setup, gap, space, cum, 
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlp, runAlp, mZ, amZ, mT,  &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -2474,7 +2522,7 @@ end subroutine f90SingularMassDiffList
 !ccccccccccccccc
 
 subroutine f90SingularMassDiffPiece(hard, shape, Eshape, setup, gap, space, cum, scheme, abs,   &
-  current, xi, xiB, orderAlpha, runAlpha, orderMass, runMass, order, run, nf, j3, s3, G3,&
+  current, xi, xiB, orderAlp, runAlp, orderMass, runMass, order, run, nf, j3, s3, G3,&
   mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass,  &
   muM, mu, width, piece, lambda, R0, mu0, delta0, h, gammaZ, sin2ThetaW, tau, tau2, res)
 
@@ -2485,7 +2533,7 @@ subroutine f90SingularMassDiffPiece(hard, shape, Eshape, setup, gap, space, cum,
   integer, dimension(2), intent(in ) :: piece
   character (len = *)  , intent(in ) :: shape, cum, space, gap, Eshape, current,  &
   hard, scheme, setup, abs
-  integer              , intent(in ) :: orderAlpha, order, runAlpha, nf, runMass, &
+  integer              , intent(in ) :: orderAlp, order, runAlp, nf, runMass, &
   orderMass, run
   real (dp)            , intent(in ) :: mZ, amZ, muLambda1, muLambda2, mT, muT, &
   mu,  Q, G3, lambda, tau, R0, mu0, delta0, h, s3, mB, muB, xi, gammaZ, &
@@ -2508,7 +2556,7 @@ subroutine f90SingularMassDiffPiece(hard, shape, Eshape, setup, gap, space, cum,
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,    &
+  alphaAll  = Alpha( AnDim, orderAlp, runAlp, mZ, amZ, mT,    &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
@@ -2538,7 +2586,7 @@ end subroutine f90SingularMassDiffPiece
 !ccccccccccccccc
 
 subroutine f90MassNonDist(hard, shape, Eshape, setup, gap, space, cum, scheme,  &
-  orderAlpha, runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT, &
+  orderAlp, runAlp, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT, &
   mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu, c, &
   clen, lambda, R0, mu0, delta0, h, tau, res)
 
@@ -2548,7 +2596,7 @@ subroutine f90MassNonDist(hard, shape, Eshape, setup, gap, space, cum, scheme,  
 
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in   ) :: shape, cum, setup, gap, hard, Eshape, space
-  integer            , intent(in   ) :: orderAlpha, order, runAlpha, run, clen, runMass, &
+  integer            , intent(in   ) :: orderAlp, order, runAlp, run, clen, runMass, &
                                         orderMass, nf
   real (dp)          , intent(in   ) :: mZ, amZ, muLambda1, muLambda2, mT, mB, muB, &
                                         mu, Q, G3, lambda, tau, R0, mu0, delta0, h, &
@@ -2578,7 +2626,7 @@ subroutine f90MassNonDist(hard, shape, Eshape, setup, gap, space, cum, scheme,  
   end do
 
   EW       = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
-  alphaAll = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
+  alphaAll = Alpha( AnDim, orderAlp, runAlp, mZ, amZ, mT,  &
                      muT, mB, muB, mC, muC )
   MatEl    = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
                                     muLambda1, muLambda2 )
@@ -2599,7 +2647,7 @@ end subroutine f90MassNonDist
 !ccccccccccccccc
 
 subroutine f90MassNonDistDiff(hard, shape, Eshape, setup, gap, space, cum, scheme, &
-  orderAlpha, runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT,  &
+  orderAlp, runAlp, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT,  &
   mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu, c,  &
   clen, lambda, R0, mu0, delta0, h, tau, tau2, res)
 
@@ -2609,7 +2657,7 @@ subroutine f90MassNonDistDiff(hard, shape, Eshape, setup, gap, space, cum, schem
 
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in   ) :: shape, cum, setup, gap, hard, Eshape, space
-  integer            , intent(in   ) :: orderAlpha, order, runAlpha, run, clen, runMass, &
+  integer            , intent(in   ) :: orderAlp, order, runAlp, run, clen, runMass, &
                                         orderMass, nf
   real (dp)          , intent(in   ) :: mZ, amZ, muLambda1, muLambda2, mT, mB, muB, h, &
                                         mu, Q, G3, lambda, tau, R0, mu0, delta0, tau2,&
@@ -2639,7 +2687,7 @@ subroutine f90MassNonDistDiff(hard, shape, Eshape, setup, gap, space, cum, schem
   end do
 
   EW        = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
-  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlp, runAlp, mZ, amZ, mT,  &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
                                     muLambda1, muLambda2 )
@@ -2660,7 +2708,7 @@ end subroutine f90MassNonDistDiff
 !ccccccccccccccc
 
 subroutine f90MassNonDistPiece(hard, shape, Eshape, gap, space, cum, scheme, &
-  orderAlpha, runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, &
+  orderAlp, runAlp, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, &
   muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, &
   mu, c, lambda, R0, mu0, delta0, h, tau, res)
 
@@ -2670,7 +2718,7 @@ subroutine f90MassNonDistPiece(hard, shape, Eshape, gap, space, cum, scheme, &
 
   integer, dimension(2), intent(in ) :: c
   character (len = *)  , intent(in ) :: hard, shape, cum, gap, Eshape, scheme, space
-  integer              , intent(in ) :: orderAlpha, runAlpha, run, nf, runMass, &
+  integer              , intent(in ) :: orderAlp, runAlp, run, nf, runMass, &
                                         orderMass, order
   real (dp)            , intent(in ) :: mZ, amZ, muLambda1, muLambda2, mT, mB, muB, &
                                         mu, Q, G3, lambda, tau, R0, mu0, delta0, h, &
@@ -2693,7 +2741,7 @@ subroutine f90MassNonDistPiece(hard, shape, Eshape, gap, space, cum, scheme, &
   end do
 
   EW        = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
-  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,     &
+  alphaAll  = Alpha( AnDim, orderAlp, runAlp, mZ, amZ, mT,     &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
                muLambda1, muLambda2 )
@@ -2714,7 +2762,7 @@ end subroutine f90MassNonDistPiece
 !ccccccccccccccc
 
 subroutine f90MassNonDistList(hard, shape, Eshape, gap, space, cum, scheme, &
-  orderAlpha, runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, &
+  orderAlp, runAlp, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, &
   muT, mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, &
   mu, clen, lambda, R0, mu0, delta0, h, tau, res)
 
@@ -2723,7 +2771,7 @@ subroutine f90MassNonDistList(hard, shape, Eshape, gap, space, cum, scheme, &
   use AnomDimClass;  implicit none
 
   character (len = *)  , intent(in ) :: hard, shape, cum, gap, Eshape, scheme, space
-  integer              , intent(in ) :: orderAlpha, runAlpha, run, nf, runMass, &
+  integer              , intent(in ) :: orderAlp, runAlp, run, nf, runMass, &
                                         orderMass, clen, order
   real (dp)            , intent(in ) :: mZ, amZ, muLambda1, muLambda2, mT, mB, muB, &
                                         mu, Q, G3, lambda, tau, R0, mu0, delta0, h, &
@@ -2755,7 +2803,7 @@ subroutine f90MassNonDistList(hard, shape, Eshape, gap, space, cum, scheme, &
   end do
 
   EW        = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
-  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT, &
+  alphaAll  = Alpha( AnDim, orderAlp, runAlp, mZ, amZ, mT, &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
                muLambda1, muLambda2 )
@@ -2775,7 +2823,7 @@ end subroutine f90MassNonDistList
 !ccccccccccccccc
 
 subroutine f90MassNonDistDiffList(hard, shape, Eshape, gap, space, cum, scheme,  &
-  orderAlpha, runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT,&
+  orderAlp, runAlp, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT,&
   mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu,   &
   clen, lambda, R0, mu0, delta0, h, tau, tau2, res)
 
@@ -2784,7 +2832,7 @@ subroutine f90MassNonDistDiffList(hard, shape, Eshape, gap, space, cum, scheme, 
   use AnomDimClass;  implicit none
 
   character (len = *)  , intent(in ) :: hard, shape, cum, gap, Eshape, scheme, space
-  integer              , intent(in ) :: orderAlpha, runAlpha, run, nf, runMass, &
+  integer              , intent(in ) :: orderAlp, runAlp, run, nf, runMass, &
                                         orderMass, clen, order
   real (dp)            , intent(in ) :: mZ, amZ, muLambda1, muLambda2, mT, mB, muJ, &
                                         mu, Q, G3, lambda, tau, R0, mu0, delta0, tau2,   &
@@ -2816,7 +2864,7 @@ subroutine f90MassNonDistDiffList(hard, shape, Eshape, gap, space, cum, scheme, 
   end do
 
   EW        = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
-  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,     &
+  alphaAll  = Alpha( AnDim, orderAlp, runAlp, mZ, amZ, mT,     &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
                muLambda1, muLambda2 )
@@ -2835,7 +2883,7 @@ end subroutine f90MassNonDistDiffList
 !ccccccccccccccc
 
 subroutine f90MassNonDistDiffPiece(hard, shape, Eshape, gap, space, cum, scheme, &
-  orderAlpha, runAlpha, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT,&
+  orderAlp, runAlp, orderMass, runMass, order, run, nf, G3, mZ, amZ, mT, muT,&
   mB, muB, mC, muC, muLambda1, muLambda2, Q, muH, muJ, muS, R, Rmass, muM, mu, c,&
   lambda, R0, mu0, delta0, h, tau, tau2, res)
 
@@ -2845,7 +2893,7 @@ subroutine f90MassNonDistDiffPiece(hard, shape, Eshape, gap, space, cum, scheme,
 
   integer, dimension(2), intent(in ) :: c
   character (len = *)  , intent(in ) :: hard, shape, cum, gap, Eshape, scheme, space
-  integer              , intent(in ) :: orderAlpha, order, runAlpha, run, nf, runMass, &
+  integer              , intent(in ) :: orderAlp, order, runAlp, run, nf, runMass, &
                                         orderMass
   real (dp)            , intent(in ) :: mZ, amZ, muLambda1, muLambda2, mT, mB, muJ, &
                                         mu, Q, G3, lambda, tau, R0, mu0, delta0, h, tau2,&
@@ -2868,7 +2916,7 @@ subroutine f90MassNonDistDiffPiece(hard, shape, Eshape, gap, space, cum, scheme,
   end do
 
   EW        = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
-  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,     &
+  alphaAll  = Alpha( AnDim, orderAlp, runAlp, mZ, amZ, mT,     &
                      muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp,  &
                muLambda1, muLambda2 )
@@ -2888,7 +2936,7 @@ end subroutine f90MassNonDistDiffPiece
 
 !ccccccccccccccc
 
-subroutine f90NSMass(shape, setup, gap, cum, scheme, abs, current, orderAlpha, runAlpha, &
+subroutine f90NSMass(shape, setup, gap, cum, scheme, abs, current, orderAlp, runAlp, &
   orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1,&
   muLambda2, Q, mu, muM, muJ, muS, R, Rmass, width, c, clen, lambda, R0, mu0, delta0, h, &
   gammaZ, sin2ThetaW, t, res)
@@ -2899,7 +2947,7 @@ subroutine f90NSMass(shape, setup, gap, cum, scheme, abs, current, orderAlpha, r
 
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in ) :: shape, current, cum, setup, gap, abs, scheme
-  integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nf, clen, runMass, &
+  integer            , intent(in ) :: orderAlp, runAlp, order, run, nf, clen, runMass, &
                                       orderMass
   real (dp)          , intent(in ) :: t, mT, muT, mC, muC, Q, mZ, gammaZ, sin2ThetaW, mu,&
                                       muS, Rmass, R0, mu0, muLambda1, amZ, lambda, muJ,  &
@@ -2922,7 +2970,7 @@ subroutine f90NSMass(shape, setup, gap, cum, scheme, abs, current, orderAlpha, r
 
   Mod       = Model(lambda, c, [0,0], 'sum')
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, &
                     muT, mB, muB, mC, muC)
   MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
                                     muLambda1, muLambda2)
@@ -2938,7 +2986,7 @@ end subroutine f90NSMass
 
 !ccccccccccccccc
 
-subroutine f90NSMassDiff(shape, setup, gap, cum, scheme, abs, current, orderAlpha, runAlpha, &
+subroutine f90NSMassDiff(shape, setup, gap, cum, scheme, abs, current, orderAlp, runAlp, &
   orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1,&
   muLambda2, Q, mu, muM, muJ, muS, R, Rmass, width, c, clen, lambda, R0, mu0, delta0, h, &
   gammaZ, sin2ThetaW, t, t2, res)
@@ -2949,7 +2997,7 @@ subroutine f90NSMassDiff(shape, setup, gap, cum, scheme, abs, current, orderAlph
 
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in ) :: shape, current, cum, setup, gap, abs, scheme
-  integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nf, clen, runMass, &
+  integer            , intent(in ) :: orderAlp, runAlp, order, run, nf, clen, runMass, &
                                       orderMass
   real (dp)          , intent(in ) :: t, mT, muT, mC, muC, Q, mZ, gammaZ, sin2ThetaW, t2, &
                                       muS, Rmass, R0, mu0, muLambda1, amZ, lambda, muB, h,&
@@ -2972,7 +3020,7 @@ subroutine f90NSMassDiff(shape, setup, gap, cum, scheme, abs, current, orderAlph
 
   Mod       = Model(lambda, c, [0,0], 'sum')
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, &
   muT, mB, muB, mC, muC)
   MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
   muLambda1, muLambda2)
@@ -2988,7 +3036,7 @@ end subroutine f90NSMassDiff
 
 !ccccccccccccccc
 
-subroutine f90NSMassPiece(shape, gap, cum, scheme, abs, current, orderAlpha, runAlpha,   &
+subroutine f90NSMassPiece(shape, gap, cum, scheme, abs, current, orderAlp, runAlp,   &
   orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1,&
   muLambda2, Q, mu, muM, muJ, muS, R, Rmass, piece, width, lambda, R0, mu0, delta0, h,   &
   gammaZ, sin2ThetaW, t, res)
@@ -2999,7 +3047,7 @@ subroutine f90NSMassPiece(shape, gap, cum, scheme, abs, current, orderAlpha, run
 
   integer, dimension(2), intent(in ) :: piece
   character (len = *)  , intent(in ) :: shape, current, cum, gap, abs, scheme
-  integer              , intent(in ) :: orderAlpha, runAlpha, order, run, nf, runMass,   &
+  integer              , intent(in ) :: orderAlp, runAlp, order, run, nf, runMass,   &
                                         orderMass
   real (dp)            , intent(in ) :: t, muT, mC, muC, Q, mZ, gammaZ, sin2ThetaW, muB, &
                                         muS, Rmass, R0, mu0, muLambda1, mu, amZ, lambda ,&
@@ -3023,7 +3071,7 @@ subroutine f90NSMassPiece(shape, gap, cum, scheme, abs, current, orderAlpha, run
 
   Mod       = Model(lambda, [1._dp], piece, 'piece')
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlp, runAlp, mZ, amZ, mT,  &
                     muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
                                     muLambda1, muLambda2)
@@ -3039,8 +3087,8 @@ end subroutine f90NSMassPiece
 
 !ccccccccccccccc
 
-subroutine f90NSMassList(shape, setup, gap, cum, scheme, abs, current, orderAlpha, &
-runAlpha, orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC,  &
+subroutine f90NSMassList(shape, setup, gap, cum, scheme, abs, current, orderAlp, &
+runAlp, orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC,  &
 muLambda1, muLambda2, Q, mu, muM, muJ, muS, R, Rmass, clen, width, lambda, R0, mu0,&
 delta0, h, gammaZ, sin2ThetaW, t, res)
 
@@ -3049,7 +3097,7 @@ delta0, h, gammaZ, sin2ThetaW, t, res)
   use constants, only: dp; implicit none
 
   character (len = *)  , intent(in ) :: shape, current, cum, gap, abs, scheme, setup
-  integer              , intent(in ) :: orderAlpha, runAlpha, order, run, nf, runMass,   &
+  integer              , intent(in ) :: orderAlp, runAlp, order, run, nf, runMass,   &
                                         orderMass, clen
   real (dp)            , intent(in ) :: t, muT, mC, muC, Q, mZ, gammaZ, sin2ThetaW, muB, &
                                         muS, Rmass, R0, mu0, muLambda1, mu, amZ, lambda , &
@@ -3082,7 +3130,7 @@ delta0, h, gammaZ, sin2ThetaW, t, res)
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlp, runAlp, mZ, amZ, mT,  &
                     muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
                                     muLambda1, muLambda2)
@@ -3097,8 +3145,8 @@ end subroutine f90NSMassList
 
 !ccccccccccccccc
 
-subroutine f90NSMassDiffList(shape, setup, gap, cum, scheme, abs, current, orderAlpha, &
-runAlpha, orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, &
+subroutine f90NSMassDiffList(shape, setup, gap, cum, scheme, abs, current, orderAlp, &
+runAlp, orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, &
 muLambda1, muLambda2, Q, mu, muM, muJ, muS, R, Rmass, clen, width, lambda, R0, mu0,&
 delta0, h, gammaZ, sin2ThetaW, t, t2, res)
 
@@ -3107,7 +3155,7 @@ delta0, h, gammaZ, sin2ThetaW, t, t2, res)
   use constants, only: dp; implicit none
 
   character (len = *)  , intent(in ) :: shape, current, cum, gap, abs, scheme, setup
-  integer              , intent(in ) :: orderAlpha, runAlpha, order, run, nf, &
+  integer              , intent(in ) :: orderAlp, runAlp, order, run, nf, &
                                         orderMass, runMass, clen
   real (dp)            , intent(in ) :: t, muT, mC, muC, Q, mZ, gammaZ, sin2ThetaW, muB, &
                                         muS, Rmass, R0, mu0, muLambda1, mu, amZ, lambda, &
@@ -3140,7 +3188,7 @@ delta0, h, gammaZ, sin2ThetaW, t, t2, res)
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlp, runAlp, mZ, amZ, mT,  &
                     muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
                                     muLambda1, muLambda2)
@@ -3155,7 +3203,7 @@ end subroutine f90NSMassDiffList
 
 !ccccccccccccccc
 
-subroutine f90NSMassDiffPiece(shape, gap, cum, scheme, abs, current, orderAlpha, runAlpha,   &
+subroutine f90NSMassDiffPiece(shape, gap, cum, scheme, abs, current, orderAlp, runAlp,   &
   orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1,&
   muLambda2, Q, mu, muM, muJ, muS, R, Rmass, piece, width, lambda, R0, mu0, delta0, h,   &
   gammaZ, sin2ThetaW, t, t2, res)
@@ -3166,7 +3214,7 @@ subroutine f90NSMassDiffPiece(shape, gap, cum, scheme, abs, current, orderAlpha,
 
   integer, dimension(2), intent(in ) :: piece
   character (len = *)  , intent(in ) :: shape, current, cum, gap, abs, scheme
-  integer              , intent(in ) :: orderAlpha, runAlpha, order, run, nf, runMass,   &
+  integer              , intent(in ) :: orderAlp, runAlp, order, run, nf, runMass,   &
                                         orderMass
   real (dp)            , intent(in ) :: t, muT, mC, muC, Q, mZ, gammaZ, sin2ThetaW, muB, &
                                         muS, Rmass, R0, mu0, muLambda1, mu, amZ, lambda, &
@@ -3190,7 +3238,7 @@ subroutine f90NSMassDiffPiece(shape, gap, cum, scheme, abs, current, orderAlpha,
 
   Mod       = Model(lambda, [1._dp], piece, 'piece')
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha( AnDim, orderAlpha, runAlpha, mZ, amZ, mT,  &
+  alphaAll  = Alpha( AnDim, orderAlp, runAlp, mZ, amZ, mT,  &
                     muT, mB, muB, mC, muC )
   MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
                                     muLambda1, muLambda2)
@@ -3206,7 +3254,7 @@ end subroutine f90NSMassDiffPiece
 
 !ccccccccccccccc
 
-subroutine f90HJMNSMass(setup, gap, cum, scheme, abs, current, orderAlpha, runAlpha,     &
+subroutine f90HJMNSMass(setup, gap, cum, scheme, abs, current, orderAlp, runAlp,     &
  orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1, &
  muLambda2, Q, mu, muM, muJ, muS, R, Rmass, width, c, clen, lambda, R0, mu0, delta0, h,  &
  gammaZ, sin2ThetaW, t, res)
@@ -3216,7 +3264,7 @@ subroutine f90HJMNSMass(setup, gap, cum, scheme, abs, current, orderAlpha, runAl
 
   real (dp), dimension(clen, clen), intent(in) :: c
   character (len = *), intent(in ) :: current, cum, setup, gap, abs, scheme
-  integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nf, clen, &
+  integer            , intent(in ) :: orderAlp, runAlp, order, run, nf, clen, &
   orderMass, runMass
 
   real (dp)          , intent(in ) :: t, mT, muT, mC, muC, Q, mZ, sin2ThetaW, &
@@ -3240,7 +3288,7 @@ subroutine f90HJMNSMass(setup, gap, cum, scheme, abs, current, orderAlpha, runAl
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC)
   MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp,  &
   0._dp, Q, mu, muJ, muM, muS, R, Rmass, muLambda1, muLambda2)
 
@@ -3266,7 +3314,7 @@ end subroutine f90HJMNSMass
 
 !ccccccccccccccc
 
-subroutine f90HJMNSMassDiff(setup, gap, cum, scheme, abs, current, orderAlpha, runAlpha, &
+subroutine f90HJMNSMassDiff(setup, gap, cum, scheme, abs, current, orderAlp, runAlp, &
  orderMass, runMass, order, run, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda1,     &
  muLambda2, Q, mu, muM, muJ, muS, R, Rmass, width, c, clen, lambda, R0, mu0, delta0, h, &
  gammaZ, sin2ThetaW, t, t2, res)
@@ -3277,7 +3325,7 @@ subroutine f90HJMNSMassDiff(setup, gap, cum, scheme, abs, current, orderAlpha, r
 
   real (dp), dimension(clen, clen), intent(in) :: c
   character (len = *), intent(in ) :: current, cum, setup, gap, abs, scheme
-  integer            , intent(in ) :: orderAlpha, runAlpha, order, run, clen, &
+  integer            , intent(in ) :: orderAlp, runAlp, order, run, clen, &
   orderMass, runMass, nf
 
   real (dp)          , intent(in ) :: t, mT, muT, mC, muC, Q, mZ, gammaZ, mu, &
@@ -3301,7 +3349,7 @@ subroutine f90HJMNSMassDiff(setup, gap, cum, scheme, abs, current, orderAlpha, r
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC)
   MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, &
   0._dp, Q, mu, muJ, muM, muS, R, Rmass, muLambda1, muLambda2)
 
@@ -3362,13 +3410,13 @@ end subroutine f90FOMass
 !ccccccccccccccc
 
 subroutine f90DiffDeltaGapMass(gap, order, R0, R, mu0, mu, muM, muLambda1, muLambda2, &
-  orderAlpha, runAlpha, runMass, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, res)
+  orderAlp, runAlp, runMass, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, res)
 
   use MatrixElementsClass; use AlphaClass  ; use GapMassClass
   use constants, only: dp; use AnomDimClass; implicit none
 
   character (len = *), intent(in ) :: gap
-  integer            , intent(in ) :: order, nf, orderAlpha, runAlpha, runMass
+  integer            , intent(in ) :: order, nf, orderAlp, runAlp, runMass
   real (dp)          , intent(in ) :: R0, R, mu0, mu, muLambda1, mZ, amZ, mT, muT, &
   mB, muB, mC, muC, muLambda2, muM
   real (dp)          , intent(out) :: res
@@ -3382,7 +3430,7 @@ subroutine f90DiffDeltaGapMass(gap, order, R0, R, mu0, mu, muM, muLambda1, muLam
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC)
 
   MatEl    = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp,  &
   0._dp, mu, mu, mu, muM, mu, mu, mu, muLambda1, muLambda2)
@@ -3876,12 +3924,12 @@ end subroutine f90alphaComplex
 
 !ccccccccccccccc
 
-subroutine f90MSbarMass(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, muB, mC, &
+subroutine f90MSbarMass(orderAlp, runAlp, run, nf, mZ, amZ, mT, muT, mB, muB, mC, &
   muC, mu, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass; implicit none
 
-  integer          , intent(in ) :: orderAlpha, runAlpha, run, nf
+  integer          , intent(in ) :: orderAlp, runAlp, run, nf
   real (dp)        , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC
   real (dp)        , intent(out) :: res
   type (Running)                 :: alphaMass
@@ -3893,7 +3941,7 @@ subroutine f90MSbarMass(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, muB
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, muC);  res = alphaMass%MSbarMass(mu)
@@ -3902,11 +3950,11 @@ end subroutine f90MSbarMass
 
 !ccccccccccccccc
 
-subroutine f90PoleMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, &
+subroutine f90PoleMass(orderAlp, runAlp, order, run, nf, mZ, amZ, mT, muT, &
 mB, muB, mC, muC, mu, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
-  integer            , intent(in ) :: orderAlpha, runAlpha, run, order, nf
+  integer            , intent(in ) :: orderAlp, runAlp, run, order, nf
   real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC
   real (dp)          , intent(out) :: res
   type (Running)                   :: alphaMass
@@ -3918,7 +3966,7 @@ mB, muB, mC, muC, mu, res)
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, muC);  res = alphaMass%PoleMass(order, mu)
@@ -3927,11 +3975,11 @@ end subroutine f90PoleMass
 
 !ccccccccccccccc
 
-subroutine f90MSbarMassLow(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, &
+subroutine f90MSbarMassLow(orderAlp, runAlp, run, nf, mZ, amZ, mT, muT, &
 mB, muB, mC, muC, mu, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
-  integer          , intent(in ) :: orderAlpha, runAlpha, run, nf
+  integer          , intent(in ) :: orderAlp, runAlp, run, nf
   real (dp)        , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC
   real (dp)        , intent(out) :: res
   type (Running)                 :: alphaMass
@@ -3943,7 +3991,7 @@ mB, muB, mC, muC, mu, res)
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, muC); res = alphaMass%MSbarMassLow(mu)
@@ -3952,13 +4000,13 @@ end subroutine f90MSbarMassLow
 
 !ccccccccccccccc
 
-subroutine f90OptimalR(type, n, method, orderAlpha, runAlpha, order, run, nf, &
+subroutine f90OptimalR(type, n, method, orderAlp, runAlp, order, run, nf, &
 mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, mu, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
 
   character (len = *), intent(in ) :: method, type
-  integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nf
+  integer            , intent(in ) :: orderAlp, runAlp, order, run, nf
   real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, lambda, n
   real (dp)          , intent(out) :: res
   type (Running)                   :: alphaMass
@@ -3970,7 +4018,7 @@ mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, mu, res)
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, mu)
@@ -4084,15 +4132,15 @@ end subroutine f90OptimalR
 
 !ccccccccccccccc
 
-  subroutine f90NRQCD(n, l, j, s, charm, scheme, average, method, orderAlpha, &
-  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1,   &
+  subroutine f90NRQCD(n, l, j, s, charm, scheme, average, method, orderAlp, &
+  runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1,   &
   lambda2, lam, mu, R, res)
 
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
     character (len = *), intent(in ) :: method, scheme, charm, average
-    integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nl, n,&
+    integer            , intent(in ) :: orderAlp, runAlp, order, run, nl, n,&
     l, j, s
     real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, &
     lambda1, lambda2, lam, R
@@ -4111,7 +4159,7 @@ end subroutine f90OptimalR
       AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
     end do
 
-    alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+    alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
     mT, muT, mB, muB, mC, muC)
 
     alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
@@ -4120,21 +4168,21 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%En( charm(:6), order, mu, R, lam, method(:8) )
+    res = Upsilon%En( order, mu, R, lam, method(:8) )
 
   end subroutine f90NRQCD
 
 !ccccccccccccccc
 
   subroutine f90FindMass(ord, n, l, j, s, iter, charm, scheme, average, method, &
-  orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,&
+  orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,&
   lambda1, lambda2, lam, mu, R, res)
 
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
     character (len = *), intent(in ) :: method, scheme, charm, iter, average
-    integer            , intent(in ) :: ord, orderAlpha, runAlpha, order, run, &
+    integer            , intent(in ) :: ord, orderAlp, runAlp, order, run, &
     nl, n, l, j, s
     real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC,&
     lambda1, lam, R, mass, lambda2
@@ -4153,7 +4201,7 @@ end subroutine f90OptimalR
       AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
     end do
 
-    alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+    alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
     mT, muT, mB, muB, mC, muC)
 
     alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
@@ -4162,7 +4210,7 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%MassFitter( iter(:10), charm(:6), ord, order, mu, R, mass, &
+    res = Upsilon%MassFitter( iter(:10), ord, order, mu, R, mass, &
     lam, method(:8) )
 
   end subroutine f90FindMass
@@ -4170,14 +4218,14 @@ end subroutine f90OptimalR
 !ccccccccccccccc
 
   subroutine f90MassError(ord, n, l, j, s, iter, charm, scheme, average, method,&
-  orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,&
+  orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,&
   lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x, res)
 
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
     character (len = *)    , intent(in ) :: method, scheme, charm, average, iter
-    integer                , intent(in ) :: ord, orderAlpha, runAlpha, order, run, &
+    integer                , intent(in ) :: ord, orderAlp, runAlp, order, run, &
     nl, n, l, j, s
     real (dp)              , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, x, &
     lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, mass, lambda2, muC
@@ -4196,7 +4244,7 @@ end subroutine f90OptimalR
       AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
     end do
 
-    alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+    alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
     mT, muT, mB, muB, mC, muC)
 
     alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
@@ -4205,7 +4253,7 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%MassError( iter(:10), charm(:6), ord, order, mu0, mu1, &
+    res = Upsilon%MassError( iter(:10), ord, order, mu0, mu1, &
     deltaMu, R0, R1, deltaR, x, mass, lam, method(:8) )
 
   end subroutine f90MassError
@@ -4213,14 +4261,14 @@ end subroutine f90OptimalR
 !ccccccccccccccc
 
   subroutine f90MassList(ord, n, l, j, s, iter, charm, scheme, average, method, &
-  orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,&
+  orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,&
   lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, res)
 
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
     character (len = *)    , intent(in ) :: method, scheme, charm, average, iter
-    integer                , intent(in ) :: ord, orderAlpha, runAlpha, order, run, &
+    integer                , intent(in ) :: ord, orderAlp, runAlp, order, run, &
     nl, n, l, j, s
     real (dp)              , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, &
     lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, mass, lambda2, muC
@@ -4242,7 +4290,7 @@ end subroutine f90OptimalR
       AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
     end do
 
-    alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+    alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
     mT, muT, mB, muB, mC, muC)
 
     alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
@@ -4251,7 +4299,7 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%MassList( iter(:10), charm(:6), ord, order, mu0, mu1, &
+    res = Upsilon%MassList( iter(:10), ord, order, mu0, mu1, &
     deltaMu, R0, R1, deltaR, mass, lam, method(:8) )
 
   end subroutine f90MassList
@@ -4259,14 +4307,14 @@ end subroutine f90OptimalR
 !ccccccccccccccc
 
   subroutine f90NRQCDList(n, l, j, s, iter, charm, scheme, average, method, &
-  orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,&
+  orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,&
   lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, res)
 
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
     character (len = *)    , intent(in ) :: method, scheme, charm, average, iter
-    integer                , intent(in ) :: orderAlpha, runAlpha, order, run, &
+    integer                , intent(in ) :: orderAlp, runAlp, order, run, &
     nl, n, l, j, s
     real (dp)              , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, &
     lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, mass, lambda2, muC
@@ -4288,7 +4336,7 @@ end subroutine f90OptimalR
       AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
     end do
 
-    alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+    alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
     mT, muT, mB, muB, mC, muC)
 
     alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
@@ -4297,7 +4345,7 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%NRQCDList( iter(:10), charm(:6), order, mu0, mu1, &
+    res = Upsilon%NRQCDList( iter(:10), order, mu0, mu1, &
     deltaMu, R0, R1, deltaR, mass, lam, method(:8) )
 
   end subroutine f90NRQCDList
@@ -4305,14 +4353,14 @@ end subroutine f90OptimalR
 !ccccccccccccccc
 
   subroutine f90NRQCDError(n, l, j, s, iter, charm, scheme, average, method, &
-  orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, &
+  orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, &
   mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x, res)
 
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
     character (len = *), intent(in ) :: method, scheme, charm, average, iter
-    integer            , intent(in ) :: orderAlpha, runAlpha, order, run, &
+    integer            , intent(in ) :: orderAlp, runAlp, order, run, &
     nl, n, l, j, s
     real (dp)          , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, muC, x, &
     lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, mass, lambda2
@@ -4331,7 +4379,7 @@ end subroutine f90OptimalR
       AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
     end do
 
-    alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+    alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
     mT, muT, mB, muB, mC, muC)
 
     alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
@@ -4340,22 +4388,22 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%EnError( iter(:10), charm(:6), order, mu0, mu1, &
+    res = Upsilon%EnError( iter(:10), order, mu0, mu1, &
     deltaMu, R0, R1, deltaR, x, mass, lam, method(:8) )
 
   end subroutine f90NRQCDError
 
 !ccccccccccccccc
 
-  subroutine f90MassIter(n, l, j, s, charm, scheme, average, method, orderAlpha, &
-  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, &
+  subroutine f90MassIter(n, l, j, s, charm, scheme, average, method, orderAlp, &
+  runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, &
   lambda2, lam, mu, R, res)
 
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
     character (len = *), intent(in ) :: method, scheme, average, charm
-    integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nl, &
+    integer            , intent(in ) :: orderAlp, runAlp, order, run, nl, &
     n, l, j, s
     real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC,&
     lambda1, lambda2, lam, R, mass
@@ -4374,7 +4422,7 @@ end subroutine f90OptimalR
       AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
     end do
 
-    alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+    alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
     mT, muT, mB, muB, mC, muC)
 
     alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
@@ -4383,21 +4431,21 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%MassIter( charm(:6), order, mu, R, mass, lam, method(:8) )
+    res = Upsilon%MassIter( order, mu, R, mass, lam, method(:8) )
 
   end subroutine f90MassIter
 
 !ccccccccccccccc
 
-  subroutine f90MassExpand(n, l, j, s, charm, scheme, average, method, orderAlpha, &
-  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, &
+  subroutine f90MassExpand(n, l, j, s, charm, scheme, average, method, orderAlp, &
+  runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, &
   lambda2, lam, mu, R, res)
 
     use RunningClass;  use AlphaClass;  use constants, only: dp
     use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
     character (len = *), intent(in ) :: method, scheme, average, charm
-    integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nl, &
+    integer            , intent(in ) :: orderAlp, runAlp, order, run, nl, &
     n, l, j, s
     real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC,&
     lambda1, lambda2, lam, R, mass
@@ -4416,7 +4464,7 @@ end subroutine f90OptimalR
       AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
     end do
 
-    alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+    alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
     mT, muT, mB, muB, mC, muC)
 
     alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
@@ -4425,18 +4473,18 @@ end subroutine f90OptimalR
     MSR     = VFNSMSR(alphaMass)
     Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%EnExpand( charm(:6), order, mu, R, mass, lam, method(:8) )
+    res = Upsilon%EnExpand( order, mu, R, mass, lam, method(:8) )
 
   end subroutine f90MassExpand
 
 !ccccccccccccccc
 
-subroutine f90mmfromMSR(type, orderAlpha, runAlpha, order, run, nf, mZ, amZ, &
+subroutine f90mmfromMSR(type, orderAlp, runAlp, order, run, nf, mZ, amZ, &
 mT, muT, mB, muB, mC, muC, mu, R, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
 
-  integer            , intent(in ) :: orderAlpha, runAlpha, order, run, nf
+  integer            , intent(in ) :: orderAlp, runAlp, order, run, nf
   real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R
   character (len = *), intent(in ) :: type
   real (dp)          , intent(out) :: res
@@ -4450,7 +4498,7 @@ mT, muT, mB, muB, mC, muC, mu, R, res)
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
   if (nf == 5) mass = mT; if (nf == 4) mass = mB; if (nf == 3) mass = mC
@@ -4462,13 +4510,13 @@ end subroutine f90mmfromMSR
 
 !ccccccccccccccc
 
-subroutine f90MSRMass(type, method, orderAlpha, runAlpha, order, run, nf, mZ, &
+subroutine f90MSRMass(type, method, orderAlp, runAlp, order, run, nf, mZ, &
 amZ, mT, muT, mB, muB, mC, muC, lambda, mu, R, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
 
   character (len = *), intent(in) :: method, type
-  integer           , intent(in ) :: orderAlpha, runAlpha, order, run, nf
+  integer           , intent(in ) :: orderAlp, runAlp, order, run, nf
   real (dp)         , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, R, lambda
   real (dp)         , intent(out) :: res
   type (Running)                  :: alphaMass
@@ -4480,7 +4528,7 @@ amZ, mT, muT, mB, muB, mC, muC, lambda, mu, R, res)
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, mu)
@@ -4490,13 +4538,13 @@ end subroutine f90MSRMass
 
 !ccccccccccccccc
 
-subroutine f90MSRVFNS(up, type, method, orderAlpha, runAlpha, order, run, nf, mZ, &
+subroutine f90MSRVFNS(up, type, method, orderAlp, runAlp, order, run, nf, mZ, &
 amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R, res)
   use RunningClass;  use AlphaClass   ;  use constants, only: dp
   use AnomDimClass;  use VFNSMSRClass ;  implicit none
 
   character (len = *), intent(in) :: method, type, up
-  integer           , intent(in ) :: orderAlpha, runAlpha, order, run, nf
+  integer           , intent(in ) :: orderAlp, runAlp, order, run, nf
   real (dp)         , intent(in ) :: mZ, amZ, mu1, mu2, mT, muT, mB, muB, mC, &
   muC, R, lambda
   real (dp)         , intent(out) :: res
@@ -4510,7 +4558,7 @@ amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R, res)
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
   alphaMass(1) = Running(nf - 1, run, alphaAll, mu2)
@@ -4522,13 +4570,13 @@ end subroutine f90MSRVFNS
 
 !ccccccccccccccc
 
-subroutine f90MSRTop(up, type, method, orderAlpha, runAlpha, order, run, nf, mZ, &
+subroutine f90MSRTop(up, type, method, orderAlp, runAlp, order, run, nf, mZ, &
 amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, mu3, R, res)
   use RunningClass;  use AlphaClass   ;  use constants, only: dp
   use AnomDimClass;  use VFNSMSRClass ;  implicit none
 
   character (len = *), intent(in) :: method, type, up
-  integer            , intent(in) :: orderAlpha, runAlpha, order, run, nf
+  integer            , intent(in) :: orderAlp, runAlp, order, run, nf
   real (dp)          , intent(in) :: mZ, amZ, mu1, mu2, mT, muT, mB, muB, mC, &
   muC, R, lambda, mu3
   real (dp)         , intent(out) :: res
@@ -4542,7 +4590,7 @@ amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, mu3, R, res)
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
   alphaMass(1) = Running(nf - 2, run, alphaAll, mu3)
@@ -4555,12 +4603,12 @@ end subroutine f90MSRTop
 
 !ccccccccccccccc
 
-subroutine f90JetMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, muT, &
+subroutine f90JetMass(orderAlp, runAlp, order, run, nf, mZ, amZ, mT, muT, &
 mB, muB, mC, muC, muLambda, R, mu, res)
  use AlphaClass;    use MatrixElementsClass;  use constants, only: dp
  use AnomDimClass;  implicit none
 
-  integer  , intent(in )      :: orderAlpha, order, runAlpha, run, nf
+  integer  , intent(in )      :: orderAlp, order, runAlp, run, nf
   real (dp), intent(in )      :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, muC, R
   real (dp), intent(out)      :: res
   type (Alpha)                :: alphaAll
@@ -4572,7 +4620,7 @@ mB, muB, mC, muC, muLambda, R, mu, res)
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
 
   MatEl     = MatricesElementsMass(alphaAll, nf, run, 0._dp, 0._dp, 0._dp, 0._dp,  &
@@ -4584,12 +4632,12 @@ end subroutine f90JetMass
 
 !ccccccccccccccc
 
-subroutine f90mmFromJetMass(orderAlpha, runAlpha, order, run, nf, mZ, amZ, mT, &
+subroutine f90mmFromJetMass(orderAlp, runAlp, order, run, nf, mZ, amZ, mT, &
 muT, mB, muB, mC, muC, muLambda, R, mu, res)
  use AlphaClass;   use MatrixElementsClass;  use constants, only: dp
  use AnomDimClass; implicit none
 
-  integer  , intent(in )         :: orderAlpha, order, runAlpha, run, nf
+  integer  , intent(in )         :: orderAlp, order, runAlp, run, nf
   real (dp), intent(in )         :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, muC, R
   real (dp), intent(out)         :: res
   type (Alpha)                   :: alphaAll
@@ -4602,7 +4650,7 @@ muT, mB, muB, mC, muC, muLambda, R, mu, res)
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
   MatEl     = MatricesElementsMass(alphaAll, nf, run, 0._dp, 0._dp, 0._dp, 0._dp,  &
@@ -4616,7 +4664,7 @@ end subroutine f90mmFromJetMass
 
 !ccccccccccccccc
 
-subroutine f90Singular(hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order, &
+subroutine f90Singular(hard, shape, setup, gap, space, cum, orderAlp, runAlp, order, &
  run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, &
  mu, c, clen, lambda, R0, mu0, delta0, h, tau, res)
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
@@ -4624,7 +4672,7 @@ subroutine f90Singular(hard, shape, setup, gap, space, cum, orderAlpha, runAlpha
 
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in)    :: shape, cum, setup, space, gap, hard
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen
   real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC, &
   mu,  Q, G3, lambda, tau, R0, mu0, delta0, h, s3, muC, j3
   real (dp)          , intent(inout) :: muH, muJ, muS, R
@@ -4644,7 +4692,7 @@ subroutine f90Singular(hard, shape, setup, gap, space, cum, orderAlpha, runAlpha
     AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -4660,7 +4708,7 @@ end subroutine f90Singular
 
 !ccccccccccccccc
 
-subroutine f90SingularDiff(hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order, run, &
+subroutine f90SingularDiff(hard, shape, setup, gap, space, cum, orderAlp, runAlp, order, run, &
  nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, &
  c, clen, lambda, R0, mu0, delta0, h, tau1, tau2, res)
   use AlphaClass;  use MatrixElementsClass;  use SingularClass; use ModelClass
@@ -4668,7 +4716,7 @@ subroutine f90SingularDiff(hard, shape, setup, gap, space, cum, orderAlpha, runA
 
   real (dp), dimension (clen), intent(in) :: c
   character (len = *), intent(in)    :: shape, cum, setup, space, hard, gap
-  integer            , intent(in)    :: orderAlpha, order, runAlpha, run, nf, clen
+  integer            , intent(in)    :: orderAlp, order, runAlp, run, nf, clen
   real (dp)          , intent(in)    :: mZ, amZ, muLambda, mT, muT, mB, muB, mC,&
   mu,  Q, G3, lambda, tau1, tau2, R0, mu0, delta0, h, s3, j3, muC
   real (dp)          , intent(inout) :: muH, muJ, muS, R
@@ -4688,7 +4736,7 @@ subroutine f90SingularDiff(hard, shape, setup, gap, space, cum, orderAlpha, runA
     AnDim  = AnomDim('MSbar', i, G3)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -4704,7 +4752,7 @@ end subroutine f90SingularDiff
 
 !ccccccccccccccc
 
-subroutine f90SingularHJM(hard, setup, gap, space, cum, orderAlpha, runAlpha, order, run, &
+subroutine f90SingularHJM(hard, setup, gap, space, cum, orderAlp, runAlp, order, run, &
   isoft, nf, j3, s3, s31, s32, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, &
   muH, muJ, muS, R, mu, c, clen, lambda, R0, mu0, delta0, h, tau, res)
 
@@ -4713,7 +4761,7 @@ subroutine f90SingularHJM(hard, setup, gap, space, cum, orderAlpha, runAlpha, or
 
   real (dp), dimension(clen, clen), intent(in) :: c
   character (len = *), intent(in) :: cum, setup, space, hard, gap
-  integer            , intent(in) :: orderAlpha, order, runAlpha, run, nf, clen, isoft
+  integer            , intent(in) :: orderAlp, order, runAlp, run, nf, clen, isoft
   real (dp)      ,  intent(inout) :: muH, muJ, muS, R
   real (dp)          , intent(in) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC,&
   muC, j3, Q, G3, lambda, tau, R0, mu0, delta0, h, s31, s32, s3
@@ -4734,7 +4782,7 @@ subroutine f90SingularHJM(hard, setup, gap, space, cum, orderAlpha, runAlpha, or
     AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6))
@@ -4758,7 +4806,7 @@ end subroutine f90SingularHJM
 
 !ccccccccccccccc
 
-subroutine f90SingularHJM1D(hard, gap, cum, orderAlpha, runAlpha, order, run, isoft, nf, &
+subroutine f90SingularHJM1D(hard, gap, cum, orderAlp, runAlp, order, run, isoft, nf, &
  j3, s3, s31, s32, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, &
  muS, R, mu, c, clen, lambda, R0, mu0, delta0, h, tau, res)
   use AlphaClass;  use MatrixElementsClass; use SingularClass; use ModelClass
@@ -4766,7 +4814,7 @@ subroutine f90SingularHJM1D(hard, gap, cum, orderAlpha, runAlpha, order, run, is
 
   real (dp), intent(in), dimension (clen) :: c
   character (len = *), intent(in ) :: cum, hard, gap
-  integer            , intent(in ) :: orderAlpha, order, runAlpha, run, nf, clen, isoft
+  integer            , intent(in ) :: orderAlp, order, runAlp, run, nf, clen, isoft
   real (dp)          , intent(in ) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, muC , &
                                      s3, muH, Q, muJ, muS, R, G3, lambda, tau, R0, mu0 , &
                                      delta0, h, s31, s32, j3
@@ -4782,7 +4830,7 @@ subroutine f90SingularHJM1D(hard, gap, cum, orderAlpha, runAlpha, order, run, is
     AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6) )
@@ -4795,7 +4843,7 @@ end subroutine f90SingularHJM1D
 
 !ccccccccccccccc
 
-subroutine f90SingularHJM1DPiece(hard, gap, cum, orderAlpha, runAlpha, order, run, isoft, nf, &
+subroutine f90SingularHJM1DPiece(hard, gap, cum, orderAlp, runAlp, order, run, isoft, nf, &
  j3, s3, s31, s32, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS , &
  R, mu, c, lambda, R0, mu0, delta0, h, tau, res)
 
@@ -4803,7 +4851,7 @@ subroutine f90SingularHJM1DPiece(hard, gap, cum, orderAlpha, runAlpha, order, ru
   use constants, only: dp; use AnomDimClass; implicit none
 
   character (len = *)  , intent(in ) :: cum, hard, gap
-  integer              , intent(in ) :: orderAlpha, order, runAlpha, run, nf, isoft
+  integer              , intent(in ) :: orderAlp, order, runAlp, run, nf, isoft
   integer, dimension(2), intent(in ) :: c
   real (dp)            , intent(in ) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC , &
                                        s3, muH, Q, muJ, muS, R, G3, lambda, tau, mu0, &
@@ -4820,7 +4868,7 @@ subroutine f90SingularHJM1DPiece(hard, gap, cum, orderAlpha, runAlpha, order, ru
     AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6))
@@ -4833,7 +4881,7 @@ end subroutine f90SingularHJM1DPiece
 
 !ccccccccccccccc
 
-subroutine f90SingularDouble(hard, setup, gap, space, cum1, cum2, orderAlpha, runAlpha, order, &
+subroutine f90SingularDouble(hard, setup, gap, space, cum1, cum2, orderAlp, runAlp, order, &
 run, isoft, nf, j3, s3, s31, s32, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q,   &
  muH, muJ, muS, R, mu, c, clen, lambda, R0, mu0, delta0, h, rho1, rho2, res)
 
@@ -4842,7 +4890,7 @@ run, isoft, nf, j3, s3, s31, s32, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLamb
 
   real (dp), dimension(clen, clen), intent(in) :: c
   character (len = *), intent(in) :: hard, cum1, cum2, setup, space, gap
-  integer            , intent(in) :: orderAlpha, order, runAlpha, run, nf, clen, isoft
+  integer            , intent(in) :: orderAlp, order, runAlp, run, nf, clen, isoft
   real (dp)          , intent(in) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, muC , &
                                      j3, s3, h, Q, G3, lambda, rho1, rho2, R0, mu0, s31,&
                                      s32, delta0
@@ -4859,7 +4907,7 @@ run, isoft, nf, j3, s3, s31, s32, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLamb
     AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6))
@@ -4887,7 +4935,7 @@ end subroutine f90SingularDouble
 
 !ccccccccccccccc
 
-subroutine f90SingularHJMPiece(hard, gap, space, cum, orderAlpha, runAlpha, order, run , &
+subroutine f90SingularHJMPiece(hard, gap, space, cum, orderAlp, runAlp, order, run , &
  isoft, nf, j3, s3, s31, s32, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, &
  muH, muJ, muS, R, mu, c, lambda, R0, mu0, delta0, h, tau, res)
 
@@ -4895,7 +4943,7 @@ subroutine f90SingularHJMPiece(hard, gap, space, cum, orderAlpha, runAlpha, orde
  use constants, only: dp; use AnomDimClass; implicit none
 
  character (len = *)  , intent(in) :: cum, space, hard, gap
- integer              , intent(in) :: orderAlpha, order, runAlpha, run, nf, isoft
+ integer              , intent(in) :: orderAlp, order, runAlp, run, nf, isoft
  integer, dimension(4), intent(in) :: c
  real (dp)            , intent(in) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, muC, &
                                      j3, s3, muH, Q, muJ, muS, R, G3, lambda, tau, R0 , &
@@ -4918,7 +4966,7 @@ subroutine f90SingularHJMPiece(hard, gap, space, cum, orderAlpha, runAlpha, orde
   ModList(1,1) = Model(lambda, [1._dp], c(:2), 'piece'); ModList(2,2) = ModList(1,1)
   ModList(1,2) = Model(lambda, [1._dp], c(3:), 'piece'); ModList(2,1) = ModList(1,2)
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6))
@@ -4930,7 +4978,7 @@ end subroutine f90SingularHJMPiece
 
 !ccccccccccccccc
 
-subroutine f90SingularDoublePiece(hard, gap, space, cum1, cum2, orderAlpha, runAlpha, order , &
+subroutine f90SingularDoublePiece(hard, gap, space, cum1, cum2, orderAlp, runAlp, order , &
  run, isoft, nf, j3, s3, s31, s32, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, &
  muH, muJ, muS, R, mu, c, lambda, R0, mu0, delta0, h, rho1, rho2, res)
 
@@ -4939,7 +4987,7 @@ subroutine f90SingularDoublePiece(hard, gap, space, cum1, cum2, orderAlpha, runA
 
  integer, dimension(4), intent(in ) :: c
  character (len = *)  , intent(in ) :: cum1, cum2, space, hard, gap
- integer              , intent(in ) :: orderAlpha, order, runAlpha, run, nf, isoft
+ integer              , intent(in ) :: orderAlp, order, runAlp, run, nf, isoft
  real (dp)            , intent(in ) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, muC, &
                                        j3, s3, muH, muJ, muS, R, G3, lambda, rho1, rho2, &
                                        R0, mu0, Q, delta0, h, s31, s32
@@ -4959,7 +5007,7 @@ subroutine f90SingularDoublePiece(hard, gap, space, cum1, cum2, orderAlpha, runA
   ModList(1,1) = Model(lambda, [1._dp], c(:2), 'piece'); ModList(2,2) = ModList(1,1)
   ModList(1,2) = Model(lambda, [1._dp], c(3:), 'piece'); ModList(2,1) = ModList(1,2)
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6))
@@ -4972,7 +5020,7 @@ end subroutine f90SingularDoublePiece
 
 !ccccccccccccccc
 
-subroutine f90SingularPiece(hard, shape, gap, space, cum, orderAlpha, runAlpha, order, run, nf, &
+subroutine f90SingularPiece(hard, shape, gap, space, cum, orderAlp, runAlp, order, run, nf, &
 j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, piece, &
 lambda, R0, mu0, delta0, h, tau, res)
 
@@ -4980,7 +5028,7 @@ lambda, R0, mu0, delta0, h, tau, res)
   use constants, only: dp; use AnomDimClass; implicit none
 
   character (len = *)  , intent(in) :: shape, cum, space, hard, gap
-  integer              , intent(in) :: orderAlpha, order, runAlpha, run, nf
+  integer              , intent(in) :: orderAlp, order, runAlp, run, nf
   integer, dimension(2), intent(in) :: piece
   real (dp)            , intent(in) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, &
   Q, muJ, muS, R, G3, lambda, tau, R0, mu0, delta0, j3, s3, muH, h, mC, muC
@@ -4997,7 +5045,7 @@ lambda, R0, mu0, delta0, h, tau, res)
   end do
 
   Mod       = Model(lambda, [1._dp], piece, 'piece')
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
  mB, muB, mC, muC)
 
   MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
@@ -5013,7 +5061,7 @@ end subroutine f90SingularPiece
 
 !ccccccccccccccc
 
-subroutine f90SingularList(hard, shape, gap, space, cum, orderAlpha, runAlpha, order  , &
+subroutine f90SingularList(hard, shape, gap, space, cum, orderAlp, runAlp, order  , &
 run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, &
 mu, clen, lambda, R0, mu0, delta0, h, tau, res)
 
@@ -5021,7 +5069,7 @@ mu, clen, lambda, R0, mu0, delta0, h, tau, res)
  use constants, only: dp; use AnomDimClass; implicit none
 
   character (len = *)  , intent(in) :: shape, cum, space, hard, gap
-  integer              , intent(in) :: orderAlpha, order, runAlpha, run, nf, clen
+  integer              , intent(in) :: orderAlp, order, runAlp, run, nf, clen
   real (dp)            , intent(in) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, muC, &
                                       Q, muJ, muS, R, G3, lambda, tau, R0, mu0, delta0,  &
                                       j3, s3, muH, h
@@ -5046,7 +5094,7 @@ mu, clen, lambda, R0, mu0, delta0, h, tau, res)
     AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless( MatEl, run, mu, shape(:6), hard(:6) )
@@ -5057,7 +5105,7 @@ end subroutine f90SingularList
 
 !ccccccccccccccc
 
-subroutine f90SingularDiffPiece(hard, shape, gap, space, cum, orderAlpha, runAlpha, order, run,&
+subroutine f90SingularDiffPiece(hard, shape, gap, space, cum, orderAlp, runAlp, order, run,&
 nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu,   &
 piece, lambda, R0, mu0, delta0, h, tau, tau2, res)
 
@@ -5065,7 +5113,7 @@ piece, lambda, R0, mu0, delta0, h, tau, tau2, res)
   use constants, only: dp; use AnomDimClass; implicit none
 
   character (len = *)  , intent(in) :: shape, cum, space, hard, gap
-  integer              , intent(in) :: orderAlpha, order, runAlpha, run, nf
+  integer              , intent(in) :: orderAlp, order, runAlp, run, nf
   integer, dimension(2), intent(in) :: piece
   real (dp)            , intent(in) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, muC, &
                                       Q, muJ, muS, R, G3, lambda, tau, R0, mu0, delta0, &
@@ -5083,7 +5131,7 @@ piece, lambda, R0, mu0, delta0, h, tau, tau2, res)
  end do
 
  Mod       = Model(lambda, [1._dp], piece, 'piece')
- alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+ alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                    mB, muB, mC, muC)
  MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
  Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -5098,7 +5146,7 @@ end subroutine f90SingularDiffPiece
 
 !ccccccccccccccc
 
-subroutine f90SingularDiffList(hard, shape, gap, space, cum, orderAlpha, runAlpha, order,&
+subroutine f90SingularDiffList(hard, shape, gap, space, cum, orderAlp, runAlp, order,&
  run, nf, j3, s3, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, &
  mu, clen, lambda, R0, mu0, delta0, h, tau, tau2, res)
 
@@ -5106,7 +5154,7 @@ subroutine f90SingularDiffList(hard, shape, gap, space, cum, orderAlpha, runAlph
   use constants, only: dp; use AnomDimClass; implicit none
 
   character (len = *), intent(in) :: shape, cum, space, hard, gap
-  integer            , intent(in) :: orderAlpha, order, runAlpha, run, nf, clen
+  integer            , intent(in) :: orderAlp, order, runAlp, run, nf, clen
   real (dp)          , intent(in) :: mZ, amZ, mu, muLambda, mT, muT, mB, muB, mC, &
                                      Q, muJ, muS, R, G3, lambda, tau, R0, delta0, &
                                      j3, s3, muH, h, tau2, mu0, muC
@@ -5132,7 +5180,7 @@ subroutine f90SingularDiffList(hard, shape, gap, space, cum, orderAlpha, runAlph
     AnDim(i) = AnomDim('MSbar', i, G3)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
                     mB, muB, mC, muC)
   MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -5147,14 +5195,14 @@ end subroutine f90SingularDiffList
 
 !ccccccccccccccc
 
-subroutine f90Rhad(str, orderAlpha, runAlpha, order, nf, mZ, amZ, mT, muT, mB, &
+subroutine f90Rhad(str, orderAlp, runAlp, order, nf, mZ, amZ, mT, muT, mB, &
 muB, mC, muC, mu, Q, res)
 
   use RunningClass; use AlphaClass; use SigmaClass;  use ElectroWeakClass
   use constants, only: dp; use AnomDimClass; implicit none
 
   character (len = *), intent(in ) :: str
-  integer            , intent(in ) :: order, runAlpha, orderAlpha, nf
+  integer            , intent(in ) :: order, runAlp, orderAlp, nf
   real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, Q
   real (dp)          , intent(out) :: res
   type (Running)                   :: alphaMass
@@ -5168,8 +5216,8 @@ muB, mC, muC, mu, Q, res)
     AnDim(i) = AnomDim(str(:5), i, 0._dp)
   end do
 
-  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, mB, muB, mC, muC)
-  alphaMass = Running(nf, runAlpha, alphaAll, muC)
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  alphaMass = Running(nf, runAlp, alphaAll, muC)
   EW = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
 
   MatEl = Sigma(alphaMass, EW);  res = MatEl%Rhad(order, mu, Q)
@@ -5207,14 +5255,14 @@ end subroutine f90RhadCoefs
 
 !ccccccccccccccc
 
-subroutine f90RhadMass(str, curr, orderAlpha, runAlpha, runMass, order, nf, mZ, &
+subroutine f90RhadMass(str, curr, orderAlp, runAlp, runMass, order, nf, mZ, &
 gammaZ, sin2ThetaW, amZ, mT, muT, mB, muB, mC, muC, mu, Q, res)
 
   use RunningClass; use AlphaClass; use SigmaClass; use ElectroWeakClass
   use constants, only: dp; use AnomDimClass; implicit none
 
   character (len = *), intent(in ) :: str, curr
-  integer            , intent(in ) :: order, runAlpha, orderAlpha, nf, runMass
+  integer            , intent(in ) :: order, runAlp, orderAlp, nf, runMass
   real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, gammaZ, &
   sin2ThetaW, Q
   real (dp)          , intent(out) :: res
@@ -5229,7 +5277,7 @@ gammaZ, sin2ThetaW, amZ, mT, muT, mB, muB, mC, muC, mu, Q, res)
     AnDim(i) = AnomDim(str(:5), i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
   alphaMass = Running(nf, runMass, alphaAll, 0._dp)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
@@ -5241,14 +5289,14 @@ end subroutine f90RhadMass
 
 !ccccccccccccccc
 
-subroutine f90lambdaQCD(str, order, runAlpha, run, nf, mZ, amZ, mT, muT, mB, &
+subroutine f90lambdaQCD(str, order, runAlp, run, nf, mZ, amZ, mT, muT, mB, &
 muB, mC, muC, mu, res)
 
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
 
   character (len = *), intent(in ) :: str
-  integer            , intent(in ) :: order, runAlpha, run, nf
+  integer            , intent(in ) :: order, runAlp, run, nf
   real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC
   real (dp)          , intent(out) :: res
   type (Running)                   :: alphaMass
@@ -5260,7 +5308,7 @@ muB, mC, muC, mu, res)
     AnDim(i) = AnomDim( str(:5), i, 0._dp )
   end do
 
-  alphaAll  = Alpha(AnDim, order, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, order, runAlp, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
   alphaMass = Running(nf, run, alphaAll, mu)
   res       = alphaMass%lambdaQCD(run)
@@ -5297,11 +5345,11 @@ end subroutine f90delta
 
 !ccccccccccccccc
 
-subroutine f90PSdelta(orderAlpha, runAlpha, nf, mZ, amZ, mT, muT, &
+subroutine f90PSdelta(orderAlp, runAlp, nf, mZ, amZ, mT, muT, &
 mB, muB, mC, muC, mu, R, lg, res)
   use AlphaClass;    use RunningClass;  use constants, only: dp
   use AnomDimClass;  implicit none
-  integer                , intent(in ) :: nf, orderAlpha, runAlpha
+  integer                , intent(in ) :: nf, orderAlp, runAlp
   real (dp)              , intent(in ) :: mu, R, mZ, amZ, mT, muT, mB, muB, mC, muC, lg
   real (dp), dimension(4), intent(out) :: res
   type (Alpha)                         :: alphaAll
@@ -5313,7 +5361,7 @@ mB, muB, mC, muC, mu, R, lg, res)
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
   alphaMass = Running(nf, 0, alphaAll, 0._dp)
@@ -5324,12 +5372,12 @@ end subroutine f90PSdelta
 
 !ccccccccccccccc
 
-subroutine f90deltaGap(str, orderAlpha, runAlpha, runMass, nf, mZ, amZ, mT, muT, &
+subroutine f90deltaGap(str, orderAlp, runAlp, runMass, nf, mZ, amZ, mT, muT, &
 mB, muB, mC, muC, mu, R, res)
   use AlphaClass;    use MatrixElementsClass;  use constants, only: dp
   use AnomDimClass;  implicit none
   character (len = *)    , intent(in ) :: str
-  integer                , intent(in ) :: nf, orderAlpha, runAlpha, runMass
+  integer                , intent(in ) :: nf, orderAlp, runAlp, runMass
   real (dp)              , intent(in ) :: mu, R, mZ, amZ, mT, muT, mB, muB, mC, muC
   real (dp), dimension(4), intent(out) :: res
   type (Alpha)                         :: alphaAll
@@ -5346,7 +5394,7 @@ mB, muB, mC, muC, mu, R, res)
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
   mT, muT, mB, muB, mC, muC)
 
   MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, &
@@ -5358,11 +5406,11 @@ end subroutine f90deltaGap
 
 !ccccccccccccccc
 
-subroutine f90deltaMSbar(orderAlpha, runAlpha, run, nf, mZ, amZ, mT, muT, mB, &
+subroutine f90deltaMSbar(orderAlp, runAlp, run, nf, mZ, amZ, mT, muT, mB, &
 muB, mC, muC, mu, res)
   use RunningClass; use AlphaClass;  use MatrixElementsClass
   use constants, only: dp; use AnomDimClass; implicit none
-  integer                , intent(in ) :: orderAlpha, runAlpha, run, nf
+  integer                , intent(in ) :: orderAlp, runAlp, run, nf
   real (dp)              , intent(in ) :: mZ, amZ, mu, mT, muT, muB, mB, mC, muC
   real (dp), dimension(4), intent(out) :: res
   type (Alpha)                         :: alphaAll
@@ -5374,7 +5422,7 @@ muB, mC, muC, mu, res)
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlpha, runAlpha, mZ, amZ, mT, muT, &
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
   mB, muB, mC, muC)
 
   MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, mu, &
@@ -5478,12 +5526,12 @@ end subroutine f90NGLfunction
 
 !ccccccccccccccc
 
-subroutine f90DiffDeltaGap(str, scheme, order, R0, R, mu0, mu, muLambda, orderAlpha, &
-                           runAlpha, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, res)
+subroutine f90DiffDeltaGap(str, scheme, order, R0, R, mu0, mu, muLambda, orderAlp, &
+                           runAlp, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, res)
   use MatrixElementsClass; use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
   character (len = *), intent(in ) :: str, scheme
-  integer            , intent(in ) :: order, nf, orderAlpha, runAlpha
+  integer            , intent(in ) :: order, nf, orderAlp, runAlp
   real (dp)          , intent(in ) :: R0, R, mu0, mu, muLambda, mZ, amZ, mT, muT, mB, &
                                       muB, mC, muC
   real (dp)          , intent(out) :: res
@@ -5496,7 +5544,7 @@ subroutine f90DiffDeltaGap(str, scheme, order, R0, R, mu0, mu, muLambda, orderAl
     AnDim(i) = AnomDim(scheme(:5), i, 0._dp)
   end do
 
-  alphaAll  = Alpha(Andim, orderAlpha, runAlpha, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC)
   MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, &
   mu, mu, tiny(1._dp), mu, mu, mu, muLambda, muLambda)
 

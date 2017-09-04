@@ -338,10 +338,14 @@ lib/CMakeFiles/libCaliper.dir/TTbar.F90.o.requires: lib/CMakeFiles/libCaliper.di
 lib/CMakeFiles/libCaliper.dir/TTbar.F90.o: lib/CMakeFiles/libCaliper.dir/constants.mod.stamp
 lib/CMakeFiles/libCaliper.dir/TTbar.F90.o.requires: lib/CMakeFiles/libCaliper.dir/derigamma.mod.proxy
 lib/CMakeFiles/libCaliper.dir/TTbar.F90.o: lib/CMakeFiles/libCaliper.dir/derigamma.mod.stamp
+lib/CMakeFiles/libCaliper.dir/TTbar.F90.o.requires: lib/CMakeFiles/libCaliper.dir/nrqcdclass.mod.proxy
+lib/CMakeFiles/libCaliper.dir/TTbar.F90.o: lib/CMakeFiles/libCaliper.dir/nrqcdclass.mod.stamp
 lib/CMakeFiles/libCaliper.dir/TTbar.F90.o.requires: lib/CMakeFiles/libCaliper.dir/runningclass.mod.proxy
 lib/CMakeFiles/libCaliper.dir/TTbar.F90.o: lib/CMakeFiles/libCaliper.dir/runningclass.mod.stamp
 lib/CMakeFiles/libCaliper.dir/TTbar.F90.o.requires: lib/CMakeFiles/libCaliper.dir/toppikclass.mod.proxy
 lib/CMakeFiles/libCaliper.dir/TTbar.F90.o: lib/CMakeFiles/libCaliper.dir/toppikclass.mod.stamp
+lib/CMakeFiles/libCaliper.dir/TTbar.F90.o.requires: lib/CMakeFiles/libCaliper.dir/vfnsmsrclass.mod.proxy
+lib/CMakeFiles/libCaliper.dir/TTbar.F90.o: lib/CMakeFiles/libCaliper.dir/vfnsmsrclass.mod.stamp
 lib/CMakeFiles/libCaliper.dir/rnrqcdclass.mod.proxy: lib/CMakeFiles/libCaliper.dir/TTbar.F90.o.provides
 lib/CMakeFiles/libCaliper.dir/TTbar.F90.o.provides.build:
 	$(CMAKE_COMMAND) -E cmake_copy_f90_mod lib/rnrqcdclass lib/CMakeFiles/libCaliper.dir/rnrqcdclass.mod.stamp GNU
