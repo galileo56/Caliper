@@ -439,15 +439,21 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  function En(self, order, mu, R, lambda, method) result(list)
+  function En(self, order, mu, R, lambda, method, counting) result(list)
     class (NRQCD)   , intent(inout) :: self
     character (len = *), intent(in) :: method
+    character (len = *), intent(in), optional :: counting
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda
     real (dp), dimension(0:4)       :: list
     real (dp), dimension(0:7)       :: listA
 
-    listA = self%EnInv(order, mu, R, lambda, method)
+    if ( present(counting) ) then
+      listA = self%EnInv(order, mu, R, lambda, method, counting)
+    else
+      listA = self%EnInv(order, mu, R, lambda, method)
+    end if
+
     listA(2) = listA(2) + listA(6)
     listA(3) = listA(3) + listA(7)
     list  = 2 * ( self%mH + listA(5) ) * listA(:4)
@@ -484,9 +490,10 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  function EnInv(self, order, mu, R, lambda, method) result(list)
+  function EnInv(self, order, mu, R, lambda, method, counting) result(list)
     class (NRQCD)   , intent(inout) :: self
     character (len = *), intent(in) :: method
+    character (len = *), intent(in), optional :: counting
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda
     real (dp), dimension(0:4)       :: alphaList
@@ -567,16 +574,26 @@ module NRQCDClass
 
       end do
 
-      do j = 1, 4
-        do i = 1, j
-          l = min(i - 1, j - i)
-          list(j) = list(j) + sum( deltaLog(:l,j - i) * c(i,:l) )
-        end do
-      end do
+      if ( present(counting) .and. counting(:5) == 'ttbar' ) then
 
-      do j = 4, 1, -1
-        list(j) = sum( delta(:j) * list(j:0:-1) )
-      end do
+        list(1:4) = c(:,0); list(3:4) = list(3:4) + list(1) * delta(1:2)
+        list(4)   = list(4) + list(2) * delta(1) + delta(1) * c(2,1)
+        list(1:4) = list(1:4) + delta(1:4)
+
+      else
+
+        do j = 1, 4
+          do i = 1, j
+            l = min(i - 1, j - i)
+            list(j) = list(j) + sum( deltaLog(:l,j - i) * c(i,:l) )
+          end do
+        end do
+
+        do j = 4, 1, -1
+          list(j) = sum( delta(:j) * list(j:0:-1) )
+        end do
+
+      end if
 
     end if
 

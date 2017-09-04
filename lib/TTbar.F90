@@ -74,7 +74,7 @@ contains
     real (dp)          , intent(in) :: R, lambda
     real (dp), dimension(0:4)       :: res
 
-    res = self%Upsilon%En(order, R, R, lambda, method)/2
+    res = self%Upsilon%En(order, R, R, lambda, method, 'ttbar')/2
 
   end function Delta1S
 
