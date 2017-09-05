@@ -462,6 +462,7 @@ module NRQCDClass
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda, mUpsilon
     real (dp), dimension(0:4)       :: list
+    real (dp), dimension(0:5)       :: list2, listInv2
     real (dp), dimension(0:7)       :: listA
     integer                         :: n
 
@@ -469,12 +470,27 @@ module NRQCDClass
 
     list(0) = 1
 
-    do n = 0, 3
-      list(n + 1) = - sum( list(:n) * listA(n + 1:1:-1) )
-    end do
+    if ( counting(:5) == 'ttbar' ) then
+
+      list2(0:1) = [1,0]; listInv2(0:1) = [1,0]; list2(2:) = listA(1:4)
+
+      do n = 1, 4
+        listInv2(n + 1) = - sum( listInv2(:n) * list2(n + 1:1:-1) )
+      end do
+
+      list(1:) = listInv2(2:);  list(3) = list(3) - listA(7)
+
+    else
+
+      do n = 0, 3
+        list(n + 1) = - sum( list(:n) * listA(n + 1:1:-1) )
+      end do
+
+      list(3) = list(3) - 2 * listA(6) * list(1) - listA(7)
+
+    end if
 
     list(2) = list(2) - listA(6)
-    list(3) = list(3) - 2 * listA(6) * list(1) - listA(7)
 
     list = mUpsilon * list/2
 
