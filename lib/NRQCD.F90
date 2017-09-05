@@ -210,9 +210,9 @@ module NRQCDClass
 !ccccccccccccccc
 
   function MassList(self, iter, n, order, mu0, mu1, deltaMu, R0, R1, &
-  deltaR, mUpsilon, lambda, method) result(list)
+  deltaR, mUpsilon, lambda, method, counting) result(list)
     class (NRQCD)      , intent(inout) :: self
-    character (len = *), intent(in)    :: method, iter
+    character (len = *), intent(in)    :: method, iter, counting
     integer            , intent(in)    :: order, n
     real (dp)          , intent(in)    :: lambda, mUpsilon, mu0, mu1, R1, &
     deltaMu, R0, deltaR
@@ -233,7 +233,7 @@ module NRQCDClass
       do j = 0, jmax
         list(2,i,j) = R0 + j * deltaR
         list(3,i,j) = self%MassFitter(iter, n, order, list(1,i,j), &
-        list(2,i,j), mUpsilon, lambda, method)
+        list(2,i,j), mUpsilon, lambda, method, counting)
       end do
 
     end do
@@ -243,9 +243,9 @@ module NRQCDClass
 !ccccccccccccccc
 
   function NRQCDList(self, iter, n, mu0, mu1, deltaMu, R0, R1, &
-  deltaR, mUpsilon, lambda, method) result(list)
+  deltaR, mUpsilon, lambda, method, counting) result(list)
     class (NRQCD)      , intent(inout) :: self
-    character (len = *), intent(in)    :: method, iter
+    character (len = *), intent(in)    :: method, iter, counting
     integer            , intent(in)    :: n
     real (dp)          , intent(in)    :: lambda, mUpsilon, mu0, mu1, R1, &
     deltaMu, R0, deltaR
@@ -269,13 +269,13 @@ module NRQCDClass
 
         if ( iter(:10) == 'FixedOrder') then
           list(3:,i,j) = self%En(n, list(1,i,j), &
-          list(2,i,j), lambda, method)
+          list(2,i,j), lambda, method, counting)
         else if ( iter(:8) == 'expanded') then
           list(3:,i,j) = self%EnExpand(n, list(1,i,j), &
-          list(2,i,j), mUpsilon, lambda, method)
+          list(2,i,j), mUpsilon, lambda, method, counting)
         else if ( iter(:9) == 'iterative') then
           list(3:,i,j) = self%MassIter(n, list(1,i,j), &
-          list(2,i,j), mUpsilon, lambda, method)
+          list(2,i,j), mUpsilon, lambda, method, counting)
         end if
 
       end do
@@ -287,9 +287,9 @@ module NRQCDClass
 !ccccccccccccccc
 
   function MassError(self, iter, n, order, mu0, mu1, deltaMu, R0, R1, &
-  deltaR, x, mUpsilon, lambda, method) result(list)
+  deltaR, x, mUpsilon, lambda, method, counting) result(list)
     class (NRQCD)      , intent(inout) :: self
-    character (len = *), intent(in)    :: method, iter
+    character (len = *), intent(in)    :: method, iter, counting
     integer            , intent(in)    :: order, n
     real (dp)          , intent(in)    :: lambda, mUpsilon, mu0, mu1, R1, x, &
     deltaMu, R0, deltaR
@@ -311,7 +311,7 @@ module NRQCDClass
           R = R0 + j * deltaR
           rat = mu/R; if ( rat > x .or.  rat < xinv ) cycle
           mass = self%MassFitter(iter, n, order, mu, R, mUpsilon, &
-          lambda, method)
+          lambda, method, counting)
           if ( mass > list(1) ) list(1) = mass
           if ( mass < list(2) ) list(2) = mass
         end do
@@ -319,7 +319,7 @@ module NRQCDClass
       else
 
         mass = self%MassFitter(iter, n, order, mu, mu, mUpsilon, &
-        lambda, method)
+        lambda, method, counting)
         if ( mass > list(1) ) list(1) = mass
         if ( mass < list(2) ) list(2) = mass
 
@@ -334,9 +334,9 @@ module NRQCDClass
 !ccccccccccccccc
 
   function EnError(self, iter, n, mu0, mu1, deltaMu, R0, R1, &
-  deltaR, x, mUpsilon, lambda, method) result(list)
+  deltaR, x, mUpsilon, lambda, method, counting) result(list)
     class (NRQCD)      , intent(inout) :: self
-    character (len = *), intent(in)    :: method, iter
+    character (len = *), intent(in)    :: method, iter, counting
     integer            , intent(in)    :: n
     real (dp)          , intent(in)    :: lambda, mu0, mu1, R1, x, deltaR, R0, &
     deltaMu, mUpsilon
@@ -361,11 +361,11 @@ module NRQCDClass
           rat = mu/R; if ( rat > x .or.  rat < xinv ) cycle
 
           if ( iter(:10) == 'FixedOrder') then
-            mass = self%En(n, mu, R, lambda, method)
+            mass = self%En(n, mu, R, lambda, method, counting)
           else if ( iter(:8) == 'expanded') then
-            mass = self%EnExpand(n, mu, R, mUpsilon, lambda, method)
+            mass = self%EnExpand(n, mu, R, mUpsilon, lambda, method, counting)
           else if ( iter(:9) == 'iterative') then
-            mass = self%MassIter(n, mu, R, mUpsilon, lambda, method)
+            mass = self%MassIter(n, mu, R, mUpsilon, lambda, method, counting)
           end if
 
           do k = 0, 4
@@ -378,7 +378,7 @@ module NRQCDClass
 
       else
 
-        mass = self%En(n, mu, mu, lambda, method); upMass = 0
+        mass = self%En(n, mu, mu, lambda, method, counting); upMass = 0
 
         do k = 0, 4
           upMass = upMass + mass(k)
@@ -399,9 +399,9 @@ module NRQCDClass
 !ccccccccccccccc
 
   real (dp) function MassFitter(self, iter, n, order, mu, R, mUpsilon, &
-  lambda, method)
+  lambda, method, counting)
     class (NRQCD)      , intent(inout) :: self
-    character (len = *), intent(in)    :: method, iter
+    character (len = *), intent(in)    :: method, iter, counting
     integer            , intent(in)    :: order, n
     real (dp)          , intent(in)    :: mu, R, lambda, mUpsilon
     real (dp)                          :: a
@@ -422,14 +422,14 @@ module NRQCDClass
       call self%SetMass(mass, self%rat * mass)
 
       if ( iter(:9) == 'iterative' ) then
-        list(:4) = self%MassIter(order, mu, R, mUpsilon, lambda, method)
+        list(:4) = self%MassIter(order, mu, R, mUpsilon, lambda, method, counting)
         FindRoot = sum( list(:n) )
       else if ( iter(:10) == 'FixedOrder' ) then
-        list = self%EnInv(order, mu, R, lambda, method)
+        list = self%EnInv(order, mu, R, lambda, method, counting)
         list(2:3) = list(2:3) + list(6:7)
         FindRoot = mUpsilon/sum( list(:n) )/2 - list(5)
       else if ( iter(:8) == 'expanded' ) then
-        list(:4) = self%EnExpand(order, mu, R, mUpsilon, lambda, method)
+        list(:4) = self%EnExpand(order, mu, R, mUpsilon, lambda, method, counting)
         FindRoot = sum( list(:n) )
       end if
 
@@ -441,19 +441,13 @@ module NRQCDClass
 
   function En(self, order, mu, R, lambda, method, counting) result(list)
     class (NRQCD)   , intent(inout) :: self
-    character (len = *), intent(in) :: method
-    character (len = *), intent(in), optional :: counting
+    character (len = *), intent(in) :: method, counting
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda
     real (dp), dimension(0:4)       :: list
     real (dp), dimension(0:7)       :: listA
 
-    if ( present(counting) ) then
-      listA = self%EnInv(order, mu, R, lambda, method, counting)
-    else
-      listA = self%EnInv(order, mu, R, lambda, method)
-    end if
-
+    listA = self%EnInv(order, mu, R, lambda, method, counting)
     listA(2) = listA(2) + listA(6)
     listA(3) = listA(3) + listA(7)
     list  = 2 * ( self%mH + listA(5) ) * listA(:4)
@@ -462,25 +456,41 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  function EnExpand(self, order, mu, R, mUpsilon, lambda, method) result(list)
+  function EnExpand(self, order, mu, R, mUpsilon, lambda, method, counting) result(list)
     class (NRQCD)   , intent(inout) :: self
-    character (len = *), intent(in) :: method
+    character (len = *), intent(in) :: method, counting
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda, mUpsilon
     real (dp), dimension(0:4)       :: list
+    real (dp), dimension(0:5)       :: list2, listInv2
     real (dp), dimension(0:7)       :: listA
     integer                         :: n
 
-    listA = self%EnInv(order, mu, R, lambda, method)
+    listA = self%EnInv(order, mu, R, lambda, method, counting)
 
     list(0) = 1
 
-    do n = 0, 3
-      list(n + 1) = - sum( list(:n) * listA(n + 1:1:-1) )
-    end do
+    if ( counting(:5) == 'ttbar' ) then
+
+      list2(0:1) = [1,0]; listInv2(0:1) = [1,0]; list2(2:) = listA(1:4)
+
+      do n = 1, 4
+        listInv2(n + 1) = - sum( listInv2(:n) * list2(n + 1:1:-1) )
+      end do
+
+      list(1:) = listInv2(2:);  list(3) = list(3) - listA(7)
+
+    else
+
+      do n = 0, 3
+        list(n + 1) = - sum( list(:n) * listA(n + 1:1:-1) )
+      end do
+
+      list(3) = list(3) - 2 * listA(6) * list(1) - listA(7)
+
+    end if
 
     list(2) = list(2) - listA(6)
-    list(3) = list(3) - 2 * listA(6) * list(1) - listA(7)
 
     list = mUpsilon * list/2
 
@@ -492,8 +502,7 @@ module NRQCDClass
 
   function EnInv(self, order, mu, R, lambda, method, counting) result(list)
     class (NRQCD)   , intent(inout) :: self
-    character (len = *), intent(in) :: method
-    character (len = *), intent(in), optional :: counting
+    character (len = *), intent(in) :: method, counting
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda
     real (dp), dimension(0:4)       :: alphaList
@@ -574,7 +583,7 @@ module NRQCDClass
 
       end do
 
-      if ( present(counting) .and. counting(:5) == 'ttbar' ) then
+      if ( counting(:5) == 'ttbar' ) then
 
         list(1:4) = c(:,0); list(3:4) = list(3:4) + list(1) * delta(1:2)
         list(4)   = list(4) + list(2) * delta(1) + delta(1) * c(2,1)
@@ -611,9 +620,9 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  function MassIter(self, order, mu, R, mUpsilon, lambda, method) result(list)
+  function MassIter(self, order, mu, R, mUpsilon, lambda, method, counting) result(list)
     class (NRQCD)   , intent(inout) :: self
-    character (len = *), intent(in) :: method
+    character (len = *), intent(in) :: method, counting
     integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, R, lambda, mUpsilon
     real (dp), dimension(0:4)       :: list, listInv, alphaList

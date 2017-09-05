@@ -4028,454 +4028,454 @@ end subroutine f90OptimalR
 
 !ccccccccccccccc
 
-  subroutine f90UpsilonDeltaCharm(n, l, alp, mb, mc, res)
-    use RunningClass;  use AlphaClass;  use constants, only: dp
-    use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
-    real (dp)        , intent(in ) :: alp, mb, mc
-    integer          , intent(in ) :: n, l
-    real (dp)        , intent(out) :: res
-    type (NRQCD)                   :: Upsilon
-    type (VFNSMSR)                 :: MSR
-    type (Alpha)                   :: alphaAll
-    type (Running), dimension(2)   :: alphaMass
-    type (AnomDim), dimension(3:6) :: AnDim
-    integer                        :: i
+subroutine f90UpsilonDeltaCharm(n, l, alp, mb, mc, res)
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
+  real (dp)        , intent(in ) :: alp, mb, mc
+  integer          , intent(in ) :: n, l
+  real (dp)        , intent(out) :: res
+  type (NRQCD)                   :: Upsilon
+  type (VFNSMSR)                 :: MSR
+  type (Alpha)                   :: alphaAll
+  type (Running), dimension(2)   :: alphaMass
+  type (AnomDim), dimension(3:6) :: AnDim
+  integer                        :: i
 
-    do i = 3, 6
-      AnDim(i) = AnomDim('MSbar', i, 0._dp)
-    end do
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
 
-    alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, &
-    0._dp, 0._dp, mc, mc, mc, mc)
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, &
+  0._dp, 0._dp, mc, mc, mc, mc)
 
-    alphaMass = Running(4, 0, alphaAll, 100._dp)
-    MSR       = VFNSMSR(alphaMass)
-    Upsilon   = NRQCD( 'up', 'MSbar', 'no', MSR, n, l, 0, 0 )
+  alphaMass = Running(4, 0, alphaAll, 100._dp)
+  MSR       = VFNSMSR(alphaMass)
+  Upsilon   = NRQCD( 'up', 'MSbar', 'no', MSR, n, l, 0, 0 )
 
-    res = Upsilon%DeltaCharm(alp, mb)
+  res = Upsilon%DeltaCharm(alp, mb)
 
-  end subroutine f90UpsilonDeltaCharm
-
-!ccccccccccccccc
-
-  subroutine f90UpsilonDeltaCharmBin(n, l, alp, mb, mc, res)
-    use RunningClass;  use AlphaClass;  use constants, only: dp
-    use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
-    real (dp)        , intent(in ) :: alp, mb, mc
-    integer          , intent(in ) :: n, l
-    real (dp)        , intent(out) :: res
-    type (NRQCD)                   :: Upsilon
-    type (VFNSMSR)                 :: MSR
-    type (Alpha)                   :: alphaAll
-    type (Running), dimension(2)   :: alphaMass
-    type (AnomDim), dimension(3:6) :: AnDim
-    integer                        :: i
-
-    do i = 3, 6
-      AnDim(i) = AnomDim('MSbar', i, 0._dp)
-    end do
-
-    alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, &
-    0._dp, 0._dp, mc, mc, mc, mc)
-
-    alphaMass = Running(4, 0, alphaAll, 100._dp)
-    MSR       = VFNSMSR(alphaMass)
-    Upsilon   = NRQCD( 'up', 'MSbar', 'no', MSR, n, l, 0, 0 )
-
-    res = Upsilon%DeltaCharmBin(alp, mb)
-
-  end subroutine f90UpsilonDeltaCharmBin
+end subroutine f90UpsilonDeltaCharm
 
 !ccccccccccccccc
 
-  subroutine f90DeltaCharmExact(charm, type, scheme, average, n, l, j, s, nl, &
-    mH, mL, mu, alp, res)
-    use RunningClass;  use AlphaClass;  use constants, only: dp
-    use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
+subroutine f90UpsilonDeltaCharmBin(n, l, alp, mb, mc, res)
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
+  real (dp)        , intent(in ) :: alp, mb, mc
+  integer          , intent(in ) :: n, l
+  real (dp)        , intent(out) :: res
+  type (NRQCD)                   :: Upsilon
+  type (VFNSMSR)                 :: MSR
+  type (Alpha)                   :: alphaAll
+  type (Running), dimension(2)   :: alphaMass
+  type (AnomDim), dimension(3:6) :: AnDim
+  integer                        :: i
 
-    character (len = *), intent(in ) :: type, scheme, average, charm
-    integer            , intent(in ) :: nl, n, l, j, s
-    real (dp)          , intent(in ) :: mH, mL, alp, mu
-    real (dp)          , intent(out) :: res
-    real (dp)                        :: mB, mC, mT
-    type (NRQCD)                     :: Upsilon
-    type (Alpha)                     :: alphaAll
-    type (VFNSMSR)                   :: MSR
-    type (Running), dimension(2)     :: alphaMass
-    type (AnomDim), dimension(3:6)   :: AnDim
-    integer                          :: i
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
 
-    if (nl == 5) then
-      mT = mH; mB = mL
-    else if (nl == 4) then
-      mB = mH; mC = mL
-    else
-      res = 0; return
-    end if
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, &
+  0._dp, 0._dp, mc, mc, mc, mc)
 
-    do i = 3, 6
-      AnDim(i) = AnomDim(scheme, i, 0._dp)
-    end do
+  alphaMass = Running(4, 0, alphaAll, 100._dp)
+  MSR       = VFNSMSR(alphaMass)
+  Upsilon   = NRQCD( 'up', 'MSbar', 'no', MSR, n, l, 0, 0 )
 
-    alphaAll  = Alpha(AnDim, 4, 4, 91.187_dp, 0.118_dp, &
-    mT, mT, mB, mB, mC, mC)
+  res = Upsilon%DeltaCharmBin(alp, mb)
 
-    alphaMass = [ Running(nl - 1, 0, alphaAll, mL), &
-    Running(nl, 0, alphaAll, mH) ]
-
-    MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm, scheme, average(:3), MSR, n, l, j, s )
-
-    res = Upsilon%DeltaCharmExact(type, mu, alp, mH)
-
-  end subroutine f90DeltaCharmExact
+end subroutine f90UpsilonDeltaCharmBin
 
 !ccccccccccccccc
 
-  subroutine f90NRQCD(n, l, j, s, charm, scheme, average, method, orderAlp, &
-  runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1,   &
-  lambda2, lam, mu, R, res)
+subroutine f90DeltaCharmExact(charm, type, scheme, average, n, l, j, s, nl, &
+  mH, mL, mu, alp, res)
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
-    use RunningClass;  use AlphaClass;  use constants, only: dp
-    use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
+  character (len = *), intent(in ) :: type, scheme, average, charm
+  integer            , intent(in ) :: nl, n, l, j, s
+  real (dp)          , intent(in ) :: mH, mL, alp, mu
+  real (dp)          , intent(out) :: res
+  real (dp)                        :: mB, mC, mT
+  type (NRQCD)                     :: Upsilon
+  type (Alpha)                     :: alphaAll
+  type (VFNSMSR)                   :: MSR
+  type (Running), dimension(2)     :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
+  integer                          :: i
 
-    character (len = *), intent(in ) :: method, scheme, charm, average
-    integer            , intent(in ) :: orderAlp, runAlp, order, run, nl, n,&
-    l, j, s
-    real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, &
-    lambda1, lambda2, lam, R
-    real (dp)          , intent(out) :: res(5)
-    character (len = 5)              :: alphaScheme
-    type (NRQCD)                     :: Upsilon
-    type (Alpha)                     :: alphaAll
-    type (VFNSMSR)                   :: MSR
-    type (Running), dimension(2)     :: alphaMass
-    type (AnomDim), dimension(3:6)   :: AnDim
-    integer                          :: i
+  if (nl == 5) then
+    mT = mH; mB = mL
+  else if (nl == 4) then
+    mB = mH; mC = mL
+  else
+    res = 0; return
+  end if
 
-    alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
+  do i = 3, 6
+    AnDim(i) = AnomDim(scheme, i, 0._dp)
+  end do
 
-    do i = 3, 6
-      AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
-    end do
+  alphaAll  = Alpha(AnDim, 4, 4, 91.187_dp, 0.118_dp, &
+  mT, mT, mB, mB, mC, mC)
 
-    alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-    mT, muT, mB, muB, mC, muC)
+  alphaMass = [ Running(nl - 1, 0, alphaAll, mL), &
+  Running(nl, 0, alphaAll, mH) ]
 
-    alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
-    Running(nl, run, alphaAll, lambda1) ]
+  MSR     = VFNSMSR(alphaMass)
+  Upsilon = NRQCD( charm, scheme, average(:3), MSR, n, l, j, s )
 
-    MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+  res = Upsilon%DeltaCharmExact(type, mu, alp, mH)
 
-    res = Upsilon%En( order, mu, R, lam, method(:8) )
-
-  end subroutine f90NRQCD
-
-!ccccccccccccccc
-
-  subroutine f90FindMass(ord, n, l, j, s, iter, charm, scheme, average, method, &
-  orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,&
-  lambda1, lambda2, lam, mu, R, res)
-
-    use RunningClass;  use AlphaClass;  use constants, only: dp
-    use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
-
-    character (len = *), intent(in ) :: method, scheme, charm, iter, average
-    integer            , intent(in ) :: ord, orderAlp, runAlp, order, run, &
-    nl, n, l, j, s
-    real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC,&
-    lambda1, lam, R, mass, lambda2
-    real (dp)          , intent(out) :: res
-    character (len = 5)              :: alphaScheme
-    type (NRQCD)                     :: Upsilon
-    type (VFNSMSR)                   :: MSR
-    type (Alpha)                     :: alphaAll
-    type (Running), dimension(2)     :: alphaMass
-    type (AnomDim), dimension(3:6)   :: AnDim
-    integer                          :: i
-
-    alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
-
-    do i = 3, 6
-      AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
-    end do
-
-    alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-    mT, muT, mB, muB, mC, muC)
-
-    alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
-    Running(nl, run, alphaAll, lambda1) ]
-
-    MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
-
-    res = Upsilon%MassFitter( iter(:10), ord, order, mu, R, mass, &
-    lam, method(:8) )
-
-  end subroutine f90FindMass
+end subroutine f90DeltaCharmExact
 
 !ccccccccccccccc
 
-  subroutine f90MassError(ord, n, l, j, s, iter, charm, scheme, average, method,&
-  orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,&
-  lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x, res)
+subroutine f90NRQCD(n, l, j, s, charm, scheme, average, method, counting, &
+orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, &
+lambda1, lambda2, lam, mu, R, res)
 
-    use RunningClass;  use AlphaClass;  use constants, only: dp
-    use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
-    character (len = *)    , intent(in ) :: method, scheme, charm, average, iter
-    integer                , intent(in ) :: ord, orderAlp, runAlp, order, run, &
-    nl, n, l, j, s
-    real (dp)              , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, x, &
-    lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, mass, lambda2, muC
-    real (dp), dimension(2), intent(out) :: res
-    character (len = 5)                  :: alphaScheme
-    type (NRQCD)                         :: Upsilon
-    type (VFNSMSR)                       :: MSR
-    type (Alpha)                         :: alphaAll
-    type (Running), dimension(2)         :: alphaMass
-    type (AnomDim), dimension(3:6)       :: AnDim
-    integer                              :: i
+  character (len = *), intent(in ) :: method, scheme, charm, average, counting
+  integer            , intent(in ) :: orderAlp, runAlp, order, run, nl, n,&
+  l, j, s
+  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, &
+  lambda1, lambda2, lam, R
+  real (dp)          , intent(out) :: res(5)
+  character (len = 5)              :: alphaScheme
+  type (NRQCD)                     :: Upsilon
+  type (Alpha)                     :: alphaAll
+  type (VFNSMSR)                   :: MSR
+  type (Running), dimension(2)     :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
+  integer                          :: i
 
-    alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
+  alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
-    do i = 3, 6
-      AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
-    end do
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
 
-    alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-    mT, muT, mB, muB, mC, muC)
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
 
-    alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
-    Running(nl, run, alphaAll, lambda1) ]
+  alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
+  Running(nl, run, alphaAll, lambda1) ]
 
-    MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+  MSR     = VFNSMSR(alphaMass)
+  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%MassError( iter(:10), ord, order, mu0, mu1, &
-    deltaMu, R0, R1, deltaR, x, mass, lam, method(:8) )
+  res = Upsilon%En( order, mu, R, lam, method(:8), counting(:5) )
 
-  end subroutine f90MassError
-
-!ccccccccccccccc
-
-  subroutine f90MassList(ord, n, l, j, s, iter, charm, scheme, average, method, &
-  orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,&
-  lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, res)
-
-    use RunningClass;  use AlphaClass;  use constants, only: dp
-    use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
-
-    character (len = *)    , intent(in ) :: method, scheme, charm, average, iter
-    integer                , intent(in ) :: ord, orderAlp, runAlp, order, run, &
-    nl, n, l, j, s
-    real (dp)              , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, &
-    lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, mass, lambda2, muC
-
-    real (dp), dimension( 3, 0:Floor( (mu1 - mu0)/deltaMu ), &
-    0:Floor( (R1 - R0)/deltaR ) ), intent(out) :: res
-
-    character (len = 5)                  :: alphaScheme
-    type (NRQCD)                         :: Upsilon
-    type (VFNSMSR)                       :: MSR
-    type (Alpha)                         :: alphaAll
-    type (Running), dimension(2)         :: alphaMass
-    type (AnomDim), dimension(3:6)       :: AnDim
-    integer                              :: i
-
-    alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
-
-    do i = 3, 6
-      AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
-    end do
-
-    alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-    mT, muT, mB, muB, mC, muC)
-
-    alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
-    Running(nl, run, alphaAll, lambda1) ]
-
-    MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
-
-    res = Upsilon%MassList( iter(:10), ord, order, mu0, mu1, &
-    deltaMu, R0, R1, deltaR, mass, lam, method(:8) )
-
-  end subroutine f90MassList
+end subroutine f90NRQCD
 
 !ccccccccccccccc
 
-  subroutine f90NRQCDList(n, l, j, s, iter, charm, scheme, average, method, &
-  orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,&
-  lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, res)
+subroutine f90FindMass(ord, n, l, j, s, iter, charm, scheme, average, method, &
+counting, orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, &
+muC, mass, lambda1, lambda2, lam, mu, R, res)
 
-    use RunningClass;  use AlphaClass;  use constants, only: dp
-    use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
-    character (len = *)    , intent(in ) :: method, scheme, charm, average, iter
-    integer                , intent(in ) :: orderAlp, runAlp, order, run, &
-    nl, n, l, j, s
-    real (dp)              , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, &
-    lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, mass, lambda2, muC
+  character (len = *), intent(in ) :: method, scheme, charm, iter, average, counting
+  integer            , intent(in ) :: ord, orderAlp, runAlp, order, run, &
+  nl, n, l, j, s
+  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC,&
+  lambda1, lam, R, mass, lambda2
+  real (dp)          , intent(out) :: res
+  character (len = 5)              :: alphaScheme
+  type (NRQCD)                     :: Upsilon
+  type (VFNSMSR)                   :: MSR
+  type (Alpha)                     :: alphaAll
+  type (Running), dimension(2)     :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
+  integer                          :: i
 
-    real (dp), dimension( 7, 0:Floor( (mu1 - mu0)/deltaMu ), &
-    0:Floor( (R1 - R0)/deltaR ) ), intent(out) :: res
+  alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
-    character (len = 5)                  :: alphaScheme
-    type (NRQCD)                         :: Upsilon
-    type (VFNSMSR)                       :: MSR
-    type (Alpha)                         :: alphaAll
-    type (Running), dimension(2)         :: alphaMass
-    type (AnomDim), dimension(3:6)       :: AnDim
-    integer                              :: i
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
 
-    alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
 
-    do i = 3, 6
-      AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
-    end do
+  alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
+  Running(nl, run, alphaAll, lambda1) ]
 
-    alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-    mT, muT, mB, muB, mC, muC)
+  MSR     = VFNSMSR(alphaMass)
+  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
-    Running(nl, run, alphaAll, lambda1) ]
+  res = Upsilon%MassFitter( iter(:10), ord, order, mu, R, mass, &
+  lam, method(:8), counting(:5) )
 
-    MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
-
-    res = Upsilon%NRQCDList( iter(:10), order, mu0, mu1, &
-    deltaMu, R0, R1, deltaR, mass, lam, method(:8) )
-
-  end subroutine f90NRQCDList
+end subroutine f90FindMass
 
 !ccccccccccccccc
 
-  subroutine f90NRQCDError(n, l, j, s, iter, charm, scheme, average, method, &
-  orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, &
-  mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x, res)
+subroutine f90MassError(ord, n, l, j, s, iter, charm, scheme, average, method,&
+counting, orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,&
+mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x, res)
 
-    use RunningClass;  use AlphaClass;  use constants, only: dp
-    use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
-    character (len = *), intent(in ) :: method, scheme, charm, average, iter
-    integer            , intent(in ) :: orderAlp, runAlp, order, run, &
-    nl, n, l, j, s
-    real (dp)          , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, muC, x, &
-    lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, mass, lambda2
-    real (dp), dimension(2,0:4), intent(out) :: res
-    character (len = 5)              :: alphaScheme
-    type (NRQCD)                     :: Upsilon
-    type (VFNSMSR)                   :: MSR
-    type (Alpha)                     :: alphaAll
-    type (Running), dimension(2)     :: alphaMass
-    type (AnomDim), dimension(3:6)   :: AnDim
-    integer                          :: i
+  character (len = *)    , intent(in ) :: method, scheme, charm, average, iter, counting
+  integer                , intent(in ) :: ord, orderAlp, runAlp, order, run, &
+  nl, n, l, j, s
+  real (dp)              , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, x, &
+  lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, mass, lambda2, muC
+  real (dp), dimension(2), intent(out) :: res
+  character (len = 5)                  :: alphaScheme
+  type (NRQCD)                         :: Upsilon
+  type (VFNSMSR)                       :: MSR
+  type (Alpha)                         :: alphaAll
+  type (Running), dimension(2)         :: alphaMass
+  type (AnomDim), dimension(3:6)       :: AnDim
+  integer                              :: i
 
-    alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
+  alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
-    do i = 3, 6
-      AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
-    end do
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
 
-    alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-    mT, muT, mB, muB, mC, muC)
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
 
-    alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
-    Running(nl, run, alphaAll, lambda1) ]
+  alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
+  Running(nl, run, alphaAll, lambda1) ]
 
-    MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+  MSR     = VFNSMSR(alphaMass)
+  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
 
-    res = Upsilon%EnError( iter(:10), order, mu0, mu1, &
-    deltaMu, R0, R1, deltaR, x, mass, lam, method(:8) )
+  res = Upsilon%MassError( iter(:10), ord, order, mu0, mu1, &
+  deltaMu, R0, R1, deltaR, x, mass, lam, method(:8), counting(:5) )
 
-  end subroutine f90NRQCDError
-
-!ccccccccccccccc
-
-  subroutine f90MassIter(n, l, j, s, charm, scheme, average, method, orderAlp, &
-  runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, &
-  lambda2, lam, mu, R, res)
-
-    use RunningClass;  use AlphaClass;  use constants, only: dp
-    use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
-
-    character (len = *), intent(in ) :: method, scheme, average, charm
-    integer            , intent(in ) :: orderAlp, runAlp, order, run, nl, &
-    n, l, j, s
-    real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC,&
-    lambda1, lambda2, lam, R, mass
-    real (dp)          , intent(out) :: res(5)
-    character (len = 5)              :: alphaScheme
-    type (VFNSMSR)                   :: MSR
-    type (NRQCD)                     :: Upsilon
-    type (Alpha)                     :: alphaAll
-    type (Running), dimension(2)     :: alphaMass
-    type (AnomDim), dimension(3:6)   :: AnDim
-    integer                          :: i
-
-    alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
-
-    do i = 3, 6
-      AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
-    end do
-
-    alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-    mT, muT, mB, muB, mC, muC)
-
-    alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
-    Running(nl, run, alphaAll, lambda1) ]
-
-    MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
-
-    res = Upsilon%MassIter( order, mu, R, mass, lam, method(:8) )
-
-  end subroutine f90MassIter
+end subroutine f90MassError
 
 !ccccccccccccccc
 
-  subroutine f90MassExpand(n, l, j, s, charm, scheme, average, method, orderAlp, &
-  runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, &
-  lambda2, lam, mu, R, res)
+subroutine f90MassList(ord, n, l, j, s, iter, charm, scheme, average, method,  &
+counting, orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, &
+mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, res)
 
-    use RunningClass;  use AlphaClass;  use constants, only: dp
-    use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
-    character (len = *), intent(in ) :: method, scheme, average, charm
-    integer            , intent(in ) :: orderAlp, runAlp, order, run, nl, &
-    n, l, j, s
-    real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC,&
-    lambda1, lambda2, lam, R, mass
-    real (dp)          , intent(out) :: res(5)
-    character (len = 5)              :: alphaScheme
-    type (VFNSMSR)                   :: MSR
-    type (NRQCD)                     :: Upsilon
-    type (Alpha)                     :: alphaAll
-    type (Running), dimension(2)     :: alphaMass
-    type (AnomDim), dimension(3:6)   :: AnDim
-    integer                          :: i
+  character (len = *)    , intent(in ) :: method, scheme, charm, average, iter, counting
+  integer                , intent(in ) :: ord, orderAlp, runAlp, order, run, &
+  nl, n, l, j, s
+  real (dp)              , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, &
+  lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, mass, lambda2, muC
 
-    alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
+  real (dp), dimension( 3, 0:Floor( (mu1 - mu0)/deltaMu ), &
+  0:Floor( (R1 - R0)/deltaR ) ), intent(out) :: res
 
-    do i = 3, 6
-      AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
-    end do
+  character (len = 5)                  :: alphaScheme
+  type (NRQCD)                         :: Upsilon
+  type (VFNSMSR)                       :: MSR
+  type (Alpha)                         :: alphaAll
+  type (Running), dimension(2)         :: alphaMass
+  type (AnomDim), dimension(3:6)       :: AnDim
+  integer                              :: i
 
-    alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-    mT, muT, mB, muB, mC, muC)
+  alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
-    alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
-    Running(nl, run, alphaAll, lambda1) ]
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
 
-    MSR     = VFNSMSR(alphaMass)
-    Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
 
-    res = Upsilon%EnExpand( order, mu, R, mass, lam, method(:8) )
+  alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
+  Running(nl, run, alphaAll, lambda1) ]
 
-  end subroutine f90MassExpand
+  MSR     = VFNSMSR(alphaMass)
+  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+
+  res = Upsilon%MassList( iter(:10), ord, order, mu0, mu1, &
+  deltaMu, R0, R1, deltaR, mass, lam, method(:8), counting(:5) )
+
+end subroutine f90MassList
+
+!ccccccccccccccc
+
+subroutine f90NRQCDList(n, l, j, s, iter, charm, scheme, average, method, &
+counting, orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, &
+mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, res)
+
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
+
+  character (len = *)    , intent(in ) :: method, scheme, charm, average, iter, counting
+  integer                , intent(in ) :: orderAlp, runAlp, order, run, &
+  nl, n, l, j, s
+  real (dp)              , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, &
+  lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, mass, lambda2, muC
+
+  real (dp), dimension( 7, 0:Floor( (mu1 - mu0)/deltaMu ), &
+  0:Floor( (R1 - R0)/deltaR ) ), intent(out) :: res
+
+  character (len = 5)                  :: alphaScheme
+  type (NRQCD)                         :: Upsilon
+  type (VFNSMSR)                       :: MSR
+  type (Alpha)                         :: alphaAll
+  type (Running), dimension(2)         :: alphaMass
+  type (AnomDim), dimension(3:6)       :: AnDim
+  integer                              :: i
+
+  alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
+
+  alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
+  Running(nl, run, alphaAll, lambda1) ]
+
+  MSR     = VFNSMSR(alphaMass)
+  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+
+  res = Upsilon%NRQCDList( iter(:10), order, mu0, mu1, &
+  deltaMu, R0, R1, deltaR, mass, lam, method(:8), counting(:5) )
+
+end subroutine f90NRQCDList
+
+!ccccccccccccccc
+
+subroutine f90NRQCDError(n, l, j, s, iter, charm, scheme, average, method, &
+counting, orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, &
+mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x, res)
+
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
+
+  character (len = *), intent(in ) :: method, scheme, charm, average, iter, counting
+  integer            , intent(in ) :: orderAlp, runAlp, order, run, &
+  nl, n, l, j, s
+  real (dp)          , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, muC, x, &
+  lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, mass, lambda2
+  real (dp), dimension(2,0:4), intent(out) :: res
+  character (len = 5)              :: alphaScheme
+  type (NRQCD)                     :: Upsilon
+  type (VFNSMSR)                   :: MSR
+  type (Alpha)                     :: alphaAll
+  type (Running), dimension(2)     :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
+  integer                          :: i
+
+  alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
+
+  alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
+  Running(nl, run, alphaAll, lambda1) ]
+
+  MSR     = VFNSMSR(alphaMass)
+  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+
+  res = Upsilon%EnError( iter(:10), order, mu0, mu1, &
+  deltaMu, R0, R1, deltaR, x, mass, lam, method(:8), counting(:5) )
+
+end subroutine f90NRQCDError
+
+!ccccccccccccccc
+
+subroutine f90MassIter(n, l, j, s, charm, scheme, average, method, orderAlp, &
+counting, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,  &
+lambda1, lambda2, lam, mu, R, res)
+
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
+
+  character (len = *), intent(in ) :: method, scheme, average, charm, counting
+  integer            , intent(in ) :: orderAlp, runAlp, order, run, nl, &
+  n, l, j, s
+  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC,&
+  lambda1, lambda2, lam, R, mass
+  real (dp)          , intent(out) :: res(5)
+  character (len = 5)              :: alphaScheme
+  type (VFNSMSR)                   :: MSR
+  type (NRQCD)                     :: Upsilon
+  type (Alpha)                     :: alphaAll
+  type (Running), dimension(2)     :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
+  integer                          :: i
+
+  alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
+
+  alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
+  Running(nl, run, alphaAll, lambda1) ]
+
+  MSR     = VFNSMSR(alphaMass)
+  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+
+  res = Upsilon%MassIter( order, mu, R, mass, lam, method(:8), counting(:5) )
+
+end subroutine f90MassIter
+
+!ccccccccccccccc
+
+subroutine f90MassExpand(n, l, j, s, charm, scheme, average, method, counting, &
+orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass,    &
+lambda1, lambda2, lam, mu, R, res)
+
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
+
+  character (len = *), intent(in ) :: method, scheme, average, charm, counting
+  integer            , intent(in ) :: orderAlp, runAlp, order, run, nl, &
+  n, l, j, s
+  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC,&
+  lambda1, lambda2, lam, R, mass
+  real (dp)          , intent(out) :: res(5)
+  character (len = 5)              :: alphaScheme
+  type (VFNSMSR)                   :: MSR
+  type (NRQCD)                     :: Upsilon
+  type (Alpha)                     :: alphaAll
+  type (Running), dimension(2)     :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
+  integer                          :: i
+
+  alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
+
+  alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
+  Running(nl, run, alphaAll, lambda1) ]
+
+  MSR     = VFNSMSR(alphaMass)
+  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+
+  res = Upsilon%EnExpand( order, mu, R, mass, lam, method(:8), counting(:5) )
+
+end subroutine f90MassExpand
 
 !ccccccccccccccc
 
