@@ -89,7 +89,7 @@ subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
 
   MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
-  res = NRQCD%A1pole(order(:4), En, gamtop, asoft, VcsNNLL, musoft)
+  res = NRQCD%A1pole(order(:4), En, mtpole, gamtop, asoft, VcsNNLL, musoft)
 
 end subroutine f90A1Pole
 

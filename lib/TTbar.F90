@@ -87,101 +87,109 @@ contains
     integer            , intent(in) :: ordMass
     real (dp), dimension(0:4)       :: m1Slist
     complex (dp)                    :: vt
-    real (dp)                       :: ac, ah, asLL, asNLL, auLL, En, c1run,   &
+    real (dp)                       :: ac, ah, asLL, asNLL, auLL, En, c1run, L,&
     mu1, mu2, asNNLL, c2run, Vcc, V22, Vss, Vrr, VkkCACF, VkkCF2, Vkk, Vkkk1I, &
-    Vkkk2T, VcsNNLL, DelmNNLL, rCoul, r2, rd, rr, rk, rkin, r1S, pre, inM, mp
+    Vkkk2T, VcsNNLL, DelmNNLL, rCoul, r2, rd, rr, rk, rkin, r1S, pre, inM, mP, &
+    DeltaLL, aS, mpLL, DeltaNLL
 
     Xsec = 0
 
-    if ( scheme(:2) == '1S' ) then
+    if ( scheme(:2) == 'S1' ) then
 
       m1Slist = self%Delta1S(ordMass, 35._dp, lambda, method)
       inM     = sum( m1Slist(:ordMass) )
 
-      if ( order(:2) == 'LL' ) then
-      else if ( order(:3) == 'NLL' ) then
-      end if
-
     else if ( scheme(:4) == 'pole') then
-      inM = self%mass; mp = inM
+      inM = self%mass; mP = inM; mpLL = inM
     end if
 
-    if ( scheme(:4) == 'pole') then
+    mu1 = h * inM;  mu2 = nu * mu1;  ah = self%run%AlphaQCD(mu1)
+    asLL = self%AlphaOb%alphaGenericFlavor('inverse', 1, self%nl, mu1, ah, mu2)
+    ac = - VcsLL(asLL)/FPi
 
-      mu1 = h * self%mass;  mu2 = nu * mu1;  ah = self%run%AlphaQCD(mu1)
+    if ( order(:3) == 'NLL' .or. order(:4) == 'NNLL' ) then
 
-      asLL = self%AlphaOb%alphaGenericFlavor('inverse', 1, self%nl, &
+      asNLL = self%AlphaOb%alphaGenericFlavor('inverse', 2, self%nl, &
       mu1, ah, mu2)
 
-      if ( order(:3) == 'NLL' .or. order(:4) == 'NNLL' ) then
+      auLL = self%AlphaOb%alphaGenericFlavor('inverse', 1, self%nl, &
+      mu1, ah, mu2 * nu)
 
-        asNLL = self%AlphaOb%alphaGenericFlavor('inverse', 2, self%nl, &
-        mu1, ah, mu2)
+    end if
 
-        auLL = self%AlphaOb%alphaGenericFlavor('inverse', 1, self%nl, &
-        mu1, ah, mu2 * nu)
-
-        En = q - 2 * self%mass
-
-      end if
+    if ( scheme(:2) == 'S1' ) then
 
       if ( order(:2) == 'LL' ) then
-
-        vt = vC(q, self%mass, gt); ac = 4 * asLL/3
-
-        Xsec =  18 * (Qt * self%mass/q)**2 *  ImagPart(  (0,1) * vt - ac * (  &
-        Euler - 0.5_dp + l2 + Log( - (0,1) * vt/(h * nu) ) + &
-        DiGam( 1 - (0,1) * ac/(2 * vt) )  )  )
-
+        DeltaLL = ac**2/8
+        mP = inM * (1 + DeltaLL)
       else if ( order(:3) == 'NLL' ) then
-
-        c1run = self%MNLLc1(ah, asLL, auLL)
-
-        Xsec = (2 * self%mass * Qt/Q)**2 * c1run**2 * &
-        self%A1pole('NLL', En, gt, asNLL, 0._dp, mu2)
-
-      else if ( order(:4) == 'NNLL' ) then
-
-        asNNLL = self%AlphaOb%alphaGenericFlavor('inverse', 3, self%nl, &
-        mu1, ah, mu2)
-
-        ac = - VcsLL(asLL)/FPi; Vcc = - ac
-
-        c1run = self%MNNLLAllc1InclSoftMixLog(ah, asLL, auLL, nu, h, 1._dp)
-        c2run = self%MLLc2(ah, auLL)
-        V22 = self%V2sLL(ah, asLL, auLL)/FPi
-        Vss = self%VssLL(ah, asLL)/FPi
-        Vrr = self%VrsLL(asLL, auLL)/FPi
-        Vkk = - 28 * asLL**2/9;  VkkCACF = -4 * asLL**2;  VkkCF2 = 8 * asLL**2/9
-        Vkkk1I = asLL**2 * self%Vk1sLL( asLL, auLL)
-        Vkkk2T = asLL**2 * self%Vk2sLL(asLL, auLL)
-        VcsNNLL = self%VceffsNNLL(asNNLL, asLL, auLL)
-
-        DelmNNLL = (V22/2 + Vss + 3 * Vrr/8) * Vcc**3/2 - (Vkk + 6 * Vkkk1I + &
-        4 * Vkkk2T) * Vcc**2/8 + 5 * Vcc**4/128
-
-        vt = vC(q, self%mass, gt)
-
-        rCoul = c1run**2 * self%mass**2 * self%A1pole('NNLL', En, &
-        gt, asNNLL, VcsNNLL, h * self%mass * nu)/18/Pi
-
-        r2 = 2 * c1run * c2run * self%mass**2/FPi * &
-        ImagPart(vt**2 * ggg(ac, vt, l2 - 0.5_dp) )
-
-        rd = c1run**2 * FPi * ( V22 + 2 * Vss) * ImagPart( dgd(ac, vt) )
-        rr = FPi * c1run**2 * Vrr * ImagPart( dgr(ac, vt) )
-
-        rk = c1run**2 * (  VkkCACF * ImagPart( dgkCACF(ac, vt) ) + VkkCF2 * &
-        ImagPart( dgkCF2(ac, vt) ) + Vkkk1I * ImagPart( dgkk1I(ac, vt) ) + &
-        Vkkk2T * ImagPart( dgkk2T(ac, vt) )  )
-
-        rkin = c1run**2 * ImagPart( dgkin(ac, vt) ); r1S = 0
-
-        Pre = 72 * Pi/Q**2
-
-        Xsec = Qt**2 * pre * (rCoul + rr + r1S + r2 + rkin + rd + rk)
-
+        as = - VcsLL(asNLL)/FPi; L = Log(h * nu/as)
+        DeltaLL = as**2/8; as = 3 * as/4
+        DeltaNLL = DeltaLL * as * ( self%beta(0) * (L + 1) + self%a1/2 )/Pi
+        mpLL = 1 + DeltaLL; mp = inM * (mpLL + DeltaNLL); mpLL = inM * mpLL
       end if
+
+    end if
+
+    if ( order(:3) == 'NLL' .or. order(:4) == 'NNLL' ) En = q - 2 * mP
+
+    if ( order(:2) == 'LL' ) then
+
+      vt = vC(q, mp, gt); ac = 4 * asLL/3
+
+      Xsec =  18 * (Qt * mP/q)**2 *  ImagPart(  (0,1) * vt - ac * (  &
+      Euler - 0.5_dp + l2 + Log( - (0,1) * mP * vt/h/nu/inM ) + &
+      DiGam( 1 - (0,1) * ac/(2 * vt) )  )  )
+
+    else if ( order(:3) == 'NLL' ) then
+
+      c1run = self%MNLLc1(ah, asLL, auLL)
+
+      Xsec = (2 * mpLL * Qt/Q)**2 * c1run**2 * &
+      self%A1pole('NLL', En, mPLL, gt, asNLL, 0._dp, mu2)
+
+      ! Xsec = mp
+
+    else if ( order(:4) == 'NNLL' ) then
+
+      asNNLL = self%AlphaOb%alphaGenericFlavor('inverse', 3, self%nl, &
+      mu1, ah, mu2)
+
+      Vcc = - ac
+
+      c1run = self%MNNLLAllc1InclSoftMixLog(ah, asLL, auLL, nu, h, 1._dp)
+      c2run = self%MLLc2(ah, auLL)
+      V22 = self%V2sLL(ah, asLL, auLL)/FPi
+      Vss = self%VssLL(ah, asLL)/FPi
+      Vrr = self%VrsLL(asLL, auLL)/FPi
+      Vkk = - 28 * asLL**2/9;  VkkCACF = -4 * asLL**2;  VkkCF2 = 8 * asLL**2/9
+      Vkkk1I = asLL**2 * self%Vk1sLL( asLL, auLL)
+      Vkkk2T = asLL**2 * self%Vk2sLL(asLL, auLL)
+      VcsNNLL = self%VceffsNNLL(asNNLL, asLL, auLL)
+
+      DelmNNLL = (V22/2 + Vss + 3 * Vrr/8) * Vcc**3/2 - (Vkk + 6 * Vkkk1I + &
+      4 * Vkkk2T) * Vcc**2/8 + 5 * Vcc**4/128
+
+      vt = vC(q, self%mass, gt)
+
+      rCoul = c1run**2 * self%mass**2 * self%A1pole('NNLL', En, self%mass, &
+      gt, asNNLL, VcsNNLL, h * self%mass * nu)/18/Pi
+
+      r2 = 2 * c1run * c2run * self%mass**2/FPi * &
+      ImagPart(vt**2 * ggg(ac, vt, l2 - 0.5_dp) )
+
+      rd = c1run**2 * FPi * ( V22 + 2 * Vss) * ImagPart( dgd(ac, vt) )
+      rr = FPi * c1run**2 * Vrr * ImagPart( dgr(ac, vt) )
+
+      rk = c1run**2 * (  VkkCACF * ImagPart( dgkCACF(ac, vt) ) + VkkCF2 * &
+      ImagPart( dgkCF2(ac, vt) ) + Vkkk1I * ImagPart( dgkk1I(ac, vt) ) + &
+      Vkkk2T * ImagPart( dgkk2T(ac, vt) )  )
+
+      rkin = c1run**2 * ImagPart( dgkin(ac, vt) ); r1S = 0
+
+      Pre = 72 * Pi/Q**2
+
+      Xsec = Qt**2 * pre * (rCoul + rr + r1S + r2 + rkin + rd + rk)
 
     end if
 
@@ -316,10 +324,10 @@ contains
 
 ! ccccccccccc
 
-  real (dp) function A1pole(self, order, En, gamtop, asoft, VcsNNLL, musoft)
+  real (dp) function A1pole(self, order, En, mass, gamtop, asoft, VcsNNLL, musoft)
     class (RNRQCD)     , intent(in) :: self
     character (len = *), intent(in) :: order
-    real (dp)          , intent(in) :: En, gamtop, asoft, musoft, VcsNNLL
+    real (dp)          , intent(in) :: En, gamtop, asoft, musoft, VcsNNLL, mass
     type (Toppik)                   :: TP
     real (dp), dimension(2)         :: res
     real (dp)                       :: x0, x1, x2, aSuPi
@@ -335,7 +343,7 @@ contains
       x0 = self%a1 * asuPi + self%a2 * asuPi**2 - 3 * VcsNNLL/16/asoft/Pi
     end if
 
-    TP = Toppik(self%nl, En, self%mass, gamtop, asoft, musoft, 175000000._dp, &
+    TP = Toppik(self%nl, En, mass, gamtop, asoft, musoft, 175000000._dp, &
     175000000._dp, x0, x1, x2, 0._dp, 0._dp, 0._dp, &
     0._dp, 0._dp, 0._dp, 0._dp, 0, 0, 0._dp, 0)
 
