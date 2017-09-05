@@ -80,16 +80,31 @@ contains
 
 ! ccccccccccc
 
-  real (dp) function Xsec(self, order, scheme, q, gt, h, nu)
-    class (RNRQCD)     , intent(in) :: self
-    character (len = *), intent(in) :: order, scheme
-    real (dp)          , intent(in) :: gt, h, nu, q
+  real (dp) function Xsec(self, ordMass, order, scheme, method, lambda, q, gt, h, nu)
+    class (RNRQCD)  , intent(inout) :: self
+    character (len = *), intent(in) :: order, scheme, method
+    real (dp)          , intent(in) :: gt, h, nu, q, lambda
+    integer            , intent(in) :: ordMass
+    real (dp), dimension(0:4)       :: m1Slist
     complex (dp)                    :: vt
     real (dp)                       :: ac, ah, asLL, asNLL, auLL, En, c1run,   &
     mu1, mu2, asNNLL, c2run, Vcc, V22, Vss, Vrr, VkkCACF, VkkCF2, Vkk, Vkkk1I, &
-    Vkkk2T, VcsNNLL, DelmNNLL, rCoul, r2, rd, rr, rk, rkin, r1S, pre
+    Vkkk2T, VcsNNLL, DelmNNLL, rCoul, r2, rd, rr, rk, rkin, r1S, pre, inM, mp
 
     Xsec = 0
+
+    if ( scheme(:2) == '1S' ) then
+
+      m1Slist = self%Delta1S(ordMass, 35._dp, lambda, method)
+      inM     = sum( m1Slist(:ordMass) )
+
+      if ( order(:2) == 'LL' ) then
+      else if ( order(:3) == 'NLL' ) then
+      end if
+
+    else if ( scheme(:4) == 'pole') then
+      inM = self%mass; mp = inM
+    end if
 
     if ( scheme(:4) == 'pole') then
 

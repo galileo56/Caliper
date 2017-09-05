@@ -33,13 +33,13 @@ end subroutine f90Delta1S
 
 ! cccccccccccccccccccc
 
-subroutine f90RNRQCD(nl, order, scheme, orderAlp, runAlp, runMass, muLam, &
+subroutine f90RNRQCD(nl, order, scheme, method, orderAlp, runAlp, orderMass, runMass, muLam, &
   xlam, mZ, aMz, Q, mtpole, gt, h, nu, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; implicit none
   real (dp)          , intent(in)  :: Q, mtpole, gt, h, nu, mZ, aMz, xlam, muLam
-  character (len = *), intent(in)  :: order, scheme
-  integer            , intent(in)  :: nl, orderAlp, runAlp, runMass
+  character (len = *), intent(in)  :: order, scheme, method
+  integer            , intent(in)  :: nl, orderAlp, runAlp, runMass, orderMass
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (RNRQCD)                    :: NRQCD
@@ -60,7 +60,7 @@ subroutine f90RNRQCD(nl, order, scheme, orderAlp, runAlp, runMass, muLam, &
 
   MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
-  res = NRQCD%Xsec(order(:4), scheme(:4), q, gt, h, nu)
+  res = NRQCD%Xsec( orderMass, order(:4), scheme(:4), method(:8), xlam, q, gt, h, nu )
 
 end subroutine f90RNRQCD
 
@@ -4532,7 +4532,7 @@ amZ, mT, muT, mB, muB, mC, muC, lambda, mu, R, res)
   mT, muT, mB, muB, mC, muC)
 
   alphaMass = Running(nf, run, alphaAll, mu)
-  res       = alphaMass%MSRMass(type, order, R, lambda, method)
+  res       = alphaMass%MSRMass( type, order, R, lambda, method(:8) )
 
 end subroutine f90MSRMass
 
