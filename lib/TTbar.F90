@@ -90,7 +90,7 @@ contains
     real (dp)                       :: ac, ah, asLL, asNLL, auLL, En, c1run, L,&
     mu1, mu2, asNNLL, c2run, Vcc, V22, Vss, Vrr, VkkCACF, VkkCF2, Vkk, Vkkk1I, &
     Vkkk2T, VcsNNLL, DelmNNLL, rCoul, r2, rd, rr, rk, rkin, r1S, pre, inM, mP, &
-    DeltaLL, aS, mpLL, DeltaNLL
+    DeltaLL, aS, mpLL, DeltaNLL, DeltaNNLL, asPi
 
     Xsec = 0
 
@@ -120,22 +120,20 @@ contains
     if ( scheme(:2) == 'S1' ) then
 
       if ( order(:2) == 'LL' ) then
-        DeltaLL = ac**2/8
-        mP = inM * (1 + DeltaLL)
+        DeltaLL = ac**2/8;  mP = inM * (1 + DeltaLL)
       else if ( order(:3) == 'NLL' ) then
         as = - VcsLL(asNLL)/FPi; L = Log(h * nu/as)
         DeltaLL = as**2/8; as = 3 * as/4
         DeltaNLL = DeltaLL * as * ( self%beta(0) * (L + 1) + self%a1/2 )/Pi
         mpLL = 1 + DeltaLL; mp = inM * (mpLL + DeltaNLL); mpLL = inM * mpLL
+        En = q - 2 * mP
       end if
 
     end if
 
-    if ( order(:3) == 'NLL' .or. order(:4) == 'NNLL' ) En = q - 2 * mP
-
     if ( order(:2) == 'LL' ) then
 
-      vt = vC(q, mp, gt); ac = 4 * asLL/3
+      vt = vC(q, mp, mp, gt); ac = 4 * asLL/3
 
       Xsec =  18 * (Qt * mP/q)**2 *  ImagPart(  (0,1) * vt - ac * (  &
       Euler - 0.5_dp + l2 + Log( - (0,1) * mP * vt/h/nu/inM ) + &
@@ -147,8 +145,6 @@ contains
 
       Xsec = (2 * mpLL * Qt/Q)**2 * c1run**2 * &
       self%A1pole('NLL', En, mPLL, gt, asNLL, 0._dp, mu2)
-
-      ! Xsec = mp
 
     else if ( order(:4) == 'NNLL' ) then
 
@@ -170,12 +166,28 @@ contains
       DelmNNLL = (V22/2 + Vss + 3 * Vrr/8) * Vcc**3/2 - (Vkk + 6 * Vkkk1I + &
       4 * Vkkk2T) * Vcc**2/8 + 5 * Vcc**4/128
 
-      vt = vC(q, self%mass, gt)
+      if ( scheme(:2) == 'S1' ) then
 
-      rCoul = c1run**2 * self%mass**2 * self%A1pole('NNLL', En, self%mass, &
-      gt, asNNLL, VcsNNLL, h * self%mass * nu)/18/Pi
+        as = - VcsLL(asNNLL)/FPi; DeltaLL = as**2/8; mpLL = inM * (1 + DeltaLL)
 
-      r2 = 2 * c1run * c2run * self%mass**2/FPi * &
+        as = - VcsNNLL/FPi; L = Log(h * nu/asNNLL);  asPi = asNNLL/Pi
+
+        DeltaLL = as**2/8
+        DeltaNLL  = DeltaLL * asPi * ( self%beta(0) * (L + 1) + self%a1/2 )
+        DeltaNNLL = DeltaLL * asPi**2 * ( self%beta(0)**2 * (3 * L**2/4 + L  + &
+        Zeta3/2 + Pi2/24 + 0.25_dp) + self%beta(0) * self%a1/2 * (3 * L/2 + 1) &
+        + self%beta(1) * (L + 1)/4 + self%a1**2/16 + self%a2/8  )
+
+        mp = inM * (1 + DeltaLL + DeltaNLL + DeltaLL**2 + DeltaNNLL)
+
+      end if
+
+      vt = vC(q, mpLL, inM, gt); En = q - 2 * mp
+
+      rCoul = c1run**2 * mpLL**2 * self%A1pole('NNLL', En, mpLL, &
+      gt, asNNLL, VcsNNLL, h * inM * nu)/18/Pi
+
+      r2 = 2 * c1run * c2run * inM**2/FPi * &
       ImagPart(vt**2 * ggg(ac, vt, l2 - 0.5_dp) )
 
       rd = c1run**2 * FPi * ( V22 + 2 * Vss) * ImagPart( dgd(ac, vt) )
@@ -186,6 +198,10 @@ contains
       Vkkk2T * ImagPart( dgkk2T(ac, vt) )  )
 
       rkin = c1run**2 * ImagPart( dgkin(ac, vt) ); r1S = 0
+
+      if ( scheme(:2) == 'S1' ) then
+        r1S = c1run**2 * DelmNNLL * inM**2/FPi * ImagPart( dggg(ac, vt) )
+      end if
 
       Pre = 72 * Pi/Q**2
 
@@ -233,7 +249,7 @@ contains
     real (dp)   , intent(in) :: a
     complex (dp), intent(in) :: v
 
-    dgk = - self%mass**2 * ( ggg( a, v, 2 * l2 - 2 )**2 + v**2 )/2/FPi/a
+    dgk = - inM**2 * ( ggg( a, v, 2 * l2 - 2 )**2 + v**2 )/2/FPi/a
 
     end function dgk
 
@@ -243,7 +259,7 @@ contains
     real (dp)   , intent(in) :: a
     complex (dp), intent(in) :: v
 
-    dgkCACF = - self%mass**2 * ( ggg( a, v, l2 - 1.25_dp )**2 + v**2 )/2/FPi/a
+    dgkCACF = - inM**2 * ( ggg( a, v, l2 - 1.25_dp )**2 + v**2 )/2/FPi/a
 
     end function dgkCACF
 
@@ -253,7 +269,7 @@ contains
     real (dp)   , intent(in) :: a
     complex (dp), intent(in) :: v
 
-    dgkk2T = - self%mass**2 * ( ggg( a, v, l2 - 21._dp/16 )**2 + v**2 )/2/Pi/a
+    dgkk2T = - inM**2 * ( ggg( a, v, l2 - 21._dp/16 )**2 + v**2 )/2/Pi/a
 
     end function dgkk2T
 
@@ -263,7 +279,7 @@ contains
     real (dp)   , intent(in) :: a
     complex (dp), intent(in) :: v
 
-    dgkCF2 = - self%mass**2 * ( ggg( a, v, l2 - 1 )**2 + v**2 )/2/FPi/a
+    dgkCF2 = - inM**2 * ( ggg( a, v, l2 - 1 )**2 + v**2 )/2/FPi/a
 
     end function dgkCF2
 
@@ -273,7 +289,7 @@ contains
     real (dp)   , intent(in) :: a
     complex (dp), intent(in) :: v
 
-    dgd = - self%mass**2 * ggg( a, v, l2 - 0.5_dp )**2/FPi**2
+    dgd = - inM**2 * ggg( a, v, l2 - 0.5_dp )**2/FPi**2
 
     end function dgd
 
@@ -283,7 +299,7 @@ contains
     real (dp)   , intent(in) :: a
     complex (dp), intent(in) :: v
 
-    dgr = - self%mass**2/FPi**2 * ( ggg(a, v, l2 - 1.5_dp)**2 + v**2 + &
+    dgr = - inM**2/FPi**2 * ( ggg(a, v, l2 - 1.5_dp)**2 + v**2 + &
     v**2 * dggga(a, v, l2 - 0.5_dp) )
 
     end function dgr
@@ -294,7 +310,7 @@ contains
     real (dp)   , intent(in) :: a
     complex (dp), intent(in) :: v
 
-    dgkin = self%mass**2/4/FPi * (  a * ggg(a, v, l2 - 1.5_dp)**2 + a * v**2 + &
+    dgkin = inM**2/4/FPi * (  a * ggg(a, v, l2 - 1.5_dp)**2 + a * v**2 + &
     2 * v**2 * ( ggg(a, v, l2 - 0.5_dp) + a * dggga(a, v, l2 - 0.5_dp) + &
     v/4 *  dgggv(a, v, l2 - 0.5_dp) )  )
 
@@ -316,7 +332,7 @@ contains
     real (dp)   , intent(in) :: a
     complex (dp), intent(in) :: v
 
-    dgkk1I = - 3 * self%mass**2 * ( ggg( a, v, l2 - 17._dp/12 )**2 + v**2 )/FPi/a
+    dgkk1I = - 3 * inM**2 * ( ggg( a, v, l2 - 17._dp/12 )**2 + v**2 )/FPi/a
 
     end function dgkk1I
 
@@ -572,10 +588,10 @@ contains
 
 ! ccccccccccc
 
-  complex (dp) function vC(q, m, gt)
-    real (dp), intent(in) :: q, m, gt
+  complex (dp) function vC(q, m1, m2, gt)
+    real (dp), intent(in) :: q, m1, m2, gt
 
-    vC = sqrt(  ( q - 2 * m + (0,1) * gt ) /m  )
+    vC = sqrt(  ( q - 2 * m1 + (0,1) * gt ) /m2  )
 
   end function vC
 
@@ -584,7 +600,7 @@ contains
   real (dp) function vStar(q, m, gt)
     real (dp), intent(in) :: q, m, gt
 
-    vStar = 0.05_dp + Abs( vC(q, m, gt) )
+    vStar = 0.05_dp + Abs( vC(q, m, m, gt) )
 
   end function vStar
 
@@ -603,7 +619,7 @@ contains
     real (dp), intent(in) :: q, m, gt, v0, v1
     real (dp)             :: v
 
-    SwitchOff = 0; v = realpart( vC(q, m, gt) )
+    SwitchOff = 0; v = realpart( vC(q, m, m, gt) )
 
     if (v < v0) then
       SwitchOff = 1

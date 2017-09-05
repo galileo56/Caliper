@@ -129,7 +129,7 @@ subroutine f90vC(q, m, gt, res)
   real (dp)              , intent(in)  :: q, m, gt
   real (dp), dimension(2), intent(out) :: res
   complex (dp)                         :: v
-  v = vC(q, m, gt); res = [ realpart(v), imagpart(v) ]
+  v = vC(q, m, m, gt); res = [ realpart(v), imagpart(v) ]
 end subroutine f90vC
 
 ! cccccccccccccccccccc
