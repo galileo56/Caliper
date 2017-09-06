@@ -4126,7 +4126,7 @@ subroutine f90DeltaCharmExact(charm, type, scheme, average, n, l, j, s, nl, &
   MSR     = VFNSMSR(alphaMass)
   Upsilon = NRQCD( charm, scheme(:4), average(:3), MSR, n, l, j, s )
 
-  res = Upsilon%DeltaCharmExact(type, mu, alp, mH)
+  res = Upsilon%DeltaCharmExact(type(:5), mu, alp, mH)
 
 end subroutine f90DeltaCharmExact
 
