@@ -553,7 +553,7 @@ module NRQCDClass
 
       else if ( self%scheme(:5) == 'MSbar' .and. self%up(:4) == 'down' ) then
 
-        rat = self%mC/self%mH; lg = -log(rat);  deltaM(1) = deltaCharm2(rat)
+        rat = self%mC/self%mH; lg = - log(rat);  deltaM(1) = deltaCharm2(rat)
 
         deltaM(2) = deltaCharm3(self%nf, 1, rat) + 2 * lg * deltaM(1)/3 +       &
         4 * lg**2/27 - 27.51152614489051_dp + 1.3053814981630874_dp * self%nf + &
@@ -564,7 +564,7 @@ module NRQCDClass
 
       end if
 
-      deltaM = Rmass * alphaList(2:3) * deltaM /mass
+      deltaM = Rmass * alphaList(2:3) * deltaM/mass
 
       do i = 1, 4
         do k = 0, i - 1
@@ -747,7 +747,7 @@ module NRQCDClass
     real (dp)    , intent(in) :: mu, ln, mC
     real (dp)                 :: lg
 
-   lg = log(mu/mC)
+   lg = log(mu/mC)!lg = -log(1 + mC/mu)
 
     delta2 = self%cnl(2) + lg**2/3 - 2 * (ln**2 + self%h2) * (self%nf - 17)/3 + lg * &
     ( 13._dp/18 - 2._dp * self%nf/9 - self%cnl(1) ) + ln * ( lg * &
