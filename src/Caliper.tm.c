@@ -2702,16 +2702,16 @@ static double upsilondeltacharmbin(int n, int l, double alpha, double mb, double
 }
 
 extern double f90deltacharmexact_(char const* charm, char const* type,
-char const* scheme, int* n, int* l, int* j, int* s, int* nl, double* mH,
-double* mL, double* mu, double* alp, double* result);
+char const* scheme, char const* average, int* n, int* l, int* j, int* s,
+int* nl, double* mH, double* mL, double* mu, double* alp, double* result);
 
 static double deltacharmexact(char const* charm, char const* type,
-char const* scheme, int n, int l, int j, int s, int nl, double mH, double mL,
-double mu, double alp){
+char const* scheme, char const* average, int n, int l, int j, int s, int nl,
+double mH, double mL, double mu, double alp){
   double res;
 
-   f90deltacharmexact_(charm, type, scheme, &n, &l, &j, &s, &nl, &mH, &mL, &mu, &alp,
-   &res);
+   f90deltacharmexact_(charm, type, scheme, average, &n, &l, &j, &s, &nl, &mH,
+   &mL, &mu, &alp, &res);
    return res;
 }
 
@@ -11404,7 +11404,7 @@ L0:	return res;
 } /* _tr119 */
 
 
-double deltacharmexact P(( const char * _tp1, const char * _tp2, const char * _tp3, int _tp4, int _tp5, int _tp6, int _tp7, int _tp8, double _tp9, double _tp10, double _tp11, double _tp12));
+double deltacharmexact P(( const char * _tp1, const char * _tp2, const char * _tp3, const char * _tp4, int _tp5, int _tp6, int _tp7, int _tp8, int _tp9, double _tp10, double _tp11, double _tp12, double _tp13));
 
 #if MLPROTOTYPES
 static int _tr120( MLINK mlp)
@@ -11416,35 +11416,38 @@ static int _tr120(mlp) MLINK mlp;
 	const char * _tp1;
 	const char * _tp2;
 	const char * _tp3;
-	int _tp4;
+	const char * _tp4;
 	int _tp5;
 	int _tp6;
 	int _tp7;
 	int _tp8;
-	double _tp9;
+	int _tp9;
 	double _tp10;
 	double _tp11;
 	double _tp12;
+	double _tp13;
 	double _rp0;
 	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetString( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetString( mlp, &_tp3) ) goto L2;
-	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
+	if ( ! MLGetString( mlp, &_tp4) ) goto L3;
 	if ( ! MLGetInteger( mlp, &_tp5) ) goto L4;
 	if ( ! MLGetInteger( mlp, &_tp6) ) goto L5;
 	if ( ! MLGetInteger( mlp, &_tp7) ) goto L6;
 	if ( ! MLGetInteger( mlp, &_tp8) ) goto L7;
-	if ( ! MLGetReal( mlp, &_tp9) ) goto L8;
+	if ( ! MLGetInteger( mlp, &_tp9) ) goto L8;
 	if ( ! MLGetReal( mlp, &_tp10) ) goto L9;
 	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
 	if ( ! MLGetReal( mlp, &_tp12) ) goto L11;
-	if ( ! MLNewPacket(mlp) ) goto L12;
+	if ( ! MLGetReal( mlp, &_tp13) ) goto L12;
+	if ( ! MLNewPacket(mlp) ) goto L13;
 
-	_rp0 = deltacharmexact(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12);
+	_rp0 = deltacharmexact(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L12: L11: L10: L9: L8: L7: L6: L5: L4: L3:	MLReleaseString(mlp, _tp3);
+L13: L12: L11: L10: L9: L8: L7: L6: L5: L4:	MLReleaseString(mlp, _tp4);
+L3:	MLReleaseString(mlp, _tp3);
 L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
@@ -14188,7 +14191,7 @@ static struct func {
 		{ 3, 0, _tr117, "complexpolylog" },
 		{ 2, 0, _tr118, "cli2" },
 		{ 5, 0, _tr119, "upsilondeltacharm" },
-		{12, 0, _tr120, "deltacharmexact" },
+		{13, 0, _tr120, "deltacharmexact" },
 		{ 5, 0, _tr121, "upsilondeltacharmbin" },
 		{ 3, 0, _tr122, "deltacharm3" },
 		{ 3, 0, _tr123, "deltacharm3der" },
@@ -14372,9 +14375,9 @@ static const char* evalstrs[] = {
 	(const char*)0,
 	"P2Int::usage = \"P2Int[r] integral for massive bubble\"",
 	(const char*)0,
-	"DeltaCharmExact::usage = \"DeltaCharmExact[charm, type, scheme, n",
-	", l, j, s, nl, mH, mL, mu, alp] computes the subleading massive ",
-	"charm corrections to quarkonium masses\"",
+	"DeltaCharmExact::usage = \"DeltaCharmExact[charm, type, scheme, a",
+	"verage, n, l, j, s, nl, mH, mL, mu, alp] computes the subleading",
+	" massive charm corrections to quarkonium masses\"",
 	(const char*)0,
 	"UpsilonDeltaCharmBin::usage = \"UpsilonDeltaCharmBin[n, l, alp, m",
 	"b, mc] computes the massive charm corrections to quarkonium mass",
@@ -15294,7 +15297,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"ComplexPolylog[n_, z_]", (char *)"{n, Re[z], Im[z]}", 117);
 	if (_res) _res = _definepattern(mlp, (char *)"CLi2[z_]", (char *)"{Re[z], Im[z]}", 118);
 	if (_res) _res = _definepattern(mlp, (char *)"UpsilonDeltaCharm[n_, l_, alpha_, mb_, mc_]", (char *)"{n, l, alpha, mb, mc}", 119);
-	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharmExact[charm_, type_, scheme_, n_, l_, j_, s_, nl_,                  mH_, mL_, mu_, alp_]", (char *)"{charm, type, scheme, n, l, j, s, nl, mH, mL, mu, alp}", 120);
+	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharmExact[charm_, type_, scheme_, average_, n_, l_, j_,                 s_, nl_, mH_, mL_, mu_, alp_]", (char *)"{charm, type, scheme, average, n, l, j, s, nl, mH, mL, mu, alp}", 120);
 	if (_res) _res = _definepattern(mlp, (char *)"UpsilonDeltaCharmBin[n_, l_, alpha_, mb_, mc_]", (char *)"{n, l, alpha, mb, mc}", 121);
 	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharm3[nl_, nh_, z_]", (char *)"{nl, nh, z}", 122);
 	if (_res) _res = _definepattern(mlp, (char *)"DeltaCharm3Der[nl_, nh_, z_]", (char *)"{nl, nh, z}", 123);
