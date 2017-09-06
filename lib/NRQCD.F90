@@ -25,7 +25,8 @@ module NRQCDClass
     procedure, pass(self), private :: Binomial, EnInv
     procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
     ZeroBin, DeltaCharmBin, MassIter, EnExpand, DeltaCharmBin3, DeltaCharmDer, &
-    DeltaCharmExact, DeltaCharmDerBin, MassError, EnError, MassList, NRQCDList
+    DeltaCharmExact, DeltaCharmDerBin, MassError, EnError, MassList, NRQCDList, &
+    DeltaCharmBinBend
 
   end type NRQCD
 
@@ -747,7 +748,7 @@ module NRQCDClass
     real (dp)    , intent(in) :: mu, ln, mC
     real (dp)                 :: lg
 
-   lg = log(mu/mC)!lg = -log(1 + mC/mu)
+    lg = log(mu/mC)
 
     delta2 = self%cnl(2) + lg**2/3 - 2 * (ln**2 + self%h2) * (self%nf - 17)/3 + lg * &
     ( 13._dp/18 - 2._dp * self%nf/9 - self%cnl(1) ) + ln * ( lg * &
@@ -761,6 +762,30 @@ module NRQCDClass
     end if
 
   end function DeltaCharmBin3
+
+!ccccccccccccccc
+
+  real (dp) function DeltaCharmBinBend(self, mu, ln, mC) result(delta2)
+    class (NRQCD), intent(in) :: self
+    real (dp)    , intent(in) :: mu, ln, mC
+    real (dp)                 :: lg, rat, pre
+
+    rat = mC/mu; lg = - log(1 + rat); pre = self%n * rat/(1 + self%n * rat)
+
+    delta2 = self%cnl(2) - 2 * (ln**2 + self%h2) * (self%nf - 17)/3 + &
+    ln * ( (8 * self%nf - 79)/18._dp + (35/2._dp - self%nf) * &
+    self%cnl(1) + (self%nf - 33/2._dp) * self%cnf(1) ) - self%cnf(2)
+
+    if ( self%scheme(:4) == 'pole' ) then
+      delta2 = delta2 - 7._dp/12
+    else
+      delta2 = delta2 + 11._dp/36
+    end if
+
+    delta2 = pre * delta2 + lg**2/3 + ln * lg * (2 * self%nf - 35)/3 + &
+    lg * ( 13._dp/18 - 2._dp * self%nf/9 - self%cnl(1) )
+
+  end function DeltaCharmBinBend
 
 !ccccccccccccccc
 
@@ -843,6 +868,8 @@ module NRQCDClass
           DeltaCharmExact = self%DeltaCharmBin3(mu, lg, self%mC)
 
         end if
+
+        ! DeltaCharmExact = self%DeltaCharmBinBend(mu, lg, self%mC)
 
       end if
 
