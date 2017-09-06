@@ -126,8 +126,8 @@ module NRQCDClass
 
       do i = 0, n - 1
         harm = Harmonic(n + i)
-        InNRQCD%h2 = InNRQCD%h2 + (2*i + 1) * harm**2
-        h3         = h3         + (2*i + 1) * harm**3
+        InNRQCD%h2 = InNRQCD%h2 + (2 * i + 1) * harm**2
+        h3         = h3         + (2 * i + 1) * harm**3
       end do
 
       InNRQCD%h2 = InNRQCD%h2/n**2 - InNRQCD%harm**2
@@ -156,9 +156,8 @@ module NRQCDClass
 
       fac = 4 * n**2
 
-      InNRQCD%c(2:,0) = InNRQCD%c(2:,0)/fac
-      InNRQCD%cnf(2)  = InNRQCD%cnf(2)/fac
-      InNRQCD%cnl(2)  = InNRQCD%cnl(2)/fac
+      InNRQCD%c(2:,0) = InNRQCD%c(2:,0)/fac; InNRQCD%cnf(2) = InNRQCD%cnf(2)/fac
+      InNRQCD%cnl(2)  = InNRQCD%cnl(2) /fac
 
       c2h = c2h/fac - InNRQCD%harm * InNRQCD%c(2,0)
 
