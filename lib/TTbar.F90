@@ -170,7 +170,7 @@ contains
 
         as = - VcsLL(asNNLL)/FPi; DeltaLL = as**2/8; mpLL = inM * (1 + DeltaLL)
 
-        as = - VcsNNLL/FPi; L = Log(h * nu/asNNLL);  asPi = asNNLL/Pi
+        as = - VcsNNLL/FPi; L = Log(h * nu/as); asPi = asNNLL/Pi
 
         DeltaLL = as**2/8
         DeltaNLL  = DeltaLL * asPi * ( self%beta(0) * (L + 1) + self%a1/2 )
