@@ -12,7 +12,7 @@ module NRQCDClass
     character (len = 5)           :: scheme
     character (len = 4)           :: up
     character (len = 3)           :: average
-    real (dp)                     :: mH, harm, h2, rat, mC
+    real (dp)                     :: mH, harm, h2, rat, mC, muC, ratC, amZ
     type (Running)                :: alphaMass
     type (Alpha)                  :: alphaOb
     type (AnomDim)                :: Andim
@@ -26,7 +26,7 @@ module NRQCDClass
     procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
     ZeroBin, DeltaCharmBin, MassIter, EnExpand, DeltaCharmBin3, DeltaCharmDer, &
     DeltaCharmExact, DeltaCharmDerBin, MassError, EnError, MassList, NRQCDList, &
-    DeltaCharmBinBend, setCharm, SetAlpha
+    DeltaCharmBinBend, setCharm, SetAlpha, EnDerAlpha, EnDerCharm
 
   end type NRQCD
 
@@ -186,8 +186,16 @@ module NRQCDClass
     InNRQCD%c(3,1) = InNRQCD%c(3,1) + 3 * InNRQCD%c(3,3) * InNRQCD%h2
     InNRQCD%c(2,0) = InNRQCD%c(2,0) +     InNRQCD%c(2,2) * InNRQCD%h2
 
-    if (nf == 5) InNRQCD%mc = InNRQCD%alphaOb%scales('mB')
-    if (nf == 4) InNRQCD%mc = InNRQCD%alphaOb%scales('mC')
+    if (nf == 5) then
+      InNRQCD%mC  = InNRQCD%alphaOb%scales('mB')
+      InNRQCD%muC = InNRQCD%alphaOb%scales('muB')
+    else if (nf == 4) then
+      InNRQCD%mC  = InNRQCD%alphaOb%scales('mC')
+      InNRQCD%muC = InNRQCD%alphaOb%scales('muC')
+    end if
+
+    InNRQCD%ratC = InNRQCD%muC/InNRQCD%mC
+    InNRQCD%aMz  = InNRQCD%alphaOb%scales('amZ')
 
   end function InNRQCD
 
@@ -463,6 +471,50 @@ module NRQCDClass
     end function FindRoot
 
   end function MassFitter
+
+!ccccccccccccccc
+
+  function EnDerAlpha(self, order, mu, R, lambda, method, counting, eps) result(list)
+    class (NRQCD)   , intent(inout) :: self
+    character (len = *), intent(in) :: method, counting
+    integer            , intent(in) :: order
+    real (dp)          , intent(in) :: mu, R, lambda, eps
+    real (dp), dimension(0:4)       :: list1, list2, list
+    real (dp)                       :: amZ
+
+    amZ = self%amZ
+
+    call self%setAlpha(amZ + eps)
+    list1 = self%En(order, mu, R, lambda, method, counting)
+
+    call self%setAlpha(amZ - eps)
+    list2 = self%En(order, mu, R, lambda, method, counting)
+
+    list = (list2 - list1)/2/eps
+
+  end function EnDerAlpha
+
+!ccccccccccccccc
+
+  function EnDerCharm(self, order, mu, R, lambda, method, counting, eps) result(list)
+    class (NRQCD)   , intent(inout) :: self
+    character (len = *), intent(in) :: method, counting
+    integer            , intent(in) :: order
+    real (dp)          , intent(in) :: mu, R, lambda, eps
+    real (dp), dimension(0:4)       :: list1, list2, list
+    real (dp)                       :: mC
+
+    mC = self%mC
+
+    call self%setCharm( mC + eps, self%ratC * (mC + eps) )
+    list1 = self%En(order, mu, R, lambda, method, counting)
+
+    call self%setCharm( mC - eps, self%ratC * (mC - eps) )
+    list2 = self%En(order, mu, R, lambda, method, counting)
+
+    list = (list2 - list1)/2/eps
+
+  end function EnDerCharm
 
 !ccccccccccccccc
 

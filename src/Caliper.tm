@@ -125,6 +125,8 @@
 :Evaluate:  MSRVFNS::usage = "MSRVFNS[up, type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R] computes the MSR running of the quark masses with flavor matching."
 :Evaluate:  MSRTop::usage = "MSRTop[up, type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, mu3, R] computes the MSR running of the top masses for nonzero bottom and charm quark masses."
 :Evaluate:  NRQCD::usage = "NRQCD[n, l, j, s, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu, R] computes the quarkonium energy levels."
+:Evaluate:  NRQCDDerCharm::usage = "NRQCDDerCharm[n, l, j, s, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu, R, eps] computes the derivative of quarkonium energy levels wrt the charm mass."
+:Evaluate:  NRQCDDerAlpha::usage = "NRQCDDerAlpha[n, l, j, s, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu, R, eps] computes the derivative of quarkonium energy levels wrt the amZ."
 :Evaluate:  MassIter::usage = "MassIter[n, l, j, s, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu, R] computes the bottom mass from quarkonium energy levels."
 :Evaluate:  MassExpand::usage = "MassExpand[n, l, j, s, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu, R] computes the bottom mass from quarkonium energy levels."
 :Evaluate:  FindMass::usage = "FindMass[ord, n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu, R] fits the quark mass from the quarkonium energy levels."
@@ -2056,14 +2058,49 @@
 
 :Begin:
 :Function:      nrqcd
-:Pattern:       NRQCD[n_, l_, j_, s_, charm_, scheme_, average_, method_, counting_, orderAlpha_,
-                runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_,
-                mC_, muC_, lambda1_, lambda2_, lam_, mu_, R_]
-:Arguments:     {n, l, j, s, charm, scheme, average, method, counting, orderAlpha, runAlpha, order,
-                 run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu, R}
-:ArgumentTypes: {Integer, Integer, Integer, Integer, String, String, String, String, String, Integer,
-                 Integer, Integer, Integer, Integer, Real, Real, Real, Real,
-                 Real, Real, Real, Real, Real, Real, Real, Real, Real}
+:Pattern:       NRQCD[n_, l_, j_, s_, charm_, scheme_, average_, method_,
+                counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,
+                mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_, mu_,
+                R_]
+:Arguments:     {n, l, j, s, charm, scheme, average, method, counting, orderAlpha,
+                 runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,
+                 lambda1, lambda2, lam, mu, R}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, String, String, String,
+                 String, String, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      nrqcddercharm
+:Pattern:       NRQCDDerCharm[n_, l_, j_, s_, charm_, scheme_, average_, method_,
+                counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,
+                mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_, mu_,
+                R_, eps_]
+:Arguments:     {n, l, j, s, charm, scheme, average, method, counting, orderAlpha,
+                 runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,
+                 lambda1, lambda2, lam, mu, R, eps}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, String, String, String,
+                 String, String, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      nrqcdderalpha
+:Pattern:       NRQCDDerAlpha[n_, l_, j_, s_, charm_, scheme_, average_, method_,
+                counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,
+                mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_, mu_,
+                R_, eps_]
+:Arguments:     {n, l, j, s, charm, scheme, average, method, counting, orderAlpha,
+                 runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,
+                 lambda1, lambda2, lam, mu, R, eps}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, String, String, String,
+                 String, String, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real}
 :ReturnType:     Manual
 :End:
 
@@ -5342,6 +5379,54 @@ double muC, double lambda1, double lambda2, double lam, double mu, double R){
   f90nrqcd_(&n, &l, &j, &s, charm, str, average, method, counting, &orderAlpha, &runAlpha, &order,
   &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &lambda1, &lambda2,
   &lam, &mu, &R, res);
+
+   MLPutRealList(stdlink, res, 5);
+   MLEndPacket(stdlink);
+
+}
+
+extern double f90nrqcddercharm_(int* n, int* l, int* j, int* s, char const* charm,
+char const* str, char const* average, char const* method, char const* counting,
+int* orderAlpha, int* runAlpha, int* order,
+int* run, int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB,
+double* muB, double* mC, double* muC, double* lambda1, double* lambda2,
+double* lam, double* mu, double* R, double* eps, double* res);
+
+static void nrqcddercharm(int n, int l, int j, int s, char const* charm, char const* str, char const* average,
+char const* method, char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
+double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
+double muC, double lambda1, double lambda2, double lam, double mu, double R,
+double eps){
+
+  double res[5];
+
+  f90nrqcddercharm_(&n, &l, &j, &s, charm, str, average, method, counting, &orderAlpha, &runAlpha, &order,
+  &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &lambda1, &lambda2,
+  &lam, &mu, &R, &eps, res);
+
+   MLPutRealList(stdlink, res, 5);
+   MLEndPacket(stdlink);
+
+}
+
+extern double f90nrqcdderalpha_(int* n, int* l, int* j, int* s, char const* charm,
+char const* str, char const* average, char const* method, char const* counting,
+int* orderAlpha, int* runAlpha, int* order,
+int* run, int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB,
+double* muB, double* mC, double* muC, double* lambda1, double* lambda2,
+double* lam, double* mu, double* R, double* eps, double* res);
+
+static void nrqcdderalpha(int n, int l, int j, int s, char const* charm, char const* str, char const* average,
+char const* method, char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
+double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
+double muC, double lambda1, double lambda2, double lam, double mu, double R,
+double eps){
+
+  double res[5];
+
+  f90nrqcdderalpha_(&n, &l, &j, &s, charm, str, average, method, counting, &orderAlpha, &runAlpha, &order,
+  &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &lambda1, &lambda2,
+  &lam, &mu, &R, &eps, res);
 
    MLPutRealList(stdlink, res, 5);
    MLEndPacket(stdlink);
