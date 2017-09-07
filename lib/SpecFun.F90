@@ -29,6 +29,31 @@ end module Constants
 
 ! cccccccccccccccccccc
 
+function GaussRand(x0, sigma, n) result(list)
+  use constants; implicit none
+  integer  , intent(in)     :: n
+  real (dp), intent(in)     :: x0, sigma
+  real (dp), dimension(2*n) :: list
+  integer                   :: i
+  real (dp), dimension(2)   :: v
+  real (dp)                 :: rsq, fac
+
+  do i = 1, n
+
+1  continue
+
+    v = 2 * [ rand(), rand() ] - 1; rsq = dot_product(v,v)
+
+    if ( rsq >= 1 .or. rsq == 0 ) go to 1
+
+    fac = sqrt( -2 * log(rsq)/rsq );  list(i:n+i:n) = fac * v
+
+  end do
+
+end function GaussRand
+
+! cccccccccccccccccccc
+
 subroutine ZLBKSB(A,N,NP,INDX,B)  ! complex version of lubksb
   use constants, only: dp; IMPLICIT NONE
   complex (dp), intent(in), dimension(NP,NP) :: A
