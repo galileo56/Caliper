@@ -627,8 +627,8 @@ module NRQCDClass
     real (dp)          , intent(in) :: mu, R, lambda, mUpsilon
     real (dp), dimension(0:4)       :: list, listInv, alphaList
     real (dp), dimension(0:3)       :: logList
-    real (dp), dimension(0:4)       :: delta, deltaInv
-    real (dp), dimension(0:5)       :: list2, listInv2
+    real (dp), dimension(0:4)       :: delta
+    real (dp), dimension(0:5)       :: list2, listInv2, deltaInv, delta2
     real (dp), dimension(4)         :: lgmList
     real (dp), dimension(0:4,4)     :: coefMSR
     real (dp), dimension(2)         :: deltaM, deltaCharm
@@ -710,22 +710,41 @@ module NRQCDClass
         list(1:) = list(1:) - delta(1:) * Rmass/mTree
       else
 
-        delta(3) = delta(3) + coefMSR(1,2) * ( delta(1) - list(1) )
+        if ( counting(:5) == 'ttbar' ) then
 
-        delta(4) = delta(4) + coefMSR(1,2) * ( list(1)**2 - 2 * list(2) - &
-        delta(1)**2 + 2 * coefMSR(0,2) )/2 + coefMSR(1,3) * ( delta(1) &
-         - list(1) ) + lgmList(1) * (  coefMSR(1,2)**2 + 2 * coefMSR(2,3) * &
-        ( delta(1) - list(1) )  )
+          delta(4) = delta(4) + coefMSR(1,2) * ( delta(1) - list(1) )
+          deltaInv(0:1) = [1,0]; delta2(0:1) = [1,0]; delta2(2:) = delta(1:)
 
-        deltaInv(0) = 1
+          do n = 1, 4
+            deltaInv(n + 1) = - sum( deltaInv(:n) * delta2(n + 1:1:-1) )
+          end do
 
-        do n = 0, 3
-          deltaInv(n + 1) = - sum( deltaInv(:n) * delta(n + 1:1:-1) )
-        end do
+          do n = 5, 2, -1
+            list2(n) = sum( deltaInv(:n) * list2(n:0:-1) )
+          end do
 
-        do n = 4, 1, -1
-          list(n) = sum( deltaInv(:n) * list(n:0:-1) )
-        end do
+          list(1:) = list2(2:)
+
+        else
+
+          delta(3) = delta(3) + coefMSR(1,2) * ( delta(1) - list(1) )
+
+          delta(4) = delta(4) + coefMSR(1,2) * ( list(1)**2 - 2 * list(2) - &
+          delta(1)**2 + 2 * coefMSR(0,2) )/2 + coefMSR(1,3) * ( delta(1) &
+           - list(1) ) + lgmList(1) * (  coefMSR(1,2)**2 + 2 * coefMSR(2,3) * &
+          ( delta(1) - list(1) )  )
+
+          deltaInv(0) = 1
+
+          do n = 0, 3
+            deltaInv(n + 1) = - sum( deltaInv(:n) * delta(n + 1:1:-1) )
+          end do
+
+          do n = 4, 1, -1
+            list(n) = sum( deltaInv(:n) * list(n:0:-1) )
+          end do
+
+        end if
 
       end if
 
@@ -736,22 +755,24 @@ module NRQCDClass
 
     list(2:3) = list(2:3) - deltaM - deltaCharm
 
-    if ( counting(:5) /= 'ttbar' ) list(3) = list(3) + factor**2 * alphaList(1) * &
-    ( 2 * self%DeltaCharmBin(alp, mTree) - self%DeltaCharmDerBin(alp, mass) )
+    if ( counting(:5) /= 'ttbar' ) then
 
-    if ( self%up(:2) == 'up' .and. self%mC > tiny(1._dp) ) then
+      list(3) = list(3) + factor**2 * alphaList(1) * &
+      ( 2 * self%DeltaCharmBin(alp, mTree) - self%DeltaCharmDerBin(alp, mass) )
 
-      if ( self%scheme(:5) == 'MSbar' ) then
+      if ( self%up(:2) == 'up' .and. self%mC > tiny(1._dp) ) then
 
-        rat = self%mC/mTree
+        if ( self%scheme(:5) == 'MSbar' ) then
 
-        list(3) = list(3) + deltaM(1) * ( 2 * delta(1) - list(1) ) + &
-        alphaList(2) * ( list(1) - delta(1) ) * rat * DeltaCharm2Der(rat)
+          rat = self%mC/mTree
 
-        if ( self%up(:4) == 'down' ) list(3) = list(3) + 4._dp/9
+          list(3) = list(3) + deltaM(1) * ( 2 * delta(1) - list(1) ) + &
+          alphaList(2) * ( list(1) - delta(1) ) * rat * DeltaCharm2Der(rat)
 
+          if ( self%up(:4) == 'down' ) list(3) = list(3) + 4._dp/9
+
+        end if
       end if
-
     end if
 
     list = mTree * list; list(0) = list(0) + self%mH - mass
