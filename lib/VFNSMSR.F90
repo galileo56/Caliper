@@ -20,7 +20,7 @@ module VFNSMSRClass
     contains
 
     procedure, pass(self), public :: MSRMass, setMass, RunArray, numFlav, &
-    MSRDelta, alphaAll, deltaM, mass, DeltaM2
+    MSRDelta, alphaAll, deltaM, mass, DeltaM2, setCharm, SetAlpha
 
     procedure, pass(self), private :: LowMass, LowRevol
 
@@ -782,6 +782,46 @@ contains
     end if
 
   end subroutine setMass
+
+!ccccccccccccccc
+
+  subroutine SetAlpha(self, alpha)
+    class (VFNSMSR), intent(inout) :: self
+    real (dp)      , intent(in   ) :: alpha
+
+    call self%AlphaOb%SetAlpha(alpha)
+    call self%alphaMass(1)%SetAlpha(alpha)
+    call self%alphaMass(2)%SetAlpha(alpha)
+
+  end subroutine SetAlpha
+
+!ccccccccccccccc
+
+  subroutine setCharm(self, m, mu)
+    class (VFNSMSR), intent(inout) :: self
+    real (dp)      , intent(in)    :: m, mu
+
+    self%mL = m
+
+    if (self%nf == 5) then
+
+      call self%alphaMass(1)%SetMBottom(m, mu)
+      call self%alphaMass(2)%SetMBottom(m, mu)
+
+      select type (self)
+      type is (topMSR)
+        call self%alphaMass(3)%SetMBottom(m, mu)
+      end select
+
+      call self%alphaOb%SetMBottom(m, mu)
+
+    else if (self%nf == 4) then
+      call self%alphaMass(1)%SetMCharm(m, mu)
+      call self%alphaMass(2)%SetMCharm(m, mu)
+      call self%alphaOb%SetMCharm(m, mu)
+    end if
+
+  end subroutine setCharm
 
 !ccccccccccccccc
 

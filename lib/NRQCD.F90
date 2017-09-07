@@ -26,7 +26,7 @@ module NRQCDClass
     procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
     ZeroBin, DeltaCharmBin, MassIter, EnExpand, DeltaCharmBin3, DeltaCharmDer, &
     DeltaCharmExact, DeltaCharmDerBin, MassError, EnError, MassList, NRQCDList, &
-    DeltaCharmBinBend
+    DeltaCharmBinBend, setCharm, SetAlpha
 
   end type NRQCD
 
@@ -209,6 +209,33 @@ module NRQCDClass
 
 !ccccccccccccccc
 
+  subroutine setCharm(self, m, mu)
+    class (NRQCD), intent(inout) :: self
+    real (dp)    , intent(in)    :: m, mu
+
+    self%mC = m;    call self%MSR%setCharm(m, mu)
+
+    if (self%nf == 5) then
+      call self%alphaMass%SetMBottom(m, mu)
+    else if (self%nf == 4) then
+      call self%alphaMass%SetMCharm(m, mu)
+    end if
+
+  end subroutine setCharm
+
+!ccccccccccccccc
+
+  subroutine SetAlpha(self, alpha)
+    class (NRQCD), intent(inout) :: self
+    real (dp)      , intent(in   ) :: alpha
+
+    call self%AlphaOb%SetAlpha(alpha)  ;  call self%MSR%SetAlpha(alpha)
+    call self%alphaMass%SetAlpha(alpha)
+
+  end subroutine SetAlpha
+
+!ccccccccccccccc
+
   function MassList(self, iter, n, order, mu0, mu1, deltaMu, R0, R1, &
   deltaR, mUpsilon, lambda, method, counting) result(list)
     class (NRQCD)      , intent(inout) :: self
@@ -220,7 +247,7 @@ module NRQCDClass
     real (dp), dimension( 3, 0:Floor( (mu1 - mu0)/deltaMu ), &
     0:Floor( (R1 - R0)/deltaR ))    :: list
 
-    integer                            :: imax, jmax, i, j
+    integer                         :: imax, jmax, i, j
 
     imax = Floor( (mu1 - mu0)/deltaMu ); jmax = Floor( (R1 - R0)/deltaR )
 
