@@ -221,7 +221,8 @@ module NRQCDClass
     class (NRQCD), intent(inout) :: self
     real (dp)    , intent(in)    :: m, mu
 
-    self%mC = m;    call self%MSR%setCharm(m, mu)
+    self%mC = m; self%muC = mu;    call self%MSR%setCharm(m, mu)
+    call self%AlphaOb%setMCharm(m, mu)
 
     if (self%nf == 5) then
       call self%alphaMass%SetMBottom(m, mu)
@@ -235,7 +236,7 @@ module NRQCDClass
 
   subroutine SetAlpha(self, alpha)
     class (NRQCD), intent(inout) :: self
-    real (dp)      , intent(in   ) :: alpha
+    real (dp)    , intent(in   ) :: alpha
 
     call self%AlphaOb%SetAlpha(alpha)  ;  call self%MSR%SetAlpha(alpha)
     call self%alphaMass%SetAlpha(alpha)
@@ -490,7 +491,7 @@ module NRQCDClass
     call self%setAlpha(amZ - eps)
     list2 = self%En(order, mu, R, lambda, method, counting)
 
-    list = (list2 - list1)/2/eps
+    list = (list1 - list2)/2/eps
 
   end function EnDerAlpha
 
@@ -512,7 +513,7 @@ module NRQCDClass
     call self%setCharm( mC - eps, self%ratC * (mC - eps) )
     list2 = self%En(order, mu, R, lambda, method, counting)
 
-    list = (list2 - list1)/2/eps
+    list = (list1 - list2)/2/eps
 
   end function EnDerCharm
 

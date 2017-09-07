@@ -811,6 +811,7 @@ contains
       select type (self)
       type is (topMSR)
         call self%alphaMass(3)%SetMBottom(m, mu)
+        ! self%ratCharm = self%mC/self%mT
       end select
 
       call self%alphaOb%SetMBottom(m, mu)
@@ -820,6 +821,8 @@ contains
       call self%alphaMass(2)%SetMCharm(m, mu)
       call self%alphaOb%SetMCharm(m, mu)
     end if
+
+    self%rat = self%mL/self%mH
 
   end subroutine setCharm
 
