@@ -628,6 +628,7 @@ module NRQCDClass
     real (dp), dimension(0:4)       :: list, listInv, alphaList
     real (dp), dimension(0:3)       :: logList
     real (dp), dimension(0:4)       :: delta, deltaInv
+    real (dp), dimension(0:5)       :: list2, listInv2
     real (dp), dimension(4)         :: lgmList
     real (dp), dimension(0:4,4)     :: coefMSR
     real (dp), dimension(2)         :: deltaM, deltaCharm
@@ -655,14 +656,30 @@ module NRQCDClass
     listInv(4) = listInv(4) + self%c(4,0) * log(alp)
     listInv(1:) = factor * alphaList(:3) * listInv(1:)
 
-    listInv(3) = listInv(3) + alphaList(1) * self%beta(0) * factor**2
-    listInv(4) = listInv(4) - alphaList(1) * self%beta(0) * factor**3/2 + &
-    alphaList(2) * factor**2 * (  5 * self%beta(0)**2 * logList(1)/2 + &
-    ( 10 * self%beta(0) * self%c(1,0) - 2 * self%beta(0)**2 + self%beta(1) )/4  )
+    if ( counting(:5) == 'ttbar' ) then
 
-    do n = 0, 3
-      list(n + 1) = - sum( list(:n) * listInv(n + 1:1:-1) )
-    end do
+      listInv(4) = listInv(4) + alphaList(1) * self%beta(0) * factor**2
+
+      list2(0:1) = [1,0]; listInv2(0:1) = [1,0]; listInv2(2:) = listInv(1:4)
+
+      do n = 1, 4
+        list2(n + 1) = - sum( list2(:n) * listInv2(n + 1:1:-1) )
+      end do
+
+      list(1:) = list2(2:)
+
+    else
+
+      listInv(3) = listInv(3) + alphaList(1) * self%beta(0) * factor**2
+      listInv(4) = listInv(4) - alphaList(1) * self%beta(0) * factor**3/2 + &
+      alphaList(2) * factor**2 * (  5 * self%beta(0)**2 * logList(1)/2 + &
+      ( 10 * self%beta(0) * self%c(1,0) - 2 * self%beta(0)**2 + self%beta(1) )/4  )
+
+      do n = 0, 3
+        list(n + 1) = - sum( list(:n) * listInv(n + 1:1:-1) )
+      end do
+
+    end if
 
     if ( self%scheme(:4) /= 'pole' ) then
 
@@ -719,7 +736,7 @@ module NRQCDClass
 
     list(2:3) = list(2:3) - deltaM - deltaCharm
 
-    list(3) = list(3) + factor**2 * alphaList(1) * &
+    if ( counting(:5) /= 'ttbar' ) list(3) = list(3) + factor**2 * alphaList(1) * &
     ( 2 * self%DeltaCharmBin(alp, mTree) - self%DeltaCharmDerBin(alp, mass) )
 
     if ( self%up(:2) == 'up' .and. self%mC > tiny(1._dp) ) then
