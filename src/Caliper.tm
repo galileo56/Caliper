@@ -267,7 +267,7 @@
                 runMass_, muLam_, xLam_, mZ_, aMz_, Q_, mtpole_, gt_, h_, nu_]
 :Arguments:     {nl, order, scheme, method, orderAlpha, runAlpha, orderMass,
                 runMass, muLam, xLam, mZ, aMz, Q, mtpole, gt, h, nu}
-:ArgumentTypes: {Integer, String, String, String, Integer, Integer, Integer,
+:ArgumentTypes: {Integer, Integer, String, String, Integer, Integer, Integer,
                 Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real}
 :ReturnType:    Real
 :End:
@@ -287,7 +287,7 @@
 :Function:      a1pole
 :Pattern:       A1Pole[nl_, order_, En_, mtpole_, gamtop_, asoft_, VcsNNLL_, musoft_]
 :Arguments:     {nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft}
-:ArgumentTypes: {Integer, String, Real, Real, Real, Real, Real, Real}
+:ArgumentTypes: {Integer, Integer, Real, Real, Real, Real, Real, Real}
 :ReturnType:    Real
 :End:
 
@@ -2586,30 +2586,30 @@ static double vceffsnnll(int nl, double ah, double au, double as){
    return res;
 }
 
-extern double f90a1pole_(int* nl, char const* order, double* En, double* mtpole,
+extern double f90a1pole_(int* nl, int* order, double* En, double* mtpole,
 double* gamtop, double* asoft, double* VcsNNLL, double* musoft, double* result);
 
-static double a1pole(int nl, char const* order, double En, double mtpole,
+static double a1pole(int nl, int order, double En, double mtpole,
 double gamtop, double asoft, double VcsNNLL, double musoft){
   double res;
 
-   f90a1pole_(&nl, order, &En, &mtpole, &gamtop, &asoft, &VcsNNLL, &musoft, &res);
+   f90a1pole_(&nl, &order, &En, &mtpole, &gamtop, &asoft, &VcsNNLL, &musoft, &res);
 
    return res;
 }
 
-extern double f90rnrqcd_(int* nl, char const* order, char const* scheme,
+extern double f90rnrqcd_(int* nl, int* order, char const* scheme,
 char const* method, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass,
 double* muLam, double* xLam, double* mZ, double* aMz, double* Q, double* mt,
 double* gt, double* h, double* nu, double* res);
 
-static double rnrqcd(int nl, char const* order, char const* scheme,
+static double rnrqcd(int nl, int order, char const* scheme,
 char const* method, int orderAlpha, int runAlpha, int orderMass, int runMass,
 double muLam, double xLam, double mZ, double aMz, double Q, double mt,
 double gt, double h, double nu){
   double res;
 
-   f90rnrqcd_(&nl, order, scheme, method, &orderAlpha, &runAlpha, &orderMass,
+   f90rnrqcd_(&nl, &order, scheme, method, &orderAlpha, &runAlpha, &orderMass,
    &runMass, &muLam, &xLam, &mZ, &aMz, &Q, &mt, &gt, &h, &nu, &res);
 
    return res;

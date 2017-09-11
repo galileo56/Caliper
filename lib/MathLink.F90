@@ -38,8 +38,8 @@ subroutine f90RNRQCD(nl, order, scheme, method, orderAlp, runAlp, orderMass, run
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; implicit none
   real (dp)          , intent(in)  :: Q, mtpole, gt, h, nu, mZ, aMz, xlam, muLam
-  character (len = *), intent(in)  :: order, scheme, method
-  integer            , intent(in)  :: nl, orderAlp, runAlp, runMass, orderMass
+  character (len = *), intent(in)  :: scheme, method
+  integer            , intent(in)  :: nl, orderAlp, runAlp, runMass, orderMass, order
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (RNRQCD)                    :: NRQCD
@@ -60,7 +60,7 @@ subroutine f90RNRQCD(nl, order, scheme, method, orderAlp, runAlp, orderMass, run
 
   MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
-  res = NRQCD%Xsec( orderMass, order(:4), scheme(:4), method(:8), xlam, q, gt, h, nu )
+  res = NRQCD%Xsec( orderMass, order, scheme(:4), method(:8), xlam, q, gt, h, nu )
 
 end subroutine f90RNRQCD
 
@@ -70,8 +70,7 @@ subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass;  implicit none
   real (dp)          , intent(in)  :: En, mtpole, gamtop, asoft, VcsNNLL, musoft
-  character (len = *), intent(in)  :: order
-  integer            , intent(in)  :: nl
+  integer            , intent(in)  :: nl, order
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (RNRQCD)                    :: NRQCD
@@ -89,7 +88,7 @@ subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
 
   MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
-  res = NRQCD%A1pole(order(:4), En, mtpole, gamtop, asoft, VcsNNLL, musoft)
+  res = NRQCD%A1pole(order, En, mtpole, gamtop, asoft, VcsNNLL, musoft)
 
 end subroutine f90A1Pole
 

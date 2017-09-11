@@ -83,9 +83,9 @@ contains
 
   real (dp) function Xsec(self, ordMass, order, scheme, method, lambda, q, gt, h, nu)
     class (RNRQCD)  , intent(inout) :: self
-    character (len = *), intent(in) :: order, scheme, method
+    character (len = *), intent(in) :: scheme, method
     real (dp)          , intent(in) :: gt, h, nu, q, lambda
-    integer            , intent(in) :: ordMass
+    integer            , intent(in) :: ordMass, order
     real (dp), dimension(0:4)       :: m1Slist
     complex (dp)                    :: vt
     real (dp)                       :: ac, ah, asLL, asNLL, auLL, En, c1run, L,&
@@ -106,7 +106,7 @@ contains
     asLL = self%AlphaOb%alphaGenericFlavor('inverse', 1, self%nl, mu1, ah, mu2)
     ac = - VcsLL(asLL)/FPi
 
-    if ( order(:3) == 'NLL' .or. order(:4) == 'NNLL' ) then
+    if ( order == 2 .or. order == 3 ) then
 
       asNLL = self%AlphaOb%alphaGenericFlavor('inverse', 2, self%nl, &
       mu1, ah, mu2)
@@ -118,9 +118,9 @@ contains
 
     if ( scheme(:2) == 'S1' ) then
 
-      if ( order(:2) == 'LL' ) then
+      if ( order == 1 ) then
         DeltaLL = ac**2/8;  mP = inM * (1 + DeltaLL)
-      else if ( order(:3) == 'NLL' ) then
+      else if ( order == 2 ) then
         as = - VcsLL(asNLL)/FPi; L = Log(h * nu/as)
         DeltaLL = as**2/8; as = 3 * as/4
         DeltaNLL = DeltaLL * as * ( self%beta(0) * (L + 1) + self%a1/2 )/Pi
@@ -129,7 +129,7 @@ contains
 
     end if
 
-    if ( order(:2) == 'LL' ) then
+    if ( order == 1 ) then
 
       vt = vC(q, mp, mp, gt); ac = 4 * asLL/3
 
@@ -137,15 +137,15 @@ contains
       Euler - 0.5_dp + l2 + Log( - (0,1) * mP * vt/h/nu/inM ) + &
       DiGam( 1 - (0,1) * ac/(2 * vt) )  )  )
 
-    else if ( order(:3) == 'NLL' ) then
+    else if ( order == 2 ) then
 
       ! c1run = self%MNLLc1(ah, asLL, auLL)**2
       c1run = self%MNLLc1Square(ah, asLL, auLL);  En = q - 2 * mP
 
       Xsec = (2 * mpLL * Qt/Q)**2 * c1run * &
-      self%A1pole('NLL', En, mPLL, gt, asNLL, 0._dp, mu2)
+      self%A1pole(2, En, mPLL, gt, asNLL, 0._dp, mu2)
 
-    else if ( order(:4) == 'NNLL' ) then
+    else if ( order == 3 ) then
 
       asNNLL = self%AlphaOb%alphaGenericFlavor('inverse', 3, self%nl, &
       mu1, ah, mu2)
@@ -184,7 +184,7 @@ contains
 
       vt = vC(q, mpLL, inM, gt); En = q - 2 * mp
 
-      rCoul = c1run * mpLL**2 * self%A1pole('NNLL', En, mpLL, &
+      rCoul = c1run * mpLL**2 * self%A1pole(3, En, mpLL, &
       gt, asNNLL, VcsNNLL, h * inM * nu)/18/Pi
 
       r2 = 2 * c2run * inM**2/FPi * ImagPart(vt**2 * ggg(ac, vt, l2 - 0.5_dp) ) ! * sqrt(c1run)
@@ -341,20 +341,20 @@ contains
 ! ccccccccccc
 
   real (dp) function A1pole(self, order, En, mass, gamtop, asoft, VcsNNLL, musoft)
-    class (RNRQCD)     , intent(in) :: self
-    character (len = *), intent(in) :: order
-    real (dp)          , intent(in) :: En, gamtop, asoft, musoft, VcsNNLL, mass
-    type (Toppik)                   :: TP
-    real (dp), dimension(2)         :: res
-    real (dp)                       :: x0, x1, x2, aSuPi
+    class (RNRQCD), intent(in) :: self
+    integer       , intent(in) :: order
+    real (dp)     , intent(in) :: En, gamtop, asoft, musoft, VcsNNLL, mass
+    type (Toppik)              :: TP
+    real (dp), dimension(2)    :: res
+    real (dp)                  :: x0, x1, x2, aSuPi
 
     x0 = 0; x1 = 0; x2 = 0
 
-    if ( order(:2) == 'LL' ) then
+    if ( order == 1 ) then
       x0 = 1
-    else if ( order(:3) == 'NLL' ) then
+    else if ( order == 2 ) then
       aSuPi = asoft/FPi; x0 = self%xc01(aSuPi); x1 = self%xc11(aSuPi)
-    else if ( order(:4) == 'NNLL' .or. order(:4) == 'N2LL' ) then
+    else if ( order == 3 ) then
       aSuPi = asoft/FPi; x1 = self%xc12(aSuPi); x2 = self%xc22(aSuPi)
       x0 = self%a1 * asuPi + self%a2 * asuPi**2 - 3 * VcsNNLL/16/asoft/Pi
     end if

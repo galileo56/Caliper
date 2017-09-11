@@ -494,30 +494,30 @@ static double vceffsnnll(int nl, double ah, double au, double as){
    return res;
 }
 
-extern double f90a1pole_(int* nl, char const* order, double* En, double* mtpole,
+extern double f90a1pole_(int* nl, int* order, double* En, double* mtpole,
 double* gamtop, double* asoft, double* VcsNNLL, double* musoft, double* result);
 
-static double a1pole(int nl, char const* order, double En, double mtpole,
+static double a1pole(int nl, int order, double En, double mtpole,
 double gamtop, double asoft, double VcsNNLL, double musoft){
   double res;
 
-   f90a1pole_(&nl, order, &En, &mtpole, &gamtop, &asoft, &VcsNNLL, &musoft, &res);
+   f90a1pole_(&nl, &order, &En, &mtpole, &gamtop, &asoft, &VcsNNLL, &musoft, &res);
 
    return res;
 }
 
-extern double f90rnrqcd_(int* nl, char const* order, char const* scheme,
+extern double f90rnrqcd_(int* nl, int* order, char const* scheme,
 char const* method, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass,
 double* muLam, double* xLam, double* mZ, double* aMz, double* Q, double* mt,
 double* gt, double* h, double* nu, double* res);
 
-static double rnrqcd(int nl, char const* order, char const* scheme,
+static double rnrqcd(int nl, int order, char const* scheme,
 char const* method, int orderAlpha, int runAlpha, int orderMass, int runMass,
 double muLam, double xLam, double mZ, double aMz, double Q, double mt,
 double gt, double h, double nu){
   double res;
 
-   f90rnrqcd_(&nl, order, scheme, method, &orderAlpha, &runAlpha, &orderMass,
+   f90rnrqcd_(&nl, &order, scheme, method, &orderAlpha, &runAlpha, &orderMass,
    &runMass, &muLam, &xLam, &mZ, &aMz, &Q, &mt, &gt, &h, &nu, &res);
 
    return res;
@@ -3860,7 +3860,7 @@ L0:	return res;
 } /* _tr8 */
 
 
-double rnrqcd P(( int _tp1, const char * _tp2, const char * _tp3, const char * _tp4, int _tp5, int _tp6, int _tp7, int _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17));
+double rnrqcd P(( int _tp1, int _tp2, const char * _tp3, const char * _tp4, int _tp5, int _tp6, int _tp7, int _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17));
 
 #if MLPROTOTYPES
 static int _tr9( MLINK mlp)
@@ -3870,7 +3870,7 @@ static int _tr9(mlp) MLINK mlp;
 {
 	int	res = 0;
 	int _tp1;
-	const char * _tp2;
+	int _tp2;
 	const char * _tp3;
 	const char * _tp4;
 	int _tp5;
@@ -3888,7 +3888,7 @@ static int _tr9(mlp) MLINK mlp;
 	double _tp17;
 	double _rp0;
 	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
-	if ( ! MLGetString( mlp, &_tp2) ) goto L1;
+	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetString( mlp, &_tp3) ) goto L2;
 	if ( ! MLGetString( mlp, &_tp4) ) goto L3;
 	if ( ! MLGetInteger( mlp, &_tp5) ) goto L4;
@@ -3912,8 +3912,7 @@ static int _tr9(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L17: L16: L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4:	MLReleaseString(mlp, _tp4);
 L3:	MLReleaseString(mlp, _tp3);
-L2:	MLReleaseString(mlp, _tp2);
-L1: 
+L2: L1: 
 L0:	return res;
 } /* _tr9 */
 
@@ -3962,7 +3961,7 @@ L0:	return res;
 } /* _tr10 */
 
 
-double a1pole P(( int _tp1, const char * _tp2, double _tp3, double _tp4, double _tp5, double _tp6, double _tp7, double _tp8));
+double a1pole P(( int _tp1, int _tp2, double _tp3, double _tp4, double _tp5, double _tp6, double _tp7, double _tp8));
 
 #if MLPROTOTYPES
 static int _tr11( MLINK mlp)
@@ -3972,7 +3971,7 @@ static int _tr11(mlp) MLINK mlp;
 {
 	int	res = 0;
 	int _tp1;
-	const char * _tp2;
+	int _tp2;
 	double _tp3;
 	double _tp4;
 	double _tp5;
@@ -3981,7 +3980,7 @@ static int _tr11(mlp) MLINK mlp;
 	double _tp8;
 	double _rp0;
 	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
-	if ( ! MLGetString( mlp, &_tp2) ) goto L1;
+	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
 	if ( ! MLGetReal( mlp, &_tp4) ) goto L3;
 	if ( ! MLGetReal( mlp, &_tp5) ) goto L4;
@@ -3994,8 +3993,7 @@ static int _tr11(mlp) MLINK mlp;
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L8: L7: L6: L5: L4: L3: L2:	MLReleaseString(mlp, _tp2);
-L1: 
+L8: L7: L6: L5: L4: L3: L2: L1: 
 L0:	return res;
 } /* _tr11 */
 
