@@ -47,7 +47,8 @@
 :Evaluate:  Pi0Der::usage = "Pi0Der[i,z] i-th derivative of the tree-level massive vacuum polarization function"
 :Evaluate:  Pi1Der::usage = "Pi1Der[i,z] i-th derivative of the one-loop massive vacuum polarization function"
 :Evaluate:  Pi1::usage = "Pi1[z] one-loop massive vacuum polarization function"
-:Evaluate:  Pi2::usage = "Pi2[z] one-loop massive vacuum polarization function"
+:Evaluate:  Pi2::usage = "Pi2[z] two-loop massive vacuum polarization function"
+:Evaluate:  Pi2Der::usage = "Pi2Der[z] derivative of the two-loop massive vacuum polarization function"
 :Evaluate:  P2::usage = "P2[z] integrand for massive bubble"
 :Evaluate:  P2Double::usage = "P2Double[r1,r2] integral for double massive bubble"
 :Evaluate:  P2Int::usage = "P2Int[r] integral for massive bubble"
@@ -1789,6 +1790,14 @@
 :Begin:
 :Function:      pi2
 :Pattern:       Pi2[z_]
+:Arguments:     {Re[z], Im[z]}
+:ArgumentTypes: {Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      pi2der
+:Pattern:       Pi2Der[z_]
 :Arguments:     {Re[z], Im[z]}
 :ArgumentTypes: {Real, Real}
 :ReturnType:    Manual
@@ -4662,6 +4671,19 @@ static void pi2(double zr, double zi){
   double res[2];
 
    f90pi2_(&zr, &zi, res);
+
+   MLPutFunction(stdlink, "Complex", 2);
+   MLPutReal(stdlink, res[0]); MLPutReal(stdlink, res[1]);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90pi2der_(double* zr, double* zi, double* result);
+
+static void pi2der(double zr, double zi){
+  double res[2];
+
+   f90pi2der_(&zr, &zi, res);
 
    MLPutFunction(stdlink, "Complex", 2);
    MLPutReal(stdlink, res[0]); MLPutReal(stdlink, res[1]);

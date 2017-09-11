@@ -5,7 +5,7 @@ module SigmaClass
 
   real (dp), dimension(2)               :: EWfact
   public                                :: setEWfact, Pi0, Pi1, Pi0Der, Pi1Der, &
-  P2
+  P2, P2Der
 
 !ccccccccccccccc
 
@@ -544,14 +544,14 @@ end function Pi1
 
 complex (dp) function P2Der(z)
   complex (dp), intent(in)    :: z
-  complex (dp)                :: r0, rz, r1, r2, r3, l1, l2, l3, PL1, PL2, PL3, PL4
   complex (dp), dimension(12) :: r32
+  complex (dp)                :: r0, rz, r1, r2, r3, l1, l2, l3, PL1, PL2, PL3, &
+  PL4, l4, d1, d2
 
   rz = sqrt(z); r1 = sqrt(1 - z); r2 = 1 + r1; r3 = 1 - r1; r0 = sqrt(z - 1)
-  l1 = Log(1 + 2 * r0 * rz - 2 * z); l2 = Log(1 + r0 * rz - z)
-  l3 = Log( 8 * (z - r0 * rz) ); PL1 = cli2(1 + 2 * r0 * rz - 2 * z)
-  PL2 = cli2(2 * z - 1 - 2 * r0 * rz); PL3 = cli3(1 + 2 * r0 * rz - 2 * z)
-  PL4 = cli3(2 * z - 1 - 2 * r0 * rz)
+  d2 = 1 + 2 * r0 * rz - 2 * z; d1 = d2**2 - 1; l1 = Log(d2); PL2 = cli2(-d2)
+  l2 = Log(1 + r0 * rz - z); l3 = Log( 8 * (z - r0 * rz) ); PL1 = cli2(d2)
+  PL3 = cli3(d2); PL4 = cli3(-d2); l4 = Log(1 + d2)
 
   r32 = PowList(r3/r2, 12)
 
@@ -576,16 +576,14 @@ end function P2Der
 
 complex (dp) function P2(z)
   complex (dp), intent(in)    :: z
-  complex (dp)                :: rz, r1, r2, r3, l1, l2, l3, PL1, PL2, PL3, PL4
   complex (dp), dimension(12) :: r32
+  complex (dp)                :: rz, r1, r2, r3, l1, l2, l3, PL1, PL2, PL3, PL4, &
+  d1
 
   rz = sqrt(z); r1 = sqrt(1 - z); r2 = 1 + r1; r3 = 1 - r1; r1 = sqrt(z - 1)
-  l1 = Log(1 + 2 * r1 * rz - 2 * z); l2 = Log(1 + r1 * rz - z)
-  l3 = Log( 8 * (z - r1 * rz) ); PL1 = cli2(1 + 2 * r1 * rz - 2 * z)
-  PL2 = cli2(2 * z - 1 - 2 * r1 * rz); PL3 = cli3(1 + 2 * r1 * rz - 2 * z)
-  PL4 = cli3(2 * z - 1 - 2 * r1 * rz)
-
-  r32 = PowList(r3/r2, 12)
+  d1 = 1 + 2 * r1 * rz - 2 * z; l1 = Log(d1); l2 = Log(1 + r1 * rz - z)
+  l3 = Log( 8 * (z - r1 * rz) ); PL1 = cli2(d1); PL2 = cli2(-d1); PL3 = cli3(d1)
+  PL4 = cli3(-d1); r32 = PowList(r3/r2, 12)
 
   P2 = - 0.688472275231591_dp + 2 * ( 0.688472275231591_dp + &
   0.1891443911186843_dp * r32(1) - 0.030243753917029492_dp * r32(2) + &
@@ -725,7 +723,7 @@ complex (dp) function P2(z)
   rz**2*(-8.869586914062989e-3_dp-1.303059964401347e-2_dp*z-  &
   1.3891531207758698_dp*z**2-1.0074279136024535e-1_dp*z**3+  &
   2.596763157509472e-1_dp*z**4+  &
-  1.2521197829432449_dp*z**5)))/(rz*z**5*(0._dp+r1**2*rz**2+  &
+  1.2521197829432449_dp*z**5)))/(rz*z**5*(r1**2*rz**2+  &
   r1*rz*(1-2._dp*z)-1._dp*z+z**2))+  &
   PL2*((PL4*(-5.24705759683866e-2_dp+4.197646077470928e-1_dp*z**2-  &
   8.395292154941856e-1_dp*z**4))/z**5+(PL3*(-2.62352879841933e-2_dp+  &
