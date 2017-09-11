@@ -2,11 +2,12 @@
 ! ccccccccccc
 
 module RNRQCDClass
-  use constants, only: dp, Pi, Pi2, l2, Zeta3, Euler ; use ToppikClass
+  use constants, only: dp, Pi, Pi2, l2, Zeta3, Euler, Pi3; use ToppikClass
   use DeriGamma, only: DiGam, trigam ; use RunningClass; use AnomDimClass
   use AlphaClass; use NRQCDClass; use VFNSMSRClass; implicit none ;  private
 
-  real (dp), parameter :: FPi = 4 * Pi
+  real (dp)   , parameter :: FPi = 4 * Pi
+  complex (dp), parameter :: cI = (0,1)
 
   public :: qFromV, vC, VcsLL, XiNNLLSoftMixLogc1, vStar, vRootStar, SwitchOff
 
@@ -136,9 +137,9 @@ contains
 
       vt = vC(q, mp, mp, gt); ac = 4 * asLL/3
 
-      Xsec =  18 * (self%Qt * mP/q)**2 *  ImagPart(  (0,1) * vt - ac * (  &
-      Euler - 0.5_dp + l2 + Log( - (0,1) * mP * vt/h/nu/inM ) + &
-      DiGam( 1 - (0,1) * ac/(2 * vt) )  )  )
+      Xsec =  18 * (self%Qt * mP/q)**2 *  ImagPart(  cI * vt - ac * (  &
+      Euler - 0.5_dp + l2 + Log( - cI * mP * vt/h/nu/inM ) + &
+      DiGam( 1 - cI * ac/(2 * vt) )  )  )
 
     else if ( order == 2 ) then
 
@@ -220,8 +221,8 @@ contains
       real (dp)   , intent(in) :: a, X
       complex (dp), intent(in) :: v
 
-      ggg = (0,1) * vt - a * (  Log( - (0,1) * v/nu/h ) + X + Euler + &
-      DiGam( 1 - (0,1) * a/2/v )  )
+      ggg = cI * vt - a * (  Log( - cI * v/nu/h ) + X + Euler + &
+      DiGam( 1 - cI * a/2/v )  )
 
     end function ggg
 
@@ -231,8 +232,8 @@ contains
       real (dp)   , intent(in) :: a, X
       complex (dp), intent(in) :: v
 
-      dggga = - Euler - X - Log( - (0,1) * v/nu/h ) - DiGam( 1 - (0,1) * a/2/v ) &
-      + (0,1) * a * TriGam( 1 - (0,1) * a/2/v )/2/v
+      dggga = - Euler - X - Log( - cI * v/nu/h ) - DiGam( 1 - cI * a/2/v ) &
+      + cI * a * TriGam( 1 - cI * a/2/v )/2/v
 
     end function dggga
 
@@ -242,7 +243,7 @@ contains
       real (dp)   , intent(in) :: a, X
       complex (dp), intent(in) :: v
 
-      dgggv = (0,1) - a * ( 1/v + (0,1) * a * TriGam( 1 - (0,1) * a/2/v )/2/v**2 )
+      dgggv = cI - a * ( 1/v + cI * a * TriGam( 1 - cI * a/2/v )/2/v**2 )
 
     end function dgggv
 
@@ -615,7 +616,7 @@ contains
   complex (dp) function vC(q, m1, m2, gt)
     real (dp), intent(in) :: q, m1, m2, gt
 
-    vC = sqrt(  ( q - 2 * m1 + (0,1) * gt ) /m2  )
+    vC = sqrt(  ( q - 2 * m1 + cI * gt ) /m2  )
 
   end function vC
 
@@ -690,6 +691,79 @@ contains
     xc22 = asuPi**2 * self%beta(0)**2
 
   end function xc22
+
+! ccccccccccc
+
+  complex (dp) function higherOrderLogs(alpha, v, i, j, m, mu, nu)
+    real (dp)  , intent(in) :: alpha, v, m, mu, nu
+    integer    , intent(in) :: i, j
+    real (dp)               :: lnu
+
+    higherOrderLogs = 0
+
+    if (i == 1 .and. j == 3) then
+      higherOrderLogs = 128 * cI * v**3 * alpha * Log(nu)/Pi/9
+    else if (i == 2 .and. j == 1) then
+      higherOrderLogs = - 280 * cI * v * alpha**2 * Log(v)/27
+    else if (i == 2 .and. j == 2) then
+      higherOrderLogs = 170 * cI * v**2 * alpha**2 * Log(nu)/27
+    else if (i == 2 .and. j == 3) then
+      higherOrderLogs = - 1472 * cI * v**3 * alpha**2 * Log(nu)**2/Pi2/27
+    else if (i == 3 .and. j == 1) then
+      lnu = log(nu)
+      higherOrderLogs = - cI * lnu * v * alpha**3 * ( 64343 + 140280 * l2 &
+      - 8940 * lnu + 2955 * Pi2 + 96600 * Log(mu/m) + 17880 * Log(v) )/1215/Pi
+    else if (i == 3 .and. j == 2) then
+      higherOrderLogs = - 2461 * cI * v**2 * alpha**3 * Log(nu)**2/Pi/27
+    else if (i == 3 .and. j == 3) then
+      higherOrderLogs = 67712 * cI * v**3 * alpha**3 * Log(nu)**3/Pi3/243
+    end if
+
+  end function higherOrderLogs
+
+! ccccccccccc
+
+  complex (dp) function EXPterms(alpha, v, i, j, m, mu)
+    real (dp)  , intent(in) :: alpha, v, m, mu
+    integer    , intent(in) :: i, j
+    complex (dp)            :: l1, l3
+
+    EXPterms = 0
+
+    if (i == 0 .and. j == 1) then
+      EXPterms = 2 * cI * v
+    else if (i == 0 .and. j == 3) then
+      EXPterms = 7 * v**3 * cI/12
+    else if (i == 1 .and. j == 0) then
+      EXPterms = - 8 * alpha * Log(- cI * v)/3
+    else if (i == 1 .and. j == 1) then
+      EXPterms = - 32 * cI * v * alpha/Pi/3
+    else if (i == 1 .and. j == 2) then
+      EXPterms = v**2 * alpha * ( 33 - 40 * Log(-2 * cI * m * v/mu) )/9
+    else if (i == 2 .and. j == -1) then
+      EXPterms = 8 * cI * Pi2 * alpha**2/v/27
+    else if (i == 2 .and. j == 0) then
+      l1 = Log(- cI * m * v/mu)
+      EXPterms = 2 * alpha**2 * ( l1 * (69 * l1 + 138 * l2 - 43) + &
+      192 * log(- cI * v) )/27/Pi
+    else if (i == 2 .and. j == 1) then
+      EXPterms = -14.513280990412623_dp * cI * v * alpha**2 * ( Log(-cI * v) - &
+      0.31755295480049456_dp - 0.28545651550321627_dp * Log(- cI * m * v/mu) )
+    else if (i == 3 .and. j == -2) then
+      EXPterms = - 32 * alpha**3 * Zeta3/27/v**2
+    else if (i == 3 .and. j == -1) then
+      EXPterms = - 4 * cI * alpha**3 * (53 * Pi2 + 828 * Zeta3 + &
+      138 * Pi2 * Log(-2 * cI * m * v/mu) )/243/Pi/v
+    else if (i == 3 .and. j == -1) then
+      l1 = Log(- cI * m * v/mu); l3 = Log(- cI * v)
+      EXPterms = - 1.3234297814023874_dp * alpha**3 * ( l1**3 + l1**2 * &
+      (3 * l2 - 4.565197036493422_dp) + (-4.748801815703692_dp - &
+      20.890672104680654_dp * l2 - 14.621887456729755_dp * l3) * l3 + l1 * &
+      (20.107979523788522_dp + l2 * (5.491493383742911_dp + 3 * l2) + &
+      14.621887456729755_dp * l3) )
+    end if
+
+  end function EXPterms
 
 ! ccccccccccc
 
