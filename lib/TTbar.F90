@@ -24,7 +24,8 @@ module RNRQCDClass
 
     procedure, pass (self), public :: VceffsNNLL, VrsLL, V2sLL, VssLL, Vk1sLL, &
     Vk2sLL, VkeffsLL, XiNLL, XiNNLLnonmix, XiNNLLmixUsoft, MLLc2, MNLLc1, m1S, &
-    MNLLplusNNLLnonmixc1, MNNLLAllc1InclSoftMixLog, A1pole, Xsec, Delta1S
+    MNLLplusNNLLnonmixc1, MNNLLAllc1InclSoftMixLog, A1pole, Xsec, Delta1S, &
+    MNLLc1Square, MNNLLc1Square
 
     procedure, pass (self), private :: xc01, xc11, xc12, xc22
 
@@ -141,9 +142,10 @@ contains
 
     else if ( order(:3) == 'NLL' ) then
 
-      c1run = self%MNLLc1(ah, asLL, auLL)
+      ! c1run = self%MNLLc1(ah, asLL, auLL)**2
+      c1run = self%MNLLc1Square(ah, asLL, auLL)
 
-      Xsec = (2 * mpLL * Qt/Q)**2 * c1run**2 * &
+      Xsec = (2 * mpLL * Qt/Q)**2 * c1run * &
       self%A1pole('NLL', En, mPLL, gt, asNLL, 0._dp, mu2)
 
     else if ( order(:4) == 'NNLL' ) then
@@ -153,7 +155,8 @@ contains
 
       Vcc = - ac
 
-      c1run = self%MNNLLAllc1InclSoftMixLog(ah, asLL, auLL, nu, h, 1._dp)
+      ! c1run = self%MNNLLAllc1InclSoftMixLog(ah, asLL, auLL, nu, h, 1._dp)**2
+      c1run = self%MNNLLc1Square(ah, asLL, auLL, nu, h, 1._dp)**2
       c2run = self%MLLc2(ah, auLL)
       V22 = self%V2sLL(ah, asLL, auLL)/FPi
       Vss = self%VssLL(ah, asLL)/FPi
@@ -184,23 +187,22 @@ contains
 
       vt = vC(q, mpLL, inM, gt); En = q - 2 * mp
 
-      rCoul = c1run**2 * mpLL**2 * self%A1pole('NNLL', En, mpLL, &
+      rCoul = c1run * mpLL**2 * self%A1pole('NNLL', En, mpLL, &
       gt, asNNLL, VcsNNLL, h * inM * nu)/18/Pi
 
-      r2 = 2 * c1run * c2run * inM**2/FPi * &
-      ImagPart(vt**2 * ggg(ac, vt, l2 - 0.5_dp) )
+      r2 = 2 * c2run * inM**2/FPi * ImagPart(vt**2 * ggg(ac, vt, l2 - 0.5_dp) )
 
-      rd = c1run**2 * FPi * ( V22 + 2 * Vss) * ImagPart( dgd(ac, vt) )
-      rr = FPi * c1run**2 * Vrr * ImagPart( dgr(ac, vt) )
+      rd = FPi * ( V22 + 2 * Vss) * ImagPart( dgd(ac, vt) )
+      rr = FPi * Vrr * ImagPart( dgr(ac, vt) )
 
-      rk = c1run**2 * (  VkkCACF * ImagPart( dgkCACF(ac, vt) ) + VkkCF2 * &
+      rk = (  VkkCACF * ImagPart( dgkCACF(ac, vt) ) + VkkCF2 * &
       ImagPart( dgkCF2(ac, vt) ) + Vkkk1I * ImagPart( dgkk1I(ac, vt) ) + &
       Vkkk2T * ImagPart( dgkk2T(ac, vt) )  )
 
-      rkin = c1run**2 * ImagPart( dgkin(ac, vt) ); r1S = 0
+      rkin = ImagPart( dgkin(ac, vt) ); r1S = 0
 
       if ( scheme(:2) == 'S1' ) then
-        r1S = c1run**2 * DelmNNLL * inM**2/FPi * ImagPart( dggg(ac, vt) )
+        r1S = DelmNNLL * inM**2/FPi * ImagPart( dggg(ac, vt) )
       end if
 
       Pre = 72 * Pi/Q**2
@@ -535,14 +537,19 @@ contains
 
 ! ccccccccccc
 
-  real (dp) function MNLLplusNNLLnonmixc1(self, ah, as, au)
+  real (dp) function MNLLc1Square(self, ah, as, au)
     class (RNRQCD), intent(in) :: self
     real (dp)     , intent(in) :: ah, as, au
 
-    ! MNLLplusNNLLnonmixc1 = 1 - 8 * ah/3/Pi + ah**2 * (   4 * (l2/2 - 0.625_dp) &
-    ! + 16 * (l2/3 - 2/Pi**2 - 31._dp/24)/9 + (  8 * (11/Pi**2 - 2)/27 + 22 *    &
-    ! self%nl/Pi2/27 + 16 * ( 4 * l2/3 + (9.75_dp - Zeta3)/Pi**2 - 35._dp/18 )/9 &
-    ! - 4 * ( 8 * l2/3 - 179._dp/72 + (151._dp/36 + 13 * Zeta3/2)/Pi**2 )  )/2   )
+    MNLLc1Square = (1 - 16 * ah/3/Pi) * exp( 2 * self%xiNLL(ah, as, au) )
+
+  end function MNLLc1Square
+
+! ccccccccccc
+
+  real (dp) function MNLLplusNNLLnonmixc1(self, ah, as, au)
+    class (RNRQCD), intent(in) :: self
+    real (dp)     , intent(in) :: ah, as, au
 
     MNLLplusNNLLnonmixc1 = 1 - 8 * ah/3/Pi + ah**2 * &
     (0.04127900074317465_dp * self%nl - 3.55919055282743_dp - 14._dp/9 * l2)
@@ -572,10 +579,26 @@ contains
     (2.5925925925925926_dp + 0.13509491152311703_dp * self%beta(0)) * Log(hh) )
 
     MNNLLAllc1InclSoftMixLog = MNNLLAllc1InclSoftMixLog * &
+    exp(  2 * ( self%xiNLL(ah, as, au) + self%xiNNLLmixUsoft(ah, as) + ss * &
+    xiNNLLSoftMixLogc1(ah, nu, hh) + self%xiNNLLnonmix(ah, as, au, hh, ss) )  )
+
+  end function MNNLLAllc1InclSoftMixLog
+
+! ccccccccccc
+
+  real (dp) function MNNLLc1Square(self, ah, as, au, nu, hh, ss)
+    class (RNRQCD), intent(in) :: self
+    real (dp)     , intent(in) :: ah, as, au, nu, hh, ss
+
+    MNNLLc1Square = 1 - 1.6976527263135504_dp * ah + ah**2 *  ( &
+    0.0825580014863493_dp * self%nl - 8.554332805940287_dp - &
+    ( 5.185185185185185_dp + 0.27018982304623407_dp * self%beta(0) ) * Log(hh) )
+
+    MNNLLc1Square = MNNLLc1Square * &
     exp( self%xiNLL(ah, as, au) + self%xiNNLLmixUsoft(ah, as) + ss * &
     xiNNLLSoftMixLogc1(ah, nu, hh) + self%xiNNLLnonmix(ah, as, au, hh, ss) )
 
-  end function MNNLLAllc1InclSoftMixLog
+  end function MNNLLc1Square
 
 ! ccccccccccc
 
