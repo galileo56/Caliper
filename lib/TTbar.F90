@@ -6,7 +6,7 @@ module RNRQCDClass
   use DeriGamma, only: DiGam, trigam ; use RunningClass; use AnomDimClass
   use AlphaClass; use NRQCDClass; use VFNSMSRClass; implicit none ;  private
 
-  real (dp), parameter :: Qt = 2._dp/3, FPi = 4 * Pi
+  real (dp), parameter :: FPi = 4 * Pi
 
   public :: qFromV, vC, VcsLL, XiNNLLSoftMixLogc1, vStar, vRootStar, SwitchOff
 
@@ -14,7 +14,7 @@ module RNRQCDClass
 
   type, public :: RNRQCD
     integer                   :: nl
-    real (dp)                 :: a1, a2, mass
+    real (dp)                 :: a1, a2, mass, Qt
     real (dp), dimension(0:4) :: beta
     type (Running)            :: run
     type (Alpha)              :: AlphaOb
@@ -56,6 +56,9 @@ contains
     1.2345679012345678_dp * nl**2
 
     RNRQCDIn%Upsilon = NRQCD('up', 'MSRn', 'no', MSR, 1, 0, 1, 1)
+
+    if (nl == 5 .or. nl == 3 .or. nl == 1) RNRQCDIn%Qt = 2._dp/3
+    if (nl == 4 .or. nl == 2 .or. nl == 0) RNRQCDIn%Qt = - 1._dp/3
 
   end function RNRQCDIn
 
@@ -133,7 +136,7 @@ contains
 
       vt = vC(q, mp, mp, gt); ac = 4 * asLL/3
 
-      Xsec =  18 * (Qt * mP/q)**2 *  ImagPart(  (0,1) * vt - ac * (  &
+      Xsec =  18 * (self%Qt * mP/q)**2 *  ImagPart(  (0,1) * vt - ac * (  &
       Euler - 0.5_dp + l2 + Log( - (0,1) * mP * vt/h/nu/inM ) + &
       DiGam( 1 - (0,1) * ac/(2 * vt) )  )  )
 
@@ -142,7 +145,7 @@ contains
       ! c1run = self%MNLLc1(ah, asLL, auLL)**2
       c1run = self%MNLLc1Square(ah, asLL, auLL);  En = q - 2 * mP
 
-      Xsec = (2 * mpLL * Qt/Q)**2 * c1run * &
+      Xsec = (2 * mpLL * self%Qt/Q)**2 * c1run * &
       self%A1pole(2, En, mPLL, gt, asNLL, 0._dp, mu2)
 
     else if ( order == 3 ) then
@@ -205,7 +208,7 @@ contains
 
       Pre = 72 * Pi/Q**2
 
-      Xsec = Qt**2 * pre * (rCoul + rr + r1S + r2 + rkin + rd + rk)
+      Xsec = self%Qt**2 * pre * (rCoul + rr + r1S + r2 + rkin + rd + rk)
 
     end if
 
