@@ -91,17 +91,15 @@ contains
     real (dp)                       :: ac, ah, asLL, asNLL, auLL, En, c1run, L,&
     mu1, mu2, asNNLL, c2run, Vcc, V22, Vss, Vrr, VkkCACF, VkkCF2, Vkk, Vkkk1I, &
     Vkkk2T, VcsNNLL, DelmNNLL, rCoul, r2, rd, rr, rk, rkin, r1S, pre, inM, mP, &
-    DeltaLL, aS, mpLL, DeltaNLL, DeltaNNLL, asPi
+    DeltaLL, aS, mPLL, DeltaNLL, DeltaNNLL, asPi
 
     Xsec = 0
 
     if ( scheme(:2) == 'S1' ) then
-
       m1Slist = self%Delta1S(ordMass, 35._dp, lambda, method)
       inM     = sum( m1Slist(:ordMass) )
-
-    else if ( scheme(:4) == 'pole') then
-      inM = self%mass; mP = inM; mpLL = inM
+    else if ( scheme(:4) == 'pole' ) then
+      inM = self%mass; mP = inM; mPLL = inM
     end if
 
     mu1 = h * inM;  mu2 = nu * mu1;  ah = self%run%AlphaQCD(mu1)
@@ -126,8 +124,7 @@ contains
         as = - VcsLL(asNLL)/FPi; L = Log(h * nu/as)
         DeltaLL = as**2/8; as = 3 * as/4
         DeltaNLL = DeltaLL * as * ( self%beta(0) * (L + 1) + self%a1/2 )/Pi
-        mpLL = 1 + DeltaLL; mp = inM * (mpLL + DeltaNLL); mpLL = inM * mpLL
-        En = q - 2 * mP
+        mpLL = 1 + DeltaLL; mP = inM * (mpLL + DeltaNLL); mpLL = inM * mpLL
       end if
 
     end if
@@ -143,7 +140,7 @@ contains
     else if ( order(:3) == 'NLL' ) then
 
       ! c1run = self%MNLLc1(ah, asLL, auLL)**2
-      c1run = self%MNLLc1Square(ah, asLL, auLL)
+      c1run = self%MNLLc1Square(ah, asLL, auLL);  En = q - 2 * mP
 
       Xsec = (2 * mpLL * Qt/Q)**2 * c1run * &
       self%A1pole('NLL', En, mPLL, gt, asNLL, 0._dp, mu2)
@@ -190,19 +187,20 @@ contains
       rCoul = c1run * mpLL**2 * self%A1pole('NNLL', En, mpLL, &
       gt, asNNLL, VcsNNLL, h * inM * nu)/18/Pi
 
-      r2 = 2 * c2run * inM**2/FPi * ImagPart(vt**2 * ggg(ac, vt, l2 - 0.5_dp) )
+      r2 = 2 * c2run * inM**2/FPi * ImagPart(vt**2 * ggg(ac, vt, l2 - 0.5_dp) ) ! * sqrt(c1run)
 
-      rd = FPi * ( V22 + 2 * Vss) * ImagPart( dgd(ac, vt) )
-      rr = FPi * Vrr * ImagPart( dgr(ac, vt) )
+      rd = FPi * ( V22 + 2 * Vss) * ImagPart( dgd(ac, vt) ) ! * c1run
+      rr = FPi * Vrr * ImagPart( dgr(ac, vt) ) ! * c1run
 
       rk = (  VkkCACF * ImagPart( dgkCACF(ac, vt) ) + VkkCF2 * &
       ImagPart( dgkCF2(ac, vt) ) + Vkkk1I * ImagPart( dgkk1I(ac, vt) ) + &
-      Vkkk2T * ImagPart( dgkk2T(ac, vt) )  )
+      Vkkk2T * ImagPart( dgkk2T(ac, vt) )  ) ! * c1run
 
-      rkin = ImagPart( dgkin(ac, vt) ); r1S = 0
+      rkin = ImagPart( dgkin(ac, vt) )! * c1run
+      r1S = 0
 
       if ( scheme(:2) == 'S1' ) then
-        r1S = DelmNNLL * inM**2/FPi * ImagPart( dggg(ac, vt) )
+        r1S = DelmNNLL * inM**2/FPi * ImagPart( dggg(ac, vt) )! * c1run
       end if
 
       Pre = 72 * Pi/Q**2
