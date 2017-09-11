@@ -153,12 +153,12 @@ contains
       Vcc = - ac
 
       ! c1run = self%MNNLLAllc1InclSoftMixLog(ah, asLL, auLL, nu, h, 1._dp)**2
-      c1run = self%MNNLLc1Square(ah, asLL, auLL, nu, h, 1._dp)**2
+      c1run = self%MNNLLc1Square(ah, asLL, auLL, nu, h, 1._dp)
       c2run = self%MLLc2(ah, auLL)
       V22 = self%V2sLL(ah, asLL, auLL)/FPi
       Vss = self%VssLL(ah, asLL)/FPi
       Vrr = self%VrsLL(asLL, auLL)/FPi
-      Vkk = - 28 * asLL**2/9;  VkkCACF = -4 * asLL**2;  VkkCF2 = 8 * asLL**2/9
+      Vkk = - 28 * asLL**2/9;  VkkCACF = - 4 * asLL**2;  VkkCF2 = 8 * asLL**2/9
       Vkkk1I = asLL**2 * self%Vk1sLL( asLL, auLL)
       Vkkk2T = asLL**2 * self%Vk2sLL(asLL, auLL)
       VcsNNLL = self%VceffsNNLL(asNNLL, asLL, auLL)
@@ -577,8 +577,8 @@ contains
     (2.5925925925925926_dp + 0.13509491152311703_dp * self%beta(0)) * Log(hh) )
 
     MNNLLAllc1InclSoftMixLog = MNNLLAllc1InclSoftMixLog * &
-    exp(  2 * ( self%xiNLL(ah, as, au) + self%xiNNLLmixUsoft(ah, as) + ss * &
-    xiNNLLSoftMixLogc1(ah, nu, hh) + self%xiNNLLnonmix(ah, as, au, hh, ss) )  )
+    exp( self%xiNLL(ah, as, au) + self%xiNNLLmixUsoft(ah, as) + ss * &
+    xiNNLLSoftMixLogc1(ah, nu, hh) + self%xiNNLLnonmix(ah, as, au, hh, ss) )
 
   end function MNNLLAllc1InclSoftMixLog
 
@@ -593,8 +593,8 @@ contains
     ( 5.185185185185185_dp + 0.27018982304623407_dp * self%beta(0) ) * Log(hh) )
 
     MNNLLc1Square = MNNLLc1Square * &
-    exp( self%xiNLL(ah, as, au) + self%xiNNLLmixUsoft(ah, as) + ss * &
-    xiNNLLSoftMixLogc1(ah, nu, hh) + self%xiNNLLnonmix(ah, as, au, hh, ss) )
+    exp(  2 * ( self%xiNLL(ah, as, au) + self%xiNNLLmixUsoft(ah, as) + ss * &
+    xiNNLLSoftMixLogc1(ah, nu, hh) + self%xiNNLLnonmix(ah, as, au, hh, ss) )  )
 
   end function MNNLLc1Square
 
