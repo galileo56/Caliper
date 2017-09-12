@@ -138,14 +138,14 @@ module SigmaClass
     Integer            , intent(in)          :: order
     real (dp)          , intent(in)          :: h, Q, gt
     complex (dp)                             :: z
-    real (dp)                                :: mu
+    real (dp)                                :: mu, m
     integer                                  :: i, n
     real (dp), dimension(5)                  :: b
     real (dp), dimension(0:min(order,3))     :: alphaList, rQ
     real (dp), dimension(0:min(order,3) - 1) :: logList
     real (dp), dimension(0:min(order,3) - 1, min(order,3)) :: Rcoef
 
-    mu = h * self%mH; z = ( Q + (0,1) * gt )**2/4/self%mH**2 ; n = min(order,3)
+    m = self%mH; mu = h * m; z = ( Q + (0,1) * gt )**2/4/m**2 ; n = min(order,3)
 
     Rcoef = 0; RQCD = 0; if (order < 0) return; rQ = PiCoef(z,n)
 
@@ -154,7 +154,7 @@ module SigmaClass
 
     logList(0) = 1; alphaList(0) = 1
     if (order > 0) alphaList(1:) = PowList( self%run%alphaQCD(mu)/Pi, n )
-    n = n - 1;  if (order > 1) logList(1:) = PowList( log(mu/Q), n )
+    n = n - 1;  if (order > 1) logList(1:) = PowList( log(h), n )
 
     call self%andim%expandAlpha(Rcoef)
 
@@ -162,9 +162,7 @@ module SigmaClass
       rQ(i) = dot_product( Rcoef(:,i), logList )
     end do
 
-    ! rQ = matmul(logList, Rcoef)
-
-    RQCD = 64 * Pi * self%mH**2 * dot_product( alphaList, rQ )/3/Q**2
+    RQCD = 64 * Pi * m**2 * dot_product( alphaList, rQ )/3/Q**2
 
   end function RQCD
 
