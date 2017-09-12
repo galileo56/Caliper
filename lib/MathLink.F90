@@ -680,6 +680,20 @@ end subroutine f90Pi1
 
 !ccccccccccccccc
 
+subroutine f90Pi3(zr, zi, res)
+  use SigmaClass, only: Pi3; use constants, only: dp; implicit none
+  real (dp), intent(in) :: zr, zi
+  real (dp), intent(out), dimension(2) :: res
+  complex (dp) :: resul
+
+  resul = Pi3( cmplx(zr, zi, kind = dp) )
+
+  res = [ RealPart(resul), ImagPart(resul) ]
+
+end subroutine f90Pi3
+
+!ccccccccccccccc
+
 subroutine f90Pi2(zr, zi, res)
   use SigmaClass, only: P2; use constants, only: dp; implicit none
   real (dp), intent(in) :: zr, zi

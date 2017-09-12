@@ -47,6 +47,7 @@
 :Evaluate:  Pi0Der::usage = "Pi0Der[i,z] i-th derivative of the tree-level massive vacuum polarization function"
 :Evaluate:  Pi1Der::usage = "Pi1Der[i,z] i-th derivative of the one-loop massive vacuum polarization function"
 :Evaluate:  Pi1::usage = "Pi1[z] one-loop massive vacuum polarization function"
+:Evaluate:  Pi3::usage = "Pi3[z] three-loop massive vacuum polarization function"
 :Evaluate:  Pi2::usage = "Pi2[z] two-loop massive vacuum polarization function"
 :Evaluate:  Pi2Der::usage = "Pi2Der[z] derivative of the two-loop massive vacuum polarization function"
 :Evaluate:  P2::usage = "P2[z] integrand for massive bubble"
@@ -1782,6 +1783,14 @@
 :Begin:
 :Function:      pi1
 :Pattern:       Pi1[z_]
+:Arguments:     {Re[z], Im[z]}
+:ArgumentTypes: {Real, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      pi3
+:Pattern:       Pi3[z_]
 :Arguments:     {Re[z], Im[z]}
 :ArgumentTypes: {Real, Real}
 :ReturnType:    Manual
@@ -4658,6 +4667,19 @@ static void pi1(double zr, double zi){
   double res[2];
 
    f90pi1_(&zr, &zi, res);
+
+   MLPutFunction(stdlink, "Complex", 2);
+   MLPutReal(stdlink, res[0]); MLPutReal(stdlink, res[1]);
+
+   MLEndPacket(stdlink);
+}
+
+extern double f90pi3_(double* zr, double* zi, double* result);
+
+static void pi3(double zr, double zi){
+  double res[2];
+
+   f90pi3_(&zr, &zi, res);
 
    MLPutFunction(stdlink, "Complex", 2);
    MLPutReal(stdlink, res[0]); MLPutReal(stdlink, res[1]);
