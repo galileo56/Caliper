@@ -5406,10 +5406,40 @@ gammaZ, sin2ThetaW, amZ, mT, muT, mB, muB, mC, muC, mu, Q, res)
   alphaMass = Running(nf, runMass, alphaAll, 0._dp)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   MatEl     = Sigma(alphaMass, EW)
-
   res       = MatEl%RhadMass(curr(:6), order, mu, Q)
 
 end subroutine f90RhadMass
+
+!ccccccccccccccc
+
+subroutine f90RQCD(str, orderAlp, runAlp, runMass, order, gt, mZ, &
+amZ, mT, muT, mB, muB, mC, muC, h, Q, res)
+
+  use RunningClass; use AlphaClass; use SigmaClass; use ElectroWeakClass
+  use constants, only: dp; use AnomDimClass; implicit none
+
+  character (len = *), intent(in ) :: str
+  integer            , intent(in ) :: order, runAlp, orderAlp, runMass
+  real (dp)          , intent(in ) :: mZ, amZ, h, mT, muT, mB, muB, mC, muC, Q, gt
+  real (dp)          , intent(out) :: res
+  type (Running)                   :: alphaMass
+  type (Alpha)                     :: alphaAll
+  type (Sigma)                     :: MatEl
+  type (ElectroWeak)               :: EW
+  integer                          :: i
+  type (AnomDim), dimension(3:6)   :: AnDim
+
+  do i = 3, 6
+    AnDim(i) = AnomDim( str(:5), i, 0._dp )
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  alphaMass = Running(6, runMass, alphaAll, 0._dp)
+  EW        = ElectroWeak(mZ, 0._dp, 0._dp)
+  MatEl     = Sigma(alphaMass, EW)
+  res       = MatEl%RQCD(order, gt, h, Q)
+
+end subroutine f90RQCD
 
 !ccccccccccccccc
 

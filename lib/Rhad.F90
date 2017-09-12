@@ -526,9 +526,9 @@ end function Pi0Der
   real (dp), dimension( 0:min(n,3) ) :: res
 
   if (n >= 0) res(0) = ImagPart( Pi0(z) )
-  if (n >= 1) res(2) = ImagPart( Pi1(z) )
-  if (n >= 2) res(3) = ImagPart( P2(z)  )
-  if (n >= 3) res(4) = ImagPart( Pi3(z) )
+  if (n >= 1) res(1) = 4 * ImagPart( Pi1(z) )/3
+  if (n >= 2) res(2) = ImagPart( P2(z)  )
+  if (n >= 3) res(3) = ImagPart( Pi3(z) )
 
   end function PiCoef
 
