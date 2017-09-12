@@ -26,7 +26,7 @@ module RNRQCDClass
     procedure, pass (self), public :: VceffsNNLL, VrsLL, V2sLL, VssLL, Vk1sLL, &
     Vk2sLL, VkeffsLL, XiNLL, XiNNLLnonmix, XiNNLLmixUsoft, MLLc2, MNLLc1, m1S, &
     MNLLplusNNLLnonmixc1, MNNLLAllc1InclSoftMixLog, A1pole, Xsec, Delta1S, &
-    MNLLc1Square, MNNLLc1Square
+    MNLLc1Square, MNNLLc1Square, Rexp
 
     procedure, pass (self), private :: xc01, xc11, xc12, xc22
 
@@ -341,6 +341,27 @@ contains
     end function dgkk1I
 
   end function Xsec
+
+! ccccccccccc
+
+  real (dp) function Rexp(self, order, q, gt, h, nu)
+    class (RNRQCD), intent(in) :: self
+    integer       , intent(in) :: order
+    real (dp)     , intent(in) :: q, gt, h, nu
+    real (dp)                  :: mu, alpha, m
+    complex (dp)               :: logs, v
+    integer                    :: i
+
+    m = self%mass; mu = h * m; logs = 0; alpha = self%run%AlphaQCD(mu)
+    v = vC(q, m, m, gt)
+
+    do i = 0, order
+      logs = logs + EXPterms(alpha, v, i, 2 * order - 1 - i, m, mu)
+    end do
+
+    logs = 4 * m**2/q**2 * logs
+
+  end function Rexp
 
 ! ccccccccccc
 
@@ -695,7 +716,8 @@ contains
 ! ccccccccccc
 
   complex (dp) function higherOrderLogs(alpha, v, i, j, m, mu, nu)
-    real (dp)  , intent(in) :: alpha, v, m, mu, nu
+    real (dp)  , intent(in) :: alpha, m, mu, nu
+    complex (dp), intent(in) :: v
     integer    , intent(in) :: i, j
     real (dp)               :: lnu
 
@@ -724,9 +746,10 @@ contains
 ! ccccccccccc
 
   complex (dp) function EXPterms(alpha, v, i, j, m, mu)
-    real (dp)  , intent(in) :: alpha, v, m, mu
-    integer    , intent(in) :: i, j
-    complex (dp)            :: l1, l3
+    real (dp)   , intent(in) :: alpha, m, mu
+    complex (dp), intent(in) :: v
+    integer     , intent(in) :: i, j
+    complex (dp)             :: l1, l3
 
     EXPterms = 0
 
@@ -747,7 +770,7 @@ contains
       EXPterms = 2 * alpha**2 * ( l1 * (69 * l1 + 138 * l2 - 43) + &
       192 * log(- cI * v) )/27/Pi
     else if (i == 2 .and. j == 1) then
-      EXPterms = -14.513280990412623_dp * cI * v * alpha**2 * ( Log(-cI * v) - &
+      EXPterms = - 14.513280990412623_dp * cI * v * alpha**2 * ( Log(-cI * v) - &
       0.31755295480049456_dp - 0.28545651550321627_dp * Log(- cI * m * v/mu) )
     else if (i == 3 .and. j == -2) then
       EXPterms = - 32 * alpha**3 * Zeta3/27/v**2
