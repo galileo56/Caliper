@@ -142,7 +142,7 @@
 :Evaluate:  Rhad::usage = "Rhad[scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
 :Evaluate:  RhadCoefs::usage = "RhadCoefs[nf] computes the massless total hadronic cross section series coefficients."
 :Evaluate:  RhadMass::usage = "RhadMass[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massive total hadronic cross section."
-:Evaluate:  RQCD::usage = "RQCD[scheme, orderAlpha, runAlpha, runMass, order, gt, Mz, aMz, mT, muT, mB, muB, mC, muC, h, Q] computes the massive total hadronic cross section for an unstable top quark."
+:Evaluate:  RQCD::usage = "RQCD[scheme, orderAlpha, runAlpha, runMass, order, gt, Mz, aMz, mT, h, Q] computes the massive total hadronic cross section for an unstable top quark."
 :Evaluate:  LambdaQCD::usage = "LambdaQCD[scheme, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  Hyper2F1::usage="Hyper2F1[a, b, c, x] Hypergeometric Function in Fortran"
 :Evaluate:  HyperF32Exact::usage="HyperF32Exact[w, x] Hypergeometric Function in Fortran"
@@ -2331,11 +2331,11 @@
 :Begin:
 :Function:      rqcd
 :Pattern:       RQCD[scheme_, orderAlpha_, runAlpha_, runMass_, order_, gt_,
-                Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, h_, Q_]
+                Mz_, aMz_, mT_, h_, Q_]
 :Arguments:     {scheme, orderAlpha, runAlpha, runMass, order, gt, Mz,
-                aMz, mT, muT, mB, muB, mC, muC, h, Q}
+                aMz, mT, h, Q}
 :ArgumentTypes: {String, Integer, Integer, Integer, Integer, Real, Real,
-                Real, Real, Real, Real, Real, Real, Real, Real, Real}
+                Real, Real, Real, Real}
 :ReturnType:    Real
 :End:
 
@@ -5689,17 +5689,15 @@ double mT, double muT, double mB, double muB, double mC, double muC, double mu, 
 
 extern double f90rqcd_(char const* str, int* orderAlpha, int* runAlpha,
 int* runMass, int* order, double* gt, double* Mz,  double* aMz, double* mT,
-double* muT, double* mB, double* muB, double* mC, double* muC, double* h,
-double * Q, double* res);
+double* h, double * Q, double* res);
 
 static double rqcd(char const* str, int orderAlpha, int runAlpha, int runMass,
-int order, double gt, double Mz, double aMz, double mT, double muT, double mB,
-double muB, double mC, double muC, double h, double Q){
+int order, double gt, double Mz, double aMz, double mT, double h, double Q){
 
   double res;
 
   f90rqcd_(str, &orderAlpha, &runAlpha, &runMass, &order, &gt, &Mz,
-  &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &h, &Q, &res);
+  &aMz, &mT, &h, &Q, &res);
 
  return res;
 }
