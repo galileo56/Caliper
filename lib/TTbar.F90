@@ -350,16 +350,26 @@ contains
     real (dp)     , intent(in) :: q, gt, h, nu
     real (dp)                  :: mu, alpha, m
     complex (dp)               :: logs, v
-    integer                    :: i
+    integer                    :: i, j
 
-    m = self%mass; mu = h * m; logs = 0; alpha = self%run%AlphaQCD(mu)
-    v = vC(q, m, m, gt)
+    Rexp = 0; if (order < 1) return
+
+    m = self%mass; mu = h * m; alpha = self%run%AlphaQCD(mu)
+    v = vC(q, m, m, gt); logs = 0
 
     do i = 0, order
-      logs = logs + EXPterms(alpha, v, i, 2 * order - 1 - i, m, mu)
+      do j = 1, order
+        logs = logs + EXPterms(alpha, v, i, j - i, m, mu)
+      end do
     end do
 
-    logs = 4 * m**2/q**2 * logs
+    do i = 0, order
+      do j = order + 1, 3 * (order - 1)
+        logs = logs + higherOrderLogs(alpha, v, i, j, m, mu, nu)
+      end do
+    end do
+
+    Rexp = 4 * m**2/q**2 * ImagPart(logs)
 
   end function Rexp
 
