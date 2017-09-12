@@ -2330,12 +2330,11 @@
 
 :Begin:
 :Function:      rqcd
-:Pattern:       RQCD[scheme_, runAlpha_, runMass_, order_, gt_,
-                Mz_, aMz_, mT_, h_, Q_]
-:Arguments:     {scheme, runAlpha, runMass, order, gt, Mz,
-                aMz, mT, h, Q}
-:ArgumentTypes: {String, Integer, Integer, Integer, Integer, Real, Real,
-                Real, Real, Real, Real}
+:Pattern:       RQCD[scheme_, runAlpha_, runMass_, order_, gt_, Mz_, aMz_, mT_,
+                h_, Q_]
+:Arguments:     {scheme, runAlpha, runMass, order, gt, Mz, aMz, mT, h, Q}
+:ArgumentTypes: {String, Integer, Integer, Integer, Real, Real, Real, Real,
+                Real, Real}
 :ReturnType:    Real
 :End:
 
