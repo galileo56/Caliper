@@ -22,7 +22,7 @@ module SigmaClass
    contains
 
     procedure, pass(self), public :: RhadMass, SetAlpha, SetMTop, SetMBottom, &
-    Rhad, SetMCharm, RHadCoefs
+    Rhad, SetMCharm, RHadCoefs, RQCD
 
   end type Sigma
 
@@ -119,8 +119,8 @@ module SigmaClass
     integer                                  :: i, n
 
     rQ = 1;  logList(0) = 1; alphaList(0) = 1 ; n = min(order,4) - 1
-    if (order > 1)   logList(1:) = PowList( log(mu/Q), n)
-    if (order > 0) alphaList(1:) = PowList( self%run%alphaQCD(mu)/Pi, min(order,4) )
+    if (order > 1)   logList(1:) = PowList( log(mu/Q), n )
+    if (order > 0) alphaList(1:) = PowList( self%run%alphaQCD(mu)/Pi, n + 1 )
 
     alpha_loop: do i = 2, min(order,4)
       rQ(i) = dot_product( self%RhadCoef(:n,i), logList )
@@ -129,6 +129,37 @@ module SigmaClass
     Rhad = dot_product( alphaList, rQ )
 
   end function Rhad
+
+!ccccccccccccccc
+
+  real (dp) function RQCD(self, order, gt, h, Q)
+    class (Sigma)      , intent(in)          :: self
+    Integer            , intent(in)          :: order
+    real (dp)          , intent(in)          :: h, Q, gt
+    complex (dp)                             :: z
+    real (dp)                                :: mu
+    integer                                  :: i, n
+    real (dp), dimension(0:min(order,3))     :: alphaList, rQ
+    real (dp), dimension(0:min(order,3) - 1) :: logList
+    real (dp), dimension(0:min(order,3) - 1, min(order,3)) :: Rcoef
+
+    mu = h * self%m; z = ( Q + (0,1) * gt )**2/4/self%m**2 ; n = min(order,3)
+
+    Rcoef= 0; rQ = PiCoef(z,n); Rcoef(0,:n) = rQ(1:); rQ(1:) = 0
+
+    logList(0) = 1; alphaList(0) = 1
+    if (order > 0) alphaList(1:) = PowList( self%run%alphaQCD(mu)/Pi, n )
+    n = n + 1;  if (order > 1) logList(1:) = PowList( log(mu/Q), n )
+
+    call self%andim%expandAlpha(Rcoef)
+
+    do i = 1, n
+      rQ(i) = dot_product( Rcoef(:n,i), logList )
+    end do
+
+    RQCD = rQ(0) + dot_product( alphaList, rQ )
+
+  end function RQCD
 
 !ccccccccccccccc
 
@@ -489,10 +520,24 @@ end function Pi0Der
 
 !ccccccccccccccc
 
+  function PiCoef(z, n) result(res)
+  complex (dp), intent(in)           :: z
+  integer     , intent(in)           :: n
+  real (dp), dimension( 0:min(n,3) ) :: res
+
+  if (n >= 0) res(0) = ImagPart( Pi0(z) )
+  if (n >= 1) res(2) = ImagPart( Pi1(z) )
+  if (n >= 2) res(3) = ImagPart( P2(z)  )
+  if (n >= 3) res(4) = ImagPart( Pi3(z) )
+
+  end function PiCoef
+
+!ccccccccccccccc
+
 complex (dp) function Pi1Der(i, z)
   integer     , intent(in) :: i
   complex (dp), intent(in) :: z
-  complex (dp) :: uu, uuDer, uuDer2, uuDer3
+  complex (dp)             :: uu, uuDer, uuDer2, uuDer3
 
   Pi1Der = 0; if (i > 0) uu = u(z); if (i > 0) uuDer = uDer(1,uu)
   if (i > 0) uuDer2 = uDer(2,uu);  if (i > 1) uuDer3 = uDer(3,uu)
