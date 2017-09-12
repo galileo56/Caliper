@@ -41,15 +41,15 @@ module AnomDimClass
     procedure, pass(self), public :: expandAlpha, wTildeExpand, kTildeExpand, &
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
     bHQETgamma, wTildeHm, GammaRComputer, sCoefRecursive, N12Generic, PScoef, &
-    sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12, sCoefGeneric, cCoeff, &
-    P12Generic, MatchingAlpha, MatchingAlphaLog, MatchingAlphaUp
+    sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12, sCoefGeneric, cCoeff,&
+    P12Generic, MatchingAlpha, MatchingAlphaLog, MatchingAlphaUp, alphaMatching
 
-   procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
-   kTildeComplex, rootReal, alphaMatching, rootComplex
+    procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
+    kTildeComplex, rootReal, rootComplex
 
-   generic, public                :: wTilde => wTildeReal, wTildeComplex
-   generic, public                :: kTilde => kTildeReal, kTildeComplex
-   generic, public                :: root   => rootReal, rootComplex
+    generic, public                :: wTilde => wTildeReal, wTildeComplex
+    generic, public                :: kTilde => kTildeReal, kTildeComplex
+    generic, public                :: root   => rootReal, rootComplex
 
   end type AnomDim
 
@@ -1335,8 +1335,6 @@ end function MatchingAlphaUp
     real (dp), dimension(:), intent(in)      :: b
     real (dp), dimension( size(b), size(b) ) :: c
     integer                                  :: n, j
-
-    ! if ( size(a) /= size(b) )
 
     c(1,:) = b
 

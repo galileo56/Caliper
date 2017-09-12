@@ -139,13 +139,17 @@ module SigmaClass
     complex (dp)                             :: z
     real (dp)                                :: mu
     integer                                  :: i, n
+    real (dp), dimension(4)                  :: b
     real (dp), dimension(0:min(order,3))     :: alphaList, rQ
     real (dp), dimension(0:min(order,3) - 1) :: logList
     real (dp), dimension(0:min(order,3) - 1, min(order,3)) :: Rcoef
 
     mu = h * self%m; z = ( Q + (0,1) * gt )**2/4/self%m**2 ; n = min(order,3)
 
-    Rcoef= 0; rQ = PiCoef(z,n); Rcoef(0,:n) = rQ(1:); rQ(1:) = 0
+    Rcoef = 0; rQ = PiCoef(z,n)
+
+    b = getInverse( self%andim%alphaMatching(self%nf + 1) )
+    call alphaReExpand( rQ(1:), b(:3) ); Rcoef(0,:n) = rQ(1:); rQ(1:) = 0
 
     logList(0) = 1; alphaList(0) = 1
     if (order > 0) alphaList(1:) = PowList( self%run%alphaQCD(mu)/Pi, n )
