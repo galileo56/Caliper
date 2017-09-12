@@ -1287,7 +1287,8 @@ end function MatchingAlphaUp
   pure function MSRDelta(self, type) result(coef)
     class (AnomDim)    , intent(in) :: self
     character (len = *), intent(in) :: type
-    real (dp), dimension(4)         :: coef, b
+    real (dp), dimension(4)         :: coef
+    real (dp), dimension(5)         :: b
 
     if ( type(:4) == 'MSRn' ) then
 
@@ -1297,13 +1298,13 @@ end function MatchingAlphaUp
 
       coef = MSbarDelta(self%nf, 1, self%err)
       b = getInverse( self%alphaMatching(self%nf + 1) )
-      call alphaReExpand(coef, b)
+      call alphaReExpand( coef, b(:4) )
 
     else if ( type(:5) == 'charm' ) then
 
       coef = MSbarDelta(self%nf - 1, 2, self%err)
       b = getInverse( self%alphaMatching(self%nf + 1) )
-      call alphaReExpand(coef, b)
+      call alphaReExpand( coef, b(:4) )
 
     end if
 

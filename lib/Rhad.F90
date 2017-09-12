@@ -13,7 +13,7 @@ module SigmaClass
    private
    integer                        :: nf
    real (dp), dimension(0:3,4)    :: RhadCoef
-   real (dp)                      :: m
+   real (dp)                      :: m, mH
    type (AnomDim)                 :: andim
    type (Running)                 :: run
    type (ElectroWeak)             :: EW
@@ -45,6 +45,7 @@ module SigmaClass
     nf = InitSigma%andim%numFlav();   InitSigma%nf    = nf
     InitSigma%m = run%scales('mL');   if (nf < 5) InitSigma%m = 0
     InitSigma%EW = EW             ;   InitSigma%scheme = run%scheme()
+    InitSigma%mH = run%scales('mH')
 
     InitSigma%RhadCoef = 0;  InitSigma%RhadCoef(0,1) = 1
     InitSigma%RhadCoef(0,2) = 1.985707398577798_dp   - 0.11529539789360388_dp * nf
@@ -122,9 +123,9 @@ module SigmaClass
     if (order > 1)   logList(1:) = PowList( log(mu/Q), n )
     if (order > 0) alphaList(1:) = PowList( self%run%alphaQCD(mu)/Pi, n + 1 )
 
-    alpha_loop: do i = 2, min(order,4)
+    do i = 2, n + 1
       rQ(i) = dot_product( self%RhadCoef(:n,i), logList )
-    end do alpha_loop
+    end do
 
     Rhad = dot_product( alphaList, rQ )
 
@@ -139,29 +140,31 @@ module SigmaClass
     complex (dp)                             :: z
     real (dp)                                :: mu
     integer                                  :: i, n
-    real (dp), dimension(4)                  :: b
+    real (dp), dimension(5)                  :: b
     real (dp), dimension(0:min(order,3))     :: alphaList, rQ
     real (dp), dimension(0:min(order,3) - 1) :: logList
     real (dp), dimension(0:min(order,3) - 1, min(order,3)) :: Rcoef
 
-    mu = h * self%m; z = ( Q + (0,1) * gt )**2/4/self%m**2 ; n = min(order,3)
+    mu = h * self%mH; z = ( Q + (0,1) * gt )**2/4/self%mH**2 ; n = min(order,3)
 
-    Rcoef = 0; rQ = PiCoef(z,n)
+    Rcoef = 0; RQCD = 0; if (order < 0) return; rQ = PiCoef(z,n)
 
     b = getInverse( self%andim%alphaMatching(self%nf + 1) )
-    call alphaReExpand( rQ(1:), b(:3) ); Rcoef(0,:n) = rQ(1:); rQ(1:) = 0
+    call alphaReExpand( rQ(1:), b(:3) ); Rcoef(0,:) = rQ(1:); rQ(2:) = 0
 
     logList(0) = 1; alphaList(0) = 1
     if (order > 0) alphaList(1:) = PowList( self%run%alphaQCD(mu)/Pi, n )
-    n = n + 1;  if (order > 1) logList(1:) = PowList( log(mu/Q), n )
+    n = n - 1;  if (order > 1) logList(1:) = PowList( log(mu/Q), n )
 
     call self%andim%expandAlpha(Rcoef)
 
-    do i = 1, n
-      rQ(i) = dot_product( Rcoef(:n,i), logList )
+    do i = 2, n + 1
+      rQ(i) = dot_product( Rcoef(:,i), logList )
     end do
 
-    RQCD = rQ(0) + dot_product( alphaList, rQ )
+    ! rQ = matmul(logList, Rcoef)
+
+    RQCD = 64 * Pi * self%mH**2 * dot_product( alphaList, rQ )/3/Q**2
 
   end function RQCD
 
@@ -529,10 +532,10 @@ end function Pi0Der
   integer     , intent(in)           :: n
   real (dp), dimension( 0:min(n,3) ) :: res
 
-  if (n >= 0) res(0) = ImagPart( Pi0(z) )
-  if (n >= 1) res(1) = 4 * ImagPart( Pi1(z) )/3
-  if (n >= 2) res(2) = ImagPart( P2(z)  )
-  if (n >= 3) res(3) = ImagPart( Pi3(z) )
+  if (n >= 0) res(0) = ImagPart( z * Pi0(z) )
+  if (n >= 1) res(1) = 4 * ImagPart( z * Pi1(z) )/3
+  if (n >= 2) res(2) = ImagPart( z * P2(z)  )
+  if (n >= 3) res(3) = ImagPart( z * Pi3(z) )
 
   end function PiCoef
 
