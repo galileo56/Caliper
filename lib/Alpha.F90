@@ -329,8 +329,7 @@ end function alphaGenericComplexFlavor
       if (run > 1) then
         b(1,1) = aLL * cCoef(1) * log(aLL/amZ)
         alphaGenericReal = 1 + b(1,1)
-        a0List(0) = 1; a0List(1:) = powList(amZ , 20)
-        aLList(0) = 1; aLList(1:) = powList(aLL, 20)
+        a0List = powList0(amZ , 20);  aLList = powList0(aLL, 20)
       end if
 
       do n = 2, 20
@@ -374,8 +373,8 @@ end function alphaGenericComplexFlavor
       if (run > 1) b(1,1) = aLL * cCoef(1) * log(aLL/a0)
 
       if (run > 2) then
-        a0List(0) = 1; a0List(1:run - 1) = powList(a0 , run - 1)
-        aLList(0) = 1; aLList(1:run - 1) = powList(aLL, run - 1)
+        a0List(:run - 1) = powList0(a0 , run - 1)
+        aLList(:run - 1) = powList0(aLL, run - 1)
       end if
 
       do n = 2, run - 1
@@ -575,8 +574,7 @@ end function alphaGenericComplexFlavor
       if (run > 1) then
         b(1,1) = aLL * cCoef(1) * log(aLL/amZ)
         alphaGenericComplex = 1 + b(1,1)
-        a0List(0) = 1; a0List(1:) = powList(amZ , 20)
-        aLList(0) = 1; aLList(1:) = powList(aLL, 20)
+        a0List = powList0(amZ , 20);  aLList = powList0(aLL, 20)
       end if
 
       do n = 2, 20
@@ -620,8 +618,8 @@ end function alphaGenericComplexFlavor
       if (run > 1) b(1,1) = aLL * cCoef(1) * log(aLL/a0)
 
       if (run > 2) then
-        a0List(0) = 1; a0List(1:run - 1) = powList(a0 , run - 1)
-        aLList(0) = 1; aLList(1:run - 1) = powList(aLL, run - 1)
+        a0List(:run - 1) = powList0(a0 , run - 1)
+        aLList(:run - 1) = powList0(aLL, run - 1)
       end if
 
       do n = 2, run - 1
@@ -766,7 +764,7 @@ end function alphaGenericComplexFlavor
     real (dp), dimension(0:self%n  )            :: lgList
     real (dp), dimension(0:4, 5    )            :: b
 
-    lgList(0) = 1; lgList(1:) = powList(lg, self%n)
+    lgList = powList0(lg, self%n)
     b = self%andim(nf)%MatchingAlphaLog(direction)
 
     e = matmul( lgList, b(:self%n, :self%n + 1) )
@@ -785,7 +783,7 @@ end function alphaGenericComplexFlavor
   !   real (dp), dimension(self%n + 1,self%n + 1) :: ePow
   !   integer                                     :: n, i
   !
-  !   lgList(0) = 1; lgList(1:) = powList(lg, self%n); e = 0; e(1) = 1; ePow = 0
+  !   lgList = powList0(lg, self%n); e = 0; e(1) = 1; ePow = 0
   !
   !   b = 0; c = 0; c(0,1) = 1 ;  b(0,1:) = self%andim(nf)%MatchingAlpha()
   !   call self%andim(nf    )%expandAlpha( b(:,1:) )

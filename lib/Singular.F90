@@ -1804,7 +1804,7 @@ module SingularClass
     CI = (0, 1);  C11 = (1, 1);  z = C11 * x - CI/10; y = z/pmid
     t = CI * y ;  tmuS = t * self%muSEuler; lgc = log(tmuS)
 
-    logTab(0) = 1; logTab(1:) = powList(lgc, 2*order)
+    logTab = powList0(lgc, 2*order)
 
     core = sum( self%MatAdded(:2 * order, order) * logTab )
 
@@ -2414,7 +2414,7 @@ module SingularClass
         logList = [ ( lg**i/i, i = 1, 2*order ) ]; SumKer1 = self%MatHJMFO(0,:order)
         SumKer1 = SumKer1 + matmul( logList, self%MatHJMFO(1:2*order, :order) )
       else
-        logList(1) = 1; logList(2:) = powList(lg, 2*order - 1)
+        logList = powList0(lg, 2*order - 1)
         SumKer1 = matmul( logList, self%MatHJMFO(1:2*order, :order) )/rho1
       end if
 
@@ -2424,7 +2424,7 @@ module SingularClass
         logList = [ ( lg**i/i, i = 1, 2*order ) ]; SumKer2 = self%MatHJMFO(0,:order)
         SumKer2 = SumKer2 + matmul( logList, self%MatHJMFO(1:2*order, :order) )
       else
-        logList(1) = 1; logList(2:) = powList(lg, 2*order - 1)
+        logList = powList0(lg, 2*order - 1)
         SumKer2 = matmul( logList, self%MatHJMFO(1:2*order, :order) )/rho2
       end if
 
@@ -2546,7 +2546,7 @@ module SingularClass
 
         facw = self%muSEuler**(w1 + w2)/p1**(1+w1)/p2**(1+w2)
 
-        lg = log(p2/p1); lgList(0) = 1; lgList(1:) = PowList(lg, 2*isoft)
+        lg = log(p2/p1); lgList = PowList0(lg, 2*isoft)
 
         DoubleSing = DoubleSing + Sum( lgList * SoftNGL1(:,0) ) * facw
 
@@ -3067,7 +3067,7 @@ module SingularClass
 
         facw = self%muSEuler**(w1 + w2)/p1**(1+w1)/p2**(1+w2)
 
-        lg = log(p2/p1); lgList(0) = 1; lgList(1:) = PowList(lg, 2*isoft)
+        lg = log(p2/p1); lgList = PowList0(lg, 2*isoft)
 
         DoubleSingWidth = DoubleSingWidth + Sum( lgList * SoftNGL1(:,0) ) * facw
 

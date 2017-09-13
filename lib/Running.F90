@@ -329,7 +329,7 @@ module RunningClass
      real (dp), dimension(0:4)   :: logList
 
      alphaList = PowList( self%alphaQCD(mu)/Pi, 4 )
-     LogList(0) = 1; LogList(1:) = PowList(  log( mu/self%MSbarMass(mu) ), 4  )
+     LogList = PowList0(  log( mu/self%MSbarMass(mu) ), 4  )
 
      delta = alphaList * matmul( logList, self%tab )
 
