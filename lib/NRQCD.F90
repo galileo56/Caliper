@@ -598,8 +598,8 @@ module NRQCDClass
     real (dp)                       :: alp, Rmass, mass, factor, lg, rat, delta2
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
-    alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1; delta2 = 0
-    factor = - 2 * alp**2/9/self%n**2 ; logList(0) = 1 ; deltaM = 0
+    alphaList = PowList0(alp/Pi,4); delta(0) = 1; delta2 = 0
+    factor = - 2 * alp**2/9/self%n**2; deltaM = 0
 
     if ( self%scheme(:4) == 'pole' ) then
       delta(1:) = 0; Rmass = 0; mass = self%mH
@@ -611,7 +611,7 @@ module NRQCDClass
       mass = self%MSR%MSRmass(self%up, self%scheme, order, R, lambda, method)
     end if
 
-    logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / mass) + self%harm, 3 )
+    logList = PowList0( log(3 * self%n * mu / 4 / alp / mass) + self%harm, 3 )
 
     if ( self%scheme(:4) == 'pole' ) then
 
@@ -716,9 +716,8 @@ module NRQCDClass
     real (dp)                       :: alp, Rmass, mass, factor, mTree, lg, rat
 
     list = 0; list(0) = 1 ; alp = self%alphaMass%alphaQCD(mu); coefMSR = 0
-    alphaList(0) = 1; alphaList(1:) = PowList(alp/Pi,4); delta(0) = 1
-    factor = - 2 * alp**2/9/self%n**2 ; logList(0) = 1; mTree = mUpsilon/2
-    deltaM = 0; listInv = 0; listInv(0) = 1
+    alphaList = PowList0(alp/Pi,4); delta(0) = 1 ; mTree = mUpsilon/2
+    factor = - 2 * alp**2/9/self%n**2 ; deltaM = 0; listInv = 0; listInv(0) = 1
 
     if ( self%scheme(:4) == 'pole' ) then
       delta(1:) = 0; Rmass = 0; mass = self%mH
@@ -730,7 +729,7 @@ module NRQCDClass
       mass = self%MSR%MSRmass(self%up, self%scheme, order, R, lambda, method)
     end if
 
-    logList(1:) = PowList( log(3 * self%n * mu / 4 / alp / mTree) + self%harm, 3 )
+    logList = PowList0( log(3 * self%n * mu / 4 / alp / mTree) + self%harm, 3 )
 
     listInv(1:) = matmul( self%c(:3,:), logList )
     listInv(4) = listInv(4) + self%c(4,0) * log(alp)
