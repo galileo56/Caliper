@@ -24,9 +24,9 @@ module RNRQCDClass
   contains
 
     procedure, pass (self), public :: VceffsNNLL, VrsLL, V2sLL, VssLL, Vk1sLL, &
-    Vk2sLL, VkeffsLL, XiNLL, XiNNLLnonmix, XiNNLLmixUsoft, MLLc2, MNLLc1, m1S, &
+    Vk2sLL, VkeffsLL, XiNLL, XiNNLLnonmix, XiNNLLmixUsoft, MLLc2, MNLLc1, &
     MNLLplusNNLLnonmixc1, MNNLLAllc1InclSoftMixLog, A1pole, Xsec, Delta1S, &
-    MNLLc1Square, MNNLLc1Square, Rexp
+    MNLLc1Square, MNNLLc1Square, Rexp, QSwitch
 
     procedure, pass (self), private :: xc01, xc11, xc12, xc22
 
@@ -58,17 +58,30 @@ contains
 
     RNRQCDIn%Upsilon = NRQCD('up', 'MSRn', 'no', MSR, 1, 0, 1, 1)
 
-    if (nl == 5 .or. nl == 3 .or. nl == 1) RNRQCDIn%Qt = 2._dp/3
+    if (nl == 5 .or. nl == 3 .or. nl == 1) RNRQCDIn%Qt =   2._dp/3
     if (nl == 4 .or. nl == 2 .or. nl == 0) RNRQCDIn%Qt = - 1._dp/3
 
   end function RNRQCDIn
 
 ! ccccccccccc
 
-  real (dp) function M1S(self)
-    class (RNRQCD), intent(in) :: self
+  real (dp) function QSwitch(self, order, ordMass, gt, R, lambda, method)
+    class (RNRQCD)  , intent(inout) :: self
+    character (len = *), intent(in) :: method
+    integer            , intent(in) :: order, ordMass
+    real (dp)          , intent(in) :: R, lambda, gt
+    real (dp), dimension(0:4)       :: res
+    real (dp)                       :: m1S, m
+    real (dp), dimension(4)         :: A
 
-  end function M1S
+    res = self%Delta1S(order, R, lambda, method); m1S = sum( res(:ordMass) )
+    m = self%run%MSRMass('MSRn', order, self%mass, lambda, method)
+    A = powList( m/m1S, 4 )
+
+    QSwitch = 2 * m1S + Sqrt(  ( 6.25e-6_dp - A(1)/2000 + 3 * A(2)/200 - &
+    A(3)/5 + A(4) ) * m1S**2 - gt**2  )
+
+  end function QSwitch
 
 ! ccccccccccc
 

@@ -12,6 +12,7 @@
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
 
+:Evaluate:  QSwitch::usage = "Delta1S[nl, orderAlpha, runAlpha, orderMass, runMass, ord1S, muLam, xLam, method, mZ, aMz, mt, gt, R]"
 :Evaluate:  Delta1S::usage = "Delta1S[nl, orderAlpha, runAlpha, orderMass, runMass, muLam, xLam, method, mZ, aMz, mt, R]"
 :Evaluate:  rNRQCD::usage = "rNRQCD[nl, order, scheme, method, orderAlpha, runAlpha, orderMass, runMass, muLam, xLam, mZ, aMz, Q, mtpole, gt, h, nu]"
 :Evaluate:  A1Pole::usage = "A1Pole[nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft]"
@@ -271,6 +272,17 @@
                 runMass, muLam, xLam, mZ, aMz, Q, mtpole, gt, h, nu}
 :ArgumentTypes: {Integer, Integer, String, String, Integer, Integer, Integer,
                 Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      qswitch
+:Pattern:       QSwitch[nl_, orderAlpha_, runAlpha_, orderMass_, runMass_, ord1S_,
+                muLam_, xLam_, method_, mZ_, aMz_, mt_, gt_, R_]
+:Arguments:     {nl, orderAlpha, runAlpha, orderMass, runMass, ord1S, muLam, xLam,
+                method, mZ, aMz, mt, gt, R}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, Integer, Integer, Real, Real,
+                String, Real, Real, Real, Real, Real}
 :ReturnType:    Real
 :End:
 
@@ -2633,6 +2645,22 @@ double gt, double h, double nu){
    &runMass, &muLam, &xLam, &mZ, &aMz, &Q, &mt, &gt, &h, &nu, &res);
 
    return res;
+}
+
+extern double f90qswitch_(int* nl, int* orderAlpha, int* runAlpha, int* orderMass,
+int* runMass, int* ord1S, double* muLam, double* xLam, char const* method, double* mZ,
+double* aMz, double* mt, double*gt, double* R, double* res);
+
+static double qswitch(int nl, int orderAlpha, int runAlpha, int orderMass,
+int runMass, int ord1S, double muLam, double xLam, char const* method, double mZ,
+double aMz, double mt, double gt, double R){
+  double res;
+
+   f90qswitch_(&nl, &orderAlpha, &runAlpha, &orderMass, &runMass, &ord1S, &muLam,
+   &xLam, method, &mZ, &aMz, &mt, &gt, &R, &res);
+
+   return res;
+
 }
 
 extern double f90delta1s_(int* nl, int* orderAlpha, int* runAlpha, int* orderMass,

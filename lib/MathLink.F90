@@ -33,6 +33,38 @@ end subroutine f90Delta1S
 
 ! cccccccccccccccccccc
 
+subroutine f90Qswitch(nl, orderAlp, runAlp, orderM, runM, ord1S, muLam, xlam, &
+method, mZ, aMz, mt, gt, R, res)
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass; use VFNSMSRClass; implicit none
+  integer            , intent(in) :: nl, orderAlp, runAlp, runM, orderM, ord1S
+  real (dp)          , intent(in) :: muLam, xlam, mZ, aMz, mt, R, gt
+  character (len = *), intent(in) :: method
+  real (dp), intent(out)          :: res
+  integer                         :: i
+  type (RNRQCD)                   :: NRQCD
+  type (Alpha)                    :: alphaAll
+  type (Running), dimension(2)    :: alphaMass
+  type (VFNSMSR)                  :: MSR
+  type (AnomDim), dimension(3:6)  :: AnDim
+
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, aMz, mt, mt, &
+  0._dp, 0._dp, 0._dp, 0._dp)
+
+  alphaMass = [ Running(nl - 1, runM, alphaAll, muLam), &
+  Running(nl, runM, alphaAll, muLam) ]
+
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
+  res = NRQCD%Qswitch( orderM, ord1S, gt, R, xlam, method(:8) )
+
+end subroutine f90Qswitch
+
+! cccccccccccccccccccc
+
 subroutine f90RNRQCD(nl, order, scheme, method, orderAlp, runAlp, orderMass, runMass, muLam, &
   xlam, mZ, aMz, Q, mtpole, gt, h, nu, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
