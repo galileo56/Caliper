@@ -26,7 +26,7 @@ module NRQCDClass
     procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
     ZeroBin, DeltaCharmBin, MassIter, EnExpand, DeltaCharmBin3, DeltaCharmDer, &
     DeltaCharmExact, DeltaCharmDerBin, MassError, EnError, MassList, NRQCDList, &
-    DeltaCharmBinBend, setCharm, SetAlpha, EnDerAlpha, EnDerCharm
+    DeltaCharmBinBend, setCharm, SetAlpha, EnDerAlpha, EnDerCharm, UpsilonList
 
   end type NRQCD
 
@@ -303,13 +303,13 @@ module NRQCDClass
 
         list(2,i,j) = R0 + j * deltaR
 
-        if ( iter(:10) == 'FixedOrder') then
+        if ( iter(:10) == 'FixedOrder' ) then
           list(3:,i,j) = self%En(n, list(1,i,j), &
           list(2,i,j), lambda, method, counting)
-        else if ( iter(:8) == 'expanded') then
+        else if ( iter(:8) == 'expanded' ) then
           list(3:,i,j) = self%EnExpand(n, list(1,i,j), &
           list(2,i,j), mUpsilon, lambda, method, counting)
-        else if ( iter(:9) == 'iterative') then
+        else if ( iter(:9) == 'iterative' ) then
           list(3:,i,j) = self%MassIter(n, list(1,i,j), &
           list(2,i,j), mUpsilon, lambda, method, counting)
         end if
@@ -319,6 +319,55 @@ module NRQCDClass
     end do
 
   end function NRQCDList
+
+!ccccccccccccccc
+
+  function UpsilonList(self, n, mu0, mu1, deltaMu, R0, R1, &
+  deltaR, lambda, method, counting, epsAlpha, epsCharm) result(list)
+    class (NRQCD)      , intent(inout) :: self
+    character (len = *), intent(in)    :: method, counting
+    integer            , intent(in)    :: n
+    real (dp)          , intent(in)    :: lambda, mu0, mu1, R1, deltaMu, R0, &
+    deltaR, epsAlpha, epsCharm
+
+    real (dp), dimension( 5, 3, 0:Floor( (mu1 - mu0)/deltaMu ), &
+    0:Floor( (R1 - R0)/deltaR ))       :: list
+
+    real (dp), dimension( 7, 0:Floor( (mu1 - mu0)/deltaMu ), &
+    0:Floor( (R1 - R0)/deltaR ))    :: list2, list3
+
+    real (dp)                          :: amZ, mC
+
+    list = 0; amZ = self%amZ; mC = self%mC
+
+    list2 = NRQCDList(self, 'FixedOrder', n, mu0, mu1, deltaMu, R0, R1, &
+    deltaR, 0._dp, lambda, method, counting)
+
+    list(:,1,:,:) = list2(3:,:,:)
+
+    call self%setAlpha(amZ + epsAlpha)
+    list2 = NRQCDList(self, 'FixedOrder', n, mu0, mu1, deltaMu, R0, R1, &
+    deltaR, 0._dp, lambda, method, counting)
+
+    call self%setAlpha(amZ - epsAlpha)
+    list3 = NRQCDList(self, 'FixedOrder', n, mu0, mu1, deltaMu, R0, R1, &
+    deltaR, 0._dp, lambda, method, counting)
+
+    list(:,2,:,:) = ( list2(3:,:,:) -  list3(3:,:,:) )/2/epsAlpha
+    call self%setAlpha(amZ)
+
+    call self%setCharm( mC + epsCharm, self%ratC * (mC + epsCharm) )
+    list2 = NRQCDList(self, 'FixedOrder', n, mu0, mu1, deltaMu, R0, R1, &
+    deltaR, 0._dp, lambda, method, counting)
+
+    call self%setCharm( mC - epsCharm, self%ratC * (mC - epsCharm) )
+    list3 = NRQCDList(self, 'FixedOrder', n, mu0, mu1, deltaMu, R0, R1, &
+    deltaR, 0._dp, lambda, method, counting)
+
+    list(:,3,:,:) = ( list2(3:,:,:) -  list3(3:,:,:) )/2/epsCharm
+    call self%setCharm( mC, self%ratC * mC )
+
+  end function UpsilonList
 
 !ccccccccccccccc
 
@@ -491,7 +540,7 @@ module NRQCDClass
     call self%setAlpha(amZ - eps)
     list2 = self%En(order, mu, R, lambda, method, counting)
 
-    list = (list1 - list2)/2/eps
+    list = (list1 - list2)/2/eps; call self%setAlpha(amZ)
 
   end function EnDerAlpha
 
@@ -513,7 +562,7 @@ module NRQCDClass
     call self%setCharm( mC - eps, self%ratC * (mC - eps) )
     list2 = self%En(order, mu, R, lambda, method, counting)
 
-    list = (list1 - list2)/2/eps
+    list = (list1 - list2)/2/eps; call self%setCharm( mC, self%ratC * mC )
 
   end function EnDerCharm
 

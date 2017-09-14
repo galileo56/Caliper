@@ -4508,6 +4508,54 @@ end subroutine f90NRQCDList
 
 !ccccccccccccccc
 
+subroutine f90UpsilonList(n, l, j, s, charm, scheme, average, method, &
+counting, orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, &
+lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm, &
+res)
+
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
+
+  character (len = *)    , intent(in ) :: method, scheme, charm, average, counting
+  integer                , intent(in ) :: orderAlp, runAlp, order, run, &
+  nl, n, l, j, s
+  real (dp)              , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, muC, &
+  lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, lambda2, epsCharm,   &
+  epsAlpha
+
+  real (dp), dimension( 5, 3, 0:Floor( (mu1 - mu0)/deltaMu ), &
+  0:Floor( (R1 - R0)/deltaR ) ), intent(out) :: res
+
+  character (len = 5)                  :: alphaScheme
+  type (NRQCD)                         :: Upsilon
+  type (VFNSMSR)                       :: MSR
+  type (Alpha)                         :: alphaAll
+  type (Running), dimension(2)         :: alphaMass
+  type (AnomDim), dimension(3:6)       :: AnDim
+  integer                              :: i
+
+  alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC)
+
+  alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
+  Running(nl, run, alphaAll, lambda1) ]
+
+  MSR     = VFNSMSR(alphaMass)
+  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+
+  res = Upsilon%UpsilonList( order, mu0, mu1, deltaMu, R0, R1, deltaR, &
+  lam, method(:8), counting(:5), epsAlpha, epsCharm )
+
+end subroutine f90UpsilonList
+
+!ccccccccccccccc
+
 subroutine f90NRQCDError(n, l, j, s, iter, charm, scheme, average, method, &
 counting, orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, &
 mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x, res)
