@@ -1819,9 +1819,8 @@ module NRQCDClass
   real (dp)                  , intent(in)    :: lambda, mu0, mu1, R1, deltaMu, &
   deltaR, epsAlpha, epsCharm, R0
 
-  real (dp), dimension( dim, 5, 4 ), intent(out) :: massList
-  real (dp), dimension( dim, dim, 5 ), intent(out) :: &
-  corMat
+  real (dp), dimension( dim, 5, 4 )  , intent(out) :: massList
+  real (dp), dimension( dim, dim, 5 ), intent(out) :: corMat
   real (dp), dimension( dim, 5, 3, 0:Floor( (mu1 - mu0)/deltaMu ), &
   0:Floor( (R1 - R0)/deltaR ) )                :: list
 
