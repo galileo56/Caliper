@@ -2,6 +2,8 @@ module NRQCDClass
   use Constants, only: dp, pi2, d1mach, Pi ;  use RunningClass; use AlphaClass
   use AnomDimClass; use VFNSMSRClass; implicit none ; private
 
+  public :: CorrMattNRQCD
+
 !ccccccccccccccc
 
   type, public                    :: NRQCD
@@ -331,10 +333,10 @@ module NRQCDClass
     deltaR, epsAlpha, epsCharm
 
     real (dp), dimension( 5, 3, 0:Floor( (mu1 - mu0)/deltaMu ), &
-    0:Floor( (R1 - R0)/deltaR ))       :: list
+    0:Floor( (R1 - R0)/deltaR ) )       :: list
 
     real (dp), dimension( 7, 0:Floor( (mu1 - mu0)/deltaMu ), &
-    0:Floor( (R1 - R0)/deltaR ))    :: list2, list3
+    0:Floor( (R1 - R0)/deltaR ) )    :: list2, list3
 
     real (dp)                          :: amZ, mC
 
@@ -1806,6 +1808,69 @@ module NRQCDClass
     end do
 
   end function Harmonic
+
+!ccccccccccccccc
+
+  subroutine CorrMattNRQCD( UpsilonList, n, mu0, mu1, deltaMu, R0, R1, deltaR, &
+  lambda, method, counting, epsAlpha, epsCharm, corMat, alphaMat, CharmMat,    &
+  massList, ErList)
+  class (NRQCD), dimension(:), intent(inout) :: UpsilonList
+  character (len = *)        , intent(in)    :: method, counting
+  integer                    , intent(in)    :: n
+  real (dp)                  , intent(in)    :: lambda, mu0, mu1, R1, deltaMu, &
+  deltaR, epsAlpha, epsCharm, R0
+
+  real (dp), dimension( size(UpsilonList), 5 ), intent(out) :: ErList, massList
+  real (dp), dimension( size(UpsilonList), size(UpsilonList), 5 ), intent(out) :: &
+  corMat, alphaMat, CharmMat
+  real (dp), dimension( size(UpsilonList), 5, 3, 0:Floor( (mu1 - mu0)/deltaMu ), &
+  0:Floor( (R1 - R0)/deltaR ))               :: list
+
+  integer                                    :: dim, i, j, k, l, m, imax, jmax
+  real (dp), dimension( size(UpsilonList), 5 ) :: SigmaList, AlphaList, CharmList
+
+  dim  = size(UpsilonList)
+
+  do k = 1, dim
+
+    list(k,:,:,:,:) = UpsilonList(k)%UpsilonList(n, mu0, mu1, deltaMu, R0, R1, &
+    deltaR, lambda, method, counting, epsAlpha, epsCharm)
+
+    do l = 1, 3
+      do i = 0, imax
+        do j = 0, jmax
+          do m = 1, 5
+            list(k,m,l,i,j) = sum( list(k,:m,l,i,j) )
+          end do
+        end do
+      end do
+    end do
+
+    do m = 1, 5
+      massList(k, m)  = sum( list(k, m, 1, :, :) )/imax
+      AlphaList(k, m) = sum( list(k, m, 2, :, :) )/imax
+      CharmList(k, m) = sum( list(k, m, 3, :, :) )/imax
+      ErList(k, m)    = (  maxVal( list(k, m, 1, :, :) ) - minVal( list(k, m, 1, :, :) )  )/2
+      SigmaList(k,m)  = sqrt(  sum(  ( list(k, m, 1, :, :) - ErList(k, m) )**2 )  )
+    end do
+
+  end do
+
+  do i = 1, dim
+    do j = 1, dim
+      do k = 1, 5
+
+        corMat(i, j, k) = sum(  ( list(i, k, 1, :, :) - ErList(i, k) ) * &
+        ( list(j, k, 1, :, :) - ErList(j, k) )  )/SigmaList(i,k)/SigmaList(j,k)
+
+        alphaMat(i,j,k) = AlphaList(i,k) * AlphaList(j,k)
+        CharmMat(i,j,k) = CharmList(i,k) * CharmList(j,k)
+
+      end do
+    end do
+  end do
+
+  end subroutine CorrMattNRQCD
 
 !ccccccccccccccc
 
