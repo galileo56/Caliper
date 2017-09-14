@@ -355,7 +355,7 @@ module NRQCDClass
     list3 = NRQCDList(self, 'FixedOrder', n, mu0, mu1, deltaMu, R0, R1, &
     deltaR, 0._dp, lambda, method, counting)
 
-    list(:,2,:,:) = ( list2(3:,:,:) -  list3(3:,:,:) )/2/epsAlpha
+    list(:,2,:,:) = ( list2(3:,:,:) - list3(3:,:,:) )/2/epsAlpha
     call self%setAlpha(amZ)
 
     call self%setCharm( mC + epsCharm, self%ratC * (mC + epsCharm) )
@@ -1811,16 +1811,16 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  subroutine CorrMattNRQCD( UpsilonList, dim, n, mu0, mu1, deltaMu, R0, R1, &
+  subroutine CorrMattNRQCD(UpsilonList, dim, n, mu0, mu1, deltaMu, R0, R1, &
   deltaR, lambda, method, counting, epsAlpha, epsCharm, massList, corMat)
 
   class (NRQCD), dimension(dim), intent(inout) :: UpsilonList
-  character (len = *)        , intent(in)    :: method, counting
-  integer                    , intent(in)    :: n, dim
-  real (dp)                  , intent(in)    :: lambda, mu0, mu1, R1, deltaMu, &
+  character (len = *)          , intent(in)    :: method, counting
+  integer                      , intent(in)    :: n, dim
+  real (dp)                    , intent(in)    :: lambda, mu0, mu1, R1, deltaMu, &
   deltaR, epsAlpha, epsCharm, R0
 
-  real (dp), dimension( dim, 4, 5 )  , intent(out) :: massList
+  real (dp), dimension( dim, 5, 5 )  , intent(out) :: massList
   real (dp), dimension( dim, dim, 5 ), intent(out) :: corMat
 
   real (dp), dimension( dim, 5, 3, 0:Floor( (mu1 - mu0)/deltaMu ), &
@@ -1849,9 +1849,10 @@ module NRQCDClass
 
     do m = 1, 5
       massList(k, 1, m) = sum( list(k, m, 1, :, :) )/(imax + 1)**2
-      massList(k, 2, m) = (  maxVal( list(k, m, 1, :, :) ) - minVal( list(k, m, 1, :, :) )  )/2
-      massList(k, 3, m) = sum( list(k, m, 2, :, :) )/(imax + 1)**2
-      massList(k, 4, m) = sum( list(k, m, 3, :, :) )/(imax + 1)**2
+      massList(k, 2, m) = (  maxVal( list(k, m, 1, :, :) ) + minVal( list(k, m, 1, :, :) )  )/2
+      massList(k, 3, m) = (  maxVal( list(k, m, 1, :, :) ) - minVal( list(k, m, 1, :, :) )  )/2
+      massList(k, 4, m) = sum( list(k, m, 2, :, :) )/(imax + 1)**2
+      massList(k, 5, m) = sum( list(k, m, 3, :, :) )/(imax + 1)**2
       SigmaList(k,m)    = sqrt(  sum(  ( list(k, m, 1, :, :) - massList(k, 1, m) )**2 )  )
     end do
 
@@ -1869,7 +1870,7 @@ module NRQCDClass
   end do
 
   do i = 1, dim
-    do j = i - 1, dim
+    do j = i + 1, dim
       corMat(i, j, :) = corMat(j, i, :)
     end do
   end do

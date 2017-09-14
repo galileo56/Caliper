@@ -1,4 +1,5 @@
 
+
 ! cccccccccccccccccccc
 
 subroutine f90Delta1S(nl, orderAlp, runAlp, orderM, runM, muLam, xlam, method, &
@@ -4571,7 +4572,7 @@ corMat)
   lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, lambda2, epsCharm,   &
   epsAlpha
 
-  real (dp), dimension( m, 4, 5 ), intent(out) :: massList
+  real (dp), dimension( m, 5, 5 ), intent(out) :: massList
   real (dp), dimension( m, m, 5 ), intent(out) :: corMat
   character (len = 5)                          :: alphaScheme
   type (NRQCD), dimension(m)                   :: Upsilon
@@ -4604,6 +4605,79 @@ corMat)
   lam, method(:8), counting(:5), epsAlpha, epsCharm, massList, CorMat )
 
 end subroutine f90CorrMat
+
+!ccccccccccccccc
+
+subroutine f90ErrMat(qnList, m, charm, scheme, average, method, counting,     &
+orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, &
+lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm, massList, &
+corMat)
+
+  use constants, only: dp; use NRQCDClass;  implicit none
+
+  character (len = *)     , intent(in) :: method, scheme, charm, average, counting
+  integer, dimension(4,m) , intent(in) :: qnList
+  integer                 , intent(in) :: orderAlp, runAlp, order, run, m, nl
+  real (dp)               , intent(in) :: mZ, amZ, mT, muT, mB, muB, mC, muC, &
+  lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, lambda2, epsCharm,   &
+  epsAlpha
+
+  real (dp), dimension( m, 4, 5 ), intent(out) :: massList
+  real (dp), dimension( m, m, 5 ), intent(out) :: corMat
+  real (dp), dimension( m, 5, 5 )              :: massList2
+  integer                                      :: i, j
+
+  call f90CorrMat(qnList, m, charm, scheme, average, method, counting,     &
+  orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, &
+  lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm, massList2,&
+  CorMat)
+
+  massList(:,:2,:) = massList2(:,:2,:)
+  massList(: ,3:4,:) = epsAlpha * massList2(:,4:,:)
+
+  do i = 1, m
+    do j = 1, m
+      corMat(i,j,:) = massList2(i,3,:) * massList2(j,3,:) * corMat(i,j,:)
+    end do
+  end do
+
+end subroutine f90ErrMat
+
+!ccccccccccccccc
+
+subroutine f90ErrMatrices(qnList, m, charm, scheme, average, method, counting, &
+orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, &
+lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm, massList, &
+corMat)
+
+  use constants, only: dp; use NRQCDClass;  implicit none
+
+  character (len = *)     , intent(in) :: method, scheme, charm, average, counting
+  integer, dimension(4,m) , intent(in) :: qnList
+  integer                 , intent(in) :: orderAlp, runAlp, order, run, m, nl
+  real (dp)               , intent(in) :: mZ, amZ, mT, muT, mB, muB, mC, muC, &
+  lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, lambda2, epsCharm,   &
+  epsAlpha
+
+  real (dp), dimension( m, 2, 5    ), intent(out) :: massList
+  real (dp), dimension( m, m, 3, 5 ), intent(out) :: corMat
+  real (dp), dimension( m, 4, 5 )                 :: massList2
+  integer                                         :: i, j, k
+
+  call f90ErrMat( qnList, m, charm, scheme, average, method, counting,     &
+  orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, &
+  lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm, massList2,&
+  CorMat(:,:,1,:) )
+
+  massList(:,:2,:) = massList2(:,:2,:)
+
+  do i = 1, m
+    do j = 1, m
+      corMat(i,j,2:3,:) = massList2(i,3:4,:) * massList2(j,3:4,:)
+    end do
+  end do
+
+end subroutine f90ErrMatrices
 
 !ccccccccccccccc
 

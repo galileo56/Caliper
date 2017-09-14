@@ -139,6 +139,8 @@
 :Evaluate:  NRQCDList::usage = "NRQCDList[n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR] makes a list of the NRQCD prediction for the quarkonium energy levels in a grid of mu-R values."
 :Evaluate:  UpsilonList::usage = "UpsilonList[n, l, j, s, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm] makes a list of the NRQCD prediction for the quarkonium energy levels and their derivatives wrt alpha(mZ) and mC, in a grid of mu-R values."
 :Evaluate:  CorrMat::usage = "CorrMat[qnlist, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm] Computes the average values of the masses and derivatives wrt alpha and mc, perturbative uncertainties and covariance matrix."
+:Evaluate:  ErrMat::usage = "ErrMat[qnlist, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm] Computes the average values of the masses and derivatives wrt alpha and mc, perturbative uncertainties and covariance matrix."
+:Evaluate:  ErrMatrices::usage = "ErrMatrices[qnlist, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm] Computes the average values of the masses and derivatives wrt alpha and mc, perturbative uncertainties and covariance matrix."
 :Evaluate:  NRQCDError::usage = "NRQCDError[n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x] computes the quarkonium energy levels, including perturbative error."
 :Evaluate:  OptimalR::usage = "OptimalR[type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda] computes the Optimal R scale for quarkonium."
 :Evaluate:  mmfromMSR::usage = "mmfromMSR[type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
@@ -2260,6 +2262,40 @@
 :Begin:
 :Function:      corrmat
 :Pattern:       CorrMat[qnlist_, charm_, scheme_, average_, method_,
+                counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,
+                mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_, mu0_,
+                mu1_, deltaMu_, R0_, R1_, deltaR_, epsAlpha_, epsCharm_]
+:Arguments:     {Flatten[qnlist], Length[qnlist], charm, scheme, average, method, counting, orderAlpha,
+                 runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,
+                 lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR,
+                 epsAlpha, epsCharm}
+:ArgumentTypes: {IntegerList, Integer, String, String, String,
+                 String, String, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      errmat
+:Pattern:       ErrMat[qnlist_, charm_, scheme_, average_, method_,
+                counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,
+                mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_, mu0_,
+                mu1_, deltaMu_, R0_, R1_, deltaR_, epsAlpha_, epsCharm_]
+:Arguments:     {Flatten[qnlist], Length[qnlist], charm, scheme, average, method, counting, orderAlpha,
+                 runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,
+                 lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR,
+                 epsAlpha, epsCharm}
+:ArgumentTypes: {IntegerList, Integer, String, String, String,
+                 String, String, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:      errmatrices
+:Pattern:       ErrMatrices[qnlist_, charm_, scheme_, average_, method_,
                 counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,
                 mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_, mu0_,
                 mu1_, deltaMu_, R0_, R1_, deltaR_, epsAlpha_, epsCharm_]
@@ -5551,10 +5587,48 @@ double muT, double mB, double muB, double mC, double muC, double lambda1,
 double lambda2, double lam, double mu0, double mu1, double deltaMu, double R0,
 double R1, double deltaR, double epsAlpha, double epsCharm){
 
-  double massList[ 20 * m ];
+  double massList[ 25 * m ];
   double corMat[ 5 * m * m ];
 
   f90corrmat_(qnlist, &m, charm, str, average, method, counting,
+  &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB,
+  &mC, &muC, &lambda1, &lambda2, &lam, &mu0, &mu1, &deltaMu, &R0, &R1,
+  &deltaR, &epsAlpha, &epsCharm, massList, corMat);
+
+   MLPutFunction(stdlink, "List", 2 );
+   MLPutFunction(stdlink, "Partition", 2 );
+   MLPutFunction(stdlink, "Partition", 2 );
+   MLPutRealList(stdlink, massList, 25 * m);
+   MLPutInteger(stdlink, m);
+   MLPutInteger(stdlink, 5);
+   MLPutFunction(stdlink, "Partition", 2 );
+   MLPutFunction(stdlink, "Partition", 2 );
+   MLPutRealList(stdlink, corMat, 5 * m * m);
+   MLPutInteger(stdlink, m);
+   MLPutInteger(stdlink, m);
+   MLEndPacket(stdlink);
+
+}
+
+extern double f90errmat_(int* qnlist, int* m, char const* charm,
+char const* str, char const* average, char const* method, char const* counting,
+int* orderAlpha, int* runAlpha, int* order, int* run, int* nf, double* Mz,
+double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+double* muC, double* lambda1, double* lambda2, double* lam, double* mu0,
+double* mu1, double* deltaMu, double* R0, double* R1, double* deltaR,
+double* epsAlpha, double* epsCharm, double* massList, double* corMat);
+
+static void errmat(int qnlist[], long len, int m, char const* charm, char const* str,
+char const* average, char const* method, char const* counting, int orderAlpha,
+int runAlpha, int order, int run, int nf, double Mz, double aMz, double mT,
+double muT, double mB, double muB, double mC, double muC, double lambda1,
+double lambda2, double lam, double mu0, double mu1, double deltaMu, double R0,
+double R1, double deltaR, double epsAlpha, double epsCharm){
+
+  double massList[ 20 * m ];
+  double corMat[ 5 * m * m ];
+
+  f90errmat_(qnlist, &m, charm, str, average, method, counting,
   &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB,
   &mC, &muC, &lambda1, &lambda2, &lam, &mu0, &mu1, &deltaMu, &R0, &R1,
   &deltaR, &epsAlpha, &epsCharm, massList, corMat);
@@ -5570,6 +5644,46 @@ double R1, double deltaR, double epsAlpha, double epsCharm){
    MLPutRealList(stdlink, corMat, 5 * m * m);
    MLPutInteger(stdlink, m);
    MLPutInteger(stdlink, m);
+   MLEndPacket(stdlink);
+
+}
+
+extern double f90errmatrices_(int* qnlist, int* m, char const* charm,
+char const* str, char const* average, char const* method, char const* counting,
+int* orderAlpha, int* runAlpha, int* order, int* run, int* nf, double* Mz,
+double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+double* muC, double* lambda1, double* lambda2, double* lam, double* mu0,
+double* mu1, double* deltaMu, double* R0, double* R1, double* deltaR,
+double* epsAlpha, double* epsCharm, double* massList, double* corMat);
+
+static void errmatrices(int qnlist[], long len, int m, char const* charm, char const* str,
+char const* average, char const* method, char const* counting, int orderAlpha,
+int runAlpha, int order, int run, int nf, double Mz, double aMz, double mT,
+double muT, double mB, double muB, double mC, double muC, double lambda1,
+double lambda2, double lam, double mu0, double mu1, double deltaMu, double R0,
+double R1, double deltaR, double epsAlpha, double epsCharm){
+
+  double massList[ 10 * m ];
+  double corMat[ 15 * m * m ];
+
+  f90errmatrices_(qnlist, &m, charm, str, average, method, counting,
+  &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB,
+  &mC, &muC, &lambda1, &lambda2, &lam, &mu0, &mu1, &deltaMu, &R0, &R1,
+  &deltaR, &epsAlpha, &epsCharm, massList, corMat);
+
+   MLPutFunction(stdlink, "List", 2 );
+   MLPutFunction(stdlink, "Partition", 2 );
+   MLPutFunction(stdlink, "Partition", 2 );
+   MLPutRealList(stdlink, massList, 10 * m);
+   MLPutInteger(stdlink, m);
+   MLPutInteger(stdlink, 2);
+   MLPutFunction(stdlink, "Partition", 2 );
+   MLPutFunction(stdlink, "Partition", 2 );
+   MLPutFunction(stdlink, "Partition", 2 );
+   MLPutRealList(stdlink, corMat, 15 * m * m);
+   MLPutInteger(stdlink, m);
+   MLPutInteger(stdlink, m);
+   MLPutInteger(stdlink, 3);
    MLEndPacket(stdlink);
 
 }
