@@ -4571,7 +4571,7 @@ corMat)
   lambda1, lam, mu0, mu1, deltaMu, R0, R1, deltaR, lambda2, epsCharm,   &
   epsAlpha
 
-  real (dp), dimension( m, 5, 4 ), intent(out) :: massList
+  real (dp), dimension( m, 4, 5 ), intent(out) :: massList
   real (dp), dimension( m, m, 5 ), intent(out) :: corMat
   character (len = 5)                          :: alphaScheme
   type (NRQCD), dimension(m)                   :: Upsilon
@@ -4593,7 +4593,7 @@ corMat)
   alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
   Running(nl, run, alphaAll, lambda1) ]
 
-  MSR     = VFNSMSR(alphaMass)
+  MSR = VFNSMSR(alphaMass)
 
   do i = 1, m
     Upsilon(i) = NRQCD( charm(:4), scheme(:5), average(:3), MSR, qnList(1,i), &
