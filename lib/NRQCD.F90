@@ -1829,7 +1829,7 @@ module NRQCDClass
   integer                                      :: i, j, k, l, m, imax, jmax
   real (dp), dimension( dim, 5 )               :: SigmaList
 
-  corMat = 0
+  corMat = 1
   imax = Floor( (mu1 - mu0)/deltaMu ); jmax = Floor( (R1 - R0)/deltaR )
 
   do k = 1, dim
@@ -1858,13 +1858,19 @@ module NRQCDClass
   end do
 
   do i = 1, dim
-    do j = 1, dim
+    do j = 1, i - 1
       do k = 1, 5
 
         corMat(i, j, k) = sum(  ( list(i, k, 1, :, :) - massList(i, 1, k) ) * &
         ( list(j, k, 1, :, :) - massList(j, 1, k) )  )/SigmaList(i,k)/SigmaList(j,k)
 
       end do
+    end do
+  end do
+
+  do i = 1, dim
+    do j = i - 1, dim
+      corMat(i, j, :) = corMat(j, i, :)
     end do
   end do
 
