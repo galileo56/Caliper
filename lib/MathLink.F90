@@ -4662,11 +4662,11 @@ corMat)
   real (dp), dimension( m, 2, 5    ), intent(out) :: massList
   real (dp), dimension( m, m, 3, 5 ), intent(out) :: corMat
   real (dp), dimension( m, 4, 5 )                 :: massList2
-  integer                                         :: i, j, k
+  integer                                         :: i, j
 
-  call f90ErrMat( qnList, m, charm, scheme, average, method, counting,     &
-  orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, &
-  lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm, massList2,&
+  call f90ErrMat( qnList, m, charm, scheme, average, method, counting, orderAlp,&
+  runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, &
+  lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm, massList2,        &
   CorMat(:,:,1,:) )
 
   massList(:,:2,:) = massList2(:,:2,:)

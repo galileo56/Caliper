@@ -28,7 +28,8 @@ module NRQCDClass
     procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
     ZeroBin, DeltaCharmBin, MassIter, EnExpand, DeltaCharmBin3, DeltaCharmDer, &
     DeltaCharmExact, DeltaCharmDerBin, MassError, EnError, MassList, NRQCDList, &
-    DeltaCharmBinBend, setCharm, SetAlpha, EnDerAlpha, EnDerCharm, UpsilonList
+    DeltaCharmBinBend, setCharm, SetAlpha, EnDerAlpha, EnDerCharm, UpsilonList, &
+    UpsilonGrid
 
   end type NRQCD
 
@@ -324,8 +325,40 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  function UpsilonList(self, n, mu0, mu1, deltaMu, R0, R1, &
-  deltaR, lambda, method, counting, epsAlpha, epsCharm) result(list)
+  subroutine UpsilonGrid(self, n, mu0, mu1, deltaMu, R0, R1, deltaR, m0, m1, &
+    deltam, lambda, method, counting, epsAlpha, epsCharm, mList, list)
+    class (NRQCD)      , intent(inout) :: self
+    character (len = *), intent(in)    :: method, counting
+    integer            , intent(in)    :: n
+    real (dp)          , intent(in)    :: lambda, mu0, mu1, R1, deltaMu, R0, &
+    deltaR, epsAlpha, epsCharm, m0, m1, deltam
+
+    real (dp), dimension(  0:Floor( (m1 - m0)/deltaM ), 5, 3, &
+    0:Floor( (mu1 - mu0)/deltaMu ), 0:Floor( (R1 - R0)/deltaR )  ), &
+    intent(out) :: list
+
+    real (dp), dimension(  0:Floor( (m1 - m0)/deltaM )  ), intent(out) :: mList
+    integer                                                            :: i, imax
+    real (dp)                                                          :: m
+
+    m = self%mH;  imax = Floor( (m1 - m0)/deltaM )
+
+    do i = 0, imax
+
+      mList(i) = m0 + i * deltaM
+      call self%setMass( mList(i), self%rat * mList(i) )
+
+      list(i,:,:,:,:) = self%UpsilonList(n, mu0, mu1, deltaMu, R0, R1, deltaR, &
+      lambda, method, counting, epsAlpha, epsCharm)
+
+    end do
+
+  end subroutine UpsilonGrid
+
+!ccccccccccccccc
+
+  function UpsilonList(self, n, mu0, mu1, deltaMu, R0, R1, deltaR, lambda, &
+  method, counting, epsAlpha, epsCharm) result(list)
     class (NRQCD)      , intent(inout) :: self
     character (len = *), intent(in)    :: method, counting
     integer            , intent(in)    :: n
