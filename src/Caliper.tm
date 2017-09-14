@@ -5520,21 +5520,22 @@ double R1, double deltaR, double epsAlpha, double epsCharm){
 
 extern double f90nrqcd_(int* n, int* l, int* j, int* s, char const* charm,
 char const* str, char const* average, char const* method, char const* counting,
-int* orderAlpha, int* runAlpha, int* order,
-int* run, int* nf, double* Mz, double* aMz, double* mT, double* muT, double* mB,
-double* muB, double* mC, double* muC, double* lambda1, double* lambda2,
-double* lam, double* mu, double* R, double* res);
+int* orderAlpha, int* runAlpha, int* order, int* run, int* nf, double* Mz,
+double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+double* muC, double* lambda1, double* lambda2, double* lam, double* mu,
+double* R, double* res);
 
-static void nrqcd(int n, int l, int j, int s, char const* charm, char const* str, char const* average,
-char const* method, char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
-double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
-double muC, double lambda1, double lambda2, double lam, double mu, double R){
+static void nrqcd(int n, int l, int j, int s, char const* charm, char const* str,
+char const* average, char const* method, char const* counting, int orderAlpha,
+int runAlpha, int order, int run, int nf, double Mz, double aMz, double mT,
+double muT, double mB, double muB, double mC, double muC, double lambda1,
+double lambda2, double lam, double mu, double R){
 
   double res[5];
 
-  f90nrqcd_(&n, &l, &j, &s, charm, str, average, method, counting, &orderAlpha, &runAlpha, &order,
-  &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &lambda1, &lambda2,
-  &lam, &mu, &R, res);
+  f90nrqcd_(&n, &l, &j, &s, charm, str, average, method, counting, &orderAlpha,
+  &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
+  &lambda1, &lambda2, &lam, &mu, &R, res);
 
    MLPutRealList(stdlink, res, 5);
    MLEndPacket(stdlink);
