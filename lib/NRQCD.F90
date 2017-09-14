@@ -1811,25 +1811,22 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  subroutine CorrMattNRQCD( UpsilonList, n, mu0, mu1, deltaMu, R0, R1, deltaR, &
-  lambda, method, counting, epsAlpha, epsCharm, corMat, alphaMat, CharmMat,    &
-  massList, ErList)
-  class (NRQCD), dimension(:), intent(inout) :: UpsilonList
+  subroutine CorrMattNRQCD( UpsilonList, dim, n, mu0, mu1, deltaMu, R0, R1, deltaR, &
+  lambda, method, counting, epsAlpha, epsCharm, massList, corMat)
+  class (NRQCD), dimension(dim), intent(inout) :: UpsilonList
   character (len = *)        , intent(in)    :: method, counting
-  integer                    , intent(in)    :: n
+  integer                    , intent(in)    :: n, dim
   real (dp)                  , intent(in)    :: lambda, mu0, mu1, R1, deltaMu, &
   deltaR, epsAlpha, epsCharm, R0
 
-  real (dp), dimension( size(UpsilonList), 5 ), intent(out) :: ErList, massList
-  real (dp), dimension( size(UpsilonList), size(UpsilonList), 5 ), intent(out) :: &
-  corMat, alphaMat, CharmMat
-  real (dp), dimension( size(UpsilonList), 5, 3, 0:Floor( (mu1 - mu0)/deltaMu ), &
-  0:Floor( (R1 - R0)/deltaR ))               :: list
+  real (dp), dimension( dim, 5, 4 ), intent(out) :: massList
+  real (dp), dimension( dim, dim, 5 ), intent(out) :: &
+  corMat
+  real (dp), dimension( dim, 5, 3, 0:Floor( (mu1 - mu0)/deltaMu ), &
+  0:Floor( (R1 - R0)/deltaR ) )                :: list
 
-  integer                                    :: dim, i, j, k, l, m, imax, jmax
-  real (dp), dimension( size(UpsilonList), 5 ) :: SigmaList, AlphaList, CharmList
-
-  dim  = size(UpsilonList)
+  integer                                      :: i, j, k, l, m, imax, jmax
+  real (dp), dimension( dim, 5 ) :: SigmaList
 
   do k = 1, dim
 
@@ -1847,11 +1844,11 @@ module NRQCDClass
     end do
 
     do m = 1, 5
-      massList(k, m)  = sum( list(k, m, 1, :, :) )/imax
-      AlphaList(k, m) = sum( list(k, m, 2, :, :) )/imax
-      CharmList(k, m) = sum( list(k, m, 3, :, :) )/imax
-      ErList(k, m)    = (  maxVal( list(k, m, 1, :, :) ) - minVal( list(k, m, 1, :, :) )  )/2
-      SigmaList(k,m)  = sqrt(  sum(  ( list(k, m, 1, :, :) - ErList(k, m) )**2 )  )
+      massList(k, m, 1) = sum( list(k, m, 1, :, :) )/imax
+      massList(k, m, 2) = (  maxVal( list(k, m, 1, :, :) ) - minVal( list(k, m, 1, :, :) )  )/2
+      massList(k, m, 3) = sum( list(k, m, 2, :, :) )/imax
+      massList(k, m, 4) = sum( list(k, m, 3, :, :) )/imax
+      SigmaList(k,m)    = sqrt(  sum(  ( list(k, m, 1, :, :) - massList(k, m, 1) )**2 )  )
     end do
 
   end do
@@ -1860,11 +1857,8 @@ module NRQCDClass
     do j = 1, dim
       do k = 1, 5
 
-        corMat(i, j, k) = sum(  ( list(i, k, 1, :, :) - ErList(i, k) ) * &
-        ( list(j, k, 1, :, :) - ErList(j, k) )  )/SigmaList(i,k)/SigmaList(j,k)
-
-        alphaMat(i,j,k) = AlphaList(i,k) * AlphaList(j,k)
-        CharmMat(i,j,k) = CharmList(i,k) * CharmList(j,k)
+        corMat(i, j, k) = sum(  ( list(i, k, 1, :, :) - massList(i, k, 1) ) * &
+        ( list(j, k, 1, :, :) - massList(j, k, 1) )  )/SigmaList(i,k)/SigmaList(j,k)
 
       end do
     end do
