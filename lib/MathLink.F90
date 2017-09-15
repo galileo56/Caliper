@@ -4633,7 +4633,8 @@ corMat)
   CorMat)
 
   massList(:,:2,:) = massList2(:,:2,:)
-  massList(: ,3:4,:) = epsAlpha * massList2(:,4:,:)
+  massList(: ,3,:) = epsAlpha * massList2(:,4,:)
+  massList(: ,4,:) = epsCharm * massList2(:,5,:)
 
   do i = 1, m
     do j = 1, m
