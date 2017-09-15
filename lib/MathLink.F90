@@ -5620,29 +5620,36 @@ end subroutine f90RhadMass
 
 subroutine f90RQCD(str, runAlp, runMass, order, gt, mZ, amZ, mT, h, Q, res)
 
-  use RunningClass; use AlphaClass; use SigmaClass; use ElectroWeakClass
-  use constants, only: dp; use AnomDimClass; implicit none
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass; use VFNSMSRClass; implicit none
 
   character (len = *), intent(in ) :: str
   integer            , intent(in ) :: order, runAlp, runMass
   real (dp)          , intent(in ) :: mZ, amZ, h, mT, Q, gt
   real (dp)          , intent(out) :: res
-  type (Running)                   :: alphaMass
-  type (Alpha)                     :: alphaAll
-  type (Sigma)                     :: MatEl
-  type (ElectroWeak)               :: EW
   integer                          :: i
+  type (RNRQCD)                    :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running), dimension(2)     :: alphaMass
+  type (VFNSMSR)                   :: MSR
   type (AnomDim), dimension(3:6)   :: AnDim
+  character (len = 5)              :: alphaScheme
+
+  alphaScheme = 'pole'; if ( str(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
   do i = 3, 6
-    AnDim(i) = AnomDim( str(:5), i, 0._dp )
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, runAlp, runAlp, mZ, amZ, mT, mT, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, runMass, alphaAll, 0._dp)
-  EW        = ElectroWeak(mZ, 0._dp, 0._dp)
-  MatEl     = Sigma(alphaMass, EW)
-  res       = MatEl%RQCD(order, gt, h, Q)
+  alphaAll  = Alpha(AnDim, runAlp, runAlp, mZ, aMz, mT, mT, &
+  0._dp, 0._dp, 0._dp, 0._dp)
+
+  alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
+  Running(5, runMass, alphaAll, 1._dp) ]
+
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
+
+  res = NRQCD%RQCD(order, gt, h, Q)
 
 end subroutine f90RQCD
 

@@ -28,7 +28,7 @@ module RNRQCDClass
     procedure, pass (self), public :: VceffsNNLL, VrsLL, V2sLL, VssLL, Vk1sLL, &
     Vk2sLL, VkeffsLL, XiNLL, XiNNLLnonmix, XiNNLLmixUsoft, MLLc2, MNLLc1, &
     MNLLplusNNLLnonmixc1, MNNLLAllc1InclSoftMixLog, A1pole, Xsec, Delta1S, &
-    MNLLc1Square, MNNLLc1Square, Rexp, QSwitch
+    MNLLc1Square, MNNLLc1Square, Rexp, QSwitch, RQCD
 
     procedure, pass (self), private :: xc01, xc11, xc12, xc22
 

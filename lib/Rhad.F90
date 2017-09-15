@@ -22,7 +22,7 @@ module SigmaClass
    contains
 
     procedure, pass(self), public :: RhadMass, SetAlpha, SetMTop, SetMBottom, &
-    Rhad, SetMCharm, RHadCoefs, RQCD
+    Rhad, SetMCharm, RHadCoefs
 
   end type Sigma
 
@@ -124,33 +124,6 @@ module SigmaClass
     Rhad = dot_product( PowList0( self%run%alphaQCD(mu)/Pi, n + 1 ), rQ )
 
   end function Rhad
-
-!ccccccccccccccc
-
-  real (dp) function RQCD(self, order, gt, h, Q)
-    class (Sigma)      , intent(in)          :: self
-    Integer            , intent(in)          :: order
-    real (dp)          , intent(in)          :: h, Q, gt
-    complex (dp)                             :: z
-    real (dp)                                :: mu, m
-    integer                                  :: n
-    real (dp), dimension(5)                  :: b
-    real (dp), dimension(0:min(order,3))     :: rQ
-    real (dp), dimension(0:min(order,3) - 1, min(order,3)) :: Rcoef
-
-    m = self%mH; mu = h * m; z = ( Q + (0,1) * gt )**2/4/m**2 ; n = min(order,3)
-
-    Rcoef = 0; RQCD = 0; if (n < 0) return; rQ = PiCoef(z,n)
-
-    b = getInverse( self%andim%alphaMatching(self%nf + 1) )
-    call alphaReExpand( rQ(1:), b(:3) ); if (order > 1) Rcoef(0,:) = rQ(1:)
-
-    if (order > 1) call self%andim%expandAlpha(Rcoef)
-    if (order > 1) rQ(2:) = matmul( PowList0( log(h), n - 1 ), Rcoef(:,2:) )
-
-    RQCD = 64 * Pi * m**2 * dot_product( PowList0( self%run%alphaQCD(mu)/Pi, n ), rQ )/3/Q**2
-
-  end function RQCD
 
 !ccccccccccccccc
 
