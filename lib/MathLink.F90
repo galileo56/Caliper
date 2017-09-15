@@ -656,12 +656,12 @@ end subroutine f90ToppikList
 !ccccccccccccccc
 
 subroutine f90Pi0(zr, zi, res)
-  use SigmaClass, only: Pi0; use constants, only: dp; implicit none
+  use SigmaClass, only: VacPol0; use constants, only: dp; implicit none
   real (dp), intent(in) :: zr, zi
   real (dp), intent(out), dimension(2) :: res
   complex (dp) :: resul
 
-  resul = Pi0( cmplx(zr, zi, kind = dp) )
+  resul = VacPol0( cmplx(zr, zi, kind = dp) )
 
   res = [ RealPart(resul), ImagPart(resul) ]
 
@@ -670,13 +670,13 @@ end subroutine f90Pi0
 !ccccccccccccccc
 
 subroutine f90Pi0Der(i, zr, zi, res)
-  use SigmaClass, only: Pi0Der; use constants, only: dp; implicit none
+  use SigmaClass, only: VacPol0Der; use constants, only: dp; implicit none
   real (dp), intent(in) :: zr, zi
   integer  , intent(in) :: i
   real (dp), intent(out), dimension(2) :: res
   complex (dp) :: resul
 
-  resul = Pi0Der( i, cmplx(zr, zi, kind = dp) )
+  resul = VacPol0Der( i, cmplx(zr, zi, kind = dp) )
 
   res = [ RealPart(resul), ImagPart(resul) ]
 
@@ -685,13 +685,13 @@ end subroutine f90Pi0Der
 !ccccccccccccccc
 
 subroutine f90Pi1Der(i, zr, zi, res)
-  use SigmaClass, only: Pi1Der; use constants, only: dp; implicit none
+  use SigmaClass, only: VacPol1Der; use constants, only: dp; implicit none
   real (dp), intent(in) :: zr, zi
   integer  , intent(in) :: i
   real (dp), intent(out), dimension(2) :: res
   complex (dp) :: resul
 
-  resul = Pi1Der( i, cmplx(zr, zi, kind = dp) )
+  resul = VacPol1Der( i, cmplx(zr, zi, kind = dp) )
 
   res = [ RealPart(resul), ImagPart(resul) ]
 
@@ -700,12 +700,12 @@ end subroutine f90Pi1Der
 !ccccccccccccccc
 
 subroutine f90Pi1(zr, zi, res)
-  use SigmaClass, only: Pi1; use constants, only: dp; implicit none
+  use SigmaClass, only: VacPol1; use constants, only: dp; implicit none
   real (dp), intent(in) :: zr, zi
   real (dp), intent(out), dimension(2) :: res
   complex (dp) :: resul
 
-  resul = Pi1( cmplx(zr, zi, kind = dp) )
+  resul = VacPol1( cmplx(zr, zi, kind = dp) )
 
   res = [ RealPart(resul), ImagPart(resul) ]
 
@@ -714,12 +714,12 @@ end subroutine f90Pi1
 !ccccccccccccccc
 
 subroutine f90Pi3(zr, zi, res)
-  use SigmaClass, only: Pi3; use constants, only: dp; implicit none
+  use SigmaClass, only: VacPol3; use constants, only: dp; implicit none
   real (dp), intent(in) :: zr, zi
   real (dp), intent(out), dimension(2) :: res
   complex (dp) :: resul
 
-  resul = Pi3( cmplx(zr, zi, kind = dp) )
+  resul = VacPol3( cmplx(zr, zi, kind = dp) )
 
   res = [ RealPart(resul), ImagPart(resul) ]
 
@@ -728,12 +728,12 @@ end subroutine f90Pi3
 !ccccccccccccccc
 
 subroutine f90Pi2(zr, zi, res)
-  use SigmaClass, only: P2; use constants, only: dp; implicit none
+  use SigmaClass, only: VacPol2; use constants, only: dp; implicit none
   real (dp), intent(in) :: zr, zi
   real (dp), intent(out), dimension(2) :: res
   complex (dp) :: resul
 
-  resul = P2( cmplx(zr, zi, kind = dp) )
+  resul = VacPol2( cmplx(zr, zi, kind = dp) )
 
   res = [ RealPart(resul), ImagPart(resul) ]
 
@@ -742,12 +742,12 @@ end subroutine f90Pi2
 !ccccccccccccccc
 
 subroutine f90Pi2Der(zr, zi, res)
-  use SigmaClass, only: P2Der; use constants, only: dp; implicit none
+  use SigmaClass, only: VacPol2Der; use constants, only: dp; implicit none
   real (dp), intent(in) :: zr, zi
   real (dp), intent(out), dimension(2) :: res
   complex (dp) :: resul
 
-  resul = P2Der( cmplx(zr, zi, kind = dp) )
+  resul = VacPol2Der( cmplx(zr, zi, kind = dp) )
 
   res = [ RealPart(resul), ImagPart(resul) ]
 
@@ -788,36 +788,36 @@ end subroutine f90DeltaCharm2
 
 !ccccccccccccccc
 
-subroutine f90p2(r, res)
+subroutine f90P2(r, res)
   use constants, only: dp; use AnomDimClass, only: p; implicit none
   real (dp), intent(in ) :: r
   real (dp), intent(out) :: res
 
   res = p(r)
 
-end subroutine f90p2
+end subroutine f90P2
 
 !ccccccccccccccc
 
-subroutine f90p2Int(r, res)
+subroutine f90P2Int(r, res)
   use constants, only: dp; use AnomDimClass, only: pInt; implicit none
   real (dp), intent(in ) :: r
   real (dp), intent(out) :: res
 
   res = pInt(r)
 
-end subroutine f90p2Int
+end subroutine f90P2Int
 
 !ccccccccccccccc
 
-subroutine f90p2Double(r1, r2, res)
-  use constants, only: dp; use AnomDimClass, only: p2Int; implicit none
+subroutine f90P2Double(r1, r2, res)
+  use constants, only: dp; use AnomDimClass, only: P2Int; implicit none
   real (dp), intent(in ) :: r1, r2
   real (dp), intent(out) :: res
 
-  res = p2Int(r1, r2)
+  res = P2Int(r1, r2)
 
-end subroutine f90p2Double
+end subroutine f90P2Double
 
 !ccccccccccccccc
 
@@ -1032,10 +1032,10 @@ end subroutine f90BreitModelUnstable
 
 !ccccccccccccccc
 
-subroutine f90ModelUnstablediff(shape, mt, Q, c, clen, lambda, n, k, p, p2, res)
+subroutine f90ModelUnstablediff(shape, mt, Q, c, clen, lambda, n, k, p, VacPol2, res)
   use constants, only: dp; use hyper; use MCtopClass; use ModelClass; implicit none
   character (len = *)       , intent(in)  :: shape
-  real (dp)                 , intent(in)  :: mt, Q, p, p2, lambda
+  real (dp)                 , intent(in)  :: mt, Q, p, VacPol2, lambda
   real (dp), dimension(clen), intent(in)  :: c
   integer                   , intent(in)  :: n, clen, k
   real (dp)                 , intent(out) :: res
@@ -1043,7 +1043,7 @@ subroutine f90ModelUnstablediff(shape, mt, Q, c, clen, lambda, n, k, p, p2, res)
   type (Model)                            :: Mod
 
   MC = MCtop( shape(:6), mt, Q, n ); Mod = Model(lambda, c, [0, 0], 'sum')
-  res = Mod%ModelUnstable(MC, k, p, p2)
+  res = Mod%ModelUnstable(MC, k, p, VacPol2)
 
 end subroutine f90ModelUnstablediff
 
@@ -5620,29 +5620,36 @@ end subroutine f90RhadMass
 
 subroutine f90RQCD(str, runAlp, runMass, order, gt, mZ, amZ, mT, h, Q, res)
 
-  use RunningClass; use AlphaClass; use SigmaClass; use ElectroWeakClass
-  use constants, only: dp; use AnomDimClass; implicit none
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass; use VFNSMSRClass; implicit none
 
   character (len = *), intent(in ) :: str
   integer            , intent(in ) :: order, runAlp, runMass
   real (dp)          , intent(in ) :: mZ, amZ, h, mT, Q, gt
   real (dp)          , intent(out) :: res
-  type (Running)                   :: alphaMass
-  type (Alpha)                     :: alphaAll
-  type (Sigma)                     :: MatEl
-  type (ElectroWeak)               :: EW
   integer                          :: i
+  type (RNRQCD)                    :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running), dimension(2)     :: alphaMass
+  type (VFNSMSR)                   :: MSR
   type (AnomDim), dimension(3:6)   :: AnDim
+  character (len = 5)              :: alphaScheme
+
+  alphaScheme = 'pole'; if ( str(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
   do i = 3, 6
-    AnDim(i) = AnomDim( str(:5), i, 0._dp )
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, runAlp, runAlp, mZ, amZ, mT, mT, 0._dp, 0._dp, 0._dp, 0._dp)
-  alphaMass = Running(5, runMass, alphaAll, 0._dp)
-  EW        = ElectroWeak(mZ, 0._dp, 0._dp)
-  MatEl     = Sigma(alphaMass, EW)
-  res       = MatEl%RQCD(order, gt, h, Q)
+  alphaAll  = Alpha(AnDim, runAlp, runAlp, mZ, aMz, mT, mT, &
+  0._dp, 0._dp, 0._dp, 0._dp)
+
+  alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
+  Running(5, runMass, alphaAll, 1._dp) ]
+
+  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
+
+  res = NRQCD%RQCD(order, gt, h, Q)
 
 end subroutine f90RQCD
 

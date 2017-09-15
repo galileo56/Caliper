@@ -4,7 +4,8 @@
 module RNRQCDClass
   use constants, only: dp, Pi, Pi2, l2, Zeta3, Euler, Pi3; use ToppikClass
   use DeriGamma, only: DiGam, trigam ; use RunningClass; use AnomDimClass
-  use AlphaClass; use NRQCDClass; use VFNSMSRClass; implicit none ;  private
+  use AlphaClass; use NRQCDClass; use VFNSMSRClass; use SigmaClass
+  implicit none ;  private
 
   real (dp)   , parameter :: FPi = 4 * Pi
   complex (dp), parameter :: cI = (0,1)
@@ -20,13 +21,14 @@ module RNRQCDClass
     type (Running)            :: run
     type (Alpha)              :: AlphaOb
     type (NRQCD)              :: Upsilon
+    type (AnomDim)            :: andim
 
   contains
 
     procedure, pass (self), public :: VceffsNNLL, VrsLL, V2sLL, VssLL, Vk1sLL, &
     Vk2sLL, VkeffsLL, XiNLL, XiNNLLnonmix, XiNNLLmixUsoft, MLLc2, MNLLc1, &
     MNLLplusNNLLnonmixc1, MNNLLAllc1InclSoftMixLog, A1pole, Xsec, Delta1S, &
-    MNLLc1Square, MNNLLc1Square, Rexp, QSwitch
+    MNLLc1Square, MNNLLc1Square, Rexp, QSwitch, RQCD
 
     procedure, pass (self), private :: xc01, xc11, xc12, xc22
 
@@ -50,7 +52,7 @@ contains
 
     nl = run%numFlav(); adim = run%adim(); RNRQCDIn%run = run; RNRQCDIn%nl = nl
     RNRQCDIn%beta = adim%betaQCD('beta') ; RNRQCDIn%AlphaOb = run%alphaAll()
-    RNRQCDIn%mass = run%scales('mH')
+    RNRQCDIn%mass = run%scales('mH'); RNRQCDIn%andim = adim
 
     RNRQCDIn%a1 = 31._dp/3 - 10._dp * nl/9
     RNRQCDIn%a2 = 456.74883699902244_dp - 66.35417150661816_dp * nl + &
@@ -62,6 +64,33 @@ contains
     if (nl == 4 .or. nl == 2 .or. nl == 0) RNRQCDIn%Qt = - 1._dp/3
 
   end function RNRQCDIn
+
+!ccccccccccccccc
+
+  real (dp) function RQCD(self, order, gt, h, Q)
+    class (RNRQCD)      , intent(in)         :: self
+    Integer            , intent(in)          :: order
+    real (dp)          , intent(in)          :: h, Q, gt
+    complex (dp)                             :: z
+    real (dp)                                :: mu, m
+    integer                                  :: n
+    real (dp), dimension(5)                  :: b
+    real (dp), dimension(0:min(order,3))     :: rQ
+    real (dp), dimension(0:min(order,3) - 1, min(order,3)) :: Rcoef
+
+    m = self%mass; mu = h * m; z = ( Q + (0,1) * gt )**2/4/m**2 ; n = min(order,3)
+
+    Rcoef = 0; RQCD = 0; if (n < 0) return; rQ = PiCoef(z,n)
+
+    b = getInverse( self%andim%alphaMatching(self%nl + 1) )
+    call alphaReExpand( rQ(1:), b(:3) ); if (order > 1) Rcoef(0,:) = rQ(1:)
+
+    if (order > 1) call self%andim%expandAlpha(Rcoef)
+    if (order > 1) rQ(2:) = matmul( PowList0( log(h), n - 1 ), Rcoef(:,2:) )
+
+    RQCD = 64 * Pi * m**2 * dot_product( PowList0( self%run%alphaQCD(mu)/Pi, n ), rQ )/3/Q**2
+
+  end function RQCD
 
 ! ccccccccccc
 

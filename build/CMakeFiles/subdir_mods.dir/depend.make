@@ -342,6 +342,8 @@ CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o.requires: CMakeFiles/subdir_mods.dir/
 CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o: CMakeFiles/subdir_mods.dir/nrqcdclass.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o.requires: CMakeFiles/subdir_mods.dir/runningclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o: CMakeFiles/subdir_mods.dir/runningclass.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o.requires: CMakeFiles/subdir_mods.dir/sigmaclass.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o: CMakeFiles/subdir_mods.dir/sigmaclass.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o.requires: CMakeFiles/subdir_mods.dir/toppikclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o: CMakeFiles/subdir_mods.dir/toppikclass.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o.requires: CMakeFiles/subdir_mods.dir/vfnsmsrclass.mod.proxy
