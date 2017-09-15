@@ -28,8 +28,7 @@ module NRQCDClass
     procedure, pass(self), public  :: En, MassFitter, setMass, DeltaCharm, &
     ZeroBin, DeltaCharmBin, MassIter, EnExpand, DeltaCharmBin3, DeltaCharmDer, &
     DeltaCharmExact, DeltaCharmDerBin, MassError, EnError, MassList, NRQCDList, &
-    DeltaCharmBinBend, setCharm, SetAlpha, EnDerAlpha, EnDerCharm, UpsilonList, &
-    UpsilonGrid
+    DeltaCharmBinBend, setCharm, SetAlpha, EnDerAlpha, EnDerCharm, UpsilonList
 
   end type NRQCD
 
@@ -205,15 +204,28 @@ module NRQCDClass
 !ccccccccccccccc
 
   subroutine setMass(self, m, mu)
-    class (NRQCD), intent(inout) :: self
-    real (dp)    , intent(in)    :: m, mu
+    class (NRQCD)      , intent(inout) :: self
+    real (dp)          , intent(in)    :: m
+    real (dp), optional, intent(in)    :: mu
 
     self%mH = m;    call self%MSR%setMass(m, mu)
 
-    if (self%nf == 5) then
-      call self%alphaMass%SetMTop(m, mu)
-    else if (self%nf == 4) then
-      call self%alphaMass%SetMBottom(m, mu)
+    if ( present(mu) ) then
+
+      if (self%nf == 5) then
+        call self%alphaMass%SetMTop(m, mu)
+      else if (self%nf == 4) then
+        call self%alphaMass%SetMBottom(m, mu)
+      end if
+
+    else
+
+      if (self%nf == 5) then
+        call self%alphaMass%SetMTop(m, self%rat * m)
+      else if (self%nf == 4) then
+        call self%alphaMass%SetMBottom(m, self%rat * m)
+      end if
+
     end if
 
   end subroutine setMass
@@ -322,38 +334,6 @@ module NRQCDClass
     end do
 
   end function NRQCDList
-
-!ccccccccccccccc
-
-  subroutine UpsilonGrid(self, n, mu0, mu1, deltaMu, R0, R1, deltaR, m0, m1, &
-    deltam, lambda, method, counting, epsAlpha, epsCharm, mList, list)
-    class (NRQCD)      , intent(inout) :: self
-    character (len = *), intent(in)    :: method, counting
-    integer            , intent(in)    :: n
-    real (dp)          , intent(in)    :: lambda, mu0, mu1, R1, deltaMu, R0, &
-    deltaR, epsAlpha, epsCharm, m0, m1, deltam
-
-    real (dp), dimension(  0:Floor( (m1 - m0)/deltaM ), 5, 3, &
-    0:Floor( (mu1 - mu0)/deltaMu ), 0:Floor( (R1 - R0)/deltaR )  ), &
-    intent(out) :: list
-
-    real (dp), dimension(  0:Floor( (m1 - m0)/deltaM )  ), intent(out) :: mList
-    integer                                                            :: i, imax
-    real (dp)                                                          :: m
-
-    m = self%mH;  imax = Floor( (m1 - m0)/deltaM )
-
-    do i = 0, imax
-
-      mList(i) = m0 + i * deltaM
-      call self%setMass( mList(i), self%rat * mList(i) )
-
-      list(i,:,:,:,:) = self%UpsilonList(n, mu0, mu1, deltaMu, R0, R1, deltaR, &
-      lambda, method, counting, epsAlpha, epsCharm)
-
-    end do
-
-  end subroutine UpsilonGrid
 
 !ccccccccccccccc
 
@@ -1847,63 +1827,101 @@ module NRQCDClass
   subroutine CorrMattNRQCD(UpsilonList, dim, n, mu0, mu1, deltaMu, R0, R1, &
   deltaR, lambda, method, counting, epsAlpha, epsCharm, massList, corMat)
 
-  class (NRQCD), dimension(dim), intent(inout) :: UpsilonList
-  character (len = *)          , intent(in)    :: method, counting
-  integer                      , intent(in)    :: n, dim
-  real (dp)                    , intent(in)    :: lambda, mu0, mu1, R1, deltaMu, &
-  deltaR, epsAlpha, epsCharm, R0
+    class (NRQCD), dimension(dim), intent(inout) :: UpsilonList
+    character (len = *)          , intent(in)    :: method, counting
+    integer                      , intent(in)    :: n, dim
+    real (dp)                    , intent(in)    :: lambda, mu0, mu1, R1, deltaMu, &
+    deltaR, epsAlpha, epsCharm, R0
 
-  real (dp), dimension( dim, 5, 5 )  , intent(out) :: massList
-  real (dp), dimension( dim, dim, 5 ), intent(out) :: corMat
+    real (dp), dimension( dim, 5, 5 )  , intent(out) :: massList
+    real (dp), dimension( dim, dim, 5 ), intent(out) :: corMat
 
-  real (dp), dimension( dim, 5, 3, 0:Floor( (mu1 - mu0)/deltaMu ), &
-  0:Floor( (R1 - R0)/deltaR ) )                :: list
+    real (dp), dimension( dim, 5, 3, 0:Floor( (mu1 - mu0)/deltaMu ), &
+    0:Floor( (R1 - R0)/deltaR ) )                :: list
 
-  integer                                      :: i, j, k, m, imax, jmax
-  real (dp), dimension( dim, 5 )               :: SigmaList
+    integer                                      :: i, j, k, m, imax, jmax
+    real (dp), dimension( dim, 5 )               :: SigmaList
 
-  corMat = 1
-  imax = Floor( (mu1 - mu0)/deltaMu ) + 1; jmax = Floor( (R1 - R0)/deltaR ) + 1
+    corMat = 1
+    imax = Floor( (mu1 - mu0)/deltaMu ) + 1; jmax = Floor( (R1 - R0)/deltaR ) + 1
 
-  do k = 1, dim
+    do k = 1, dim
 
-    list(k,:,:,:,:) = UpsilonList(k)%UpsilonList(n, mu0, mu1, deltaMu, R0, R1, &
-    deltaR, lambda, method, counting, epsAlpha, epsCharm)
+      list(k,:,:,:,:) = UpsilonList(k)%UpsilonList(n, mu0, mu1, deltaMu, R0, R1, &
+      deltaR, lambda, method, counting, epsAlpha, epsCharm)
 
-    do m = 2, 5
-      list(k,m,:,:,:) = list(k, m - 1,:,:,:) + list(k, m,:,:,:)
+      do m = 2, 5
+        list(k,m,:,:,:) = list(k, m - 1,:,:,:) + list(k, m,:,:,:)
+      end do
+
+      do m = 1, 5
+        massList(k, 1, m) = sum( list(k, m, 1, :, :) )/imax/jmax
+        massList(k, 2, m) = (  maxVal( list(k, m, 1, :, :) ) + minVal( list(k, m, 1, :, :) )  )/2
+        massList(k, 3, m) = (  maxVal( list(k, m, 1, :, :) ) - minVal( list(k, m, 1, :, :) )  )/2
+        massList(k, 4, m) = sum( list(k, m, 2, :, :) )/imax/jmax
+        massList(k, 5, m) = sum( list(k, m, 3, :, :) )/imax/jmax
+        SigmaList(k,m)    = sqrt(  sum(  ( list(k, m, 1, :, :) - massList(k, 1, m) )**2 )  )
+      end do
+
     end do
 
-    do m = 1, 5
-      massList(k, 1, m) = sum( list(k, m, 1, :, :) )/imax/jmax
-      massList(k, 2, m) = (  maxVal( list(k, m, 1, :, :) ) + minVal( list(k, m, 1, :, :) )  )/2
-      massList(k, 3, m) = (  maxVal( list(k, m, 1, :, :) ) - minVal( list(k, m, 1, :, :) )  )/2
-      massList(k, 4, m) = sum( list(k, m, 2, :, :) )/imax/jmax
-      massList(k, 5, m) = sum( list(k, m, 3, :, :) )/imax/jmax
-      SigmaList(k,m)    = sqrt(  sum(  ( list(k, m, 1, :, :) - massList(k, 1, m) )**2 )  )
-    end do
+    do i = 1, dim
+      do j = 1, i - 1
+        do k = 1, 5
 
-  end do
+          corMat(i, j, k) = sum(  ( list(i, k, 1, :, :) - massList(i, 1, k) ) * &
+          ( list(j, k, 1, :, :) - massList(j, 1, k) )  )/SigmaList(i,k)/SigmaList(j,k)
 
-  do i = 1, dim
-    do j = 1, i - 1
-      do k = 1, 5
-
-        corMat(i, j, k) = sum(  ( list(i, k, 1, :, :) - massList(i, 1, k) ) * &
-        ( list(j, k, 1, :, :) - massList(j, 1, k) )  )/SigmaList(i,k)/SigmaList(j,k)
-
+        end do
       end do
     end do
-  end do
 
-  do i = 1, dim
-    do j = i + 1, dim
-      corMat(i, j, :) = corMat(j, i, :)
+    do i = 1, dim
+      do j = i + 1, dim
+        corMat(i, j, :) = corMat(j, i, :)
+      end do
     end do
-  end do
 
   end subroutine CorrMattNRQCD
 
 !ccccccccccccccc
 
 end module NRQCDClass
+
+!ccccccccccccccc
+
+subroutine CorrMattGridNRQCD(UpsilonList, dim, n, mu0, mu1, deltaMu, R0, R1, &
+deltaR, m0, m1, deltaM, lambda, method, counting, epsAlpha, epsCharm, mList, &
+massList, corMat)
+
+  use constants, only: dp; use NRQCDClass; implicit none
+
+  class (NRQCD), dimension(dim), intent(inout) :: UpsilonList
+  character (len = *)          , intent(in)    :: method, counting
+  integer                      , intent(in)    :: n, dim
+  real (dp)                    , intent(in)    :: lambda, mu0, mu1, R1, deltaMu, &
+  deltaR, epsAlpha, epsCharm, R0, m0, m1, deltaM
+
+  real (dp), dimension( dim, 5 , 5, 0:Floor( (m1 - m0)/deltaM ) ), intent(out) :: massList
+  real (dp), dimension( dim, dim, 5, 0:Floor( (m1 - m0)/deltaM ) ), intent(out) :: corMat
+  real (dp), dimension(  0:Floor( (m1 - m0)/deltaM )  ), intent(out) :: mList
+
+  integer :: imax, i, j
+
+  imax = Floor( (m1 - m0)/deltaM )
+
+  do i = 0, imax
+
+    mList(i) = m0 + i * deltaM
+
+    do j = 1, dim
+      call UpsilonList(j)%setMass( mList(i) )
+    end do
+
+    call CorrMattNRQCD( UpsilonList, dim, n, mu0, mu1, deltaMu, R0, R1, &
+    deltaR, lambda, method, counting, epsAlpha, epsCharm, massList(:,:,:,i), &
+    corMat(:,:,:,i) )
+
+  end do
+
+end subroutine CorrMattGridNRQCD
