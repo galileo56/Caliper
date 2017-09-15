@@ -4,8 +4,8 @@ module SigmaClass
   use Constants, only: dp, Pi, Pi2, Zeta3;  implicit none;  private
 
   real (dp), dimension(2)               :: EWfact
-  public                                :: setEWfact, Pi0, Pi0Der, Pi1Der, &
-  P2, P2Der, Pi3, Pi1
+  public                                :: setEWfact, VacPol0, VacPol0Der, &
+  VacPol2, VacPol2Der, VacPol3, VacPol1, PiCoef, VacPol1Der
 
 !ccccccccccccccc
 
@@ -463,41 +463,41 @@ end function DIz
 
 !ccccccccccccccc
 
-complex (dp) function Pi0(z)
+complex (dp) function VacPol0(z)
   complex (dp), intent(in) :: z
 
-  Pi0 = 3 * (  20._dp/9 + 4/z/3 - 4 * (1 - z) * (1 + 2 * z)/3/z * Gz( u(z) )  )/16/Pi2
+  VacPol0 = 3 * (  20._dp/9 + 4/z/3 - 4 * (1 - z) * (1 + 2 * z)/3/z * Gz( u(z) )  )/16/Pi2
 
-end function Pi0
+end function VacPol0
 
 !ccccccccccccccc
 
-complex (dp) function Pi0Der(i, z)
+complex (dp) function VacPol0Der(i, z)
   integer     , intent(in) :: i
   complex (dp), intent(in) :: z
   complex (dp) :: uu, uuDer, uuDer2, uuDer3
 
-  Pi0Der = 0; if (i > 0) uu = u(z); if (i > 0) uuDer = uDer(1,uu)
+  VacPol0Der = 0; if (i > 0) uu = u(z); if (i > 0) uuDer = uDer(1,uu)
   if (i > 1) uuDer2 = uDer(2,uu);  if (i > 2) uuDer3 = uDer(3,uu)
 
   if ( i == 0 ) then
 
-    Pi0Der = Pi0(z)
+    VacPol0Der = VacPol0(z)
 
   else if (i == 1) then
 
-    Pi0Der = 4 * ( (1 + 2 * z**2) * Gz(uu) - 1 + z * (2 * z**2 - 1 - z) * &
+    VacPol0Der = 4 * ( (1 + 2 * z**2) * Gz(uu) - 1 + z * (2 * z**2 - 1 - z) * &
     Gzder(1,uu) * uuDer )/3/z**2
 
   else if (i == 2) then
 
-    Pi0Der = 4 * (  2 - 2 * Gz(uu) + (z - 1) * z**2 * (1 + 2 * z) * uuDer**2 * &
+    VacPol0Der = 4 * (  2 - 2 * Gz(uu) + (z - 1) * z**2 * (1 + 2 * z) * uuDer**2 * &
     Gzder(2,uu) + z * Gzder(1,uu) * ( 2 * (1 + 2 * z**2) * uuDer + (z - 1) * &
     z * (1 + 2 * z) * uuDer2 )  )/3/z**3
 
   else if (i == 3) then
 
-    Pi0Der = 4 * (   6 * Gz(uu) - 6 + z * (   z * ( uuDer3 * (z - 1) * z * &
+    VacPol0Der = 4 * (   6 * Gz(uu) - 6 + z * (   z * ( uuDer3 * (z - 1) * z * &
     (1 + 2 * z) + uuDer2 * (3 + 6 * z**2) ) - 6 * uuDer  ) * GZDer(1,uu) + &
     uuDer * z**2 * (  3 * ( uuDer2 * (z - 1) * z * (1 + 2 * z) + uuDer * &
     (1 + 2 * z**2) ) * GZDer(2, uu) + uuDer**2 * (z - 1) * z * (1 + 2 * z) *&
@@ -505,9 +505,9 @@ complex (dp) function Pi0Der(i, z)
 
   end if
 
-  if (i > 0) Pi0Der = 3 * Pi0Der/16/Pi2
+  if (i > 0) VacPol0Der = 3 * VacPol0Der/16/Pi2
 
-end function Pi0Der
+end function VacPol0Der
 
 !ccccccccccccccc
 
@@ -516,30 +516,30 @@ end function Pi0Der
   integer     , intent(in)           :: n
   real (dp), dimension( 0:min(n,3) ) :: res
 
-  if (n >= 0) res(0) = ImagPart( z * Pi0(z) )
-  if (n >= 1) res(1) = 4 * ImagPart( z * Pi1(z) )/3
-  if (n >= 2) res(2) = ImagPart( z * P2(z)  )
-  if (n >= 3) res(3) = ImagPart( z * Pi3(z) )
+  if (n >= 0) res(0) = ImagPart( z * VacPol0(z) )
+  if (n >= 1) res(1) = 4 * ImagPart( z * VacPol1(z) )/3
+  if (n >= 2) res(2) = ImagPart( z * VacPol2(z)  )
+  if (n >= 3) res(3) = ImagPart( z * VacPol3(z) )
 
   end function PiCoef
 
 !ccccccccccccccc
 
-complex (dp) function Pi1Der(i, z)
+complex (dp) function VacPol1Der(i, z)
   integer     , intent(in) :: i
   complex (dp), intent(in) :: z
   complex (dp)             :: uu, uuDer, uuDer2, uuDer3
 
-  Pi1Der = 0; if (i > 0) uu = u(z); if (i > 0) uuDer = uDer(1,uu)
+  VacPol1Der = 0; if (i > 0) uu = u(z); if (i > 0) uuDer = uDer(1,uu)
   if (i > 0) uuDer2 = uDer(2,uu);  if (i > 1) uuDer3 = uDer(3,uu)
 
   if ( i == 0 ) then
 
-    Pi1Der = Pi1(z)
+    VacPol1Der = VacPol1(z)
 
   else if (i == 1) then
 
-    Pi1Der = (z*(-1 + 16*z**2)*Gz(uu)**2 + 2*z*Gz(uu)*(9 + 6*z**2 + &
+    VacPol1Der = (z*(-1 + 16*z**2)*Gz(uu)**2 + 2*z*Gz(uu)*(9 + 6*z**2 + &
     uuDer*(-1 + z)*z*(-1 + 16*z)*GZDer(1,uu)) - 2*Iz(U(z)) +  &
     z*(-13 + 2*uuDer2*(-1 + z)*z*(1 + 2*z)*IzDer(1,uu) + uuDer*(3*IzDer(1,uu) &
     + 2*(-1 + z)*z*((9 + 6*z)*GZDer(1,uu) + uuDer*(1 + 2*z)*IzDer(2,uu)))))/ &
@@ -547,7 +547,7 @@ complex (dp) function Pi1Der(i, z)
 
   else if (i == 2) then
 
-    Pi1Der = (2*z*Gz(uu)**2 + 2*z*Gz(uu)*(-18 + z*(uuDer2*(-1 + z)*z*(-1 + 16*z)  &
+    VacPol1Der = (2*z*Gz(uu)**2 + 2*z*Gz(uu)*(-18 + z*(uuDer2*(-1 + z)*z*(-1 + 16*z)  &
     + uuDer*(-2 + 32*z**2))*GZDer(1,uu) + uuDer**2*(-1 + z)*z**2*(-1 + 16*z)* &
     GZDer(2,uu)) + 6*Iz(U(z)) + z*(26 + 6*z*(uuDer2*z*(-3 + z + 2*z**2) + &
     uuDer*(6 + 4*z**2))*GZDer(1,uu) + 2*uuDer**2*(-1 + z)*z**2*(-1 + 16*z)* &
@@ -558,27 +558,27 @@ complex (dp) function Pi1Der(i, z)
 
   end if
 
-  if (i > 0) Pi1Der = 3 * Pi1Der/16/Pi2
+  if (i > 0) VacPol1Der = 3 * VacPol1Der/16/Pi2
 
-end function Pi1Der
+end function VacPol1Der
 
 !ccccccccccccccc
 
-complex (dp) function Pi1(z)
+complex (dp) function VacPol1(z)
   complex (dp), intent(in) :: z
   complex (dp)             :: uu, Gzuu, IIz
 
   uu = u(z); Gzuu = Gz(uu); IIz = Iz(uu)
 
-  Pi1 = 3 * (  5._dp/6 + 13/z/6 - (1 - z) * (3 + 2 * z) * Gzuu/z + &
+  VacPol1 = 3 * (  5._dp/6 + 13/z/6 - (1 - z) * (3 + 2 * z) * Gzuu/z + &
   (1 - z) * (1 - 16 * z) * Gzuu**2/z/6 - (1 + 2 * z)/z/6 * ( IIz/z + &
   2 * (1 - z) * ( IzDer(1,uu) * uDer(1,uu) - IIz/z )  )   )/16/Pi2
 
-end function Pi1
+end function VacPol1
 
 !ccccccccccccccc
 
-complex (dp) function P2Der(z)
+complex (dp) function VacPol2Der(z)
   complex (dp), intent(in)    :: z
   complex (dp), dimension(12) :: r32
   complex (dp)                :: r0, rz, r1, r2, r3, l1, l2, l3, PL1, PL2, PL3, &
@@ -592,7 +592,7 @@ complex (dp) function P2Der(z)
 
   r32 = PowList(r3/r2, 12); l5 = Log(2 * z - 2 * r0 * rz)
 
-  P2Der = (2 + 1/r1)/(r2 - z)**2 * ( 0.688472275231591_dp + &
+  VacPol2Der = (2 + 1/r1)/(r2 - z)**2 * ( 0.688472275231591_dp + &
   0.1891443911186843_dp * r32(1) - 0.030243753917029492_dp * r32(2) + &
   0.0034204077615457664_dp * r32(3) + 0.006118445792320977_dp * r32(4) &
   + 0.0016455445946186606_dp * r32(5) + 0.001252836593493741_dp * r32(6) &
@@ -1974,11 +1974,11 @@ r0**2*(2.1862739986827746e-3_dp*z-1.7490191989462196e-2_dp*z**3+  &
 3.498038397892441e-1_dp*z**4)))/(r0*rz*(0.5_dp+r0*rz-  &
 z)*z**6))))
 
-end function P2Der
+end function VacPol2Der
 
 !ccccccccccccccc
 
-complex (dp) function P2(z)
+complex (dp) function VacPol2(z)
   complex (dp), intent(in)    :: z
   complex (dp), dimension(12) :: r32
   complex (dp)                :: rz, r1, r2, r3, l1, l2, l3, PL1, PL2, PL3, PL4, &
@@ -1989,7 +1989,7 @@ complex (dp) function P2(z)
   l3 = Log( 8 * (z - r1 * rz) ); PL1 = cli2(d1); PL2 = cli2(-d1); PL3 = cli3(d1)
   PL4 = cli3(-d1); r32 = PowList(r3/r2, 12); z05 = 0.5_dp + z; z05m = z - 0.5_dp
 
-  P2 = - 0.688472275231591_dp + 2 * ( 0.688472275231591_dp + &
+  VacPol2 = - 0.688472275231591_dp + 2 * ( 0.688472275231591_dp + &
   0.1891443911186843_dp * r32(1) - 0.030243753917029492_dp * r32(2) + &
   0.0034204077615457664_dp * r32(3) + 0.006118445792320977_dp * r32(4) + &
   0.0016455445946186606_dp * r32(5) + 0.001252836593493741_dp * r32(6) + &
@@ -2317,11 +2317,11 @@ complex (dp) function P2(z)
   z**1.5_dp*(-6.558821996048325e-3_dp+  &
   2.62352879841933e-2_dp*z**2)))/z**5))
 
-end function P2
+end function VacPol2
 
 !ccccccccccccccc
 
-complex (dp) function Pi3(z)
+complex (dp) function VacPol3(z)
   complex (dp), intent(in)    :: z
   complex (dp), dimension(12) :: rat
   complex (dp)                :: sz, r1, r2, l1, l2, l3, PL1, PL2, PL3, &
@@ -2335,7 +2335,7 @@ complex (dp) function Pi3(z)
 
   rat = powList( r, 7 )
 
-  Pi3 = 3.344517218879539_dp + (1 + r)**4/4/(1 - r)**2/r * ( &
+  VacPol3 = 3.344517218879539_dp + (1 + r)**4/4/(1 - r)**2/r * ( &
   - 1.0550389626825085_dp + 1.5804670902096216_dp * r + 2.75436533583785_dp * &
   rat(2) - 1.2823166814463995_dp * rat(3) + 0.5368852704121565_dp * rat(4) +  &
   0.22668405128072777_dp * rat(5) - 0.7432166595042755_dp * rat(6) + &
@@ -2399,7 +2399,7 @@ complex (dp) function Pi3(z)
   2*((-d3)/(1-d1)+(2*d3)/(1+  &
   d1))*l1**2)/z)*z*z1))/(6*z))**2
 
-end function Pi3
+end function VacPol3
 
 !ccccccccccccccc
 
