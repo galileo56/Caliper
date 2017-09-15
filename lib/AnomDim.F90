@@ -11,11 +11,15 @@ module AnomDimClass
   PowList, getInverse, MSbarDeltaPiece, AlphaExpand, alphaMatchingLog, pint, &
   deltaCharm2, deltaCharm2Der, gammaRcharm2, gammaRcharm3, deltaCharm3, p,   &
   deltaCharm3Der, deltaCharmNh, deltaCharmNhDer, P2int, DeltaBottomCharm,    &
-  GammaRBottomCharm, deltaCharmNL, deltaCharmNLDer, deltaCharmGlueDer
+  GammaRBottomCharm, deltaCharmNL, deltaCharmNLDer, deltaCharmGlueDer, PowList0
 
   interface PowList
     module procedure   :: PowListDP, PowListInt, PowListComp
   end interface PowList
+
+  interface PowList0
+    module procedure   :: PowList0DP, PowList0Int, PowList0Comp
+  end interface PowList0
 
 !ccccccccccccccc
 
@@ -1150,43 +1154,54 @@ module AnomDimClass
 
 !ccccccccccccccc
 
-pure function MatchingAlpha(self) result(tab)
-  class (AnomDim), intent(in) :: self
-  real (dp)    , dimension(5) :: tab
+  pure function MatchingAlpha(self) result(tab)
+    class (AnomDim), intent(in) :: self
+    real (dp)    , dimension(5) :: tab
 
-  tab = self%alphaMatch
+    tab = self%alphaMatch
 
-end function MatchingAlpha
+  end function MatchingAlpha
 
 !ccccccccccccccc
 
-pure function MatchingAlphaLog(self, direction) result(tab)
-  class (AnomDim)    , intent(in) :: self
-  character (len = *), intent(in) :: direction
-  real (dp)    , dimension(0:4,5) :: tab
+  pure function MatchingAlphaLog(self, direction) result(tab)
+    class (AnomDim)    , intent(in) :: self
+    character (len = *), intent(in) :: direction
+    real (dp)    , dimension(0:4,5) :: tab
 
-  if ( direction(:4) == 'down' ) then
-    tab = self%alphaMatchLog
-  else if ( direction(:2) == 'up' ) then
-    tab = self%AlphaMatchInvLog
-  end if
+    if ( direction(:4) == 'down' ) then
+      tab = self%alphaMatchLog
+    else if ( direction(:2) == 'up' ) then
+      tab = self%AlphaMatchInvLog
+    end if
 
 end function MatchingAlphaLog
 
 !ccccccccccccccc
 
-pure function MatchingAlphaUp(self) result(tab)
-  class (AnomDim), intent(in)     :: self
-  real (dp)  , dimension(5)       :: tab
+  pure function MatchingAlphaUp(self) result(tab)
+    class (AnomDim), intent(in)     :: self
+    real (dp)  , dimension(5)       :: tab
 
-  tab = self%alphaMatchUp
+    tab = self%alphaMatchUp
 
-end function MatchingAlphaUp
+  end function MatchingAlphaUp
 
 !ccccccccccccccc
 
   pure function alphaMatching(self, nf) result(tab)
     class (AnomDim), intent(in)     :: self
+    integer        , intent(in)     :: nf
+    real (dp)  , dimension(5)       :: tab
+
+    tab = alphaMatch(self%str, nf)
+
+  end function alphaMatching
+
+!ccccccccccccccc
+
+  pure function alphaMatch(str, nf) result(tab)
+    character (len = *), intent(in) :: str
     integer        , intent(in)     :: nf
     real (dp)  , dimension(5)       :: tab, tab2
     real (dp)  , dimension(4)       :: b
@@ -1198,7 +1213,7 @@ end function MatchingAlphaUp
     tab2(3:) = - [7._dp/24, 5.586361025786356_dp - 0.26247081195432964_dp * nf,&
     95.80685705811597_dp - 10.171370332526523_dp * nf + 0.23954195789610408_dp * nf**2]
 
-    if ( self%str(:5) == 'MSbar' ) then
+    if ( str(:5) == 'MSbar' ) then
 
       b = MSbarDelta(nf - 1, 1); d = 0; d(0,0) = 1
 
@@ -1228,13 +1243,13 @@ end function MatchingAlphaUp
         end do
       end do
 
-    else if ( self%str(:4) == 'pole' ) then
+    else if ( str(:4) == 'pole' ) then
 
       tab = tab2
 
     end if
 
-  end function alphaMatching
+  end function alphaMatch
 
 !ccccccccccccccc
 
@@ -1412,6 +1427,39 @@ end function MatchingAlphaUp
     (  8 * Pi2/9 - lx + gam/x) )/(1 + ep/x**2 + del/x)  )/12
 
   end function DeltaMass
+
+!ccccccccccccccc
+
+  pure function PowList0int(alpha, n) result(list)
+    integer    , intent(in) :: alpha
+    integer    , intent(in) :: n
+    integer, dimension(0:n) :: list
+
+    list(0) = 1; if (n > 0) list(1:) = PowList(alpha, n)
+
+  end function PowList0Int
+
+!ccccccccccccccc
+
+  pure function PowList0DP(alpha, n) result(list)
+    real (dp)    , intent(in) :: alpha
+    integer      , intent(in) :: n
+    real (dp), dimension(0:n) :: list
+
+    list(0) = 1; if (n > 0) list(1:) = PowList(alpha, n)
+
+  end function PowList0DP
+
+!ccccccccccccccc
+
+  pure function PowList0Comp(alpha, n) result(list)
+    complex (dp)    , intent(in) :: alpha
+    integer         , intent(in) :: n
+    complex (dp), dimension(0:n) :: list
+
+    list(0) = 1; if (n > 0) list(1:) = PowList(alpha, n)
+
+  end function PowList0Comp
 
 !ccccccccccccccc
 
