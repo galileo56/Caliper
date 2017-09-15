@@ -11,15 +11,11 @@ module AnomDimClass
   PowList, getInverse, MSbarDeltaPiece, AlphaExpand, alphaMatchingLog, pint, &
   deltaCharm2, deltaCharm2Der, gammaRcharm2, gammaRcharm3, deltaCharm3, p,   &
   deltaCharm3Der, deltaCharmNh, deltaCharmNhDer, P2int, DeltaBottomCharm,    &
-  GammaRBottomCharm, deltaCharmNL, deltaCharmNLDer, deltaCharmGlueDer, PowList0
+  GammaRBottomCharm, deltaCharmNL, deltaCharmNLDer, deltaCharmGlueDer
 
   interface PowList
     module procedure   :: PowListDP, PowListInt, PowListComp
   end interface PowList
-
-  interface PowList0
-    module procedure   :: PowList0DP, PowList0Int, PowList0Comp
-  end interface PowList0
 
 !ccccccccccccccc
 
@@ -1416,39 +1412,6 @@ end function MatchingAlphaUp
     (  8 * Pi2/9 - lx + gam/x) )/(1 + ep/x**2 + del/x)  )/12
 
   end function DeltaMass
-
-!ccccccccccccccc
-
-  pure function PowList0int(alpha, n) result(list)
-    integer    , intent(in) :: alpha
-    integer    , intent(in) :: n
-    integer, dimension(0:n) :: list
-
-    list(0) = 1; if (n > 0) list(1:) = PowList(alpha, n)
-
-  end function PowList0Int
-
-!ccccccccccccccc
-
-  pure function PowList0DP(alpha, n) result(list)
-    real (dp)    , intent(in) :: alpha
-    integer      , intent(in) :: n
-    real (dp), dimension(0:n) :: list
-
-    list(0) = 1; if (n > 0) list(1:) = PowList(alpha, n)
-
-  end function PowList0DP
-
-!ccccccccccccccc
-
-  pure function PowList0Comp(alpha, n) result(list)
-    complex (dp)    , intent(in) :: alpha
-    integer         , intent(in) :: n
-    complex (dp), dimension(0:n) :: list
-
-    list(0) = 1; if (n > 0) list(1:) = PowList(alpha, n)
-
-  end function PowList0Comp
 
 !ccccccccccccccc
 
