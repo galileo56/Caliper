@@ -1859,33 +1859,27 @@ module NRQCDClass
   real (dp), dimension( dim, 5, 3, 0:Floor( (mu1 - mu0)/deltaMu ), &
   0:Floor( (R1 - R0)/deltaR ) )                :: list
 
-  integer                                      :: i, j, k, l, m, imax, jmax
+  integer                                      :: i, j, k, m, imax, jmax
   real (dp), dimension( dim, 5 )               :: SigmaList
 
   corMat = 1
-  imax = Floor( (mu1 - mu0)/deltaMu ); jmax = Floor( (R1 - R0)/deltaR )
+  imax = Floor( (mu1 - mu0)/deltaMu ) + 1; jmax = Floor( (R1 - R0)/deltaR ) + 1
 
   do k = 1, dim
 
     list(k,:,:,:,:) = UpsilonList(k)%UpsilonList(n, mu0, mu1, deltaMu, R0, R1, &
     deltaR, lambda, method, counting, epsAlpha, epsCharm)
 
-    do l = 1, 3
-      do i = 0, imax
-        do j = 0, jmax
-          do m = 2, 5
-            list(k,m,l,i,j) = sum( list(k,m-1:m,l,i,j) )
-          end do
-        end do
-      end do
+    do m = 2, 5
+      list(k,m,:,:,:) = list(k, m - 1,:,:,:) + list(k, m,:,:,:)
     end do
 
     do m = 1, 5
-      massList(k, 1, m) = sum( list(k, m, 1, :, :) )/(imax + 1)**2
+      massList(k, 1, m) = sum( list(k, m, 1, :, :) )/imax/jmax
       massList(k, 2, m) = (  maxVal( list(k, m, 1, :, :) ) + minVal( list(k, m, 1, :, :) )  )/2
       massList(k, 3, m) = (  maxVal( list(k, m, 1, :, :) ) - minVal( list(k, m, 1, :, :) )  )/2
-      massList(k, 4, m) = sum( list(k, m, 2, :, :) )/(imax + 1)**2
-      massList(k, 5, m) = sum( list(k, m, 3, :, :) )/(imax + 1)**2
+      massList(k, 4, m) = sum( list(k, m, 2, :, :) )/imax/jmax
+      massList(k, 5, m) = sum( list(k, m, 3, :, :) )/imax/jmax
       SigmaList(k,m)    = sqrt(  sum(  ( list(k, m, 1, :, :) - massList(k, 1, m) )**2 )  )
     end do
 
