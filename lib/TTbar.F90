@@ -67,10 +67,11 @@ contains
 
 !ccccccccccccccc
 
-  real (dp) function RQCD(self, order, gt, h, Q)
-    class (RNRQCD)      , intent(in)         :: self
-    Integer            , intent(in)          :: order
-    real (dp)          , intent(in)          :: h, Q, gt
+  real (dp) function RQCD(self, ordMass, order, scheme, method, lambda, gt, h, Q)
+    class (RNRQCD)     , intent(in)          :: self
+    character (len = *), intent(in)          :: scheme, method
+    Integer            , intent(in)          :: order, ordMass
+    real (dp)          , intent(in)          :: h, Q, gt, lambda
     complex (dp)                             :: z
     real (dp)                                :: mu, m
     integer                                  :: n
