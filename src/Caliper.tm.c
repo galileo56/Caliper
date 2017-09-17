@@ -3741,17 +3741,18 @@ double mT, double muT, double mB, double muB, double mC, double muC, double mu, 
 }
 
 extern double f90rqcd_(char const* str, int* runAlpha, int* runMass,
-int* ordMass, int* order, char const* method, double* lambda, double* gt,
-double* Mz,  double* aMz, double* mT, double* h, double * Q, double* res);
+int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
+double* lambda, double* gt, double* Mz,  double* aMz, double* mT, double* h,
+double * Q, double* res);
 
 static double rqcd(char const* str, int runAlpha, int runMass, int ordMass,
-int order, char const* method, double lambda, double gt, double Mz, double aMz,
-double mT, double h, double Q){
+int order, int ord1S, double R1S, char const* method, double lambda, double gt,
+double Mz, double aMz, double mT, double h, double Q){
 
   double res;
 
-  f90rqcd_(str, &runAlpha, &runMass, &ordMass, &order, method, &lambda, &gt,
-  &Mz, &aMz, &mT, &h, &Q, &res);
+  f90rqcd_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S, &R1S, method,
+  &lambda, &gt, &Mz, &aMz, &mT, &h, &Q, &res);
 
  return res;
 }
@@ -3789,7 +3790,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 3793 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
+# line 3794 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
 
 
 void hypgeo P(( double _tp1, double _tp2, double _tp3, double _tp4, double _tp5, double _tp6, double _tp7, double _tp8));
@@ -14743,7 +14744,7 @@ L0:	return res;
 } /* _tr186 */
 
 
-double rqcd P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, const char * _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13));
+double rqcd P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, const char * _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15));
 
 #if MLPROTOTYPES
 static int _tr187( MLINK mlp)
@@ -14757,36 +14758,40 @@ static int _tr187(mlp) MLINK mlp;
 	int _tp3;
 	int _tp4;
 	int _tp5;
-	const char * _tp6;
+	int _tp6;
 	double _tp7;
-	double _tp8;
+	const char * _tp8;
 	double _tp9;
 	double _tp10;
 	double _tp11;
 	double _tp12;
 	double _tp13;
+	double _tp14;
+	double _tp15;
 	double _rp0;
 	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
 	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
 	if ( ! MLGetInteger( mlp, &_tp5) ) goto L4;
-	if ( ! MLGetString( mlp, &_tp6) ) goto L5;
+	if ( ! MLGetInteger( mlp, &_tp6) ) goto L5;
 	if ( ! MLGetReal( mlp, &_tp7) ) goto L6;
-	if ( ! MLGetReal( mlp, &_tp8) ) goto L7;
+	if ( ! MLGetString( mlp, &_tp8) ) goto L7;
 	if ( ! MLGetReal( mlp, &_tp9) ) goto L8;
 	if ( ! MLGetReal( mlp, &_tp10) ) goto L9;
 	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
 	if ( ! MLGetReal( mlp, &_tp12) ) goto L11;
 	if ( ! MLGetReal( mlp, &_tp13) ) goto L12;
-	if ( ! MLNewPacket(mlp) ) goto L13;
+	if ( ! MLGetReal( mlp, &_tp14) ) goto L13;
+	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
+	if ( ! MLNewPacket(mlp) ) goto L15;
 
-	_rp0 = rqcd(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13);
+	_rp0 = rqcd(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L13: L12: L11: L10: L9: L8: L7: L6:	MLReleaseString(mlp, _tp6);
-L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
+L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(mlp, _tp8);
+L7: L6: L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
 } /* _tr187 */
@@ -15207,7 +15212,7 @@ static struct func {
 		{15, 0, _tr184, "rhad" },
 		{ 1, 0, _tr185, "rhadcoefs" },
 		{19, 0, _tr186, "rhadmass" },
-		{13, 0, _tr187, "rqcd" },
+		{15, 0, _tr187, "rqcd" },
 		{14, 0, _tr188, "lambdaqcd" },
 		{ 5, 0, _tr189, "kernels" },
 		{ 2, 0, _tr190, "gammaderlist" },
@@ -15780,9 +15785,9 @@ static const char* evalstrs[] = {
 	" muB, mC, muC, mu, Q] computes the massive total hadronic cross ",
 	"section.\"",
 	(const char*)0,
-	"RQCD::usage = \"RQCD[scheme, runAlpha, runMass, ordMass, order, m",
-	"ethod, lambda, gt, Mz, aMz, mT, h, Q] computes the massive total",
-	" hadronic cross section for an unstable top quark.\"",
+	"RQCD::usage = \"RQCD[scheme, runAlpha, runMass, ordMass, ord1S, R",
+	"1S, order, method, lambda, gt, Mz, aMz, mT, h, Q] computes the m",
+	"assive total hadronic cross section for an unstable top quark.\"",
 	(const char*)0,
 	"LambdaQCD::usage = \"LambdaQCD[scheme, order, runAlpha, run, nf, ",
 	"Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of ",
@@ -16391,7 +16396,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"Rhad[scheme_, orderAlpha_, runAlpha_, order_, nf_, Mz_, aMz_,                 mT_, muT_, mB_, muB_, mC_, muC_, mu_, Q_]", (char *)"{scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB,                  muB, mC, muC, mu, Q}", 184);
 	if (_res) _res = _definepattern(mlp, (char *)"RhadCoefs[nf_]", (char *)"{nf}", 185);
 	if (_res) _res = _definepattern(mlp, (char *)"RhadMass[scheme_, current_, orderAlpha_, runAlpha_, runMass_, order_, nf_,                 Mz_, GammaZ_, sin2ThetaW_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mu_, Q_]", (char *)"{scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ,                 sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q}", 186);
-	if (_res) _res = _definepattern(mlp, (char *)"RQCD[scheme_, runAlpha_, runMass_, ordMass_, order_, method_,                 lambda_, gt_, Mz_, aMz_, mT_, h_, Q_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, method, lambda, gt,                  Mz, aMz, mT, h, Q}", 187);
+	if (_res) _res = _definepattern(mlp, (char *)"RQCD[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,                 R1S_, method_, lambda_, gt_, Mz_, aMz_, mT_, h_, Q_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, aMz, mT, h, Q}", 187);
 	if (_res) _res = _definepattern(mlp, (char *)"LambdaQCD[scheme_, order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_,                  mB_, muB_, mC_, muC_, mu_]", (char *)"{scheme, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 188);
 	if (_res) _res = _definepattern(mlp, (char *)"Kernel[n_, width_, w_, mu_, p_]", (char *)"{n, width, w, mu, p}", 189);
 	if (_res) _res = _definepattern(mlp, (char *)"GammaDerList[n_, w_]", (char *)"{n, w}", 190);

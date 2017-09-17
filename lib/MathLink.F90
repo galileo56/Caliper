@@ -5619,15 +5619,15 @@ end subroutine f90RhadMass
 
 !ccccccccccccccc
 
-subroutine f90RQCD(str, runAlp, runMass, ordMass, order, method, lambda, gt, &
-mZ, amZ, mT, h, Q, res)
+subroutine f90RQCD(str, runAlp, runMass, ordMass, order, ord1S, R1S, method, &
+lambda, gt, mZ, amZ, mT, h, Q, res)
 
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; implicit none
 
   character (len = *), intent(in ) :: str, method
-  integer            , intent(in ) :: order, runAlp, runMass, ordMass
-  real (dp)          , intent(in ) :: mZ, amZ, h, mT, Q, gt, lambda
+  integer            , intent(in ) :: order, runAlp, runMass, ordMass, ord1S
+  real (dp)          , intent(in ) :: mZ, amZ, h, mT, Q, gt, lambda, R1S
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (RNRQCD)                    :: NRQCD
@@ -5651,7 +5651,7 @@ mZ, amZ, mT, h, Q, res)
 
   MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
 
-  res = NRQCD%RQCD(ordMass, order, str, method, lambda, gt, h, Q)
+  res = NRQCD%RQCD(ordMass, order, ord1S, R1S, str, method, lambda, gt, h, Q)
 
 end subroutine f90RQCD
 

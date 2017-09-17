@@ -5,7 +5,8 @@ module SigmaClass
 
   real (dp), dimension(2)               :: EWfact
   public                                :: setEWfact, VacPol0, VacPol0Der, &
-  VacPol2, VacPol2Der, VacPol3, VacPol1, PiCoef, VacPol1Der
+  VacPol2, VacPol2Der, VacPol3, VacPol1, PiCoef, VacPol1Der, PiCoefDer1,   &
+  PiCoefDer2
 
 !ccccccccccccccc
 
@@ -485,16 +486,41 @@ end function VacPol0Der
 !ccccccccccccccc
 
   function PiCoef(z, n) result(res)
-  complex (dp), intent(in)           :: z
-  integer     , intent(in)           :: n
-  real (dp), dimension( 0:min(n,3) ) :: res
+    complex (dp), intent(in)           :: z
+    integer     , intent(in)           :: n
+    real (dp), dimension( 0:min(n,3) ) :: res
 
-  if (n >= 0) res(0) = ImagPart( z * VacPol0(z) )
-  if (n >= 1) res(1) = 4 * ImagPart( z * VacPol1(z) )/3
-  if (n >= 2) res(2) = ImagPart( z * VacPol2(z)  )
-  if (n >= 3) res(3) = ImagPart( z * VacPol3(z) )
+    if (n >= 0) res(0) = ImagPart( z * VacPol0(z) )
+    if (n >= 1) res(1) = 4 * ImagPart( z * VacPol1(z) )/3
+    if (n >= 2) res(2) = ImagPart( z * VacPol2(z)  )
+    if (n >= 3) res(3) = ImagPart( z * VacPol3(z) )
 
   end function PiCoef
+
+!ccccccccccccccc
+
+  function PiCoefDer1(z, n) result(res)
+    complex (dp), intent(in)           :: z
+    integer     , intent(in)           :: n
+    real (dp), dimension( 0:min(n,3) ) :: res
+
+    if (n >= 0) res(0) = ImagPart( z * VacPol0Der(1,z) )
+    if (n >= 1) res(1) = 4 * ImagPart( z * VacPol1Der(1,z) )/3
+    if (n >= 2) res(2) = ImagPart( z * VacPol2Der(z)  )
+
+ end function PiCoefDer1
+
+!ccccccccccccccc
+
+ function PiCoefDer2(z, n) result(res)
+   complex (dp), intent(in)           :: z
+   integer     , intent(in)           :: n
+   real (dp), dimension( 0:min(n,3) ) :: res
+
+   if (n >= 0) res(0) = ImagPart( z * VacPol0Der(2,z) )
+   if (n >= 1) res(1) = 4 * ImagPart( z * VacPol1Der(2,z) )/3
+
+end function PiCoefDer2
 
 !ccccccccccccccc
 

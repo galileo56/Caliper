@@ -67,13 +67,14 @@ contains
 
 !ccccccccccccccc
 
-  real (dp) function RQCD(self, ordMass, order, scheme, method, lambda, gt, mu, Q)
+  real (dp) function RQCD(self, ordMass, order, ord1S, R1S, scheme, method, &
+  lambda, gt, mu, Q)
     class (RNRQCD)     , intent(inout)       :: self
     character (len = *), intent(in)          :: scheme, method
-    Integer            , intent(in)          :: order, ordMass
+    Integer            , intent(in)          :: order, ordMass, ord1S
     real (dp)          , intent(in)          :: mu, Q, gt, lambda
     complex (dp)                             :: z
-    real (dp)                                :: h, m, R, QSwitch, m1S
+    real (dp)                                :: h, m, R, QSwitch, m1S, R1S
     integer                                  :: n
     real (dp), dimension(5)                  :: b
     real (dp), dimension( 0:min(order,3) )   :: rQ
@@ -83,7 +84,7 @@ contains
       m = self%mass
     else if ( scheme(:3) == 'MSR' ) then
 
-      call self%QSwitch(ordMass, ordMass, gt, self%mass, lambda, method, m1S,&
+      call self%QSwitch(ord1S, ordMass, gt, R1S, lambda, method, m1S,&
       m, QSwitch)
 
       if (q < QSwitch) then
