@@ -61,7 +61,7 @@ method, mZ, aMz, mt, gt, R, res)
   Running(nl, runM, alphaAll, muLam) ]
 
   MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
-  call = NRQCD%Qswitch( orderM, ord1S, gt, R, xlam, method(:8), m1S, m, res )
+  call  NRQCD%Qswitch( orderM, ord1S, gt, R, xlam, method(:8), m1S, m, res )
 
 end subroutine f90Qswitch
 

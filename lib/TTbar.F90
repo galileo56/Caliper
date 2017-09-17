@@ -73,7 +73,7 @@ contains
     Integer            , intent(in)          :: order, ordMass
     real (dp)          , intent(in)          :: mu, Q, gt, lambda
     complex (dp)                             :: z
-    real (dp)                                :: h, m, R, qswitch, m1S
+    real (dp)                                :: h, m, R, QSwitch, m1S
     integer                                  :: n
     real (dp), dimension(5)                  :: b
     real (dp), dimension( 0:min(order,3) )   :: rQ
@@ -83,7 +83,15 @@ contains
       m = self%mass
     else if ( scheme(:3) == 'MSR' ) then
 
-      call self%QSwitch(ordMass, ordMass, gt, self%mass, lambda, method, m1S, m, qswitch)
+      call self%QSwitch(ordMass, ordMass, gt, self%mass, lambda, method, m1S,&
+      m, QSwitch)
+
+      if (q < QSwitch) then
+        R = m1S * vStar(q, m1S, gt)
+        m = self%run%MSRMass('MSRn', order, R, lambda, method)
+      else
+        R = self%mass
+      end if
 
     end if
 
