@@ -48,6 +48,7 @@ method, mZ, aMz, mt, gt, R, res)
   type (Running), dimension(2)    :: alphaMass
   type (VFNSMSR)                  :: MSR
   type (AnomDim), dimension(3:6)  :: AnDim
+  real (dp)                       :: m, m1S
 
   do i = 3, 6
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
@@ -60,7 +61,7 @@ method, mZ, aMz, mt, gt, R, res)
   Running(nl, runM, alphaAll, muLam) ]
 
   MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR)
-  res = NRQCD%Qswitch( orderM, ord1S, gt, R, xlam, method(:8) )
+  call = NRQCD%Qswitch( orderM, ord1S, gt, R, xlam, method(:8), m1S, m, res )
 
 end subroutine f90Qswitch
 

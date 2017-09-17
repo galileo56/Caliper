@@ -67,19 +67,27 @@ contains
 
 !ccccccccccccccc
 
-  real (dp) function RQCD(self, ordMass, order, scheme, method, lambda, gt, h, Q)
-    class (RNRQCD)     , intent(in)          :: self
+  real (dp) function RQCD(self, ordMass, order, scheme, method, lambda, gt, mu, Q)
+    class (RNRQCD)     , intent(inout)       :: self
     character (len = *), intent(in)          :: scheme, method
     Integer            , intent(in)          :: order, ordMass
-    real (dp)          , intent(in)          :: h, Q, gt, lambda
+    real (dp)          , intent(in)          :: mu, Q, gt, lambda
     complex (dp)                             :: z
-    real (dp)                                :: mu, m
+    real (dp)                                :: h, m, R, qswitch, m1S
     integer                                  :: n
     real (dp), dimension(5)                  :: b
-    real (dp), dimension(0:min(order,3))     :: rQ
-    real (dp), dimension(0:min(order,3) - 1, min(order,3)) :: Rcoef
+    real (dp), dimension( 0:min(order,3) )   :: rQ
+    real (dp), dimension( 0:min(order,3) - 1, min(order,3) ) :: Rcoef
 
-    m = self%mass; mu = h * m; z = ( Q + (0,1) * gt )**2/4/m**2 ; n = min(order,3)
+    if ( scheme(:4) == 'pole' ) then
+      m = self%mass
+    else if ( scheme(:3) == 'MSR' ) then
+
+      call self%QSwitch(ordMass, ordMass, gt, self%mass, lambda, method, m1S, m, qswitch)
+
+    end if
+
+    h = mu/m; z = ( Q + (0,1) * gt )**2/4/m**2 ; n = min(order,3)
 
     Rcoef = 0; RQCD = 0; if (n < 0) return; rQ = PiCoef(z,n)
 
@@ -95,23 +103,23 @@ contains
 
 ! ccccccccccc
 
-  real (dp) function QSwitch(self, order, ordMass, gt, R, lambda, method)
+  subroutine QSwitch(self, order, ordMass, gt, R, lambda, method, m1S, m, switch)
     class (RNRQCD)  , intent(inout) :: self
     character (len = *), intent(in) :: method
     integer            , intent(in) :: order, ordMass
     real (dp)          , intent(in) :: R, lambda, gt
+    real (dp)         , intent(out) :: m1S, m, switch
     real (dp), dimension(0:4)       :: res
-    real (dp)                       :: m1S, m
     real (dp), dimension(4)         :: A
 
     res = self%Delta1S(order, R, lambda, method); m1S = sum( res(:ordMass) )
     m = self%run%MSRMass('MSRn', order, self%mass, lambda, method)
     A = powList( m/m1S, 4 )
 
-    QSwitch = 2 * m1S + Sqrt(  ( 6.25e-6_dp - A(1)/2000 + 3 * A(2)/200 - &
+    switch = 2 * m1S + Sqrt(  ( 6.25e-6_dp - A(1)/2000 + 3 * A(2)/200 - &
     A(3)/5 + A(4) ) * m1S**2 - gt**2  )
 
-  end function QSwitch
+  end subroutine QSwitch
 
 ! ccccccccccc
 
