@@ -74,14 +74,18 @@ contains
     Integer            , intent(in)          :: order, ordMass, ord1S
     real (dp)          , intent(in)          :: mu, Q, gt, lambda
     complex (dp)                             :: z
-    real (dp)                                :: h, m, R, QSwitch, m1S, R1S
+    real (dp)                                :: h, m, R, QSwitch, m1S, R1S, lr
     integer                                  :: n
     real (dp), dimension(5)                  :: b
+    real (dp), dimension(0:4)                :: delta
     real (dp), dimension( 0:min(order,3) )   :: rQ
+    real (dp), dimension( 0:min(order,3) - 1 ) :: rQDer1
+    real (dp), dimension( 0:min(order,3) - 2 ) :: rQDer2
     real (dp), dimension( 0:min(order,3) - 1, min(order,3) ) :: Rcoef
+    real (dp), dimension( 0:min(order,3) - 2, min(order,3) - 1 ) :: RcoefDer1
 
     if ( scheme(:4) == 'pole' ) then
-      m = self%mass
+      m = self%mass; delta = 0; h = mu/m
     else if ( scheme(:3) == 'MSR' ) then
 
       call self%QSwitch(ord1S, ordMass, gt, R1S, lambda, method, m1S,&
@@ -89,24 +93,65 @@ contains
 
       if (q < QSwitch) then
         R = m1S * vStar(q, m1S, gt)
-        m = self%run%MSRMass('MSRn', ordMass, R, lambda, method)
+        m = self%run%MSRMass(scheme(:4), ordMass, R, lambda, method)
       else
         R = self%mass
       end if
 
+      delta = R * self%andim%betaQCD( scheme(:4) // 'delta')/m
+      if (order > 1) lr = log(R/m)
+      h = mu/R
+
     end if
 
-    h = mu/m; z = ( Q + (0,1) * gt )**2/4/m**2 ; n = min(order,3)
+    z = ( Q + (0,1) * gt )**2/4/m**2 ; n = min(order,3)
 
     Rcoef = 0; RQCD = 0; if (n < 0) return; rQ = PiCoef(z,n)
 
     b = getInverse( self%andim%alphaMatching(self%nl + 1) )
-    call alphaReExpand( rQ(1:), b(:3) ); if (order > 1) Rcoef(0,:) = rQ(1:)
+    call alphaReExpand( rQ(1:), b(:n) ); if (order > 1) Rcoef(0,:) = rQ(1:)
 
     if (order > 1) call self%andim%expandAlpha(Rcoef)
-    if (order > 1) rQ(2:) = matmul( PowList0( log(h), n - 1 ), Rcoef(:,2:) )
 
-    RQCD = 64 * Pi * m**2 * dot_product( PowList0( self%run%alphaQCD(mu)/Pi, n ), rQ )/3/Q**2
+    if ( scheme(:3) == 'MSR' ) then
+
+      if (order > 1) rQ(2:) = matmul( PowList0( lr, n - 1 ), Rcoef(:,2:) )
+      if (order > 2) rQ(3) = rQ(3) - Rcoef(1,2) * delta(1)
+
+      delta(1:3) = [ 0._dp, 3 * delta(1)**2, 6 * delta(1) * delta(2) - &
+      4 * delta(1)**3 ] - 2 * delta(1:3)
+
+      if (order > 0) then
+
+        rQDer1 = PiCoefDer1(z,n)
+
+        if (order > 2) then
+          RcoefDer1 = 0; RcoefDer1(0,:) = rQDer1(1:)
+          call self%andim%expandAlpha(RcoefDer1)
+          rQDer1(2:) = matmul( PowList0( lr, n - 2 ), RcoefDer1(:,2:) )
+        end if
+
+        rQ(1:) = rQ(1:) + delta(1) * rQDer1
+
+        if (order > 1) then
+          rQDer2 = PiCoefDer2(z,n)
+          rQ(2:) = rQ(2:) + delta(2) * rQDer1(:n-2) + delta(1)**2 * rQDer2/2
+        end if
+
+        if (order > 2) rQ(3) = rQ(3) + PiCoefDer3(z) * delta(1)**3/6 + &
+         delta(3) * rQDer1(0) + delta(1) * delta(2) * rQDer2(0)
+
+      end if
+
+    end if
+
+    if (order > 1) then
+      Rcoef(0,:) = rQ(1:);  call self%andim%expandAlpha(Rcoef)
+      rQ(2:) = matmul( PowList0( log(h), n - 1 ), Rcoef(:,2:) )
+    end if
+
+    RQCD = 64 * Pi * m**2/3/Q**2 * &
+    dot_product( PowList0( self%run%alphaQCD(mu)/Pi, n ), rQ )
 
   end function RQCD
 
