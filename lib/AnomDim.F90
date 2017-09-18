@@ -11,7 +11,8 @@ module AnomDimClass
   PowList, getInverse, MSbarDeltaPiece, AlphaExpand, alphaMatchingLog, pint, &
   deltaCharm2, deltaCharm2Der, gammaRcharm2, gammaRcharm3, deltaCharm3, p,   &
   deltaCharm3Der, deltaCharmNh, deltaCharmNhDer, P2int, DeltaBottomCharm,    &
-  GammaRBottomCharm, deltaCharmNL, deltaCharmNLDer, deltaCharmGlueDer, PowList0
+  GammaRBottomCharm, deltaCharmNL, deltaCharmNLDer, deltaCharmGlueDer, &
+  alphaMatch, PowList0
 
   interface PowList
     module procedure   :: PowListDP, PowListInt, PowListComp

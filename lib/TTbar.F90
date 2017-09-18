@@ -79,9 +79,9 @@ contains
     real (dp), dimension(5)                  :: b
     real (dp), dimension(0:4)                :: delta
     real (dp), dimension( 0:min(order,3) )   :: rQ
-    real (dp), dimension( 0:min(order,3) - 1 ) :: rQDer1
-    real (dp), dimension( 0:min(order,3) - 2 ) :: rQDer2
-    real (dp), dimension( 0:min(order,3) - 1, min(order,3) ) :: Rcoef
+    real (dp), dimension( 0:min(order,3) - 1 )                   :: rQDer1
+    real (dp), dimension( 0:min(order,3) - 2 )                   :: rQDer2
+    real (dp), dimension( 0:min(order,3) - 1, min(order,3) )     :: Rcoef
     real (dp), dimension( 0:min(order,3) - 2, min(order,3) - 1 ) :: RcoefDer1
 
     if ( scheme(:4) == 'pole' ) then
@@ -108,7 +108,8 @@ contains
 
     Rcoef = 0; RQCD = 0; if (n < 0) return; rQ = PiCoef(z,n)
 
-    b = getInverse( self%andim%alphaMatching(self%nl + 1) )
+    ! b = getInverse( self%andim%alphaMatching(self%nl + 1) )
+    b = getInverse( alphaMatch( 'pole', self%nl + 1) )
     call alphaReExpand( rQ(1:), b(:n) ); if (order > 1) Rcoef(0,:) = rQ(1:)
 
     if (order > 1) call self%andim%expandAlpha(Rcoef)
