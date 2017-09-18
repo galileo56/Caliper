@@ -28,7 +28,7 @@ module RNRQCDClass
     procedure, pass (self), public :: VceffsNNLL, VrsLL, V2sLL, VssLL, Vk1sLL, &
     Vk2sLL, VkeffsLL, XiNLL, XiNNLLnonmix, XiNNLLmixUsoft, MLLc2, MNLLc1, &
     MNLLplusNNLLnonmixc1, MNNLLAllc1InclSoftMixLog, A1pole, Xsec, Delta1S, &
-    MNLLc1Square, MNNLLc1Square, Rexp, QSwitch, RQCD
+    MNLLc1Square, MNNLLc1Square, Rexp, QSwitch, RQCD, Rexp2
 
     procedure, pass (self), private :: xc01, xc11, xc12, xc22
 
@@ -67,36 +67,112 @@ contains
 
 ! ccccccccccc
 
+  real (dp) function Rexp2(self, ordMass, order, ord1S, R1S, scheme, method, &
+  lambda, gt, h, nu, Q)
+    class (RNRQCD)     , intent(inout) :: self
+    character (len = *), intent(in)    :: scheme, method
+    Integer            , intent(in)    :: order, ordMass, ord1S
+    real (dp)          , intent(in)    :: h, Q, gt, lambda, nu, R1S
+    real (dp)                          :: mu, m
+    complex (dp)                       :: v
+    integer                            :: i, j, n
+    real (dp), dimension( 0:min(order,3) )   :: rQ
+    real (dp), dimension( 0:min(order,3) - 1, min(order,3) ) :: Rcoef
+
+    n = min(order,3); rQ = 0
+
+    Rexp2 = 0; if (order < 1) return
+
+    m = self%mass; mu = h * m; v = vC(q, m, m, gt); Rcoef = 0
+
+    do i = 0, n
+      do j = 1, n
+        rQ(i) = rQ(i) + ImagPart( EXPterms2(v, i, j - i, m) )
+      end do
+    end do
+
+    do i = 0, order
+      do j = n + 1, 3 * (n - 1)
+        rQ(i) = rQ(i) + ImagPart( higherOrderLogs2(v, i, j - i, m, nu) )
+      end do
+    end do
+
+    if (order > 1) then
+      Rcoef(0,:) = rQ(1:); call self%andim%expandAlpha(Rcoef)
+      rQ(2:) = matmul( PowList0( log(h), n - 1 ), Rcoef(:,2:) )
+    end if
+
+    Rexp2 = 4 * m**2/q**2 * dot_product( PowList0( self%run%alphaQCD(mu)/Pi, n ), rQ )
+
+  end function Rexp2
+
+! ccccccccccc
+
   real (dp) function Rexp(self, ordMass, order, ord1S, R1S, scheme, method, &
   lambda, gt, h, nu, Q)
     class (RNRQCD)     , intent(inout) :: self
     character (len = *), intent(in)    :: scheme, method
     Integer            , intent(in)    :: order, ordMass, ord1S
     real (dp)          , intent(in)    :: h, Q, gt, lambda, nu, R1S
-    real (dp)                          :: mu, alpha, m
-    complex (dp)                       :: logs, v
-    integer                            :: i, j
+    real (dp)                          :: mu, m
+    complex (dp)                       :: v
+    integer                            :: i, j, n
+    real (dp), dimension( 0:min(order,3) )   :: rQ
+
+    n = min(order,3); rQ = 0
 
     Rexp = 0; if (order < 1) return
 
-    m = self%mass; mu = h * m; alpha = self%run%AlphaQCD(mu)
-    v = vC(q, m, m, gt); logs = 0
+    m = self%mass; mu = h * m; v = vC(q, m, m, gt)
 
-    do i = 0, order
-      do j = 1, order
-        logs = logs + EXPterms(alpha, v, i, j - i, m, mu)
+    do i = 0, n
+      do j = 1, n
+        rQ(i) = rQ(i) + EXPterms3(v, i, j - i, m, mu)
       end do
     end do
 
     do i = 0, order
-      do j = order + 1, 3 * (order - 1)
-        logs = logs + higherOrderLogs(alpha, v, i, j - i, m, mu, nu)
+      do j = n + 1, 3 * (n - 1)
+        rQ(i) = rQ(i) + higherOrderLogs3(v, i, j - i, m, mu, nu)
       end do
     end do
 
-    Rexp = 4 * m**2/q**2 * ImagPart(logs)
+    Rexp = 4 * m**2/q**2 * dot_product( PowList0( self%run%alphaQCD(mu)/Pi, n ), rQ )
 
   end function Rexp
+
+! ccccccccccc
+
+  ! real (dp) function Rexp(self, ordMass, order, ord1S, R1S, scheme, method, &
+  ! lambda, gt, h, nu, Q)
+  !   class (RNRQCD)     , intent(inout) :: self
+  !   character (len = *), intent(in)    :: scheme, method
+  !   Integer            , intent(in)    :: order, ordMass, ord1S
+  !   real (dp)          , intent(in)    :: h, Q, gt, lambda, nu, R1S
+  !   real (dp)                          :: mu, alpha, m
+  !   complex (dp)                       :: logs, v
+  !   integer                            :: i, j
+  !
+  !   Rexp = 0; if (order < 1) return
+  !
+  !   m = self%mass; mu = h * m; alpha = self%run%AlphaQCD(mu)
+  !   v = vC(q, m, m, gt); logs = 0
+  !
+  !   do i = 0, order
+  !     do j = 1, order
+  !       logs = logs + EXPterms(alpha, v, i, j - i, m, mu)
+  !     end do
+  !   end do
+  !
+  !   do i = 0, order
+  !     do j = order + 1, 3 * (order - 1)
+  !       logs = logs + higherOrderLogs(alpha, v, i, j - i, m, mu, nu)
+  !     end do
+  !   end do
+  !
+  !   Rexp = 4 * m**2/q**2 * ImagPart(logs)
+  !
+  ! end function Rexp
 
 !ccccccccccccccc
 
@@ -141,7 +217,6 @@ contains
 
     Rcoef = 0; RQCD = 0; if (n < 0) return; rQ = PiCoef(z,n)
 
-    ! b = getInverse( self%andim%alphaMatching(self%nl + 1) )
     b = getInverse( alphaMatch( 'pole', self%nl + 1) )
     call alphaReExpand( rQ(1:), b(:n) ); if (order > 1) Rcoef(0,:) = rQ(1:)
 
@@ -863,6 +938,69 @@ contains
 
 ! ccccccccccc
 
+  real (dp) function higherOrderLogs3(v, i, j, m, mu, nu)
+    real (dp)   , intent(in) :: m, mu, nu
+    complex (dp), intent(in) :: v
+    integer     , intent(in) :: i, j
+    complex (dp)             :: higherOrderLogs
+    real (dp)                :: lnu
+
+    higherOrderLogs = 0
+
+    if (i == 1 .and. j == 3) then
+      higherOrderLogs = 128 * cI * v**3 * Log(nu)/9
+    else if (i == 2 .and. j == 1) then
+      higherOrderLogs = - 280 * cI * v * Pi2 * Log(v)/27
+    else if (i == 2 .and. j == 2) then
+      higherOrderLogs = 170 * cI * v**2 * Pi2 * Log(nu)/27
+    else if (i == 2 .and. j == 3) then
+      higherOrderLogs = - 1472 * cI * v**3 * Log(nu)**2/27
+    else if (i == 3 .and. j == 1) then
+      lnu = log(nu)
+      higherOrderLogs = - cI * lnu * v * Pi2 * ( 64343 + 140280 * l2 &
+      - 8940 * lnu + 2955 * Pi2 + 96600 * Log(mu/m) + 17880 * Log(v) )/1215
+    else if (i == 3 .and. j == 2) then
+      higherOrderLogs = - 2461 * cI * v**2 * Pi2 * Log(nu)**2/27
+    else if (i == 3 .and. j == 3) then
+      higherOrderLogs = 67712 * cI * v**3 * Log(nu)**3/243
+    end if
+
+    higherOrderLogs3 = ImagPart(higherOrderLogs)
+
+  end function higherOrderLogs3
+
+! ccccccccccc
+
+  complex (dp) function higherOrderLogs2(v, i, j, m, nu)
+    real (dp)   , intent(in) :: m, nu
+    complex (dp), intent(in) :: v
+    integer     , intent(in) :: i, j
+    real (dp)                :: lnu
+
+    higherOrderLogs2 = 0
+
+    if (i == 1 .and. j == 3) then
+      higherOrderLogs2 = 128 * cI * v**3 * Log(nu)/9
+    else if (i == 2 .and. j == 1) then
+      higherOrderLogs2 = - 280 * cI * v * Pi2 * Log(v)/27
+    else if (i == 2 .and. j == 2) then
+      higherOrderLogs2 = 170 * cI * v**2 * Pi2 * Log(nu)/27
+    else if (i == 2 .and. j == 3) then
+      higherOrderLogs2 = - 1472 * cI * v**3 * Log(nu)**2/27
+    else if (i == 3 .and. j == 1) then
+      lnu = log(nu)
+      higherOrderLogs2 = - cI * lnu * v * Pi2 * ( 64343 + 140280 * l2 &
+      - 8940 * lnu + 2955 * Pi2 + 17880 * Log(v) )/1215
+    else if (i == 3 .and. j == 2) then
+      higherOrderLogs2 = - 2461 * cI * v**2 * Pi2 * Log(nu)**2/27
+    else if (i == 3 .and. j == 3) then
+      higherOrderLogs2 = 67712 * cI * v**3 * Log(nu)**3/243
+    end if
+
+  end function higherOrderLogs2
+
+! ccccccccccc
+
   complex (dp) function EXPterms(alpha, v, i, j, m, mu)
     real (dp)   , intent(in) :: alpha, m, mu
     complex (dp), intent(in) :: v
@@ -905,6 +1043,98 @@ contains
     end if
 
   end function EXPterms
+
+! ccccccccccc
+
+  real (dp) function EXPterms3(v, i, j, m, mu)
+    real (dp)   , intent(in) :: m, mu
+    complex (dp), intent(in) :: v
+    integer     , intent(in) :: i, j
+    complex (dp)             :: l1, l3, EXPterms
+
+    EXPterms = 0
+
+    if (i == 0 .and. j == 1) then
+      EXPterms = 2 * cI * v
+    else if (i == 0 .and. j == 3) then
+      EXPterms = 7 * v**3 * cI/12
+    else if (i == 1 .and. j == 0) then
+      EXPterms = - 8 * Pi * Log(- cI * v)/3
+    else if (i == 1 .and. j == 1) then
+      EXPterms = - 32 * cI * v/3
+    else if (i == 1 .and. j == 2) then
+      EXPterms = v**2 * Pi * ( 33 - 40 * Log(-2 * cI * m * v/mu) )/9
+    else if (i == 2 .and. j == -1) then
+      EXPterms = 8 * cI * Pi2**2/v/27
+    else if (i == 2 .and. j == 0) then
+      l1 = Log(- cI * m * v/mu)
+      EXPterms = 2 * Pi * ( l1 * (69 * l1 + 138 * l2 - 43) + &
+      192 * log(- cI * v) )/27
+    else if (i == 2 .and. j == 1) then
+      EXPterms = - 14.513280990412623_dp * cI * v * Pi2 * ( Log(-cI * v) - &
+      0.31755295480049456_dp - 0.28545651550321627_dp * Log(- cI * m * v/mu) )
+    else if (i == 3 .and. j == -2) then
+      EXPterms = - 32 * Pi3 * Zeta3/27/v**2
+    else if (i == 3 .and. j == -1) then
+      EXPterms = - 4 * cI * Pi2 * (53 * Pi2 + 828 * Zeta3 + &
+      138 * Pi2 * Log(-2 * cI * m * v/mu) )/243/v
+    else if (i == 3 .and. j == 0) then
+      l1 = Log(- cI * m * v/mu); l3 = Log(- cI * v)
+      EXPterms = - 1.3234297814023874_dp * Pi3 * ( l1**3 + l1**2 * &
+      (3 * l2 - 4.565197036493422_dp) + (-4.748801815703692_dp - &
+      20.890672104680654_dp * l2 - 14.621887456729755_dp * l3) * l3 + l1 * &
+      (20.107979523788522_dp + l2 * (5.491493383742911_dp + 3 * l2) + &
+      14.621887456729755_dp * l3) )
+    end if
+
+    EXPterms3 = ImagPart(EXPterms)
+
+  end function EXPterms3
+
+! ccccccccccc
+
+  complex (dp) function EXPterms2(v, i, j, m)
+    real (dp)   , intent(in) :: m
+    complex (dp), intent(in) :: v
+    integer     , intent(in) :: i, j
+    complex (dp)             :: l1, l3
+
+    EXPterms2 = 0
+
+    if (i == 0 .and. j == 1) then
+      EXPterms2 = 2 * cI * v
+    else if (i == 0 .and. j == 3) then
+      EXPterms2 = 7 * v**3 * cI/12
+    else if (i == 1 .and. j == 0) then
+      EXPterms2 = - 8 * Pi * Log(- cI * v)/3
+    else if (i == 1 .and. j == 1) then
+      EXPterms2 = - 32 * cI * v/3
+    else if (i == 1 .and. j == 2) then
+      EXPterms2 = v**2 * Pi * ( 33 - 40 * Log(-2 * cI * v) )/9
+    else if (i == 2 .and. j == -1) then
+      EXPterms2 = 8 * cI * Pi2**2/v/27
+    else if (i == 2 .and. j == 0) then
+      l1 = Log(- cI * v)
+      EXPterms2 = 2 * Pi * ( l1 * (69 * l1 + 138 * l2 - 43) + &
+      192 * log(- cI * v) )/27
+    else if (i == 2 .and. j == 1) then
+      EXPterms2 = - 14.513280990412623_dp * cI * v * Pi2 * ( Log(-cI * v) - &
+      0.31755295480049456_dp - 0.28545651550321627_dp * Log(- cI * v) )
+    else if (i == 3 .and. j == -2) then
+      EXPterms2 = - 32 * Pi**3 * Zeta3/27/v**2
+    else if (i == 3 .and. j == -1) then
+      EXPterms2 = - 4 * cI * Pi2 * (53 * Pi2 + 828 * Zeta3 + &
+      138 * Pi2 * Log(-2 * cI * v) )/243/v
+    else if (i == 3 .and. j == 0) then
+      l1 = Log(- cI * v); l3 = Log(- cI * v)
+      EXPterms2 = - 1.3234297814023874_dp * Pi**3 * ( l1**3 + l1**2 * &
+      (3 * l2 - 4.565197036493422_dp) + (-4.748801815703692_dp - &
+      20.890672104680654_dp * l2 - 14.621887456729755_dp * l3) * l3 + l1 * &
+      (20.107979523788522_dp + l2 * (5.491493383742911_dp + 3 * l2) + &
+      14.621887456729755_dp * l3) )
+    end if
+
+  end function EXPterms2
 
 ! ccccccccccc
 
