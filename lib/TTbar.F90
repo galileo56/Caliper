@@ -114,26 +114,36 @@ contains
     character (len = *), intent(in)    :: scheme, method
     Integer            , intent(in)    :: order, ordMass, ord1S
     real (dp)          , intent(in)    :: h, Q, gt, lambda, nu, R1S
-    real (dp)                          :: mu, m, lnu
+    real (dp)                          :: mu, m, lnu, R, m1S
     complex (dp)                       :: v
     integer                            :: i, j, n
+    real (dp), dimension( 0:4 )        :: res
     real (dp), dimension( 0:min(order,3) )   :: rQ
 
-    n = min(order,3); rQ = 0; lnu = log(nu)
+    n = min(order,3)
 
     Rexp = 0; if (order < 1) return
 
-    m = self%mass; mu = h * m; v = vC(q, m, m, gt)
+    if ( scheme(:4) == 'pole' ) then
+      m = self%mass; mu = h * m
+    else
+      res = self%Delta1S(order, R, lambda, method); m1S = sum( res(:ordMass) )
+      R = m1S * vStar(q, m1S, gt)
+      m = self%run%MSRMass(scheme(:4), ordMass, R, lambda, method)
+      mu = h * m1S
+    end if
+
+    v = vC(q, m, m, gt); rQ = 0; lnu = log(nu)
 
     do i = 0, n
       do j = 1, n
-        rQ(i) = rQ(i) + EXPterms3(v, i, j - i, m, mu)
+        rQ(i) = rQ(i) + EXPterms3(v, i, j - i, m, mu, R, scheme)
       end do
     end do
 
     do i = 0, order
       do j = n + 1, 3 * (n - 1)
-        rQ(i) = rQ(i) + higherOrderLogs3(v, i, j - i, m, mu, lnu)
+        rQ(i) = rQ(i) + higherOrderLogs3(v, i, j - i, m, mu, lnu, R, scheme)
       end do
     end do
 
@@ -938,12 +948,12 @@ contains
 
 ! ccccccccccc
 
-  real (dp) function higherOrderLogs3(v, i, j, m, mu, lnu)
-    real (dp)   , intent(in) :: m, mu, lnu
-    complex (dp), intent(in) :: v
-    integer     , intent(in) :: i, j
-    complex (dp)             :: higherOrderLogs
-    ! real (dp)                :: lnu
+  real (dp) function higherOrderLogs3(v, i, j, m, mu, lnu, R, scheme)
+    real (dp)          , intent(in) :: m, mu, lnu, R
+    character (len = *), intent(in) :: scheme
+    complex (dp)       , intent(in) :: v
+    integer            , intent(in) :: i, j
+    complex (dp)                    :: higherOrderLogs
 
     higherOrderLogs = 0
 
@@ -1045,11 +1055,12 @@ contains
 
 ! ccccccccccc
 
-  real (dp) function EXPterms3(v, i, j, m, mu)
-    real (dp)   , intent(in) :: m, mu
-    complex (dp), intent(in) :: v
-    integer     , intent(in) :: i, j
-    complex (dp)             :: l1, l3, EXPterms
+  real (dp) function EXPterms3(v, i, j, m, mu, R, scheme)
+    real (dp)          , intent(in) :: m, mu, R
+    character (len = *), intent(in) :: scheme
+    complex (dp)       , intent(in) :: v
+    integer            , intent(in) :: i, j
+    complex (dp)                    :: l1, l3, EXPterms
 
     EXPterms = 0
 
