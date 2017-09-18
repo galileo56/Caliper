@@ -89,7 +89,7 @@ contains
 
       if (q < QSwitch) then
         R = m1S * vStar(q, m1S, gt)
-        m = self%run%MSRMass('MSRn', order, R, lambda, method)
+        m = self%run%MSRMass('MSRn', ordMass, R, lambda, method)
       else
         R = self%mass
       end if
