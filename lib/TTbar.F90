@@ -65,16 +65,49 @@ contains
 
   end function RNRQCDIn
 
+! ccccccccccc
+
+  real (dp) function Rexp(self, ordMass, order, ord1S, R1S, scheme, method, &
+  lambda, gt, h, nu, Q)
+    class (RNRQCD)     , intent(inout) :: self
+    character (len = *), intent(in)    :: scheme, method
+    Integer            , intent(in)    :: order, ordMass, ord1S
+    real (dp)          , intent(in)    :: h, Q, gt, lambda, nu, R1S
+    real (dp)                          :: mu, alpha, m
+    complex (dp)                       :: logs, v
+    integer                            :: i, j
+
+    Rexp = 0; if (order < 1) return
+
+    m = self%mass; mu = h * m; alpha = self%run%AlphaQCD(mu)
+    v = vC(q, m, m, gt); logs = 0
+
+    do i = 0, order
+      do j = 1, order
+        logs = logs + EXPterms(alpha, v, i, j - i, m, mu)
+      end do
+    end do
+
+    do i = 0, order
+      do j = order + 1, 3 * (order - 1)
+        logs = logs + higherOrderLogs(alpha, v, i, j - i, m, mu, nu)
+      end do
+    end do
+
+    Rexp = 4 * m**2/q**2 * ImagPart(logs)
+
+  end function Rexp
+
 !ccccccccccccccc
 
   real (dp) function RQCD(self, ordMass, order, ord1S, R1S, scheme, method, &
   lambda, gt, mu, Q)
     class (RNRQCD)     , intent(inout)       :: self
     character (len = *), intent(in)          :: scheme, method
-    Integer            , intent(in)          :: order, ordMass, ord1S
-    real (dp)          , intent(in)          :: mu, Q, gt, lambda
+    integer            , intent(in)          :: order, ordMass, ord1S
+    real (dp)          , intent(in)          :: mu, Q, gt, lambda, R1S
     complex (dp)                             :: z
-    real (dp)                                :: h, m, R, QSwitch, m1S, R1S, lr
+    real (dp)                                :: h, m, R, QSwitch, m1S, lr
     integer                                  :: n
     real (dp), dimension(5)                  :: b
     real (dp), dimension(0:4)                :: delta
@@ -450,37 +483,6 @@ contains
 
 ! ccccccccccc
 
-  real (dp) function Rexp(self, order, q, gt, h, nu)
-    class (RNRQCD), intent(in) :: self
-    integer       , intent(in) :: order
-    real (dp)     , intent(in) :: q, gt, h, nu
-    real (dp)                  :: mu, alpha, m
-    complex (dp)               :: logs, v
-    integer                    :: i, j
-
-    Rexp = 0; if (order < 1) return
-
-    m = self%mass; mu = h * m; alpha = self%run%AlphaQCD(mu)
-    v = vC(q, m, m, gt); logs = 0
-
-    do i = 0, order
-      do j = 1, order
-        logs = logs + EXPterms(alpha, v, i, j - i, m, mu)
-      end do
-    end do
-
-    do i = 0, order
-      do j = order + 1, 3 * (order - 1)
-        logs = logs + higherOrderLogs(alpha, v, i, j, m, mu, nu)
-      end do
-    end do
-
-    Rexp = 4 * m**2/q**2 * ImagPart(logs)
-
-  end function Rexp
-
-! ccccccccccc
-
   real (dp) function A1pole(self, order, En, mass, gamtop, asoft, VcsNNLL, musoft)
     class (RNRQCD), intent(in) :: self
     integer       , intent(in) :: order
@@ -832,10 +834,10 @@ contains
 ! ccccccccccc
 
   complex (dp) function higherOrderLogs(alpha, v, i, j, m, mu, nu)
-    real (dp)  , intent(in) :: alpha, m, mu, nu
+    real (dp)   , intent(in) :: alpha, m, mu, nu
     complex (dp), intent(in) :: v
-    integer    , intent(in) :: i, j
-    real (dp)               :: lnu
+    integer     , intent(in) :: i, j
+    real (dp)                :: lnu
 
     higherOrderLogs = 0
 
@@ -893,7 +895,7 @@ contains
     else if (i == 3 .and. j == -1) then
       EXPterms = - 4 * cI * alpha**3 * (53 * Pi2 + 828 * Zeta3 + &
       138 * Pi2 * Log(-2 * cI * m * v/mu) )/243/Pi/v
-    else if (i == 3 .and. j == -1) then
+    else if (i == 3 .and. j == 0) then
       l1 = Log(- cI * m * v/mu); l3 = Log(- cI * v)
       EXPterms = - 1.3234297814023874_dp * alpha**3 * ( l1**3 + l1**2 * &
       (3 * l2 - 4.565197036493422_dp) + (-4.748801815703692_dp - &
