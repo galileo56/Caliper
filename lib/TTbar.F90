@@ -114,12 +114,12 @@ contains
     character (len = *), intent(in)    :: scheme, method
     Integer            , intent(in)    :: order, ordMass, ord1S
     real (dp)          , intent(in)    :: h, Q, gt, lambda, nu, R1S
-    real (dp)                          :: mu, m
+    real (dp)                          :: mu, m, lnu
     complex (dp)                       :: v
     integer                            :: i, j, n
     real (dp), dimension( 0:min(order,3) )   :: rQ
 
-    n = min(order,3); rQ = 0
+    n = min(order,3); rQ = 0; lnu = log(nu)
 
     Rexp = 0; if (order < 1) return
 
@@ -133,7 +133,7 @@ contains
 
     do i = 0, order
       do j = n + 1, 3 * (n - 1)
-        rQ(i) = rQ(i) + higherOrderLogs3(v, i, j - i, m, mu, nu)
+        rQ(i) = rQ(i) + higherOrderLogs3(v, i, j - i, m, mu, lnu)
       end do
     end do
 
@@ -938,31 +938,30 @@ contains
 
 ! ccccccccccc
 
-  real (dp) function higherOrderLogs3(v, i, j, m, mu, nu)
-    real (dp)   , intent(in) :: m, mu, nu
+  real (dp) function higherOrderLogs3(v, i, j, m, mu, lnu)
+    real (dp)   , intent(in) :: m, mu, lnu
     complex (dp), intent(in) :: v
     integer     , intent(in) :: i, j
     complex (dp)             :: higherOrderLogs
-    real (dp)                :: lnu
+    ! real (dp)                :: lnu
 
     higherOrderLogs = 0
 
     if (i == 1 .and. j == 3) then
-      higherOrderLogs = 128 * cI * v**3 * Log(nu)/9
+      higherOrderLogs = 128 * cI * v**3 * lnu/9
     else if (i == 2 .and. j == 1) then
       higherOrderLogs = - 280 * cI * v * Pi2 * Log(v)/27
     else if (i == 2 .and. j == 2) then
-      higherOrderLogs = 170 * cI * v**2 * Pi2 * Log(nu)/27
+      higherOrderLogs = 170 * cI * v**2 * Pi2 * lnu/27
     else if (i == 2 .and. j == 3) then
-      higherOrderLogs = - 1472 * cI * v**3 * Log(nu)**2/27
+      higherOrderLogs = - 1472 * cI * v**3 * lnu**2/27
     else if (i == 3 .and. j == 1) then
-      lnu = log(nu)
       higherOrderLogs = - cI * lnu * v * Pi2 * ( 64343 + 140280 * l2 &
       - 8940 * lnu + 2955 * Pi2 + 96600 * Log(mu/m) + 17880 * Log(v) )/1215
     else if (i == 3 .and. j == 2) then
-      higherOrderLogs = - 2461 * cI * v**2 * Pi2 * Log(nu)**2/27
+      higherOrderLogs = - 2461 * cI * v**2 * Pi2 * lnu**2/27
     else if (i == 3 .and. j == 3) then
-      higherOrderLogs = 67712 * cI * v**3 * Log(nu)**3/243
+      higherOrderLogs = 67712 * cI * v**3 * lnu**3/243
     end if
 
     higherOrderLogs3 = ImagPart(higherOrderLogs)
