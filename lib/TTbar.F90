@@ -154,13 +154,13 @@ contains
 !ccccccccccccccc
 
   real (dp) function RQCD(self, ordMass, order, ord1S, R1S, scheme, method, &
-  lambda, gt, mu, Q)
+  lambda, gt, h, Q)
     class (RNRQCD)     , intent(inout)       :: self
     character (len = *), intent(in)          :: scheme, method
     integer            , intent(in)          :: order, ordMass, ord1S
-    real (dp)          , intent(in)          :: mu, Q, gt, lambda, R1S
+    real (dp)          , intent(in)          :: h, Q, gt, lambda, R1S
     complex (dp)                             :: z
-    real (dp)                                :: h, m, R, QSwitch, m1S, lr
+    real (dp)                                :: h2, mu, m, R, QSwitch, m1S, lr
     integer                                  :: n
     real (dp), dimension(5)                  :: b
     real (dp), dimension(0:4)                :: delta
@@ -171,7 +171,7 @@ contains
     real (dp), dimension( 0:min(order,3) - 2, min(order,3) - 1 ) :: RcoefDer1
 
     if ( scheme(:4) == 'pole' ) then
-      m = self%mass; delta = 0; h = mu/m
+      m = self%mass; delta = 0; h2 = h; mu = h * m
     else if ( scheme(:3) == 'MSR' ) then
 
       call self%QSwitch(ord1S, ordMass, gt, R1S, lambda, method, m1S,&
@@ -185,8 +185,8 @@ contains
       end if
 
       delta = R * self%andim%betaQCD( scheme(:4) // 'delta')/m
-      if (order > 1) lr = log(R/m)
-      h = mu/R
+      if (order > 1) lr = log(R/m); mu = h * m1S
+      h2 = mu/R
 
     end if
 
@@ -233,7 +233,7 @@ contains
 
     if (order > 1) then
       Rcoef(0,:) = rQ(1:);  call self%andim%expandAlpha(Rcoef)
-      rQ(2:) = matmul( PowList0( log(h), n - 1 ), Rcoef(:,2:) )
+      rQ(2:) = matmul( PowList0( log(h2), n - 1 ), Rcoef(:,2:) )
     end if
 
     RQCD = 64 * Pi * m**2/3/Q**2 * &
