@@ -148,7 +148,7 @@
 :Evaluate:  RhadCoefs::usage = "RhadCoefs[nf] computes the massless total hadronic cross section series coefficients."
 :Evaluate:  RhadMass::usage = "RhadMass[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massive total hadronic cross section."
 :Evaluate:  RQCD::usage = "RQCD[scheme, runAlpha, runMass, ordMass, ord1S, R1S, order, method, lambda, gt, Mz, aMz, mT, mu, Q] computes the massive total hadronic cross section for an unstable top quark."
-:Evaluate:  RExp::usage = "RExp[scheme, runAlpha, runMass, ordMass, ord1S, R1S, order, method, lambda, gt, Mz, aMz, mT, mu, nu, Q] computes the threshold-expaded massive total hadronic cross section for an unstable top quark."
+:Evaluate:  RExp::usage = "RExp[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, aMz, mT, mu, nu, Q] computes the threshold-expaded massive total hadronic cross section for an unstable top quark."
 :Evaluate:  LambdaQCD::usage = "LambdaQCD[scheme, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  Hyper2F1::usage="Hyper2F1[a, b, c, x] Hypergeometric Function in Fortran"
 :Evaluate:  HyperF32Exact::usage="HyperF32Exact[w, x] Hypergeometric Function in Fortran"
