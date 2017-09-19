@@ -28,7 +28,7 @@ module RNRQCDClass
     procedure, pass (self), public :: VceffsNNLL, VrsLL, V2sLL, VssLL, Vk1sLL, &
     Vk2sLL, VkeffsLL, XiNLL, XiNNLLnonmix, XiNNLLmixUsoft, MLLc2, MNLLc1, &
     MNLLplusNNLLnonmixc1, MNNLLAllc1InclSoftMixLog, A1pole, Xsec, Delta1S, &
-    MNLLc1Square, MNNLLc1Square, Rexp, QSwitch, RQCD, Rexp2
+    MNLLc1Square, MNNLLc1Square, Rexp, QSwitch, RQCD, Rmatched
 
     procedure, pass (self), private :: xc01, xc11, xc12, xc22
 
@@ -108,6 +108,30 @@ contains
 
 ! ccccccccccc
 
+  real (dp) function Rmatched(self, ordMass, order, ord1S, R1S, scheme, method, &
+  lambda, gt, h, nu, Q, v1, v2)
+    class (RNRQCD)     , intent(inout) :: self
+    character (len = *), intent(in)    :: scheme, method
+    Integer            , intent(in)    :: order, ordMass, ord1S
+    real (dp)          , intent(in)    :: h, Q, gt, lambda, nu, R1S, v1, v2
+    real (dp), dimension(0:4)          :: res
+    real (dp)                          :: m
+
+    if ( scheme(:4) == 'pole' ) then
+      m = self%mass
+    else
+      res = self%Delta1S(ordMass, R1S, lambda, method); m = sum( res(:ord1S) )
+    end if
+
+    Rmatched = self%RQCD(ordMass, order, ord1S, R1S, scheme, method, lambda, &
+    gt, h, Q) + ( self%Xsec(ordMass, order, scheme, method, lambda, q, gt, h, nu) &
+    - self%Rexp(ordMass, order, ord1S, R1S, scheme, method, lambda, gt, h, nu, Q) )&
+    * SwitchOff(Q, m, gt, v1, v2 )
+
+  end function
+
+! ccccccccccc
+
   real (dp) function Rexp(self, ordMass, order, ord1S, R1S, scheme, method, &
   lambda, gt, h, nu, Q)
     class (RNRQCD)     , intent(inout) :: self
@@ -117,7 +141,7 @@ contains
     real (dp)                          :: mu, m, lnu, R, m1S
     complex (dp)                       :: v
     integer                            :: i, j, n
-    real (dp), dimension( 0:4 )        :: res
+    real (dp), dimension(0:4)          :: res
     real (dp), dimension( 0:min(order,3) )   :: rQ
 
     n = min(order,3)
