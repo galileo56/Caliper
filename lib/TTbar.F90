@@ -109,24 +109,26 @@ contains
 ! ccccccccccc
 
   real (dp) function Rmatched(self, ordMass, order, ord1S, R1S, scheme, method, &
-  lambda, gt, h, nu, Q, v1, v2)
+  lambda, gt, h, nu, v1, v2, Q)
     class (RNRQCD)     , intent(inout) :: self
     character (len = *), intent(in)    :: scheme, method
     Integer            , intent(in)    :: order, ordMass, ord1S
     real (dp)          , intent(in)    :: h, Q, gt, lambda, nu, R1S, v1, v2
+    character (len = 4)                :: scheme2
     real (dp), dimension(0:4)          :: res
     real (dp)                          :: m
 
     if ( scheme(:4) == 'pole' ) then
-      m = self%mass
+      m = self%mass; scheme2 = 'pole'
     else
       res = self%Delta1S(ordMass, R1S, lambda, method); m = sum( res(:ord1S) )
+      scheme2 = 'S1'
     end if
 
     Rmatched = self%RQCD(ordMass, order, ord1S, R1S, scheme, method, lambda, &
-    gt, h, Q) + ( self%Xsec(ordMass, order, scheme, method, lambda, q, gt, h, nu) &
+    gt, h, Q) + ( self%Xsec(ordMass, order, scheme2, method, lambda, q, gt, h, nu) &
     - self%Rexp(ordMass, order, ord1S, R1S, scheme, method, lambda, gt, h, nu, Q) )&
-    * SwitchOff(Q, m, gt, v1, v2 )
+    * SwitchOff(Q, m, gt, v1, v2)
 
   end function
 

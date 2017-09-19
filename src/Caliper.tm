@@ -149,6 +149,7 @@
 :Evaluate:  RhadMass::usage = "RhadMass[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massive total hadronic cross section."
 :Evaluate:  RQCD::usage = "RQCD[scheme, runAlpha, runMass, ordMass, ord1S, R1S, order, method, lambda, gt, Mz, aMz, mT, mu, Q] computes the massive total hadronic cross section for an unstable top quark."
 :Evaluate:  RExp::usage = "RExp[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, aMz, mT, mu, nu, Q] computes the threshold-expaded massive total hadronic cross section for an unstable top quark."
+:Evaluate:  Rmatched::usage = "Rmatched[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, aMz, mT, mu, nu, v1, v2, Q] computes the matched massive total hadronic cross section for an unstable top quark."
 :Evaluate:  LambdaQCD::usage = "LambdaQCD[scheme, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  Hyper2F1::usage="Hyper2F1[a, b, c, x] Hypergeometric Function in Fortran"
 :Evaluate:  HyperF32Exact::usage="HyperF32Exact[w, x] Hypergeometric Function in Fortran"
@@ -2432,6 +2433,19 @@
                 lambda, gt, Mz, aMz, mT, mu, nu, Q}
 :ArgumentTypes: {String, Integer, Integer, Integer, Integer, Integer, Real,
                 String, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      rmatched
+:Pattern:       Rmatched[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,
+                R1S_, method_, lambda_, gt_, Mz_, aMz_, mT_, mu_, nu_, v1_, v2_,
+                Q_]
+:Arguments:     {scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,
+                lambda, gt, Mz, aMz, mT, mu, nu, v1, v2, Q}
+:ArgumentTypes: {String, Integer, Integer, Integer, Integer, Integer, Real,
+                String, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                Real}
 :ReturnType:    Real
 :End:
 
@@ -5979,6 +5993,24 @@ double Mz, double aMz, double mT, double mu, double nu, double Q){
 
   f90rexp_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S, &R1S, method,
   &lambda, &gt, &Mz, &aMz, &mT, &mu, &nu, &Q, &res);
+
+ return res;
+}
+
+extern double f90rmatched_(char const* str, int* runAlpha, int* runMass,
+int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
+double* lambda, double* gt, double* Mz,  double* aMz, double* mT, double* mu,
+double* nu, double* v1, double* v2, double* Q, double* res);
+
+static double rmatched(char const* str, int runAlpha, int runMass, int ordMass,
+int order, int ord1S, double R1S, char const* method, double lambda, double gt,
+double Mz, double aMz, double mT, double mu, double nu, double v1, double v2,
+double Q){
+
+  double res;
+
+  f90rmatched_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S, &R1S, method,
+  &lambda, &gt, &Mz, &aMz, &mT, &mu, &nu, &v1, &v2, &Q, &res);
 
  return res;
 }
