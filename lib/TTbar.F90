@@ -976,6 +976,22 @@ contains
 
     higherOrderLogs3 = ImagPart(higherOrderLogs)
 
+    if ( scheme(:4) == 'pole' ) return
+
+    higherOrderLogs = 0
+
+    if (i == 2 .and. j == 2) then
+      higherOrderLogs = - 512 * cI * R * v * lnu/9/m
+    else if (i == 3 .and. j == 3) then
+      higherOrderLogs = - 8 * cI * (  lnu * ( 2 * R * (85 * m * Pi2 * v - 192 * R) + &
+      805 * m**2 * Pi2 * v**2 * Log(R/mu) ) + 23 * m * Pi2 * v * ( 6 * R - &
+      35 * m * v * Log(R/mu) ) * Log(v)  )/81/m**2/v
+    else if (i == 3 .and. j == 2) then
+      higherOrderLogs = 5888 * cI * lnu**2 * R * v/27/m
+    end if
+
+    higherOrderLogs3 = higherOrderLogs3 + ImagPart(higherOrderLogs)
+
   end function higherOrderLogs3
 
 ! ccccccccccc
@@ -1098,6 +1114,52 @@ contains
     end if
 
     EXPterms3 = ImagPart(EXPterms)
+
+    if ( scheme(:4) == 'pole' ) return
+
+    EXPterms = 0
+
+    if (i == 1 .and. j == 0) then
+      EXPterms = 8 * ( Pi * Log(R/m) - cI * R/m/v )/3
+    else if (i == 1 .and. j == 2) then
+      EXPterms = 5 * v * (3 * cI * R + 8 * m * Pi * v * Log(R/mu) )/9/m
+    else if (i == 2 .and. j == -1) then
+      EXPterms = 16 * R * (2 * m * Pi * v - cI * R)/9/m*2/v**3
+    else if (i == 2 .and. j == 0) then
+      EXPterms = (   552 * m * Pi3 * v + 4416 * cI * R * Log(R/mu) + &
+      32 * m * Pi * v * (  192 * Log(m/mu) - Log(R/mu) * (149 + 138 * l2 + &
+      69 * Log(R/mu) )  ) - 3 * cI * R * ( 291 + 16 * Pi2 * (2 * l2 - 1) -  &
+      48 * Zeta3 )   )/432/m/v
+    else if (i == 2 .and. j == 1) then
+      EXPterms = (  2 * R * (  4 * m * Pi * v * (40 * l2 - 19 - 8 * cI * Pi) - &
+      51 * cI * R + 64 * m * Pi * v * Log(v * m/R) )  )/27/m**2/v
+    else if (i == 3 .and. j == -2) then
+      EXPterms = 32 * R * ( 12 * m * Pi * R * v - 6 * cI * R**2 &
+      + cI * m**2 * Pi2**2 * v**2)/81/m**3/v**5
+    else if (i == 3 .and. j == -1) then
+      EXPterms = R * ( -12.20650397291053_dp * cI * R - (7.776708753396424_dp, &
+      - 67.25952628890525_dp) * m * v + 13.62962962962963_dp * cI * R * Log(R/mu)&
+      - 42.818744315594216_dp * m * v * Log((m*R*v)/mu**2) )/m**2/v**3
+    else if (i == 3 .and. j == 0) then
+      EXPterms = ( -2.8641975308641974_dp * cI* R**3 + 4.964492094561648_dp * m &
+      * R**2 * v + (214.36438198725799_dp, 115.57430402546645_dp) * m**2 * R *  &
+      v**2 + m**3 * ( (347.5779135832826_dp, 400.0580957533245_dp) + &
+      235.86369386039192_dp * cI*v ) * v**2 + m**2 * v**2 * ( - 41.03462996911112_dp&
+      * m * v * Log(m/mu)**3 + ( 83.07628673312446_dp * cI * R - 52.34229117492672_dp&
+      * m * v ) * Log(R/mu) - (39.18518518518518_dp * cI * R + 102.00205692336023_dp&
+      * m * v) * Log(R/mu)**2 + 41.03462996911112_dp * m * v * Log(R/mu)**3 + &
+      m * v * Log(m/mu)**2 * ( (-498.0016843135327_dp, 193.3711380806026_dp) - &
+      123.10388990733338_dp * Log(v) ) + Log(m/mu) * ( 221.2749722253882_dp * cI * m &
+      - 54.51851851851852 * cI * R + (52.342291174926814_dp,622.0347601166304_dp) &
+      * m * v + 600.0037412368929_dp * m * v * Log(R/mu) + m * v * &
+      ( (-395.99962739017235_dp, 386.7422761612052_dp) - 123.10388990733338_dp * &
+      Log(v) ) * Log(v)) + Log(v) * ( 221.27497222538818_dp * cI * m + &
+      136.46860406444543_dp * cI * R + (52.34229117492672_dp, -320.4489126814764_dp)&
+      * m * v + m * v * ( (102.00205692336024_dp, 193.3711380806026_dp) - &
+      41.03462996911112_dp * Log(v) ) * Log(v))) )/m**3/v**3
+    end if
+
+    EXPterms3 = EXPterms3 + ImagPart(EXPterms)
 
   end function EXPterms3
 
