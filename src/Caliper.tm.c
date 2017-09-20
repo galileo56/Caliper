@@ -289,7 +289,7 @@ MLYDEFN( devyield_result, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
-# line 2516 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
+# line 2518 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
 #include "mathlink.h"
 #include "ftypes.h"
 #include <stdio.h>
@@ -508,17 +508,18 @@ double gamtop, double asoft, double VcsNNLL, double musoft){
 
 extern double f90rnrqcd_(int* nl, int* order, char const* scheme,
 char const* method, int* orderAlpha, int* runAlpha, int* orderMass, int* runMass,
-double* muLam, double* xLam, double* mZ, double* aMz, double* Q, double* mt,
-double* gt, double* h, double* nu, double* res);
+int* ord1S, double* R1S, double* muLam, double* xLam, double* mZ, double* aMz,
+double* Q, double* mt, double* gt, double* h, double* nu, double* res);
 
-static double rnrqcd(int nl, int order, char const* scheme,
-char const* method, int orderAlpha, int runAlpha, int orderMass, int runMass,
+static double rnrqcd(int nl, int order, char const* scheme, char const* method,
+int orderAlpha, int runAlpha, int orderMass, int runMass, int ord1S, double R1S,
 double muLam, double xLam, double mZ, double aMz, double Q, double mt,
 double gt, double h, double nu){
   double res;
 
    f90rnrqcd_(&nl, &order, scheme, method, &orderAlpha, &runAlpha, &orderMass,
-   &runMass, &muLam, &xLam, &mZ, &aMz, &Q, &mt, &gt, &h, &nu, &res);
+   &runMass, &ord1S, &R1S, &muLam, &xLam, &mZ, &aMz, &Q, &mt, &gt, &h, &nu,
+   &res);
 
    return res;
 }
@@ -3777,17 +3778,17 @@ double Mz, double aMz, double mT, double mu, double nu, double Q){
 extern double f90rmatched_(char const* str, int* runAlpha, int* runMass,
 int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
 double* lambda, double* gt, double* Mz,  double* aMz, double* mT, double* mu,
-double* nu, double* Q, double* v1, double* v2, double* res);
+double* nu, double* v1, double* v2, double* Q, double* res);
 
 static double rmatched(char const* str, int runAlpha, int runMass, int ordMass,
 int order, int ord1S, double R1S, char const* method, double lambda, double gt,
-double Mz, double aMz, double mT, double mu, double nu, double Q, double v1,
-double v2){
+double Mz, double aMz, double mT, double mu, double nu, double v1, double v2,
+double Q){
 
   double res;
 
   f90rmatched_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S, &R1S, method,
-  &lambda, &gt, &Mz, &aMz, &mT, &mu, &nu, &Q, &v1, &v2, &res);
+  &lambda, &gt, &Mz, &aMz, &mT, &mu, &nu, &v1, &v2, &Q, &res);
 
  return res;
 }
@@ -3825,7 +3826,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 3829 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
+# line 3830 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
 
 
 void hypgeo P(( double _tp1, double _tp2, double _tp3, double _tp4, double _tp5, double _tp6, double _tp7, double _tp8));
@@ -4091,7 +4092,7 @@ L0:	return res;
 } /* _tr8 */
 
 
-double rnrqcd P(( int _tp1, int _tp2, const char * _tp3, const char * _tp4, int _tp5, int _tp6, int _tp7, int _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17));
+double rnrqcd P(( int _tp1, int _tp2, const char * _tp3, const char * _tp4, int _tp5, int _tp6, int _tp7, int _tp8, int _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19));
 
 #if MLPROTOTYPES
 static int _tr9( MLINK mlp)
@@ -4108,7 +4109,7 @@ static int _tr9(mlp) MLINK mlp;
 	int _tp6;
 	int _tp7;
 	int _tp8;
-	double _tp9;
+	int _tp9;
 	double _tp10;
 	double _tp11;
 	double _tp12;
@@ -4117,6 +4118,8 @@ static int _tr9(mlp) MLINK mlp;
 	double _tp15;
 	double _tp16;
 	double _tp17;
+	double _tp18;
+	double _tp19;
 	double _rp0;
 	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
@@ -4126,7 +4129,7 @@ static int _tr9(mlp) MLINK mlp;
 	if ( ! MLGetInteger( mlp, &_tp6) ) goto L5;
 	if ( ! MLGetInteger( mlp, &_tp7) ) goto L6;
 	if ( ! MLGetInteger( mlp, &_tp8) ) goto L7;
-	if ( ! MLGetReal( mlp, &_tp9) ) goto L8;
+	if ( ! MLGetInteger( mlp, &_tp9) ) goto L8;
 	if ( ! MLGetReal( mlp, &_tp10) ) goto L9;
 	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
 	if ( ! MLGetReal( mlp, &_tp12) ) goto L11;
@@ -4135,13 +4138,15 @@ static int _tr9(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
 	if ( ! MLGetReal( mlp, &_tp16) ) goto L15;
 	if ( ! MLGetReal( mlp, &_tp17) ) goto L16;
-	if ( ! MLNewPacket(mlp) ) goto L17;
+	if ( ! MLGetReal( mlp, &_tp18) ) goto L17;
+	if ( ! MLGetReal( mlp, &_tp19) ) goto L18;
+	if ( ! MLNewPacket(mlp) ) goto L19;
 
-	_rp0 = rnrqcd(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17);
+	_rp0 = rnrqcd(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L17: L16: L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4:	MLReleaseString(mlp, _tp4);
+L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4:	MLReleaseString(mlp, _tp4);
 L3:	MLReleaseString(mlp, _tp3);
 L2: L1: 
 L0:	return res;
@@ -15183,7 +15188,7 @@ static struct func {
 		{ 4, 0, _tr6, "mnllplusnnllnonmixc1" },
 		{ 4, 0, _tr7, "mnllc1" },
 		{ 4, 0, _tr8, "vceffsnnll" },
-		{17, 0, _tr9, "rnrqcd" },
+		{19, 0, _tr9, "rnrqcd" },
 		{14, 0, _tr10, "qswitch" },
 		{12, 0, _tr11, "delta1s" },
 		{ 8, 0, _tr12, "a1pole" },
@@ -15403,8 +15408,8 @@ static const char* evalstrs[] = {
 	"unMass, muLam, xLam, method, mZ, aMz, mt, R]\"",
 	(const char*)0,
 	"rNRQCD::usage = \"rNRQCD[nl, order, scheme, method, orderAlpha, r",
-	"unAlpha, orderMass, runMass, muLam, xLam, mZ, aMz, Q, mtpole, gt",
-	", h, nu]\"",
+	"unAlpha, orderMass, runMass, ord1S, R1S, muLam, xLam, mZ, aMz, Q",
+	", mtpole, gt, h, nu]\"",
 	(const char*)0,
 	"A1Pole::usage = \"A1Pole[nl, order, En, mtpole, gamtop, asoft, Vc",
 	"sNNLL, musoft]\"",
@@ -15946,8 +15951,8 @@ static const char* evalstrs[] = {
 	"n unstable top quark.\"",
 	(const char*)0,
 	"Rmatched::usage = \"Rmatched[scheme, runAlpha, runMass, ordMass, ",
-	"order, ord1S, R1S, method, lambda, gt, Mz, aMz, mT, mu, nu, Q, v",
-	"1, v2] computes the matched massive total hadronic cross section",
+	"order, ord1S, R1S, method, lambda, gt, Mz, aMz, mT, mu, nu, v1, ",
+	"v2, Q] computes the matched massive total hadronic cross section",
 	" for an unstable top quark.\"",
 	(const char*)0,
 	"LambdaQCD::usage = \"LambdaQCD[scheme, order, runAlpha, run, nf, ",
@@ -16381,7 +16386,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"MNLLplusNNLLnonmixc1[nl_, ah_, as_, au_]", (char *)"{nl, ah, as, au}", 6);
 	if (_res) _res = _definepattern(mlp, (char *)"MNLLc1[nl_, ah_, as_, au_]", (char *)"{nl, ah, as, au}", 7);
 	if (_res) _res = _definepattern(mlp, (char *)"VceffsNNLL[nl_, asNNLL_, ah_, as_]", (char *)"{nl, asNNLL, ah, as}", 8);
-	if (_res) _res = _definepattern(mlp, (char *)"rNRQCD[nl_, order_, scheme_, method_, orderAlpha_, runAlpha_, orderMass_,                 runMass_, muLam_, xLam_, mZ_, aMz_, Q_, mtpole_, gt_, h_, nu_]", (char *)"{nl, order, scheme, method, orderAlpha, runAlpha, orderMass,                 runMass, muLam, xLam, mZ, aMz, Q, mtpole, gt, h, nu}", 9);
+	if (_res) _res = _definepattern(mlp, (char *)"rNRQCD[nl_, order_, scheme_, method_, orderAlpha_, runAlpha_,                 orderMass_, runMass_, ord1S_, R1S_, muLam_, xLam_, mZ_, aMz_,                 Q_, mtpole_, gt_, h_, nu_]", (char *)"{nl, order, scheme, method, orderAlpha, runAlpha, orderMass,                 runMass, ord1S, R1S, muLam, xLam, mZ, aMz, Q, mtpole, gt, h, nu}", 9);
 	if (_res) _res = _definepattern(mlp, (char *)"QSwitch[nl_, orderAlpha_, runAlpha_, orderMass_, runMass_, ord1S_,                 muLam_, xLam_, method_, mZ_, aMz_, mt_, gt_, R_]", (char *)"{nl, orderAlpha, runAlpha, orderMass, runMass, ord1S, muLam, xLam,                 method, mZ, aMz, mt, gt, R}", 10);
 	if (_res) _res = _definepattern(mlp, (char *)"Delta1S[nl_, orderAlpha_, runAlpha_, orderMass_, runMass_,                 muLam_, xLam_, method_, mZ_, aMz_, mt_, R_]", (char *)"{nl, orderAlpha, runAlpha, orderMass, runMass, muLam, xLam,                 method, mZ, aMz, mt, R}", 11);
 	if (_res) _res = _definepattern(mlp, (char *)"A1Pole[nl_, order_, En_, mtpole_, gamtop_, asoft_, VcsNNLL_, musoft_]", (char *)"{nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft}", 12);
@@ -16561,7 +16566,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"RhadMass[scheme_, current_, orderAlpha_, runAlpha_, runMass_, order_, nf_,                 Mz_, GammaZ_, sin2ThetaW_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mu_, Q_]", (char *)"{scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ,                 sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q}", 186);
 	if (_res) _res = _definepattern(mlp, (char *)"RQCD[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,                 R1S_, method_, lambda_, gt_, Mz_, aMz_, mT_, mu_, Q_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, aMz, mT, mu, Q}", 187);
 	if (_res) _res = _definepattern(mlp, (char *)"RExp[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,                 R1S_, method_, lambda_, gt_, Mz_, aMz_, mT_, mu_, nu_, Q_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, aMz, mT, mu, nu, Q}", 188);
-	if (_res) _res = _definepattern(mlp, (char *)"Rmatched[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,                 R1S_, method_, lambda_, gt_, Mz_, aMz_, mT_, mu_, nu_, Q_, v1_,                 v2_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, aMz, mT, mu, nu, Q, v1, v2}", 189);
+	if (_res) _res = _definepattern(mlp, (char *)"Rmatched[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,                 R1S_, method_, lambda_, gt_, Mz_, aMz_, mT_, mu_, nu_, v1_, v2_,                 Q_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, aMz, mT, mu, nu, v1, v2, Q}", 189);
 	if (_res) _res = _definepattern(mlp, (char *)"LambdaQCD[scheme_, order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_,                  mB_, muB_, mC_, muC_, mu_]", (char *)"{scheme, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 190);
 	if (_res) _res = _definepattern(mlp, (char *)"Kernel[n_, width_, w_, mu_, p_]", (char *)"{n, width, w, mu, p}", 191);
 	if (_res) _res = _definepattern(mlp, (char *)"GammaDerList[n_, w_]", (char *)"{n, w}", 192);

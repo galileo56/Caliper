@@ -27,8 +27,9 @@ mZ, aMz, mt, R, res)
   alphaMass = [ Running(nl - 1, runM, alphaAll, muLam), &
   Running(nl, runM, alphaAll, muLam) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, 0._dp)
-  res = NRQCD%Delta1S( orderM, R, xlam, method(:8) )
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'MSRn', method(:8), 0._dp, orderM, 4, R, xlam)
+  res = NRQCD%Delta1S( )
 
 end subroutine f90Delta1S
 
@@ -48,7 +49,6 @@ method, mZ, aMz, mt, gt, R, res)
   type (Running), dimension(2)    :: alphaMass
   type (VFNSMSR)                  :: MSR
   type (AnomDim), dimension(3:6)  :: AnDim
-  real (dp)                       :: m, m1S
 
   do i = 3, 6
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
@@ -60,20 +60,21 @@ method, mZ, aMz, mt, gt, R, res)
   alphaMass = [ Running(nl - 1, runM, alphaAll, muLam), &
   Running(nl, runM, alphaAll, muLam) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, gt)
-  call  NRQCD%Qswitch( orderM, ord1S, R, xlam, method(:8), m1S, m, res )
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'MSRn', method(:8), gt, orderM, ord1S, R, xlam)
+  res =  NRQCD%Switch()
 
 end subroutine f90Qswitch
 
 ! cccccccccccccccccccc
 
-subroutine f90RNRQCD(nl, order, scheme, method, orderAlp, runAlp, orderMass, runMass, muLam, &
-  xlam, mZ, aMz, Q, mtpole, gt, h, nu, res)
+subroutine f90RNRQCD(nl, order, scheme, method, orderAlp, runAlp, orderMass, &
+  runMass, ord1S, R1S, muLam, xlam, mZ, aMz, Q, mtpole, gt, h, nu, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; implicit none
-  real (dp)          , intent(in)  :: Q, mtpole, gt, h, nu, mZ, aMz, xlam, muLam
+  real (dp)          , intent(in)  :: Q, mtpole, gt, h, nu, mZ, aMz, xlam, muLam, R1S
   character (len = *), intent(in)  :: scheme, method
-  integer            , intent(in)  :: nl, orderAlp, runAlp, runMass, orderMass, order
+  integer            , intent(in)  :: nl, orderAlp, runAlp, runMass, orderMass, order, ord1S
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (RNRQCD)                    :: NRQCD
@@ -92,9 +93,10 @@ subroutine f90RNRQCD(nl, order, scheme, method, orderAlp, runAlp, orderMass, run
   alphaMass = [ Running(nl - 1, runMass, alphaAll, muLam), &
   Running(nl, runMass, alphaAll, muLam) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, gt)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, scheme(:4), method(:8), gt, orderMass, ord1S, R1S, xlam )
 
-  res = NRQCD%Xsec( orderMass, order, scheme(:4), method(:8), xlam, q, h, nu )
+  res = NRQCD%Xsec( order, q, h, nu )
 
 end subroutine f90RNRQCD
 
@@ -120,7 +122,8 @@ subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, mtpole, mtpole, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, gamtop)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'pole', 'analytic', gamtop, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%A1pole(order, En, mtpole, asoft, VcsNNLL, musoft)
 
@@ -214,7 +217,8 @@ subroutine f90VssLL(nl, ah, as, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, 0._dp)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%VssLL(ah, as)
 
@@ -242,7 +246,8 @@ subroutine f90Vk1sLL(nl, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, 0._dp)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%Vk1sLL(as, au)
 
@@ -270,7 +275,8 @@ subroutine f90Vk2sLL(nl, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, 0._dp)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%Vk2sLL(as, au)
 
@@ -298,7 +304,8 @@ subroutine f90VkeffsLL(nl, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, 0._dp)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%VkeffsLL(as, au)
 
@@ -337,7 +344,8 @@ subroutine f90VrsLL(nl, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, 0._dp)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%VrsLL(as, au)
 
@@ -365,7 +373,8 @@ subroutine f90V2sLL(nl, ah, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, 0._dp)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%V2sLL(ah, as, au)
 
@@ -393,7 +402,8 @@ subroutine f90VceffsNNLL(nl, asNNLL, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, 0._dp)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%VceffsNNLL(asNNLL, as, au)
 
@@ -421,7 +431,8 @@ subroutine f90XiNLL(nl, ah, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, 0._dp)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%XiNLL(ah, as, au)
 
@@ -449,7 +460,8 @@ subroutine f90XiNNLLmixUsoft(nl, ah, as, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, 0._dp)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%XiNNLLmixUsoft(ah, as)
 
@@ -477,7 +489,8 @@ subroutine f90MLLc2(nl, ah, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, 0._dp)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%MLLc2(ah, au)
 
@@ -505,7 +518,8 @@ subroutine f90MNLLc1(nl, ah, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, 0._dp)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%MNLLc1(ah, as, au)
 
@@ -533,7 +547,8 @@ subroutine f90MNLLplusNNLLnonmixc1(nl, ah, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, 0._dp)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%MNLLplusNNLLnonmixc1(ah, as, au)
 
@@ -561,7 +576,8 @@ subroutine f90MNNLLAllc1InclSoftMixLog(nl, ah, as, au, nu, hh, ss, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = Running(5, 0, alphaAll, 0._dp)
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, 0._dp)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%MNNLLAllc1InclSoftMixLog(ah, as, au, nu, hh, ss)
 
@@ -600,7 +616,8 @@ subroutine f90XiNNLLnonmix(nl, ah, as, au, hh, ss, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, 0._dp)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%XiNNLLnonmix(ah, as, au, hh, ss)
 
@@ -5649,9 +5666,10 @@ lambda, gt, mZ, amZ, mT, h, Q, res)
   alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
   Running(5, runMass, alphaAll, 1._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, gt)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, str, method, gt, ordMass, ord1S, R1S, lambda)
 
-  res = NRQCD%RQCD(ordMass, order, ord1S, R1S, str, method, lambda, h, Q)
+  res = NRQCD%RQCD(order, h, Q)
 
 end subroutine f90RQCD
 
@@ -5687,9 +5705,10 @@ lambda, gt, mZ, amZ, mT, mu, nu, Q, res)
   alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
   Running(5, runMass, alphaAll, 1._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, gt)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, str, method, gt, ordMass, ord1S, R1S, lambda)
 
-  res = NRQCD%RExp(ordMass, order, ord1S, R1S, str, method, lambda, mu, nu, Q)
+  res = NRQCD%RExp(order, mu, nu, Q)
 
 end subroutine f90Rexp
 
@@ -5725,10 +5744,10 @@ lambda, gt, mZ, amZ, mT, mu, nu, v1, v2, Q, res)
   alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
   Running(5, runMass, alphaAll, 1._dp) ]
 
-  MSR = VFNSMSR(alphaMass);  NRQCD = RNRQCD(MSR, gt)
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, str, method, gt, ordMass, ord1S, R1S, lambda)
 
-  res = NRQCD%Rmatched(ordMass, order, ord1S, R1S, str, method, lambda, &
-  mu, nu, v1, v2, Q)
+  res = NRQCD%Rmatched(order, mu, nu, v1, v2, Q)
 
 end subroutine f90Rmatched
 

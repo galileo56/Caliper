@@ -15,20 +15,22 @@ module RNRQCDClass
 ! ccccccccccc
 
   type, public :: RNRQCD
-    integer                   :: nl
-    real (dp)                 :: a1, a2, mass, Qt, gt
+    integer                   :: nl, ordMass
+    real (dp)                 :: a1, a2, mass, Qt, gt, lambda, m1S, MSRm, QSwitch
     real (dp), dimension(0:4) :: beta
     type (Running)            :: run
     type (Alpha)              :: AlphaOb
-    type (NRQCD)              :: Upsilon
     type (AnomDim)            :: andim
+    character (len = 4)       :: scheme
+    character (len = 8)       :: method
+    real (dp), dimension(0:4) :: m1Spiece
 
   contains
 
     procedure, pass (self), public :: VceffsNNLL, VrsLL, V2sLL, VssLL, Vk1sLL, &
     Vk2sLL, VkeffsLL, XiNLL, XiNNLLnonmix, XiNNLLmixUsoft, MLLc2, MNLLc1, &
     MNLLplusNNLLnonmixc1, MNNLLAllc1InclSoftMixLog, A1pole, Xsec, Delta1S, &
-    MNLLc1Square, MNNLLc1Square, Rexp, QSwitch, RQCD, Rmatched
+    MNLLc1Square, MNNLLc1Square, Rexp, RQCD, Rmatched, Switch
 
     procedure, pass (self), private :: xc01, xc11, xc12, xc22
 
@@ -42,93 +44,110 @@ module RNRQCDClass
 
 contains
 
-  type (RNRQCD) function RNRQCDIn(MSR, gt)
-    type (VFNSMSR), intent(in) :: MSR
-    real (dp)     , intent(in) :: gt
-    type (Running)             :: run
-    type (AnomDim)             :: adim
-    integer                    :: nl
+  type (RNRQCD) function RNRQCDIn(MSR, scheme, method, gt, ordMass, ord1S, R1S, lambda)
+    type (VFNSMSR)     , intent(in) :: MSR
+    real (dp)          , intent(in) :: gt, lambda, R1S
+    integer            , intent(in) :: ordMass, ord1S
+    character (len = *), intent(in) :: scheme, method
+    type (Running)                  :: run
+    type (AnomDim)                  :: adim
+    type (NRQCD)                    :: Upsilon
+    integer                         :: nl
+    real (dp), dimension(4)         :: A
 
-    run = MSR%RunArray(2)
+    run = MSR%RunArray(2); RNRQCDIn%gt = gt; RNRQCDIn%ordMass = ordMass
+    RNRQCDIn%method = method(:8); RNRQCDIn%lambda = lambda
+
+    RNRQCDIn%scheme = scheme(:4); if ( scheme(:2) == 'S1' ) RNRQCDIn%scheme = 'MSRn'
 
     nl = run%numFlav(); adim = run%adim(); RNRQCDIn%run = run; RNRQCDIn%nl = nl
     RNRQCDIn%beta = adim%betaQCD('beta') ; RNRQCDIn%AlphaOb = run%alphaAll()
-    RNRQCDIn%mass = run%scales('mH'); RNRQCDIn%andim = adim
-    RNRQCDIn%gt = gt
+    RNRQCDIn%mass = run%scales('mH')     ; RNRQCDIn%andim = adim
 
     RNRQCDIn%a1 = 31._dp/3 - 10._dp * nl/9
     RNRQCDIn%a2 = 456.74883699902244_dp - 66.35417150661816_dp * nl + &
     1.2345679012345678_dp * nl**2
 
-    RNRQCDIn%Upsilon = NRQCD('up', 'MSRn', 'no', MSR, 1, 0, 1, 1)
+    Upsilon = NRQCD('up', 'MSRn', 'no', MSR, 1, 0, 1, 1)
 
     if (nl == 5 .or. nl == 3 .or. nl == 1) RNRQCDIn%Qt =   2._dp/3
     if (nl == 4 .or. nl == 2 .or. nl == 0) RNRQCDIn%Qt = - 1._dp/3
+
+    if ( scheme(:4) == 'pole' ) then
+
+      RNRQCDIn%m1S = RNRQCDIn%mass
+
+    else
+
+      RNRQCDIn%m1Spiece = Upsilon%En(ordMass, R1S, R1S, lambda, method, 'ttbar')/2
+      RNRQCDIn%m1S = sum( RNRQCDIn%m1Spiece(:ord1S) )
+
+      RNRQCDIn%MSRm = run%MSRMass( scheme(:4), ordMass, RNRQCDIn%mass, &
+      lambda, method)
+
+      A = powList( RNRQCDIn%MSRm/RNRQCDIn%m1S, 4 )
+
+      RNRQCDIn%QSwitch = 2 * RNRQCDIn%m1S + Sqrt(  ( 6.25e-6_dp - A(1)/2000 + &
+      3 * A(2)/200 - A(3)/5 + A(4) ) * RNRQCDIn%m1S**2 - gt**2  )
+
+    end if
 
   end function RNRQCDIn
 
 ! ccccccccccc
 
-  real (dp) function Rmatched(self, ordMass, order, ord1S, R1S, scheme, method, &
-  lambda, h, nu, v1, v2, Q)
+  real (dp) function Rmatched(self, order, h, nu, v1, v2, Q)
     class (RNRQCD)     , intent(inout) :: self
-    character (len = *), intent(in)    :: scheme, method
-    Integer            , intent(in)    :: order, ordMass, ord1S
-    real (dp)          , intent(in)    :: h, Q, lambda, nu, R1S, v1, v2
-    real (dp), dimension(0:4)          :: res
-    real (dp)                          :: m
+    Integer            , intent(in)    :: order
+    real (dp)          , intent(in)    :: h, Q, nu, v1, v2
 
-    if ( scheme(:4) == 'pole' ) then
-      m = self%mass
-    else
-      res = self%Delta1S(ordMass, R1S, lambda, method); m = sum( res(:ord1S) )
-    end if
-
-    Rmatched = self%RQCD(ordMass, order, ord1S, R1S, scheme, method, lambda, &
-    h, Q) + ( self%Xsec(ordMass, order, scheme, method, lambda, q, h, nu) &
-    - self%Rexp(ordMass, order, ord1S, R1S, scheme, method, lambda, h, nu, Q) )&
-    * SwitchOff(Q, m, self%gt, v1, v2)
+    Rmatched = self%RQCD(order, h, Q) + ( self%Xsec(order, Q, h, nu) &
+    - self%Rexp(order, h, nu, Q) ) * SwitchOff(Q, self%m1S, self%gt, v1, v2)
 
   end function
 
 ! ccccccccccc
 
-  real (dp) function Rexp(self, ordMass, order, ord1S, R1S, scheme, method, &
-  lambda, h, nu, Q)
+  real (dp) function Switch(self)
+    class (RNRQCD), intent(in) :: self
+
+    Switch = self%Qswitch
+
+  end function Switch
+
+! ccccccccccc
+
+  real (dp) function Rexp(self, order, h, nu, Q)
     class (RNRQCD)     , intent(inout) :: self
-    character (len = *), intent(in)    :: scheme, method
-    Integer            , intent(in)    :: order, ordMass, ord1S
-    real (dp)          , intent(in)    :: h, Q, lambda, nu, R1S
-    real (dp)                          :: mu, m, lnu, R, m1S
+    Integer            , intent(in)    :: order
+    real (dp)          , intent(in)    :: h, Q, nu
+    real (dp)                          :: mu, m, lnu, R
     complex (dp)                       :: v
     integer                            :: i, j, n
-    real (dp), dimension(0:4)          :: res
     real (dp), dimension( 0:min(order,3) )   :: rQ
 
-    n = min(order,3)
+    n = min(order,3); mu = h * self%m1S
 
     Rexp = 0; if (order < 1) return
 
-    if ( scheme(:4) == 'pole' ) then
-      m = self%mass; mu = h * m
+    if ( self%scheme(:4) == 'pole' ) then
+      m = self%mass
     else
-      res = self%Delta1S(ordMass, R1S, lambda, method); m1S = sum( res(:ord1S) )
-      R = m1S * vStar(q, m1S, self%gt)
-      m = self%run%MSRMass(scheme(:4), ordMass, R, lambda, method)
-      mu = h * m1S
+      R = self%m1S * vStar(q, self%m1S, self%gt)
+      m = self%run%MSRMass(self%scheme(:4), self%ordMass, R, self%lambda, self%method)
     end if
 
     v = vC(q, m, m, self%gt); rQ = 0; lnu = log(nu)
 
     do i = 0, n
       do j = 1, n
-        rQ(i) = rQ(i) + EXPterms3(v, i, j - i, m, mu, R, scheme)
+        rQ(i) = rQ(i) + EXPterms3(v, i, j - i, m, mu, R, self%scheme)
       end do
     end do
 
     do i = 0, order
       do j = n + 1, 3 * (n - 1)
-        rQ(i) = rQ(i) + higherOrderLogs3(v, i, j - i, m, mu, lnu, R, scheme)
+        rQ(i) = rQ(i) + higherOrderLogs3(v, i, j - i, m, mu, lnu, R, self%scheme)
       end do
     end do
 
@@ -138,14 +157,12 @@ contains
 
 !ccccccccccccccc
 
-  real (dp) function RQCD(self, ordMass, order, ord1S, R1S, scheme, method, &
-  lambda, h, Q)
+  real (dp) function RQCD(self, order, h, Q)
     class (RNRQCD)     , intent(inout)       :: self
-    character (len = *), intent(in)          :: scheme, method
-    integer            , intent(in)          :: order, ordMass, ord1S
-    real (dp)          , intent(in)          :: h, Q, lambda, R1S
+    integer            , intent(in)          :: order
+    real (dp)          , intent(in)          :: h, Q
     complex (dp)                             :: z
-    real (dp)                                :: h2, mu, m, R, QSwitch, m1S, lr
+    real (dp)                                :: h2, mu, m, R, lr
     integer                                  :: n
     real (dp), dimension(5)                  :: b
     real (dp), dimension(0:4)                :: delta
@@ -155,21 +172,19 @@ contains
     real (dp), dimension( 0:min(order,3) - 1, min(order,3) )     :: Rcoef
     real (dp), dimension( 0:min(order,3) - 2, min(order,3) - 1 ) :: RcoefDer1
 
-    if ( scheme(:4) == 'pole' ) then
+    if ( self%scheme(:4) == 'pole' ) then
       m = self%mass; delta = 0; h2 = h; mu = h * m
-    else if ( scheme(:3) == 'MSR' ) then
+    else if ( self%scheme(:3) == 'MSR' ) then
 
-      call self%QSwitch(ord1S, ordMass, R1S, lambda, method, m1S, m, QSwitch)
-
-      if (q < QSwitch) then
-        R = m1S * vStar(q, m1S, self%gt)
-        m = self%run%MSRMass(scheme(:4), ordMass, R, lambda, method)
+      if (Q < self%QSwitch) then
+        R = self%m1S * vStar(q, self%m1S, self%gt)
+        m = self%run%MSRMass(self%scheme(:4), self%ordMass, R, self%lambda, self%method)
       else
-        R = self%mass
+        R = self%mass; m = self%MSRm
       end if
 
-      delta = R * self%andim%betaQCD( scheme(:4) // 'delta')/m
-      if (order > 1) lr = log(R/m); mu = h * m1S
+      delta = R * self%andim%betaQCD( self%scheme(:4) // 'delta')/m
+      if (order > 1) lr = log(R/m); mu = h * self%m1S
       h2 = mu/R
 
     end if
@@ -183,7 +198,7 @@ contains
 
     if (order > 1) call self%andim%expandAlpha(Rcoef)
 
-    if ( scheme(:3) == 'MSR' ) then
+    if ( self%scheme(:3) == 'MSR' ) then
 
       if (order > 1) rQ(2:) = matmul( PowList0( lr, n - 1 ), Rcoef(:,2:) )
       if (order > 2) rQ(3) = rQ(3) - Rcoef(1,2) * delta(1)
@@ -227,58 +242,30 @@ contains
 
 ! ccccccccccc
 
-  subroutine QSwitch(self, order, ordMass, R, lambda, method, m1S, m, switch)
+  function Delta1S(self) result(res)
     class (RNRQCD)  , intent(inout) :: self
-    character (len = *), intent(in) :: method
-    integer            , intent(in) :: order, ordMass
-    real (dp)          , intent(in) :: R, lambda
-    real (dp)         , intent(out) :: m1S, m, switch
-    real (dp), dimension(0:4)       :: res
-    real (dp), dimension(4)         :: A
-
-    res = self%Delta1S(order, R, lambda, method); m1S = sum( res(:ordMass) )
-    m = self%run%MSRMass('MSRn', order, self%mass, lambda, method)
-    A = powList( m/m1S, 4 )
-
-    switch = 2 * m1S + Sqrt(  ( 6.25e-6_dp - A(1)/2000 + 3 * A(2)/200 - &
-    A(3)/5 + A(4) ) * m1S**2 - self%gt**2  )
-
-  end subroutine QSwitch
-
-! ccccccccccc
-
-  function Delta1S(self, order, R, lambda, method) result(res)
-    class (RNRQCD)  , intent(inout) :: self
-    character (len = *), intent(in) :: method
-    integer            , intent(in) :: order
-    real (dp)          , intent(in) :: R, lambda
     real (dp), dimension(0:4)       :: res
 
-    res = self%Upsilon%En(order, R, R, lambda, method, 'ttbar')/2
+    res = self%m1Spiece
 
   end function Delta1S
 
 ! ccccccccccc
 
-  real (dp) function Xsec(self, ordMass, order, scheme, method, lambda, q, h, nu)
+  real (dp) function Xsec(self, order, Q, h, nu)
     class (RNRQCD)  , intent(inout) :: self
-    character (len = *), intent(in) :: scheme, method
-    real (dp)          , intent(in) :: h, nu, q, lambda
-    integer            , intent(in) :: ordMass, order
-    real (dp), dimension(0:4)       :: m1Slist
+    real (dp)          , intent(in) :: h, nu, Q
+    integer            , intent(in) :: order
     complex (dp)                    :: vt
     real (dp)                       :: ac, ah, asLL, asNLL, auLL, En, c1run, L,&
     mu1, mu2, asNNLL, c2run, Vcc, V22, Vss, Vrr, VkkCACF, VkkCF2, Vkk, Vkkk1I, &
     Vkkk2T, VcsNNLL, DelmNNLL, rCoul, r2, rd, rr, rk, rkin, r1S, pre, inM, mP, &
     DeltaLL, aS, mPLL, DeltaNLL, DeltaNNLL, asPi
 
-    Xsec = 0
+    Xsec = 0; inM = self%m1S
 
-    if ( scheme(:2) == 'S1' .or. scheme(:3) == 'MSR' ) then
-      m1Slist = self%Delta1S(ordMass, 35._dp, lambda, method)
-      inM     = sum( m1Slist(:ordMass) )
-    else if ( scheme(:4) == 'pole' ) then
-      inM = self%mass; mP = inM; mPLL = inM
+    if ( self%scheme(:4) == 'pole' ) then
+      mP = inM; mPLL = inM
     end if
 
     mu1 = h * inM;  mu2 = nu * mu1;  ah = self%run%AlphaQCD(mu1)
@@ -295,7 +282,7 @@ contains
 
     end if
 
-    if ( scheme(:2) == 'S1' .or. scheme(:3) == 'MSR' ) then
+    if ( self%scheme(:2) == 'S1' .or. self%scheme(:3) == 'MSR' ) then
 
       if ( order == 1 ) then
         DeltaLL = ac**2/8;  mP = inM * (1 + DeltaLL)
@@ -345,7 +332,7 @@ contains
       DelmNNLL = (V22/2 + Vss + 3 * Vrr/8) * Vcc**3/2 - (Vkk + 6 * Vkkk1I + &
       4 * Vkkk2T) * Vcc**2/8 + 5 * Vcc**4/128
 
-      if ( scheme(:2) == 'S1' .or. scheme(:3) == 'MSR' ) then
+      if ( self%scheme(:2) == 'S1' .or. self%scheme(:3) == 'MSR' ) then
 
         as = - VcsLL(asNNLL)/FPi; DeltaLL = as**2/8; mpLL = inM * (1 + DeltaLL)
 
@@ -378,7 +365,7 @@ contains
       rkin = ImagPart( dgkin(ac, vt) )! * c1run
       r1S = 0
 
-      if ( scheme(:2) == 'S1' .or. scheme(:3) == 'MSR' ) then
+      if ( self%scheme(:2) == 'S1' .or. self%scheme(:3) == 'MSR' ) then
         r1S = DelmNNLL * inM**2/FPi * ImagPart( dggg(ac, vt) )! * c1run
       end if
 
