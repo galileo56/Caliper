@@ -305,7 +305,6 @@ contains
 
     else if ( order == 2 ) then
 
-      ! c1run = self%MNLLc1(ah, asLL, auLL)**2
       c1run = self%MNLLc1Square(ah, asLL, auLL);  En = q - 2 * mP
 
       Xsec = (2 * mpLL * self%Qt/Q)**2 * c1run * &
@@ -318,7 +317,6 @@ contains
 
       Vcc = - ac
 
-      ! c1run = self%MNNLLAllc1InclSoftMixLog(ah, asLL, auLL, nu, h, 1._dp)**2
       c1run = self%MNNLLc1Square(ah, asLL, auLL, nu, h, 1._dp)
       c2run = self%MLLc2(ah, auLL)
       V22 = self%V2sLL(ah, asLL, auLL)/FPi
@@ -353,20 +351,20 @@ contains
       rCoul = c1run * mpLL**2 * self%A1pole(3, En, mpLL, &
       asNNLL, VcsNNLL, h * inM * nu)/18/Pi
 
-      r2 = 2 * c2run * inM**2/FPi * ImagPart(vt**2 * ggg(ac, vt, l2 - 0.5_dp) ) ! * sqrt(c1run)
+      r2 = 2 * c2run * inM**2/FPi * ImagPart(vt**2 * ggg(ac, vt, l2 - 0.5_dp) )
 
-      rd = FPi * ( V22 + 2 * Vss) * ImagPart( dgd(ac, vt) ) ! * c1run
-      rr = FPi * Vrr * ImagPart( dgr(ac, vt) ) ! * c1run
+      rd = FPi * ( V22 + 2 * Vss) * ImagPart( dgd(ac, vt) )
+      rr = FPi * Vrr * ImagPart( dgr(ac, vt) )
 
       rk = (  VkkCACF * ImagPart( dgkCACF(ac, vt) ) + VkkCF2 * &
       ImagPart( dgkCF2(ac, vt) ) + Vkkk1I * ImagPart( dgkk1I(ac, vt) ) + &
-      Vkkk2T * ImagPart( dgkk2T(ac, vt) )  ) ! * c1run
+      Vkkk2T * ImagPart( dgkk2T(ac, vt) )  )
 
-      rkin = ImagPart( dgkin(ac, vt) )! * c1run
+      rkin = ImagPart( dgkin(ac, vt) )
       r1S = 0
 
       if ( self%scheme(:2) == 'S1' .or. self%scheme(:3) == 'MSR' ) then
-        r1S = DelmNNLL * inM**2/FPi * ImagPart( dggg(ac, vt) )! * c1run
+        r1S = DelmNNLL * inM**2/FPi * ImagPart( dggg(ac, vt) )
       end if
 
       Pre = 72 * Pi/Q**2
@@ -904,36 +902,6 @@ contains
 
 ! ccccccccccc
 
-  complex (dp) function higherOrderLogs2(v, i, j, m, nu)
-    real (dp)   , intent(in) :: m, nu
-    complex (dp), intent(in) :: v
-    integer     , intent(in) :: i, j
-    real (dp)                :: lnu
-
-    higherOrderLogs2 = 0
-
-    if (i == 1 .and. j == 3) then
-      higherOrderLogs2 = 128 * cI * v**3 * Log(nu)/9
-    else if (i == 2 .and. j == 1) then
-      higherOrderLogs2 = - 280 * cI * v * Pi2 * Log(v)/27
-    else if (i == 2 .and. j == 2) then
-      higherOrderLogs2 = 170 * cI * v**2 * Pi2 * Log(nu)/27
-    else if (i == 2 .and. j == 3) then
-      higherOrderLogs2 = - 1472 * cI * v**3 * Log(nu)**2/27
-    else if (i == 3 .and. j == 1) then
-      lnu = log(nu)
-      higherOrderLogs2 = - cI * lnu * v * Pi2 * ( 64343 + 140280 * l2 &
-      - 8940 * lnu + 2955 * Pi2 + 17880 * Log(v) )/1215
-    else if (i == 3 .and. j == 2) then
-      higherOrderLogs2 = - 2461 * cI * v**2 * Pi2 * Log(nu)**2/27
-    else if (i == 3 .and. j == 3) then
-      higherOrderLogs2 = 67712 * cI * v**3 * Log(nu)**3/243
-    end if
-
-  end function higherOrderLogs2
-
-! ccccccccccc
-
   real (dp) function EXPterms3(v, i, j, m, mu, R, scheme)
     real (dp)          , intent(in) :: m, mu, R
     character (len = *), intent(in) :: scheme
@@ -1018,51 +986,6 @@ contains
     EXPterms3 = EXPterms3 + ImagPart(EXPterms)
 
   end function EXPterms3
-
-! ccccccccccc
-
-  complex (dp) function EXPterms2(v, i, j, m)
-    real (dp)   , intent(in) :: m
-    complex (dp), intent(in) :: v
-    integer     , intent(in) :: i, j
-    complex (dp)             :: l1, l3
-
-    EXPterms2 = 0
-
-    if (i == 0 .and. j == 1) then
-      EXPterms2 = 2 * cI * v
-    else if (i == 0 .and. j == 3) then
-      EXPterms2 = 7 * v**3 * cI/12
-    else if (i == 1 .and. j == 0) then
-      EXPterms2 = - 8 * Pi * Log(- cI * v)/3
-    else if (i == 1 .and. j == 1) then
-      EXPterms2 = - 32 * cI * v/3
-    else if (i == 1 .and. j == 2) then
-      EXPterms2 = v**2 * Pi * ( 33 - 40 * Log(-2 * cI * v) )/9
-    else if (i == 2 .and. j == -1) then
-      EXPterms2 = 8 * cI * Pi2**2/v/27
-    else if (i == 2 .and. j == 0) then
-      l1 = Log(- cI * v)
-      EXPterms2 = 2 * Pi * ( l1 * (69 * l1 + 138 * l2 - 43) + &
-      192 * log(- cI * v) )/27
-    else if (i == 2 .and. j == 1) then
-      EXPterms2 = - 14.513280990412623_dp * cI * v * Pi2 * ( Log(-cI * v) - &
-      0.31755295480049456_dp - 0.28545651550321627_dp * Log(- cI * v) )
-    else if (i == 3 .and. j == -2) then
-      EXPterms2 = - 32 * Pi**3 * Zeta3/27/v**2
-    else if (i == 3 .and. j == -1) then
-      EXPterms2 = - 4 * cI * Pi2 * (53 * Pi2 + 828 * Zeta3 + &
-      138 * Pi2 * Log(-2 * cI * v) )/243/v
-    else if (i == 3 .and. j == 0) then
-      l1 = Log(- cI * v); l3 = Log(- cI * v)
-      EXPterms2 = - 1.3234297814023874_dp * Pi**3 * ( l1**3 + l1**2 * &
-      (3 * l2 - 4.565197036493422_dp) + (-4.748801815703692_dp - &
-      20.890672104680654_dp * l2 - 14.621887456729755_dp * l3) * l3 + l1 * &
-      (20.107979523788522_dp + l2 * (5.491493383742911_dp + 3 * l2) + &
-      14.621887456729755_dp * l3) )
-    end if
-
-  end function EXPterms2
 
 ! ccccccccccc
 
