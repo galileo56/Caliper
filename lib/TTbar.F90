@@ -30,7 +30,7 @@ module RNRQCDClass
     procedure, pass (self), public :: VceffsNNLL, VrsLL, V2sLL, VssLL, Vk1sLL, &
     Vk2sLL, VkeffsLL, XiNLL, XiNNLLnonmix, XiNNLLmixUsoft, MLLc2, MNLLc1, &
     MNLLplusNNLLnonmixc1, MNNLLAllc1InclSoftMixLog, A1pole, Xsec, Delta1S, &
-    MNLLc1Square, MNNLLc1Square, Rexp, RQCD, Rmatched, Switch
+    MNLLc1Square, MNNLLc1Square, Rexp, RQCD, Rmatched, Switch, RmatchedList
 
     procedure, pass (self), private :: xc01, xc11, xc12, xc22
 
@@ -93,6 +93,25 @@ contains
     end if
 
   end function RNRQCDIn
+
+! ccccccccccc
+
+  function RmatchedList(self, order, h, hnu, v1, v2, Q0, Q1, DeltaQ) result(list)
+    class (RNRQCD)     , intent(inout) :: self
+    Integer            , intent(in)    :: order
+    real (dp)          , intent(in)    :: h, Q0, Q1, DeltaQ, hnu, v1, v2
+    real (dp)                          :: nu, Q
+    integer                            :: i, imax
+    real(dp), dimension( 2,0:Floor( (Q1 - Q0)/deltaQ ) ) :: list
+
+    imax = Floor( (Q1 - Q0)/deltaQ )
+
+    do i = 0, imax
+      Q = Q0 + i * deltaQ; list(1,i) = Q; nu = hnu * vStar(Q, self%m1S, self%gt)
+      list(2,i) = self%Rmatched(order, h, nu, v1, v2, Q)
+    end do
+
+  end function RmatchedList
 
 ! ccccccccccc
 

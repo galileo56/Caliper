@@ -5753,6 +5753,46 @@ end subroutine f90Rmatched
 
 !ccccccccccccccc
 
+subroutine f90RmatchedList(str, runAlp, runMass, ordMass, order, ord1S, R1S, &
+method, lambda, gt, mZ, amZ, mT, h, hnu, v1, v2, Q0, Q1, deltaQ, res)
+
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass; use VFNSMSRClass; implicit none
+
+  character (len = *), intent(in ) :: str, method
+  integer            , intent(in ) :: order, runAlp, runMass, ordMass, ord1S
+  real (dp)          , intent(in ) :: mZ, amZ, h, hnu, mT, Q0, Q1, deltaQ, gt, &
+  lambda, R1S, v1, v2
+  real (dp), dimension( 2,0:Floor( (Q1 - Q0)/deltaQ ) ), intent(out) :: res
+  integer                          :: i
+  type (RNRQCD)                    :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running), dimension(2)     :: alphaMass
+  type (VFNSMSR)                   :: MSR
+  type (AnomDim), dimension(3:6)   :: AnDim
+  character (len = 5)              :: alphaScheme
+
+  alphaScheme = 'pole'; if ( str(:4) /= 'pole' ) alphaScheme = 'MSbar'
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, runAlp, runAlp, mZ, aMz, mT, mT, &
+  0._dp, 0._dp, 0._dp, 0._dp)
+
+  alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
+  Running(5, runMass, alphaAll, 1._dp) ]
+
+  MSR = VFNSMSR(alphaMass)
+  NRQCD = RNRQCD(MSR, str, method, gt, ordMass, ord1S, R1S, lambda)
+
+  res = NRQCD%RmatchedList(order, h, hnu, v1, v2, Q0, Q1, deltaQ)
+
+end subroutine f90RmatchedList
+
+!ccccccccccccccc
+
 subroutine f90lambdaQCD(str, order, runAlp, run, nf, mZ, amZ, mT, muT, mB, &
 muB, mC, muC, mu, res)
 

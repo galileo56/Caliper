@@ -150,6 +150,7 @@
 :Evaluate:  RQCD::usage = "RQCD[scheme, runAlpha, runMass, ordMass, ord1S, R1S, order, method, lambda, gt, Mz, aMz, mT, mu, Q] computes the massive total hadronic cross section for an unstable top quark."
 :Evaluate:  RExp::usage = "RExp[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, aMz, mT, mu, nu, Q] computes the threshold-expaded massive total hadronic cross section for an unstable top quark."
 :Evaluate:  Rmatched::usage = "Rmatched[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, aMz, mT, mu, nu, v1, v2, Q] computes the matched massive total hadronic cross section for an unstable top quark."
+:Evaluate:  RmatchedList::usage = "RmatchedList[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, aMz, mT, h, hnu, v1, v2, Q0, Q1, deltaQ] computes the matched massive total hadronic cross section for an unstable top quark."
 :Evaluate:  LambdaQCD::usage = "LambdaQCD[scheme, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  Hyper2F1::usage="Hyper2F1[a, b, c, x] Hypergeometric Function in Fortran"
 :Evaluate:  HyperF32Exact::usage="HyperF32Exact[w, x] Hypergeometric Function in Fortran"
@@ -2449,6 +2450,19 @@
                 String, Real, Real, Real, Real, Real, Real, Real, Real, Real,
                 Real}
 :ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      rmatchedlist
+:Pattern:       RmatchedList[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,
+                R1S_, method_, lambda_, gt_, Mz_, aMz_, mT_, mu_, nu_, v1_, v2_,
+                Q0_, Q1_, deltaQ_]
+:Arguments:     {scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,
+                lambda, gt, Mz, aMz, mT, mu, nu, v1, v2, Q0, Q1, deltaQ}
+:ArgumentTypes: {String, Integer, Integer, Integer, Integer, Integer, Real,
+                String, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                Real, Real, Real}
+:ReturnType:    Manual
 :End:
 
 :Begin:
@@ -6016,6 +6030,29 @@ double Q){
   &lambda, &gt, &Mz, &aMz, &mT, &mu, &nu, &v1, &v2, &Q, &res);
 
  return res;
+}
+
+extern double f90rmatchedlist_(char const* str, int* runAlpha, int* runMass,
+int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
+double* lambda, double* gt, double* Mz,  double* aMz, double* mT, double* mu,
+double* nu, double* v1, double* v2, double* Q0, double* Q1, double* deltaQ,
+double* res);
+
+static void rmatchedlist(char const* str, int runAlpha, int runMass, int ordMass,
+int order, int ord1S, double R1S, char const* method, double lambda, double gt,
+double Mz, double aMz, double mT, double mu, double nu, double v1, double v2,
+double Q0, double Q1, double deltaQ){
+  int imax = floor( (Q1 - Q0)/deltaQ ) + 1 ;
+  double res[2 * imax];
+
+  f90rmatchedlist_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S, &R1S, method,
+  &lambda, &gt, &Mz, &aMz, &mT, &mu, &nu, &v1, &v2, &Q0, &Q1, &deltaQ, res);
+
+   MLPutFunction(stdlink, "Partition", 2 );
+   MLPutRealList(stdlink, res, 2 * imax);
+   MLPutInteger(stdlink, 2);
+   MLEndPacket(stdlink);
+
 }
 
 extern double f90hyper2f1_(double *a, double *b, double *c, double *x, double *res);
