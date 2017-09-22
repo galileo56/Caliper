@@ -2155,9 +2155,10 @@
 
 :Begin:
 :Function:      massiter
-:Pattern:       MassIter[n_, l_, j_, s_, charm_, scheme_, average_, method_, counting_, orderAlpha_,
-                runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_, mB_, muB_,
-                mC_, muC_, mass_, lambda1_, lambda2_, lam_, mu_, R_]
+:Pattern:       MassIter[n_, l_, j_, s_, charm_, scheme_, average_, method_,
+                counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,
+                mT_, muT_, mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_,
+                lam_, mu_, R_]
 :Arguments:     {n, l, j, s, charm, scheme, average, method, counting, orderAlpha, runAlpha, order,
                  run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1,
                  lambda2, lam, mu, R}
