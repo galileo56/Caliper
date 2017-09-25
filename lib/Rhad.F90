@@ -4,6 +4,7 @@ module SigmaClass
   use Constants, only: dp, Pi, Pi2, Zeta3;  implicit none;  private
 
   real (dp), dimension(2)               :: EWfact
+  real (dp)                             :: EWSum
   public                                :: setEWfact, VacPol0, VacPol0Der, &
   VacPol2, VacPol2Der, VacPol3, VacPol1, PiCoef, VacPol1Der, PiCoefDer1,   &
   PiCoefDer2, PiCoefDer3
@@ -23,7 +24,7 @@ module SigmaClass
    contains
 
     procedure, pass(self), public :: RhadMass, SetAlpha, SetMTop, SetMBottom, &
-    Rhad, SetMCharm, RHadCoefs
+    Rhad, SetMCharm, RHadCoefs, SigmaMassless, SigmaMass
 
   end type Sigma
 
@@ -128,6 +129,43 @@ module SigmaClass
 
 !ccccccccccccccc
 
+  real (dp) function SigmaMassless(self, current, order, mu, Q)
+    class (Sigma)      , intent(in) :: self
+    Integer            , intent(in) :: order
+    real (dp)          , intent(in) :: mu, Q
+    character (len = *), intent(in) :: current
+    real (dp), dimension(2)         :: EWfactors
+
+    EWfactors = self%EW%EWfactors(self%nf, Q)
+
+    if (current(:6) == 'vector') then
+      SigmaMassless = EWfactors(1)
+    else if (current(:5) == 'axial') then
+      SigmaMassless = EWfactors(2)
+    else if (current(:3) == 'all') then
+      SigmaMassless = sum(EWfactors)
+    end if
+
+    SigmaMassless = 4 * Pi * self%run%alphaQED(mu) * SigmaMassless/Q**2 * &
+    self%Rhad(order, mu, Q)
+
+  end function SigmaMassless
+
+!ccccccccccccccc
+
+  real (dp) function SigmaMass(self, current, order, mu, Q)
+    class (Sigma)      , intent(in) :: self
+    Integer            , intent(in) :: order
+    real (dp)          , intent(in) :: mu, Q
+    character (len = *), intent(in) :: current
+
+    SigmaMass = 4 * Pi * self%run%alphaQED(mu)/Q**2 * &
+    self%RhadMass(current, order, mu, Q) * EWSum
+
+  end function SigmaMass
+
+!ccccccccccccccc
+
   real (dp) function RhadMass(self, current, order, mu, Q)
     class (Sigma)      , intent(in) :: self
     Integer            , intent(in) :: order
@@ -145,7 +183,7 @@ module SigmaClass
     if ( 2 * m < 1) then
 
       EWfactors = self%EW%EWfactors(self%nf, Q)
-      call setEWfact( EWfactors/sum(EWfactors) )
+      call setEWfact( EWfactors )
       v = sqrt( 1 - m**2 );  alphaRH = self%run%alphaQCD(mu)/Pi
 
       if (order >= 0) RhadMass = Rtree(current, v)
@@ -312,7 +350,7 @@ module SigmaClass
 
   subroutine setEWfact(EW)
     real (dp), dimension(2) :: EW
-    EWfact = EW
+    EWSum = sum(EW); EWfact = EW/EWSum
   end subroutine setEWfact
 
 !ccccccccccccccc

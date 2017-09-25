@@ -146,8 +146,10 @@
 :Evaluate:  OptimalR::usage = "OptimalR[type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda] computes the Optimal R scale for quarkonium."
 :Evaluate:  mmfromMSR::usage = "mmfromMSR[type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
 :Evaluate:  Rhad::usage = "Rhad[scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
+:Evaluate:  SigmaMassless::usage = "SigmaMassless[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
 :Evaluate:  RhadCoefs::usage = "RhadCoefs[nf] computes the massless total hadronic cross section series coefficients."
 :Evaluate:  RhadMass::usage = "RhadMass[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massive total hadronic cross section."
+:Evaluate:  SigmaMass::usage = "SigmaMass[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massive total hadronic cross section."
 :Evaluate:  RQCD::usage = "RQCD[scheme, runAlpha, runMass, ordMass, ord1S, R1S, order, method, lambda, gt, Mz, aMz, mT, mu, Q] computes the massive total hadronic cross section for an unstable top quark."
 :Evaluate:  RExp::usage = "RExp[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, aMz, mT, mu, nu, Q] computes the threshold-expaded massive total hadronic cross section for an unstable top quark."
 :Evaluate:  Rmatched::usage = "Rmatched[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, aMz, mT, mu, nu, v1, v2, Q] computes the matched massive total hadronic cross section for an unstable top quark."
@@ -2410,6 +2412,18 @@
 :End:
 
 :Begin:
+:Function:      sigmamassless
+:Pattern:       SigmaMassless[scheme_, current_, orderAlpha_, runAlpha_, order_,
+                nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, mT_, muT_, mB_, muB_, mC_,
+                muC_, mu_, Q_]
+:Arguments:     {scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,
+                 sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q}
+:ArgumentTypes: {String, String, Integer, Integer, Integer, Integer, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
 :Function:      rhadcoefs
 :Pattern:       RhadCoefs[nf_]
 :Arguments:     {nf}
@@ -2419,12 +2433,27 @@
 
 :Begin:
 :Function:      rhadmass
-:Pattern:       RhadMass[scheme_, current_, orderAlpha_, runAlpha_, runMass_, order_, nf_,
-                Mz_, GammaZ_, sin2ThetaW_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mu_, Q_]
-:Arguments:     {scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ,
-                sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q}
-:ArgumentTypes: {String, String, Integer, Integer, Integer, Integer, Integer, Real, Real,
-                Real, Real, Real, Real, Real, Real, Real, Real, Real, Real}
+:Pattern:       RhadMass[scheme_, current_, orderAlpha_, runAlpha_, runMass_,
+                order_, nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, mT_, muT_, mB_,
+                muB_, mC_, muC_, mu_, Q_]
+:Arguments:     {scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz,
+                GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q}
+:ArgumentTypes: {String, String, Integer, Integer, Integer, Integer, Integer,
+                Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      sigmamass
+:Pattern:       SigmaMass[scheme_, current_, orderAlpha_, runAlpha_, runMass_,
+                order_, nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, mT_, muT_, mB_,
+                muB_, mC_, muC_, mu_, Q_]
+:Arguments:     {scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz,
+                GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q}
+:ArgumentTypes: {String, String, Integer, Integer, Integer, Integer, Integer,
+                Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                Real, Real}
 :ReturnType:    Real
 :End:
 
@@ -5976,6 +6005,24 @@ double mu, double Q){
   return res;
 }
 
+extern double f90sigmamassless_(char const* str, char const* curr, int* orderAlpha,
+int* runAlpha, int* order, int* nf, double* Mz, double* gammaZ, double* thetaW,
+double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+double* muC, double* mu, double * Q, double* res);
+
+static double sigmamassless(char const* str, char const* curr, int orderAlpha,
+int runAlpha, int order, int nf, double Mz, double gammaZ, double thetaW,
+double aMz, double mT, double muT, double mB, double muB, double mC, double muC,
+double mu, double Q){
+
+   double res;
+
+   f90sigmamassless_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
+   &gammaZ, &thetaW, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &mu, &Q, &res);
+
+  return res;
+}
+
 extern double f90rhadcoefs_(int * nf, double* res);
 
 static void rhadcoefs(int nf){
@@ -6003,6 +6050,23 @@ double mT, double muT, double mB, double muB, double mC, double muC, double mu, 
    &gammaZ, &sinW, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &mu, &Q, &res);
 
   return res;
+}
+
+extern double f90sigmamass_(char const* str, char const* curr, int* orderAlpha,
+int* runAlpha, int* runMass, int* order, int* nf, double* Mz, double* gammaZ,
+double* sinW, double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+double* muC, double* mu, double * Q, double* res);
+
+static double sigmamass(char const* str, char const* curr, int orderAlpha, int runAlpha,
+int runMass, int order, int nf, double Mz, double gammaZ, double sinW, double aMz,
+double mT, double muT, double mB, double muB, double mC, double muC, double mu, double Q){
+
+  double res;
+
+  f90sigmamass_(str, curr, &orderAlpha, &runAlpha, &runMass, &order, &nf, &Mz,
+  &gammaZ, &sinW, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &mu, &Q, &res);
+
+ return res;
 }
 
 extern double f90rqcd_(char const* str, int* runAlpha, int* runMass,

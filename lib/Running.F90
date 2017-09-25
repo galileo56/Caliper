@@ -21,10 +21,10 @@ module RunningClass
     contains
 
     procedure, pass(self), public :: MSbarMass, MSRMass, lambdaQCD, DiffDeltaMu,  &
-    DiffDelta, orders, adim, DiffDeltaHadron, scheme, MSbarDeltaMu, MSbarMassLow, &
+    DiffDelta, orders, adim, DiffDeltaHadron, MSbarDeltaMu, MSbarMassLow, &
     AlphaAll, DeltaGapMatching, DiffRMass, mmFromMSR, PoleMass, gammaR, sCoef,  &
     SetMTop, SetMBottom, SetMCharm, SetLambda, SetAlpha, scales, numFlav,DiffR, &
-    PSdelta, OptimalR, MSRMatching, MSREvol
+    PSdelta, OptimalR, MSRMatching, MSREvol, AlphaQED, scheme
 
     procedure, pass(self), private :: alphaQCDReal, alphaQCDComplex, &
     wTildeReal, wTildeComplex, kTildeReal, kTildeComplex, RunningMass
@@ -246,6 +246,16 @@ module RunningClass
      alphaQCDReal = self%AlphaOb%alphaQCD(self%nf, mu)
 
    end function alphaQCDReal
+
+!ccccccccccccccc
+
+   pure real (dp) function alphaQED(self, mu)
+     real (dp)      , intent(in) :: mu
+     class (Running), intent(in) :: self
+
+     alphaQED = self%AlphaOb%alphaQED(self%nf, mu)
+
+   end function alphaQED
 
 !ccccccccccccccc
 
