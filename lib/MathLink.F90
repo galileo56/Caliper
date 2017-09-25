@@ -22,7 +22,7 @@ mZ, aMz, mt, R, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, aMz, mt, mt, &
-  0._dp, 0._dp, 0._dp, 0._dp)
+  0._dp, 0._dp, 0._dp, 0._dp, 'analytic', 0._dp)
 
   alphaMass = [ Running(nl - 1, runM, alphaAll, muLam), &
   Running(nl, runM, alphaAll, muLam) ]
@@ -55,7 +55,7 @@ method, mZ, aMz, mt, gt, R, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, aMz, mt, mt, &
-  0._dp, 0._dp, 0._dp, 0._dp)
+  0._dp, 0._dp, 0._dp, 0._dp, 'analytic', 0._dp)
 
   alphaMass = [ Running(nl - 1, runM, alphaAll, muLam), &
   Running(nl, runM, alphaAll, muLam) ]
@@ -88,7 +88,7 @@ subroutine f90RNRQCD(nl, order, scheme, method, orderAlp, runAlp, orderMass, &
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, aMz, mtpole, mtpole, &
-  0._dp, 0._dp, 0._dp, 0._dp)
+  0._dp, 0._dp, 0._dp, 0._dp, 'analytic', 0._dp)
 
   alphaMass = [ Running(nl - 1, runMass, alphaAll, muLam), &
   Running(nl, runMass, alphaAll, muLam) ]
@@ -119,7 +119,8 @@ subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, mtpole, mtpole, 0._dp, 0._dp, 0._dp, 0._dp)
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, mtpole, mtpole, 0._dp, 0._dp, &
+  0._dp, 0._dp, 'analytic', 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
   MSR = VFNSMSR(alphaMass)
@@ -1152,7 +1153,7 @@ subroutine f90MassiveProfList(terms, hard, shape, EShape, setup, gap, space, cum
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, &
   delta1, t2, ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
 
-  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
   muLambda1, muLambda2 )
@@ -1221,8 +1222,7 @@ subroutine f90MassiveProfPieceList(terms, hard, shape, EShape, setup, gap, space
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
-  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
   nonSing   = MassiveScales( shape(:6), EShape(:1), scheme(:10), abs(:3), current(:6), &
@@ -1289,7 +1289,7 @@ subroutine f90MassivePieceBin(terms, hard, shape, EShape, setup, gap, space, cum
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
   alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
   nonSing   = MassiveScales( shape(:6), EShape(:1), scheme(:10), abs(:3), current(:6), &
@@ -1347,7 +1347,7 @@ subroutine f90MassiveBinList(terms, hard, shape, EShape, setup, gap, space, cum,
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
   ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
   alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-  mB, muB, mC, muC)
+  mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
   muLambda1, muLambda2 )
   nonSing   = MassiveScales( shape(:6), EShape(:1), scheme(:10), abs(:3), current(:6), &
@@ -1406,7 +1406,7 @@ subroutine f90MassiveProf(terms, hard, shape, EShape, setup, gap, space, cum, sc
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
   alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
   nonSing   = MassiveScales( shape(:6), EShape(:1), scheme(:10), abs(:3), current(:6), &
@@ -1459,7 +1459,7 @@ subroutine f90MassOrigin(shape, EShape, gap, scheme, orderAlp, runAlp, orderMass
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, 0, EShape(:1), shape(:6) )
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
                                     muLambda1, muLambda2 )
   nonSing   = MassiveScales( shape(:6), EShape(:1), scheme(:10), 'abs', 'all', &
@@ -1524,7 +1524,7 @@ subroutine f90MassiveProfPiece(terms, hard, shape, EShape, setup, gap, space, cu
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
   alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
   nonSing   = MassiveScales( shape(:6), EShape(:1), scheme(:10), abs(:3), current(:6), &
@@ -1590,7 +1590,7 @@ subroutine f90MassiveProfDiffPiece(terms, hard, shape, EShape, setup, gap, space
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
   alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
   nonSing   = MassiveScales( shape(:6), EShape(:1), scheme(:10), abs(:3), current(:6), &
@@ -1648,7 +1648,7 @@ subroutine f90MassiveProfDiff(terms, hard, shape, EShape, setup, gap, space, cum
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
   alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
   nonSing   = MassiveScales( shape(:6), EShape(:1), scheme(:10), abs(:3), current(:6), &
@@ -1707,7 +1707,7 @@ subroutine f90MassiveMoment(terms, hard, shape, EShape, setup, gap, space, schem
   Prof      = ProfilesPythia( Q, beta, mu0, deltaLambda, Rat0, n0, delta0, n1, delta1, t2, &
                        ts, slope, cnt, eH, eS, eJ, mass, muM, ns, EShape(:1), shape(:6) )
   alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatricesElementsMass( alphaAll, nf, runMass, s3, s3, j3, j3,     &
                                     muLambda1, muLambda2 )
   nonSing   = MassiveScales( shape(:6), EShape(:1), scheme(:10), abs(:3), current(:6), &
@@ -1757,7 +1757,7 @@ subroutine f90MasslessProfList(terms, hard, shape, setup, gap, space, cum, order
   eS, eJ, eR, ns)
 
   alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-  mB, muB, mC, muC)
+  mB, muB, mC, muC, 'analytic', 0._dp)
 
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -1811,7 +1811,7 @@ subroutine f90MasslessProfPieceList(terms, hard, shape, setup, gap, space, cum, 
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
   alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Cumul    = CumulantMassless(Prof, Sing)
@@ -1863,7 +1863,7 @@ subroutine f90MasslessPieceBin(terms, hard, shape, setup, gap, space, cum, order
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
   alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Cumul    = CumulantMassless(Prof, Sing)
@@ -1909,7 +1909,7 @@ subroutine f90MasslessBinList(terms, hard, shape, setup, gap, space, cum, orderA
   eS, eJ, eR, ns)
 
   alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-  mB, muB, mC, muC)
+  mB, muB, mC, muC, 'analytic', 0._dp)
 
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -1956,7 +1956,7 @@ subroutine f90MasslessProf(terms, hard, shape, setup, gap, space, cum, orderAlp,
   eS, eJ, eR, ns)
 
   alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, &
-  muT, mB, muB, mC, muC)
+  muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -2010,7 +2010,7 @@ subroutine f90MasslessProfPiece(terms, hard, shape, setup, gap, space, cum, orde
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
   alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-  mB, muB, mC, muC)
+  mB, muB, mC, muC, 'analytic', 0._dp)
 
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -2063,7 +2063,7 @@ subroutine f90MasslessProfDiffPiece(terms, hard, shape, setup, gap, space, cum, 
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
   alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Cumul    = CumulantMassless(Prof, Sing)
@@ -2106,7 +2106,7 @@ subroutine f90MasslessProfDiff(terms, hard, shape, setup, gap, space, cum, order
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
   alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Mod      = Model(lambda, c, [0,0], 'sum')
@@ -2151,7 +2151,7 @@ subroutine f90MasslessMoment(terms, hard, shape, setup, gap, space, orderAlp, ru
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, eJ, eR, ns)
   alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl    = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Mod      = Model(lambda, c, [0,0], 'sum')
@@ -2192,7 +2192,7 @@ subroutine f90FindOrigin(shape, gap, orderAlp, runAlp, order, run, nf, mZ, amZ, 
 
   Prof     = ProfilesMassless(Q, mu0, Rat0, n0, n1, t2, tR, ts, slope, cnt, eH, eS, 0._dp, eR, 0)
   alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+  mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl    = MatricesElements(alphaAll, nf, 0._dp, 0._dp, 0._dp, muLambda)
   Sing     = SingularScales( MatEl, run, shape(:6), 'expand' )
   Cumul    = CumulantMassless(Prof, Sing)
@@ -3063,7 +3063,7 @@ subroutine f90NSMass(shape, setup, gap, cum, scheme, abs, current, orderAlp, run
   Mod       = Model(lambda, c, [0,0], 'sum')
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, &
-                    muT, mB, muB, mC, muC)
+  muT, mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
                                     muLambda1, muLambda2)
   nonSing   = MassiveScales( shape(:6), 'Q', scheme(:10), abs(:3), current(:6), orderMass, &
@@ -3113,7 +3113,7 @@ subroutine f90NSMassDiff(shape, setup, gap, cum, scheme, abs, current, orderAlp,
   Mod       = Model(lambda, c, [0,0], 'sum')
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, &
-  muT, mB, muB, mC, muC)
+  muT, mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatricesElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, 0._dp, &
   muLambda1, muLambda2)
   nonSing   = MassiveScales( shape(:6), 'Q', scheme(:7), abs(:3), current(:6), &
@@ -3380,7 +3380,7 @@ subroutine f90HJMNSMass(setup, gap, cum, scheme, abs, current, orderAlp, runAlp,
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp,  &
   0._dp, Q, mu, muJ, muM, muS, R, Rmass, muLambda1, muLambda2)
 
@@ -3441,7 +3441,7 @@ subroutine f90HJMNSMassDiff(setup, gap, cum, scheme, abs, current, orderAlp, run
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, &
   0._dp, Q, mu, muJ, muM, muS, R, Rmass, muLambda1, muLambda2)
 
@@ -3488,7 +3488,7 @@ subroutine f90FOMass(shape, current, m, Q, mZ, gammaZ, sin2ThetaW, t, res)
   end do
 
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
-  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, m, m, m, m, m, m)
+  alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, m, m, m, m, m, m, 'analytic', 0._dp)
   MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, Q, &
   Q, Q, tiny(1._dp), Q, Q, Q, 0._dp, 0._dp)
 
@@ -3522,7 +3522,7 @@ subroutine f90DiffDeltaGapMass(gap, order, R0, R, mu0, mu, muM, muLambda1, muLam
     AnDim(i) = AnomDim('MSbar', i, 0._dp)
   end do
 
-  alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  alphaAll = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   MatEl    = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp,  &
   0._dp, mu, mu, mu, muM, mu, mu, mu, muLambda1, muLambda2)
@@ -4056,7 +4056,7 @@ subroutine f90MSbarMass(orderAlp, runAlp, run, nf, mZ, amZ, mT, muT, mB, muB, mC
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-  mB, muB, mC, muC)
+  mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = Running(nf, run, alphaAll, muC);  res = alphaMass%MSbarMass(mu)
 
@@ -4081,7 +4081,7 @@ mB, muB, mC, muC, mu, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-  mB, muB, mC, muC)
+  mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = Running(nf, run, alphaAll, muC);  res = alphaMass%PoleMass(order, mu)
 
@@ -4106,7 +4106,7 @@ mB, muB, mC, muC, mu, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-  mB, muB, mC, muC)
+  mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = Running(nf, run, alphaAll, muC); res = alphaMass%MSbarMassLow(mu)
 
@@ -4133,7 +4133,7 @@ mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, mu, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = Running(nf, run, alphaAll, mu)
   res = alphaMass%OptimalR( type, n, order, lambda, method(:8) )
@@ -4160,7 +4160,7 @@ subroutine f90UpsilonDeltaCharm(n, l, alp, mb, mc, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, &
-  0._dp, 0._dp, mc, mc, mc, mc)
+  0._dp, 0._dp, mc, mc, mc, mc, 'analytic', 0._dp)
 
   alphaMass = Running(4, 0, alphaAll, 100._dp)
   MSR       = VFNSMSR(alphaMass)
@@ -4190,7 +4190,7 @@ subroutine f90UpsilonDeltaCharmBin(n, l, alp, mb, mc, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, &
-  0._dp, 0._dp, mc, mc, mc, mc)
+  0._dp, 0._dp, mc, mc, mc, mc, 'analytic', 0._dp)
 
   alphaMass = Running(4, 0, alphaAll, 100._dp)
   MSR       = VFNSMSR(alphaMass)
@@ -4232,7 +4232,7 @@ subroutine f90DeltaCharmExact(charm, type, scheme, average, n, l, j, s, nl, &
   end do
 
   alphaAll  = Alpha(AnDim, 4, 4, 91.187_dp, 0.118_dp, &
-  mT, mT, mB, mB, mC, mC)
+  mT, mT, mB, mB, mC, mC, 'analytic', 0._dp)
 
   alphaMass = [ Running(nl - 1, 0, alphaAll, mL), &
   Running(nl, 0, alphaAll, mH) ]
@@ -4274,7 +4274,7 @@ lambda1, lambda2, lam, mu, R, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
   Running(nl, run, alphaAll, lambda1) ]
@@ -4316,7 +4316,7 @@ lambda1, lambda2, lam, mu, R, eps, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
   Running(nl, run, alphaAll, lambda1) ]
@@ -4357,7 +4357,7 @@ lambda1, lambda2, lam, mu, R, eps, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
   Running(nl, run, alphaAll, lambda1) ]
@@ -4399,7 +4399,7 @@ muC, mass, lambda1, lambda2, lam, mu, R, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
   Running(nl, run, alphaAll, lambda1) ]
@@ -4442,7 +4442,7 @@ mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
   Running(nl, run, alphaAll, lambda1) ]
@@ -4488,7 +4488,7 @@ mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
   Running(nl, run, alphaAll, lambda1) ]
@@ -4534,7 +4534,7 @@ mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
   Running(nl, run, alphaAll, lambda1) ]
@@ -4582,7 +4582,7 @@ res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
   Running(nl, run, alphaAll, lambda1) ]
@@ -4629,7 +4629,7 @@ corMat)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
   Running(nl, run, alphaAll, lambda1) ]
@@ -4750,7 +4750,7 @@ mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
   Running(nl, run, alphaAll, lambda1) ]
@@ -4793,7 +4793,7 @@ lambda1, lambda2, lam, mu, R, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
   Running(nl, run, alphaAll, lambda1) ]
@@ -4835,7 +4835,7 @@ lambda1, lambda2, lam, mu, R, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
   Running(nl, run, alphaAll, lambda1) ]
@@ -4869,7 +4869,7 @@ mT, muT, mB, muB, mC, muC, mu, R, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   if (nf == 5) mass = mT; if (nf == 4) mass = mB; if (nf == 3) mass = mC
 
@@ -4899,7 +4899,7 @@ amZ, mT, muT, mB, muB, mC, muC, lambda, mu, R, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = Running(nf, run, alphaAll, mu)
   res       = alphaMass%MSRMass( type, order, R, lambda, method(:8) )
@@ -4929,7 +4929,7 @@ amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass(1) = Running(nf - 1, run, alphaAll, mu2)
   alphaMass(2) = Running(nf    , run, alphaAll, mu1)
@@ -4961,7 +4961,7 @@ amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, mu3, R, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass(1) = Running(nf - 2, run, alphaAll, mu3)
   alphaMass(2) = Running(nf - 1, run, alphaAll, mu2)
@@ -4991,7 +4991,7 @@ mB, muB, mC, muC, muLambda, R, mu, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-  mB, muB, mC, muC)
+  mB, muB, mC, muC, 'analytic', 0._dp)
 
   MatEl     = MatricesElementsMass(alphaAll, nf, run, 0._dp, 0._dp, 0._dp, 0._dp,  &
   muLambda, muLambda)
@@ -5021,7 +5021,7 @@ muT, mB, muB, mC, muC, muLambda, R, mu, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   MatEl     = MatricesElementsMass(alphaAll, nf, run, 0._dp, 0._dp, 0._dp, 0._dp,  &
   muLambda, muLambda)
@@ -5063,7 +5063,7 @@ subroutine f90Singular(hard, shape, setup, gap, space, cum, orderAlp, runAlp, or
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Mod       = Model(lambda, c, [0,0], 'sum')
@@ -5107,7 +5107,7 @@ subroutine f90SingularDiff(hard, shape, setup, gap, space, cum, orderAlp, runAlp
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
   Mod       = Model(lambda, c, [0,0], 'sum')
@@ -5153,7 +5153,7 @@ subroutine f90SingularHJM(hard, setup, gap, space, cum, orderAlp, runAlp, order,
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6))
 
@@ -5201,7 +5201,7 @@ subroutine f90SingularHJM1D(hard, gap, cum, orderAlp, runAlp, order, run, isoft,
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6) )
   Mod       = Model(lambda, c, [0,0], 'sum')
@@ -5239,7 +5239,7 @@ subroutine f90SingularHJM1DPiece(hard, gap, cum, orderAlp, runAlp, order, run, i
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6))
   Mod       = Model(lambda, [1._dp], c, 'piece')
@@ -5278,7 +5278,7 @@ run, isoft, nf, j3, s3, s31, s32, G3, mZ, amZ, mT, muT, mB, muB, mC, muC, muLamb
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6))
 
@@ -5337,7 +5337,7 @@ subroutine f90SingularHJMPiece(hard, gap, space, cum, orderAlp, runAlp, order, r
   ModList(1,2) = Model(lambda, [1._dp], c(3:), 'piece'); ModList(2,1) = ModList(1,2)
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6))
 
@@ -5378,7 +5378,7 @@ subroutine f90SingularDoublePiece(hard, gap, space, cum1, cum2, orderAlp, runAlp
   ModList(1,2) = Model(lambda, [1._dp], c(3:), 'piece'); ModList(2,1) = ModList(1,2)
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless(MatEl, run, mu, 'thrust', hard(:6))
 
@@ -5416,7 +5416,7 @@ lambda, R0, mu0, delta0, h, tau, res)
 
   Mod       = Model(lambda, [1._dp], piece, 'piece')
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
- mB, muB, mC, muC)
+ mB, muB, mC, muC, 'analytic', 0._dp)
 
   MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
@@ -5465,7 +5465,7 @@ mu, clen, lambda, R0, mu0, delta0, h, tau, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatrixElements(alphaAll, nf, s3, s3, j3, Q, muH, muJ, muS, R, muLambda)
   Sing      = SingularMassless( MatEl, run, mu, shape(:6), hard(:6) )
 
@@ -5502,7 +5502,7 @@ piece, lambda, R0, mu0, delta0, h, tau, tau2, res)
 
  Mod       = Model(lambda, [1._dp], piece, 'piece')
  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                   mB, muB, mC, muC)
+                   mB, muB, mC, muC, 'analytic', 0._dp)
  MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
  Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
 
@@ -5551,7 +5551,7 @@ subroutine f90SingularDiffList(hard, shape, gap, space, cum, orderAlp, runAlp, o
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-                    mB, muB, mC, muC)
+                    mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatricesElements(alphaAll, nf, s3, s3, j3, muLambda)
   Sing      = SingularScales( MatEl, run, shape(:6), hard(:6) )
 
@@ -5586,7 +5586,7 @@ muB, mC, muC, mu, Q, res)
     AnDim(i) = AnomDim(str(:5), i, 0._dp)
   end do
 
-  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
   alphaMass = Running(nf, runAlp, alphaAll, muC)
   EW = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
 
@@ -5618,7 +5618,7 @@ sin2ThetaW, amZ, mT, muT, mB, muB, mC, muC, mu, Q, res)
     AnDim(i) = AnomDim(str(:5), i, 0._dp)
   end do
 
-  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
   alphaMass = Running(nf, runAlp, alphaAll, muC)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   MatEl     = Sigma(alphaMass, EW)
@@ -5679,8 +5679,7 @@ gammaZ, sin2ThetaW, amZ, mT, muT, mB, muB, mC, muC, mu, Q, res)
     AnDim(i) = AnomDim(str(:5), i, 0._dp)
   end do
 
-  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-  mB, muB, mC, muC)
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
   alphaMass = Running(nf, runMass, alphaAll, 0._dp)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   MatEl     = Sigma(alphaMass, EW)
@@ -5713,7 +5712,7 @@ gammaZ, sin2ThetaW, amZ, mT, muT, mB, muB, mC, muC, mu, Q, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-  mB, muB, mC, muC)
+  mB, muB, mC, muC, 'analytic', 0._dp)
   alphaMass = Running(nf, runMass, alphaAll, 0._dp)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   MatEl     = Sigma(alphaMass, EW)
@@ -5748,7 +5747,7 @@ lambda, gt, mZ, amZ, mT, h, Q, res)
   end do
 
   alphaAll  = Alpha(AnDim, runAlp, runAlp, mZ, aMz, mT, mT, &
-  0._dp, 0._dp, 0._dp, 0._dp)
+  0._dp, 0._dp, 0._dp, 0._dp, 'analytic', 0._dp)
 
   alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
   Running(5, runMass, alphaAll, 1._dp) ]
@@ -5787,7 +5786,7 @@ lambda, gt, mZ, amZ, mT, mu, nu, Q, res)
   end do
 
   alphaAll  = Alpha(AnDim, runAlp, runAlp, mZ, aMz, mT, mT, &
-  0._dp, 0._dp, 0._dp, 0._dp)
+  0._dp, 0._dp, 0._dp, 0._dp, 'analytic', 0._dp)
 
   alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
   Running(5, runMass, alphaAll, 1._dp) ]
@@ -5826,7 +5825,7 @@ lambda, gt, mZ, amZ, mT, mu, nu, v1, v2, Q, res)
   end do
 
   alphaAll  = Alpha(AnDim, runAlp, runAlp, mZ, aMz, mT, mT, &
-  0._dp, 0._dp, 0._dp, 0._dp)
+  0._dp, 0._dp, 0._dp, 0._dp, 'analytic', 0._dp)
 
   alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
   Running(5, runMass, alphaAll, 1._dp) ]
@@ -5866,7 +5865,7 @@ method, lambda, gt, mZ, amZ, mT, h, hnu, v1, v2, Q0, Q1, deltaQ, res)
   end do
 
   alphaAll  = Alpha(AnDim, runAlp, runAlp, mZ, aMz, mT, mT, &
-  0._dp, 0._dp, 0._dp, 0._dp)
+  0._dp, 0._dp, 0._dp, 0._dp, 'analytic', 0._dp)
 
   alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
   Running(5, runMass, alphaAll, 1._dp) ]
@@ -5900,7 +5899,7 @@ muB, mC, muC, mu, res)
   end do
 
   alphaAll  = Alpha(AnDim, order, runAlp, mZ, amZ, mT, muT, &
-  mB, muB, mC, muC)
+  mB, muB, mC, muC, 'analytic', 0._dp)
   alphaMass = Running(nf, run, alphaAll, mu)
   res       = alphaMass%lambdaQCD(run)
 
@@ -5925,7 +5924,7 @@ subroutine f90delta(str, nf, mu, R, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, &
-  0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
+  0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 'analytic', 0._dp)
 
   MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, &
   mu, mu, mu, tiny(1._dp), mu, R, R, 0._dp, 0._dp)
@@ -5953,7 +5952,7 @@ mB, muB, mC, muC, mu, R, lg, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = Running(nf, 0, alphaAll, 0._dp)
 
@@ -5986,7 +5985,7 @@ mB, muB, mC, muC, mu, R, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
-  mT, muT, mB, muB, mC, muC)
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   MatEl     = MatrixElementsMass(alphaAll, nf, runMass, 0._dp, 0._dp, 0._dp, &
   0._dp, mu, mu, mu, muM, mu, R, R, 0._dp, 0._dp)
@@ -6014,7 +6013,7 @@ muB, mC, muC, mu, res)
   end do
 
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
-  mB, muB, mC, muC)
+  mB, muB, mC, muC, 'analytic', 0._dp)
 
   MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, mu, &
   tiny(1._dp), mu, mu, mu, muC, muC)
@@ -6135,7 +6134,7 @@ subroutine f90DiffDeltaGap(str, scheme, order, R0, R, mu0, mu, muLambda, orderAl
     AnDim(i) = AnomDim(scheme(:5), i, 0._dp)
   end do
 
-  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC)
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
   MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, &
   mu, mu, tiny(1._dp), mu, mu, mu, muLambda, muLambda)
 

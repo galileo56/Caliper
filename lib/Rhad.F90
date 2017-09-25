@@ -146,7 +146,7 @@ module SigmaClass
       SigmaMassless = sum(EWfactors)
     end if
 
-    SigmaMassless = 4 * Pi * self%run%alphaQED(mu) * SigmaMassless/Q**2 * &
+    SigmaMassless = 4 * Pi * ( self%run%alphaQED(mu)/Q )**2 * SigmaMassless * &
     self%Rhad(order, mu, Q)
 
   end function SigmaMassless
@@ -159,7 +159,7 @@ module SigmaClass
     real (dp)          , intent(in) :: mu, Q
     character (len = *), intent(in) :: current
 
-    SigmaMass = 4 * Pi * self%run%alphaQED(mu)/Q**2 * &
+    SigmaMass = 4 * Pi * ( self%run%alphaQED(mu)/Q )**2 * &
     self%RhadMass(current, order, mu, Q) * EWSum
 
   end function SigmaMass
