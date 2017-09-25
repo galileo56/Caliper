@@ -5559,7 +5559,7 @@ subroutine f90SingularDiffList(hard, shape, gap, space, cum, orderAlp, runAlp, o
    call Sing%SetRunning(muJ, muS, R, mu)
 
   res = Sing%SingleSing(Mod, gap(:12), space(:3), cum(:4), order, R0, mu0, &
-                        delta0, h, tau, tau2)
+  delta0, h, tau, tau2)
 
 end subroutine f90SingularDiffList
 
@@ -5629,6 +5629,144 @@ end subroutine f90SigmaMassless
 
 !ccccccccccccccc
 
+subroutine f90SigmaRadiative(str, curr, orderAlp, runAlp, order, nf, mZ, &
+gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, eH, Q, x, theta, &
+res)
+
+  use RunningClass; use AlphaClass; use SigmaClass;  use ElectroWeakClass
+  use constants, only: dp; use AnomDimClass; implicit none
+
+  character (len = *), intent(in ) :: str, curr
+  integer            , intent(in ) :: order, runAlp, orderAlp, nf
+  real (dp)          , intent(in ) :: mZ, amZ, eH, mT, muT, mB, muB, mC, muC, &
+  Q, gammaZ, sin2ThetaW, amZQED, x, theta
+  real (dp)          , intent(out) :: res
+  type (Running)                   :: alphaMass
+  type (Alpha)                     :: alphaAll
+  type (Sigma)                     :: MatEl
+  type (ElectroWeak)               :: EW
+  integer                          :: i
+  type (AnomDim), dimension(3:6)   :: AnDim
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(str(:5), i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, &
+  muC, 'analytic', amZQED)
+  alphaMass = Running(nf, runAlp, alphaAll, muC)
+  EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
+  MatEl     = Sigma(alphaMass, EW)
+  res       = MatEl%SigmaRadiative( curr(:6), order, eH, Q, x, theta )
+
+end subroutine f90SigmaRadiative
+
+!ccccccccccccccc
+
+subroutine f90SigmaRadiativeCum(str, curr, orderAlp, runAlp, order, nf, mZ, &
+gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, &
+theta, res)
+
+  use RunningClass; use AlphaClass; use SigmaClass;  use ElectroWeakClass
+  use constants, only: dp; use AnomDimClass; implicit none
+
+  character (len = *), intent(in ) :: str, curr
+  integer            , intent(in ) :: order, runAlp, orderAlp, nf
+  real (dp)          , intent(in ) :: mZ, amZ, eH, mT, muT, mB, muB, mC, muC, &
+  Q, gammaZ, sin2ThetaW, amZQED, x0, x1, theta
+  real (dp)          , intent(out) :: res
+  type (Running)                   :: alphaMass
+  type (Alpha)                     :: alphaAll
+  type (Sigma)                     :: MatEl
+  type (ElectroWeak)               :: EW
+  integer                          :: i
+  type (AnomDim), dimension(3:6)   :: AnDim
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(str(:5), i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, &
+  muC, 'analytic', amZQED)
+  alphaMass = Running(nf, runAlp, alphaAll, muC)
+  EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
+  MatEl     = Sigma(alphaMass, EW)
+  res       = MatEl%SigmaRadiativeCum( curr(:6), order, eH, Q, x0, x1, theta )
+
+end subroutine f90SigmaRadiativeCum
+
+!ccccccccccccccc
+
+subroutine f90SigmaRadiativeCone(str, curr, orderAlp, runAlp, order, nf, mZ, &
+gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, eH, Q, x, theta, &
+deltaTheta, res)
+
+  use RunningClass; use AlphaClass; use SigmaClass;  use ElectroWeakClass
+  use constants, only: dp; use AnomDimClass; implicit none
+
+  character (len = *), intent(in ) :: str, curr
+  integer            , intent(in ) :: order, runAlp, orderAlp, nf
+  real (dp)          , intent(in ) :: mZ, amZ, eH, mT, muT, mB, muB, mC, muC, &
+  Q, gammaZ, sin2ThetaW, amZQED, x, theta, deltaTheta
+  real (dp)          , intent(out) :: res
+  type (Running)                   :: alphaMass
+  type (Alpha)                     :: alphaAll
+  type (Sigma)                     :: MatEl
+  type (ElectroWeak)               :: EW
+  integer                          :: i
+  type (AnomDim), dimension(3:6)   :: AnDim
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(str(:5), i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, &
+  muC, 'analytic', amZQED)
+  alphaMass = Running(nf, runAlp, alphaAll, muC)
+  EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
+  MatEl     = Sigma(alphaMass, EW)
+  res       = MatEl%SigmaRadiativeCone( curr(:6), order, eH, Q, x, theta,&
+  deltaTheta )
+
+end subroutine f90SigmaRadiativeCone
+
+!ccccccccccccccc
+
+subroutine f90SigmaRadiativeConeCum(str, curr, orderAlp, runAlp, order, nf, mZ, &
+gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, &
+theta, deltaTheta, res)
+
+  use RunningClass; use AlphaClass; use SigmaClass;  use ElectroWeakClass
+  use constants, only: dp; use AnomDimClass; implicit none
+
+  character (len = *), intent(in ) :: str, curr
+  integer            , intent(in ) :: order, runAlp, orderAlp, nf
+  real (dp)          , intent(in ) :: mZ, amZ, eH, mT, muT, mB, muB, mC, muC, &
+  Q, gammaZ, sin2ThetaW, amZQED, x0, x1, theta, deltaTheta
+  real (dp)          , intent(out) :: res
+  type (Running)                   :: alphaMass
+  type (Alpha)                     :: alphaAll
+  type (Sigma)                     :: MatEl
+  type (ElectroWeak)               :: EW
+  integer                          :: i
+  type (AnomDim), dimension(3:6)   :: AnDim
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(str(:5), i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, &
+  muC, 'analytic', amZQED)
+  alphaMass = Running(nf, runAlp, alphaAll, muC)
+  EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
+  MatEl     = Sigma(alphaMass, EW)
+  res       = MatEl%SigmaRadiativeConeCum( curr(:6), order, eH, Q, x0, x1, &
+  theta, deltaTheta )
+
+end subroutine f90SigmaRadiativeConeCum
+
+!ccccccccccccccc
+
 subroutine f90RhadCoefs(nf, res)
 
   use RunningClass; use AlphaClass; use SigmaClass;  use ElectroWeakClass
@@ -5688,6 +5826,143 @@ gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, mu, Q, res)
   res       = MatEl%SigmaMass(curr(:6), order, mu, Q)
 
 end subroutine f90SigmaMass
+
+!ccccccccccccccc
+
+subroutine f90SigmaMassRadiative(str, curr, orderAlp, runAlp, runMass, order, &
+nf, mZ, gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, eH, Q, x, &
+theta, res)
+
+  use RunningClass; use AlphaClass; use SigmaClass; use ElectroWeakClass
+  use constants, only: dp; use AnomDimClass; implicit none
+
+  character (len = *), intent(in ) :: str, curr
+  integer            , intent(in ) :: order, runAlp, orderAlp, nf, runMass
+  real (dp)          , intent(in ) :: mZ, amZ, eH, mT, muT, mB, muB, mC, muC, &
+  gammaZ, sin2ThetaW, Q, amZQED, x, theta
+  real (dp)          , intent(out) :: res
+  type (Running)                   :: alphaMass
+  type (Alpha)                     :: alphaAll
+  type (Sigma)                     :: MatEl
+  type (ElectroWeak)               :: EW
+  integer                          :: i
+  type (AnomDim), dimension(3:6)   :: AnDim
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(str(:5), i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, &
+  muC, 'analytic', amZQED)
+  alphaMass = Running(nf, runMass, alphaAll, 0._dp)
+  EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
+  MatEl     = Sigma(alphaMass, EW)
+  res       = MatEl%SigmaMassRadiative(curr(:6), order, eH, Q, x, theta)
+
+end subroutine f90SigmaMassRadiative
+
+!ccccccccccccccc
+
+subroutine f90SigmaMassRadiativeCum(str, curr, orderAlp, runAlp, runMass, order, &
+nf, mZ, gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, eH, Q, x0, &
+x1, theta, res)
+
+  use RunningClass; use AlphaClass; use SigmaClass; use ElectroWeakClass
+  use constants, only: dp; use AnomDimClass; implicit none
+
+  character (len = *), intent(in ) :: str, curr
+  integer            , intent(in ) :: order, runAlp, orderAlp, nf, runMass
+  real (dp)          , intent(in ) :: mZ, amZ, eH, mT, muT, mB, muB, mC, muC, &
+  gammaZ, sin2ThetaW, Q, amZQED, x0, x1, theta
+  real (dp)          , intent(out) :: res
+  type (Running)                   :: alphaMass
+  type (Alpha)                     :: alphaAll
+  type (Sigma)                     :: MatEl
+  type (ElectroWeak)               :: EW
+  integer                          :: i
+  type (AnomDim), dimension(3:6)   :: AnDim
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(str(:5), i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, &
+  muC, 'analytic', amZQED)
+  alphaMass = Running(nf, runMass, alphaAll, 0._dp)
+  EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
+  MatEl     = Sigma(alphaMass, EW)
+  res       = MatEl%SigmaMassRadiativeCum(curr(:6), order, eH, Q, x0, x1, theta)
+
+end subroutine f90SigmaMassRadiativeCum
+
+!ccccccccccccccc
+
+subroutine f90SigmaMassRadiativeCone(str, curr, orderAlp, runAlp, runMass, order, &
+nf, mZ, gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, eH, Q, x, &
+theta, deltaTheta, res)
+
+  use RunningClass; use AlphaClass; use SigmaClass; use ElectroWeakClass
+  use constants, only: dp; use AnomDimClass; implicit none
+
+  character (len = *), intent(in ) :: str, curr
+  integer            , intent(in ) :: order, runAlp, orderAlp, nf, runMass
+  real (dp)          , intent(in ) :: mZ, amZ, eH, mT, muT, mB, muB, mC, muC, &
+  gammaZ, sin2ThetaW, Q, amZQED, x, theta, deltaTheta
+  real (dp)          , intent(out) :: res
+  type (Running)                   :: alphaMass
+  type (Alpha)                     :: alphaAll
+  type (Sigma)                     :: MatEl
+  type (ElectroWeak)               :: EW
+  integer                          :: i
+  type (AnomDim), dimension(3:6)   :: AnDim
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(str(:5), i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, &
+  muC, 'analytic', amZQED)
+  alphaMass = Running(nf, runMass, alphaAll, 0._dp)
+  EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
+  MatEl     = Sigma(alphaMass, EW)
+  res       = MatEl%SigmaMassRadiativeCone(curr(:6), order, eH, Q, x, theta, deltaTheta)
+
+end subroutine f90SigmaMassRadiativeCone
+
+!ccccccccccccccc
+
+subroutine f90SigmaMassRadiativeConeCum(str, curr, orderAlp, runAlp, runMass,  &
+order, nf, mZ, gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, eH, &
+Q, x0, x1, theta, deltaTheta, res)
+
+  use RunningClass; use AlphaClass; use SigmaClass; use ElectroWeakClass
+  use constants, only: dp; use AnomDimClass; implicit none
+
+  character (len = *), intent(in ) :: str, curr
+  integer            , intent(in ) :: order, runAlp, orderAlp, nf, runMass
+  real (dp)          , intent(in ) :: mZ, amZ, eH, mT, muT, mB, muB, mC, muC, &
+  gammaZ, sin2ThetaW, Q, amZQED, x0, x1, theta, deltaTheta
+  real (dp)          , intent(out) :: res
+  type (Running)                   :: alphaMass
+  type (Alpha)                     :: alphaAll
+  type (Sigma)                     :: MatEl
+  type (ElectroWeak)               :: EW
+  integer                          :: i
+  type (AnomDim), dimension(3:6)   :: AnDim
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(str(:5), i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, &
+  muC, 'analytic', amZQED)
+  alphaMass = Running(nf, runMass, alphaAll, 0._dp)
+  EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
+  MatEl     = Sigma(alphaMass, EW)
+  res       = MatEl%SigmaMassRadiativeConeCum(curr(:6), order, eH, Q, x0, x1, &
+  theta, deltaTheta)
+
+end subroutine f90SigmaMassRadiativeConeCum
 
 !ccccccccccccccc
 
