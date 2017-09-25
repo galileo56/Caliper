@@ -5597,7 +5597,7 @@ end subroutine f90Rhad
 !ccccccccccccccc
 
 subroutine f90SigmaMassless(str, curr, orderAlp, runAlp, order, nf, mZ, gammaZ, &
-sin2ThetaW, amZ, mT, muT, mB, muB, mC, muC, mu, Q, res)
+sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, mu, Q, res)
 
   use RunningClass; use AlphaClass; use SigmaClass;  use ElectroWeakClass
   use constants, only: dp; use AnomDimClass; implicit none
@@ -5605,7 +5605,7 @@ sin2ThetaW, amZ, mT, muT, mB, muB, mC, muC, mu, Q, res)
   character (len = *), intent(in ) :: str, curr
   integer            , intent(in ) :: order, runAlp, orderAlp, nf
   real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, &
-  Q, gammaZ, sin2ThetaW
+  Q, gammaZ, sin2ThetaW, amZQED
   real (dp)          , intent(out) :: res
   type (Running)                   :: alphaMass
   type (Alpha)                     :: alphaAll
@@ -5618,7 +5618,8 @@ sin2ThetaW, amZ, mT, muT, mB, muB, mC, muC, mu, Q, res)
     AnDim(i) = AnomDim(str(:5), i, 0._dp)
   end do
 
-  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, &
+  muC, 'analytic', amZQED)
   alphaMass = Running(nf, runAlp, alphaAll, muC)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   MatEl     = Sigma(alphaMass, EW)
@@ -5658,15 +5659,15 @@ end subroutine f90RhadCoefs
 !ccccccccccccccc
 
 subroutine f90SigmaMass(str, curr, orderAlp, runAlp, runMass, order, nf, mZ, &
-gammaZ, sin2ThetaW, amZ, mT, muT, mB, muB, mC, muC, mu, Q, res)
+gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, mu, Q, res)
 
   use RunningClass; use AlphaClass; use SigmaClass; use ElectroWeakClass
   use constants, only: dp; use AnomDimClass; implicit none
 
   character (len = *), intent(in ) :: str, curr
   integer            , intent(in ) :: order, runAlp, orderAlp, nf, runMass
-  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, gammaZ, &
-  sin2ThetaW, Q
+  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC, &
+  gammaZ, sin2ThetaW, Q, amZQED
   real (dp)          , intent(out) :: res
   type (Running)                   :: alphaMass
   type (Alpha)                     :: alphaAll
@@ -5679,7 +5680,8 @@ gammaZ, sin2ThetaW, amZ, mT, muT, mB, muB, mC, muC, mu, Q, res)
     AnDim(i) = AnomDim(str(:5), i, 0._dp)
   end do
 
-  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
+  alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, &
+  muC, 'analytic', amZQED)
   alphaMass = Running(nf, runMass, alphaAll, 0._dp)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   MatEl     = Sigma(alphaMass, EW)
