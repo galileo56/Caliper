@@ -30,7 +30,8 @@ module RNRQCDClass
     procedure, pass (self), public :: VceffsNNLL, VrsLL, V2sLL, VssLL, Vk1sLL, &
     Vk2sLL, VkeffsLL, XiNLL, XiNNLLnonmix, XiNNLLmixUsoft, MLLc2, MNLLc1, &
     MNLLplusNNLLnonmixc1, MNNLLAllc1InclSoftMixLog, A1pole, Xsec, Delta1S, &
-    MNLLc1Square, MNNLLc1Square, Rexp, RQCD, Rmatched, Switch, RmatchedList
+    MNLLc1Square, MNNLLc1Square, Rexp, RQCD, Rmatched, Switch, RmatchedList!, &
+    ! RmatchedRadiative
 
     procedure, pass (self), private :: xc01, xc11, xc12, xc22
 
@@ -124,6 +125,21 @@ contains
     - self%Rexp(order, h, nu, Q) ) * SwitchOff(Q, self%m1S, self%gt, v1, v2)
 
   end function
+
+! ccccccccccc
+
+  ! real (dp) function RmatchedRadiative(self, order, h, nu, v1, v2, Q, x, theta)
+  !   class (RNRQCD)     , intent(inout) :: self
+  !   Integer            , intent(in)    :: order
+  !   real (dp)          , intent(in)    :: h, Q, nu, v1, v2
+  !   real (dp)                       :: mu
+  !
+  !   mu = Q * sqrt(1 - 2 * x)
+  !
+  !   RmatchedRadiative = self%run%alphaQED(Q)/Pi2 * g(x, theta) * &
+  !   self%Rmatched( current, order, mu, eH * mu )
+  !
+  ! end function RmatchedRadiative
 
 ! ccccccccccc
 
