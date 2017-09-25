@@ -3989,8 +3989,30 @@ end subroutine f90alphaQCD
 
 !ccccccccccccccc
 
-subroutine f90alphaComplex(str, method, order, run, nf, mZ, amZ, mT, muT, mB, muB, &
-mC, muC, muR, muI, res)
+subroutine f90alphaQED(nf, mZ, amZQED, mT, muT, mB, muB, mC, muC, mu, res)
+  use AlphaClass;  use constants, only: dp; use AnomDimClass; implicit none
+  integer            , intent(in ) :: nf
+  real (dp)          , intent(in ) :: mZ, amZQED, mu, mT, muT, mB, muB, mC, muC
+  real (dp)          , intent(out) :: res
+  type (Alpha)                     :: alphaOb
+  type (AnomDim), dimension(3:6)   :: AnDim
+  integer                          :: i
+
+  do i = 3, 6
+    AnDim(i) = AnomDim( 'MSbar', i, 0._dp)
+  end do
+
+  alphaOb = alpha( Andim, 0, 0, mZ, amZQED, mT, muT, mB, muB, mC, muC, &
+  'analytic', amZQED )
+
+  res = alphaOb%alphaQED(nf, mu)
+
+end subroutine f90alphaQED
+
+!ccccccccccccccc
+
+subroutine f90alphaComplex(str, method, order, run, nf, mZ, amZ, mT, muT, mB, &
+muB, mC, muC, muR, muI, res)
   use AlphaClass;  use constants, only: dp; use AnomDimClass; implicit none
   character (len = *)    , intent(in ) :: str, method
   integer                , intent(in ) :: order, run, nf

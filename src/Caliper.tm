@@ -120,6 +120,7 @@
 :Evaluate:  CoefMat::usage = "CoefMat[str, nf, s3] computes the hard, soft and jet matrix elements"
 :Evaluate:  wTilde::usage = "wTilde[order, nf, gamma, a0, a1] computes wTilde for a given anomalous dimension gamma"
 :Evaluate:  kTilde::usage = "kTilde[order, nf, gamma, a0, a1] computes kTilde for a given anomalous dimension gamma"
+:Evaluate:  AlphaQED::usage = "AlphaQED[nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the electromagnetic coupling with flavor matching."
 :Evaluate:  AlphaQCD::usage = "AlphaQCD[scheme, method, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of alpha with flavor matching."
 :Evaluate:  AlphaComplex::usage = "AlphaComplex[scheme, method, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of alpha with flavor matching."
 :Evaluate:  MSbarMass::usage = "MSbarMass[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
@@ -2018,11 +2019,20 @@
 
 :Begin:
 :Function:      alphaqcd
-:Pattern:       AlphaQCD[str_, method_, order_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_,
-                 muC_, mu_]
-:Arguments:     {str, method, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}
-:ArgumentTypes: {String, String, Integer, Integer, Integer, Real, Real, Real, Real, Real, Real,
-                 Real, Real, Real}
+:Pattern:       AlphaQCD[str_, method_, order_, run_, nf_, Mz_, aMz_, mT_, muT_,
+                mB_, muB_, mC_, muC_, mu_]
+:Arguments:     {str, method, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC,
+                 muC, mu}
+:ArgumentTypes: {String, String, Integer, Integer, Integer, Real, Real, Real,
+                 Real, Real, Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      alphaqed
+:Pattern:       AlphaQED[nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mu_]
+:Arguments:     {nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}
+:ArgumentTypes: {Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real}
 :ReturnType:     Real
 :End:
 
@@ -5296,6 +5306,20 @@ aMz, double mT, double muT, double mB, double muB, double mC, double muC, double
 
    f90alphaqcd_(str, method, &order, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,
    &mu, &res);
+
+  return res;
+}
+
+extern double f90alphaqed_(int* nf, double* Mz, double* aMz, double* mT,
+double* muT, double* mB, double* muB, double* mC, double* muC, double* mu,
+double* res);
+
+static double alphaqed(int nf, double Mz, double aMz, double mT, double muT,
+double mB, double muB, double mC, double muC, double mu){
+
+   double res;
+
+   f90alphaqed_(&nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC, &mu, &res);
 
   return res;
 }

@@ -17,12 +17,12 @@ module AlphaClass
 
   type, public :: Alpha
     private
-    character (len = 9)             :: method, str
-    integer                         :: order, run, n
-    type (AnomDim) , dimension(3:6) :: andim
-    real (dp)      , dimension(3:6) :: alphaRef, muRef
-    real (dp)                       :: mT, mB, mC
-    logical                         :: QmT, QmB, QmC, QmuT, QmuC, QmuB
+    character (len = 9)            :: method, str
+    integer                        :: order, run, n
+    type (AnomDim), dimension(3:6) :: andim
+    real (dp)     , dimension(3:6) :: alphaRef, alphaQEDRef, muRef, betQED
+    real (dp)                      :: mT, mB, mC
+    logical                        :: QmT, QmB, QmC, QmuT, QmuC, QmuB
 
    contains
 
@@ -30,8 +30,9 @@ module AlphaClass
    generic, public                  :: alphaGeneric => alphaGenericReal, alphaGenericComplex
    generic, public                  :: alphaGenericFlavor => alphaGenericRealFlavor, alphaGenericComplexFlavor
 
-   procedure, pass(self)            :: alphaQCDReal, alphaQCDComplex, alphaGenericReal, &
-   alphaGenericComplex, thresholdMatching, alphaGenericRealFlavor, alphaGenericComplexFlavor
+   procedure, pass(self)            :: alphaQCDComplex, alphaGenericReal, &
+   alphaGenericComplex, thresholdMatching, alphaGenericRealFlavor, alphaQED,&
+   alphaQCDReal, alphaGenericComplexFlavor
 
    procedure, pass(self), public    :: scales, orders, scheme, SetAlpha, SetMTop, &
    SetMBottom, SetMCharm, adim
@@ -49,13 +50,14 @@ module AlphaClass
 !ccccccccccccccc
 
   type (Alpha) function InitAlpha(andimList, order, run, mZ, amZ, mT, muT,&
-    mB, muB, mC, muC, method)
+    mB, muB, mC, muC, method, amZQED)
     character (len = *), optional, intent(in) :: method
-    real (dp)         , optional , intent(in) :: amZ
+    real (dp)         , optional , intent(in) :: amZ, amZQED
     real (dp)         , optional , intent(in) :: mZ, mT, muT, mB, muB, mC, muC
     type (AnomDim) , dimension(4), intent(in) :: andimlist
     integer                      , intent(in) :: order
     integer                      , intent(in) :: run
+    integer                                   :: i
 
     InitAlpha%andim = andimlist
 
@@ -86,22 +88,31 @@ module AlphaClass
       InitAlpha%muRef(3) = muC; InitAlpha%QmuC = .true.
     end if
 
-    InitAlpha%str   = andimlist(3)%scheme()
-    InitAlpha%order = order ;  InitAlpha%alphaRef = 0
+    InitAlpha%str      = andimlist(3)%scheme(); InitAlpha%order       = order
+    InitAlpha%alphaRef = 0                    ; InitAlpha%alphaQEDRef = 0
+
+    do i = 3, 6
+      InitAlpha%betQED(i) = InitAlpha%andim(i)%betaQED()
+    end do
 
     if ( .not. present(mZ) .or. mZ <= d1mach(1) ) return
 
-    call InitAlpha%setAlpha(amZ)
+    if ( present(amZQED) ) then
+      call InitAlpha%setAlpha(amZ, amZQED)
+    else
+      call InitAlpha%setAlpha(amZ)
+    end if
 
   end function InitAlpha
 
 !ccccccccccccccc
 
-  subroutine SetAlpha(self, amZ)
-    class (Alpha), intent(inout) :: self
-    real (dp)    , intent(in)    :: amZ
+  subroutine SetAlpha(self, amZ, amZQED)
+    class (Alpha)      , intent(inout) :: self
+    real (dp)          , intent(in)    :: amZ
+    real (dp), optional, intent(in)    :: amZQED
 
-    self%alphaRef(5) = amZ
+    self%alphaRef(5) = amZ;  self%alphaQEDRef(5) = amZQED
 
     if (self%QmuT .and. self%QmT) call self%SetMTop(self%mT, self%muRef(6) )
 
@@ -109,7 +120,6 @@ module AlphaClass
 
     if (self%QmuB .and. self%QmB) then
       call self%SetMBottom( self%mB, self%muRef(4) )
-
     end if
 
   end subroutine SetAlpha
@@ -124,10 +134,14 @@ module AlphaClass
 
     self%mT = mT; self%muRef(6) = muT; alphaList(0) = 1
 
-    aS  = self%alphaGeneric(self%method, self%andim(5), self%run, self%muRef(5), self%alphaRef(5), muT)
+    aS = self%alphaGeneric(self%method, self%andim(5), self%run, self%muRef(5),&
+    self%alphaRef(5), muT)
 
     self%alphaRef(6) = pi * sum(   PowList(aS/Pi, self%n+1) * &
     self%thresholdMatching( 'up', 6, log(muT/mT) )  )
+
+    self%alphaQEDRef(6) = alphaQEDGeneric( self%betQED(5), self%alphaQEDRef(5), &
+    self%muRef(5), muT)
 
   end subroutine SetMTop
 
@@ -141,10 +155,14 @@ module AlphaClass
 
     self%mB = mB; self%muRef(4) = muB; alphaList(0) = 1
 
-    aS  = self%alphaGeneric(self%method, self%andim(5), self%run, self%muRef(5), self%alphaRef(5), muB )
+    aS  = self%alphaGeneric(self%method, self%andim(5), self%run, self%muRef(5),&
+    self%alphaRef(5), muB )
 
     self%alphaRef(4) = pi * sum(  self%thresholdMatching( 'down', 5, log(muB/mB) ) &
     * PowList(aS/Pi, self%n+1)  )
+
+    self%alphaQEDRef(4) = alphaQEDGeneric( self%betQED(5), self%alphaQEDRef(5), &
+    self%muRef(5), muB)
 
 !   Running from mB to muC, with nf = 4 flavors, and matching
 
@@ -162,10 +180,14 @@ module AlphaClass
 
     self%mC = mC; self%muRef(3) = muC; alphaList(0) = 1
 
-    aS  = self%alphaGeneric(self%method, self%andim(4), self%run, self%muRef(4), self%alphaRef(4), muC)
+    aS  = self%alphaGeneric(self%method, self%andim(4), self%run, self%muRef(4),&
+    self%alphaRef(4), muC)
 
     self%alphaRef(3) = pi * sum(  self%thresholdMatching( 'down', 4, log(muC/mC) ) &
     * PowList(aS/Pi, self%n+1)  )
+
+    self%alphaQEDRef(3) = alphaQEDGeneric( self%betQED(4), self%alphaQEDRef(4), &
+    self%muRef(4), muC)
 
   end subroutine SetMCharm
 
@@ -273,13 +295,25 @@ module AlphaClass
 
 !ccccccccccccccc
 
-pure real (dp) function alphaGenericRealFlavor(self, method, run, nf, mZ, amZ, mu)
-  class (Alpha)      , intent(in) :: self
-  character (len = *), intent(in) :: method
-  real (dp)          , intent(in) :: mZ, amZ, mu
-  integer            , intent(in) :: nf, run
+pure real (dp) function alphaQED(self, nf, mu)
+  class (Alpha), intent(in) :: self
+  real (dp)    , intent(in) :: mu
+  integer      , intent(in) :: nf
 
-  alphaGenericRealFlavor = self%alphaGeneric( method, self%adim(nf), run, mZ, amZ, mu )
+  alphaQED = alphaQEDGeneric( self%betQED(nf), self%alphaQEDRef(nf), &
+  self%muRef(nf), mu)
+
+end function alphaQED
+
+!ccccccccccccccc
+
+pure real (dp) function alphaGenericRealFlavor(self, method, run, nf, mZ, amZ, mu)
+class (Alpha)      , intent(in) :: self
+character (len = *), intent(in) :: method
+real (dp)          , intent(in) :: mZ, amZ, mu
+integer            , intent(in) :: nf, run
+
+alphaGenericRealFlavor = self%alphaGeneric( method, self%adim(nf), run, mZ, amZ, mu )
 
 end function alphaGenericRealFlavor
 
@@ -543,6 +577,15 @@ end function alphaGenericComplexFlavor
 
 !ccccccccccccccc
 
+  pure real (dp) function alphaQEDGeneric(beta0, aRef, muRef, mu)
+    real (dp), intent(in) :: beta0, aRef, muRef, mu
+
+    alphaQEDGeneric = aRef/(1 - aRef * beta0 * log(mu/muRef)/2/Pi)
+
+  end function alphaQEDGeneric
+
+!ccccccccccccccc
+
   pure complex (dp) function alphaGenericComplex(self, method, adim, run, mZ, amZ, mu)
     class (Alpha)            , intent(in) :: self
     character (len = *)      , intent(in) :: method
@@ -770,41 +813,6 @@ end function alphaGenericComplexFlavor
     e = matmul( lgList, b(:self%n, :self%n + 1) )
 
   end function thresholdMatching
-
-!ccccccccccccccc
-
-  ! function thresholdMatching2(self, nf, lg) result(e) ! smarter but slower
-  !   class (Alpha)                  , intent(in) :: self
-  !   integer                        , intent(in) :: nf
-  !   real (dp)                      , intent(in) :: lg
-  !   real (dp), dimension(self%n + 1)            :: e
-  !   real (dp), dimension(0:self%n  )            :: lgList
-  !   real (dp), dimension(0:4       , 0:5      ) :: b, c
-  !   real (dp), dimension(self%n + 1,self%n + 1) :: ePow
-  !   integer                                     :: n, i
-  !
-  !   lgList = powList0(lg, self%n); e = 0; e(1) = 1; ePow = 0
-  !
-  !   b = 0; c = 0; c(0,1) = 1 ;  b(0,1:) = self%andim(nf)%MatchingAlpha()
-  !   call self%andim(nf    )%expandAlpha( b(:,1:) )
-  !   call self%andim(nf - 1)%expandAlpha( c(:,1:) )
-  !
-  !   b(0,:self%n + 1) = matmul( lgList, b(:self%n,:self%n + 1) )
-  !   c(0,:self%n + 1) = matmul( lgList, c(:self%n,:self%n + 1) )
-  !
-  !   do n = 2, self%n + 1
-  !
-  !     ePow(1,n - 1) = e(n - 1)
-  !
-  !     do i = 2, n
-  !       ePow(i,n) = sum( e(:n + 1 - i) * ePow(i - 1,n - 1:i - 1:-1) )
-  !     end do
-  !
-  !     e(n) = b(0,n) - sum( c(0,2:n) * ePow(2:n,n) )
-  !
-  !   end do
-  !
-  ! end function thresholdMatching2
 
 !ccccccccccccccc
 

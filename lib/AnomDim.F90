@@ -28,7 +28,7 @@ module AnomDimClass
     private
     integer                       :: nf
     character (len = 5)           :: str
-    real (dp)                     :: G4, err
+    real (dp)                     :: G4, err, beta0QED
     real (dp), dimension(5)       :: AlphaMatch, AlphaMatchInv, AlphaMatchUp
     real (dp), dimension(0:4,5)   :: AlphaMatchLog, AlphaMatchInvLog
     real (dp), dimension(0:3,0:3) :: gammaHm
@@ -47,7 +47,8 @@ module AnomDimClass
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
     bHQETgamma, wTildeHm, GammaRComputer, sCoefRecursive, N12Generic, PScoef, &
     sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12, sCoefGeneric, cCoeff,&
-    P12Generic, MatchingAlpha, MatchingAlphaLog, MatchingAlphaUp, alphaMatching
+    P12Generic, MatchingAlpha, MatchingAlphaLog, MatchingAlphaUp, alphaMatching, &
+    betaQED
 
     procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
     kTildeComplex, rootReal, rootComplex
@@ -139,6 +140,14 @@ module AnomDimClass
     InAdim%AlphaMatchUp  = InAdim%alphaMatching(nf + 1)
     InAdim%AlphaMatchLog = alphaMatchingLog(InAdim%AlphaMatch, nf, nf - 1)
     InAdim%AlphaMatchInvLog = alphaMatchingLog(InAdim%AlphaMatchInv, nf - 1, nf)
+
+    InAdim%beta0QED = 4 ! ( electron + muon + up + down + strange )
+
+    if (nf >= 4) InAdim%beta0QED = InAdim%beta0QED + 4._dp/3 + 1 ! add tau and charm
+    if (nf >= 5) InAdim%beta0QED = InAdim%beta0QED + 1._dp/3     ! add bottom
+    if (nf == 6) InAdim%beta0QED = InAdim%beta0QED + 4._dp/3     ! add top
+
+    InAdim%beta0QED = 4 * InAdim%beta0QED/3
 
    end function InAdim
 
@@ -819,6 +828,13 @@ module AnomDimClass
 
 !ccccccccccccccc
 
+  pure real (dp) function betaQED(self)
+    class (AnomDim), intent(in) :: self
+    betaQED = self%beta0QED
+  end function betaQED
+
+!ccccccccccccccc
+
   pure function betaQCD(self, str) result(bet)
     class (AnomDim)    , intent(in) :: self
     character (len = *), intent(in) :: str
@@ -852,6 +868,7 @@ module AnomDimClass
     if ( str(:10) == 'gammaRInc3'      ) bet(1:) = self%gammaRInc3
     if ( str( :7) == 'gammaRp'         ) bet(1:) = self%gammaRp
     if ( str( :7) == 'gammaRn'         ) bet(1:) = self%gammaRn
+    if ( str( :6) == 'betQED'          ) bet(1:) = self%beta0QED
 
   end function betaQCD
 
