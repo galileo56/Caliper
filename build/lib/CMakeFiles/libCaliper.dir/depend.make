@@ -255,6 +255,8 @@ lib/CMakeFiles/libCaliper.dir/Rhad.F90.o.requires: lib/CMakeFiles/libCaliper.dir
 lib/CMakeFiles/libCaliper.dir/Rhad.F90.o: lib/CMakeFiles/libCaliper.dir/constants.mod.stamp
 lib/CMakeFiles/libCaliper.dir/Rhad.F90.o.requires: lib/CMakeFiles/libCaliper.dir/electroweakclass.mod.proxy
 lib/CMakeFiles/libCaliper.dir/Rhad.F90.o: lib/CMakeFiles/libCaliper.dir/electroweakclass.mod.stamp
+lib/CMakeFiles/libCaliper.dir/Rhad.F90.o.requires: lib/CMakeFiles/libCaliper.dir/quadpack.mod.proxy
+lib/CMakeFiles/libCaliper.dir/Rhad.F90.o: lib/CMakeFiles/libCaliper.dir/quadpack.mod.stamp
 lib/CMakeFiles/libCaliper.dir/Rhad.F90.o.requires: lib/CMakeFiles/libCaliper.dir/runningclass.mod.proxy
 lib/CMakeFiles/libCaliper.dir/Rhad.F90.o: lib/CMakeFiles/libCaliper.dir/runningclass.mod.stamp
 lib/CMakeFiles/libCaliper.dir/sigmaclass.mod.proxy: lib/CMakeFiles/libCaliper.dir/Rhad.F90.o.provides

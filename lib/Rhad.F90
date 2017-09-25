@@ -1,7 +1,8 @@
 
 module SigmaClass
   use AnomDimClass;  use RunningClass;  use ElectroWeakClass; use Chaplin
-  use Constants, only: dp, Pi, Pi2, Zeta3;  implicit none;  private
+  use Constants, only: dp, Pi, Pi2, Zeta3, prec; use QuadPack, only: qags
+  implicit none;  private
 
   real (dp), dimension(2)               :: EWfact
   real (dp)                             :: EWSum
@@ -24,7 +25,10 @@ module SigmaClass
    contains
 
     procedure, pass(self), public :: RhadMass, SetAlpha, SetMTop, SetMBottom, &
-    Rhad, SetMCharm, RHadCoefs, SigmaMassless, SigmaMass
+    Rhad, SetMCharm, RHadCoefs, SigmaMassless, SigmaMass, SigmaRadiative, &
+    SigmaMassRadiative, SigmaMassRadiativeCone, SigmaRadiativeCone, &
+    SigmaMassRadiativeConeCum, SigmaMassRadiativeCum, SigmaRadiativeConeCum, &
+    SigmaRadiativeCum
 
   end type Sigma
 
@@ -150,6 +154,162 @@ module SigmaClass
     self%Rhad(order, mu, Q)
 
   end function SigmaMassless
+
+!ccccccccccccccc
+
+  real (dp) function SigmaRadiative(self, current, order, eH, Q, x, theta)
+    class (Sigma)      , intent(in) :: self
+    Integer            , intent(in) :: order
+    real (dp)          , intent(in) :: eH, x, Q, theta
+    character (len = *), intent(in) :: current
+    real (dp)                       :: mu
+
+    mu = Q * sqrt(1 - 2 * x)
+
+    SigmaRadiative = self%run%alphaQED(Q)/Pi2 * g(x, theta) * &
+    self%SigmaMassless( current, order, mu, eH * mu )
+
+  end function SigmaRadiative
+
+!ccccccccccccccc
+
+  real (dp) function SigmaRadiativeCum(self, current, order, eH, Q, x0, x1, theta)
+    class (Sigma)      , intent(in) :: self
+    Integer            , intent(in) :: order
+    real (dp)          , intent(in) :: eH, x0, x1, Q, theta
+    character (len = *), intent(in) :: current
+    real (dp)                       :: abserr
+    integer                         :: neval, ier
+
+    call qags( integrand, x0, x1, prec, prec, SigmaRadiativeCum, abserr, neval, ier )
+
+  contains
+
+    real (dp) function integrand(x)
+      real (dp), intent(in) :: x
+      integrand = self%SigmaRadiative(current, order, eH, Q, x, theta)
+    end function integrand
+
+  end function SigmaRadiativeCum
+
+!ccccccccccccccc
+
+  real (dp) function SigmaRadiativeConeCum(self, current, order, eH, Q, x0, x1,&
+  theta, deltaTheta)
+    class (Sigma)      , intent(in) :: self
+    Integer            , intent(in) :: order
+    real (dp)          , intent(in) :: eH, x0, x1, Q, theta, deltaTheta
+    character (len = *), intent(in) :: current
+    real (dp)                       :: abserr
+    integer                         :: neval, ier
+
+    call qags( integrand, x0, x1, prec, prec, SigmaRadiativeConeCum, abserr, neval, ier )
+
+  contains
+
+    real (dp) function integrand(x)
+      real (dp), intent(in) :: x
+      integrand = self%SigmaRadiativeCone(current, order, eH, Q, x, theta, deltaTheta)
+    end function integrand
+
+  end function SigmaRadiativeConeCum
+
+!ccccccccccccccc
+
+  real (dp) function SigmaMassRadiativeConeCum(self, current, order, eH, Q, x0, x1,&
+  theta, deltaTheta)
+    class (Sigma)      , intent(in) :: self
+    Integer            , intent(in) :: order
+    real (dp)          , intent(in) :: eH, x0, x1, Q, theta, deltaTheta
+    character (len = *), intent(in) :: current
+    real (dp)                       :: abserr
+    integer                         :: neval, ier
+
+    call qags( integrand, x0, x1, prec, prec, SigmaMassRadiativeConeCum, abserr, neval, ier )
+
+  contains
+
+    real (dp) function integrand(x)
+      real (dp), intent(in) :: x
+      integrand = self%SigmaMassRadiativeCone(current, order, eH, Q, x, theta, deltaTheta)
+    end function integrand
+
+  end function SigmaMassRadiativeConeCum
+
+!ccccccccccccccc
+
+  real (dp) function SigmaMassRadiativeCum(self, current, order, eH, Q, x0, x1, theta)
+    class (Sigma)      , intent(in) :: self
+    Integer            , intent(in) :: order
+    real (dp)          , intent(in) :: eH, x0, x1, Q, theta
+    character (len = *), intent(in) :: current
+    real (dp)                       :: abserr
+    integer                         :: neval, ier
+
+    call qags( integrand, x0, x1, prec, prec, SigmaMassRadiativeCum, abserr, neval, ier )
+
+  contains
+
+    real (dp) function integrand(x)
+      real (dp), intent(in) :: x
+      integrand = self%SigmaMassRadiative(current, order, eH, Q, x, theta)
+    end function integrand
+
+  end function SigmaMassRadiativeCum
+
+!ccccccccccccccc
+
+  real (dp) function SigmaRadiativeCone(self, current, order, eH, Q, x, theta, &
+  deltaTheta)
+    class (Sigma)      , intent(in) :: self
+    Integer            , intent(in) :: order
+    real (dp)          , intent(in) :: eH, x, Q, theta, deltaTheta
+    character (len = *), intent(in) :: current
+    real (dp)                       :: mu
+
+    mu = Q * sqrt(1 - 2 * x)
+
+    SigmaRadiativeCone = 2 * self%run%alphaQED(Q) * gInt(x, theta, deltaTheta) &
+    * self%SigmaMassless( current, order, mu, eH * mu )/Pi
+
+  end function SigmaRadiativeCone
+
+!ccccccccccccccc
+
+  real (dp) function SigmaMassRadiative(self, current, order, eH, Q, x, theta)
+    class (Sigma)      , intent(in) :: self
+    Integer            , intent(in) :: order
+    real (dp)          , intent(in) :: x, theta, Q, eH
+    character (len = *), intent(in) :: current
+    real (dp)                       :: mu
+
+    SigmaMassRadiative = 0; if ( 1 <= 2 * x .or. x <= 0) return
+
+    mu = Q * sqrt(1 - 2 * x)
+
+    SigmaMassRadiative = self%run%alphaQED(Q)/Pi2 * g(x, theta) * &
+    self%SigmaMassless( current, order, mu, eH * mu )
+
+  end function SigmaMassRadiative
+
+!ccccccccccccccc
+
+  real (dp) function SigmaMassRadiativeCone(self, current, order, eH, Q, x, &
+  theta, deltaTheta)
+    class (Sigma)      , intent(in) :: self
+    Integer            , intent(in) :: order
+    real (dp)          , intent(in) :: x, theta, Q, eH, deltaTheta
+    character (len = *), intent(in) :: current
+    real (dp)                       :: mu
+
+    SigmaMassRadiativeCone = 0; if ( 1 <= 2 * x .or. x <= 0) return
+
+    mu = Q * sqrt(1 - 2 * x)
+
+    SigmaMassRadiativeCone = self%run%alphaQED(Q) * gInt(x, theta, deltaTheta) &
+    * 2 * self%SigmaMass( current, order, mu, eH * mu )/Pi
+
+  end function SigmaMassRadiativeCone
 
 !ccccccccccccccc
 
@@ -719,6 +879,30 @@ complex (dp) function VacPol3(z)
   0.20686408326977293_dp * GGz**3 * z1**3 * z2/z
 
 end function VacPol3
+
+!ccccccccccccccc
+
+real (dp) function g(x, theta)
+  real (dp), intent(in) :: x, theta
+  real (dp)             :: c2
+
+  c2 = cos(theta)**2
+
+  g = (  1 - 2 * x + (1 + c2) * x**2 ) / (1 - c2) / x
+
+end function g
+
+!ccccccccccccccc
+
+real (dp) function gInt(x, theta, deltaTheta)
+  real (dp), intent(in) :: x, theta, deltaTheta
+
+  gInt = (  ( 1 - 2 * x * (1 - x) ) * sin(2 * deltaTheta) - x**2 * deltaTheta &
+  * ( cos(2 * deltaTheta) - cos(2 * theta) )  ) / x / &
+   sqrt(  ( 1 - cos(theta + deltaTheta)**2 ) * &
+   ( 1 - cos(theta - deltaTheta)**2 )  )
+
+end function gInt
 
 !ccccccccccccccc
 
