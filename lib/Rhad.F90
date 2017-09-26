@@ -6,9 +6,9 @@ module SigmaClass
 
   real (dp), dimension(2)               :: EWfact
   real (dp)                             :: EWSum
-  public                                :: setEWfact, VacPol0, VacPol0Der, &
-  VacPol2, VacPol2Der, VacPol3, VacPol1, PiCoef, VacPol1Der, PiCoefDer1,   &
-  PiCoefDer2, PiCoefDer3
+  public                                :: setEWfact, VacPol0, VacPol0Der,  &
+  VacPol2, VacPol2Der, VacPol3, VacPol1, PiCoef, VacPol1Der, PiCoefDer1, g, &
+  PiCoefDer2, PiCoefDer3, gInt
 
 !ccccccccccccccc
 
@@ -216,8 +216,8 @@ module SigmaClass
 
 !ccccccccccccccc
 
-  real (dp) function SigmaMassRadiativeConeCum(self, current, order, eH, Q, x0, x1,&
-  theta, deltaTheta)
+  real (dp) function SigmaMassRadiativeConeCum(self, current, order, eH, Q, x0, &
+  x1, theta, deltaTheta)
     class (Sigma)      , intent(in) :: self
     Integer            , intent(in) :: order
     real (dp)          , intent(in) :: eH, x0, x1, Q, theta, deltaTheta

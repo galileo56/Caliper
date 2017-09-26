@@ -2,10 +2,10 @@
 ! ccccccccccc
 
 module RNRQCDClass
-  use constants, only: dp, Pi, Pi2, l2, Zeta3, Euler, Pi3; use ToppikClass
+  use constants, only: dp, Pi, Pi2, l2, Zeta3, Euler, Pi3, prec; use ToppikClass
   use DeriGamma, only: DiGam, trigam ; use RunningClass; use AnomDimClass
   use AlphaClass; use NRQCDClass; use VFNSMSRClass; use SigmaClass
-  use ElectroWeakClass; implicit none ;  private
+  use ElectroWeakClass; use adapt; implicit none ;  private
 
   real (dp)   , parameter :: FPi = 4 * Pi
   complex (dp), parameter :: cI = (0,1)
@@ -14,10 +14,11 @@ module RNRQCDClass
 
 ! ccccccccccc
 
-  type, public :: RNRQCD
-    integer                   :: nl, ordMass
+  type, public                :: RNRQCD
+    integer                   :: nl, ordMass, nf
     real (dp)                 :: a1, a2, mass, Qt, gt, lambda, m1S, MSRm, QSwitch
     real (dp), dimension(0:4) :: beta
+    type (ElectroWeak)        :: EW
     type (Running)            :: run
     type (Alpha)              :: AlphaOb
     type (AnomDim)            :: andim
@@ -30,8 +31,9 @@ module RNRQCDClass
     procedure, pass (self), public :: VceffsNNLL, VrsLL, V2sLL, VssLL, Vk1sLL, &
     Vk2sLL, VkeffsLL, XiNLL, XiNNLLnonmix, XiNNLLmixUsoft, MLLc2, MNLLc1, &
     MNLLplusNNLLnonmixc1, MNNLLAllc1InclSoftMixLog, A1pole, Xsec, Delta1S, &
-    MNLLc1Square, MNNLLc1Square, Rexp, RQCD, Rmatched, Switch, RmatchedList!, &
-    ! RmatchedRadiative
+    MNLLc1Square, MNNLLc1Square, Rexp, RQCD, Rmatched, Switch, RmatchedList, &
+    SigmaMatchedRadiative, SigmaMatched, SigmaMatchedRadiativeCone, &
+    SigmaMatchedRadiativeCum, SigmaMatchedRadiativeConeCum
 
     procedure, pass (self), private :: xc01, xc11, xc12, xc22
 
@@ -75,6 +77,8 @@ contains
 
     if (nl == 5 .or. nl == 3 .or. nl == 1) RNRQCDIn%Qt =   2._dp/3
     if (nl == 4 .or. nl == 2 .or. nl == 0) RNRQCDIn%Qt = - 1._dp/3
+
+    RNRQCDIn%nf = nl + 1;  RNRQCDIn%EW = EW
 
     if ( scheme(:4) == 'pole' ) then
 
@@ -126,22 +130,91 @@ contains
     Rmatched = self%RQCD(order, h, Q) + ( self%Xsec(order, Q, h, nu) &
     - self%Rexp(order, h, nu, Q) ) * SwitchOff(Q, self%m1S, self%gt, v1, v2)
 
-  end function
+  end function Rmatched
 
 ! ccccccccccc
 
-  ! real (dp) function RmatchedRadiative(self, order, h, nu, v1, v2, Q, x, theta)
-  !   class (RNRQCD)     , intent(inout) :: self
-  !   Integer            , intent(in)    :: order
-  !   real (dp)          , intent(in)    :: h, Q, nu, v1, v2
-  !   real (dp)                       :: mu
-  !
-  !   mu = Q * sqrt(1 - 2 * x)
-  !
-  !   RmatchedRadiative = self%run%alphaQED(Q)/Pi2 * g(x, theta) * &
-  !   self%Rmatched( current, order, mu, eH * mu )
-  !
-  ! end function RmatchedRadiative
+  real (dp) function SigmaMatched(self, order, h, nu, v1, v2, Q)
+    class (RNRQCD)     , intent(inout) :: self
+    Integer            , intent(in)    :: order
+    real (dp)          , intent(in)    :: h, Q, nu, v1, v2
+    real (dp)        , dimension(2)    :: EWfactors
+
+    EWfactors    = self%EW%EWfactors(self%nf, Q)
+    SigmaMatched = FPi * ( self%run%alphaQED(h * Q)/Q )**2 * EWfactors(1) * &
+    self%Rmatched(order, h, nu, v1, v2, Q)
+
+  end function SigmaMatched
+
+! ccccccccccc
+
+  real (dp) function SigmaMatchedRadiative(self, order, h, nu, v1, v2, Q, x, theta)
+    class (RNRQCD)     , intent(inout) :: self
+    Integer            , intent(in)    :: order
+    real (dp)          , intent(in)    :: h, Q, nu, v1, v2, x, theta
+
+    SigmaMatchedRadiative = self%run%alphaQED(Q)/Pi2 * g(x, theta) * &
+    self%SigmaMatched( order, h, nu, v1, v2, Q * sqrt(1 - 2 * x) )
+
+  end function SigmaMatchedRadiative
+
+! ccccccccccc
+
+  real (dp) function SigmaMatchedRadiativeCum(self, order, h, nu, v1, v2, Q, &
+  x0, x1, theta)
+    class (RNRQCD)     , intent(inout) :: self
+    Integer            , intent(in)    :: order
+    real (dp)          , intent(in)    :: h, Q, nu, v1, v2, x0, x1, theta
+    real (dp)                          :: abserr
+
+    call DAdapt(integrand, x0, x1, 1, prec, prec, SigmaMatchedRadiativeCum, abserr)
+
+  contains
+
+    real (dp) function integrand(x)
+      real (dp), intent(in) :: x
+
+      integrand = self%SigmaMatchedRadiative(order, h, nu, v1, v2, Q, x, theta)
+
+    end function integrand
+
+  end function SigmaMatchedRadiativeCum
+
+! ccccccccccc
+
+  real (dp) function SigmaMatchedRadiativeConeCum(self, order, h, nu, v1, v2, Q, &
+  x0, x1, theta, deltaTheta)
+    class (RNRQCD)     , intent(inout) :: self
+    Integer            , intent(in)    :: order
+    real (dp)          , intent(in)    :: h, Q, nu, v1, v2, x0, x1, theta, deltaTheta
+    real (dp)                          :: abserr
+
+    call DAdapt(integrand, x0, x1, 1, prec, prec, SigmaMatchedRadiativeConeCum, abserr)
+
+  contains
+
+    real (dp) function integrand(x)
+      real (dp), intent(in) :: x
+
+      integrand = self%SigmaMatchedRadiativeCone(order, h, nu, v1, v2, Q, x, &
+      theta, deltaTheta)
+
+    end function integrand
+
+  end function SigmaMatchedRadiativeConeCum
+
+! ccccccccccc
+
+  real (dp) function SigmaMatchedRadiativeCone(self, order, h, nu, v1, v2, Q, &
+  x, theta, deltaTheta)
+    class (RNRQCD)     , intent(inout) :: self
+    Integer            , intent(in)    :: order
+    real (dp)          , intent(in)    :: h, Q, nu, v1, v2, x, theta, deltaTheta
+
+    SigmaMatchedRadiativeCone = self%run%alphaQED(Q) * gInt(x, theta, deltaTheta) * &
+    self%SigmaMatched( order, h, nu, v1, v2, Q * sqrt(1 - 2 * x) )/Pi2
+
+  end function SigmaMatchedRadiativeCone
 
 ! ccccccccccc
 
