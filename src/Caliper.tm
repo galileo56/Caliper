@@ -2626,7 +2626,7 @@
                 R1S_, method_, lambda_, gt_, Mz_, gammaZ_, sinW_, aMz_, aMzQED_,
                 mT_, mu_, nu_, v1_, v2_, Q_]
 :Arguments:     {scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,
-                lambda, gt, Mz, gammaZ, singW, aMz, aMzQED, mT, mu, nu, v1, v2, Q}
+                lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q}
 :ArgumentTypes: {String, Integer, Integer, Integer, Integer, Integer, Real,
                 String, Real, Real, Real, Real, Real, Real, Real, Real, Real,
                 Real, Real, Real, Real}
@@ -2639,7 +2639,7 @@
                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,
                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x_, theta_]
 :Arguments:     {scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,
-                lambda, gt, Mz, gammaZ, singW, aMz, aMzQED, mT, mu, nu, v1, v2,
+                lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2,
                 Q, x, theta}
 :ArgumentTypes: {String, Integer, Integer, Integer, Integer, Integer, Real,
                 String, Real, Real, Real, Real, Real, Real, Real, Real, Real,
@@ -2654,7 +2654,7 @@
                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x0_, x1_,
                 theta_]
 :Arguments:     {scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,
-                lambda, gt, Mz, gammaZ, singW, aMz, aMzQED, mT, mu, nu, v1, v2,
+                lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2,
                 Q, x0, x1, theta}
 :ArgumentTypes: {String, Integer, Integer, Integer, Integer, Integer, Real,
                 String, Real, Real, Real, Real, Real, Real, Real, Real, Real,
@@ -2669,7 +2669,7 @@
                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x_, theta_,
                 deltaTheta_]
 :Arguments:     {scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,
-                lambda, gt, Mz, gammaZ, singW, aMz, aMzQED, mT, mu, nu, v1, v2,
+                lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2,
                 Q, x, theta, deltaTheta}
 :ArgumentTypes: {String, Integer, Integer, Integer, Integer, Integer, Real,
                 String, Real, Real, Real, Real, Real, Real, Real, Real, Real,
@@ -2684,7 +2684,7 @@
                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x0_, x1_,
                 theta_,deltaTheta_]
 :Arguments:     {scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,
-                lambda, gt, Mz, gammaZ, singW, aMz, aMzQED, mT, mu, nu, v1, v2,
+                lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2,
                 Q, x0, x1, theta, deltaTheta}
 :ArgumentTypes: {String, Integer, Integer, Integer, Integer, Integer, Real,
                 String, Real, Real, Real, Real, Real, Real, Real, Real, Real,
