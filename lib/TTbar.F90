@@ -5,7 +5,7 @@ module RNRQCDClass
   use constants, only: dp, Pi, Pi2, l2, Zeta3, Euler, Pi3; use ToppikClass
   use DeriGamma, only: DiGam, trigam ; use RunningClass; use AnomDimClass
   use AlphaClass; use NRQCDClass; use VFNSMSRClass; use SigmaClass
-  implicit none ;  private
+  use ElectroWeakClass; implicit none ;  private
 
   real (dp)   , parameter :: FPi = 4 * Pi
   complex (dp), parameter :: cI = (0,1)
@@ -45,8 +45,10 @@ module RNRQCDClass
 
 contains
 
-  type (RNRQCD) function RNRQCDIn(MSR, scheme, method, gt, ordMass, ord1S, R1S, lambda)
+  type (RNRQCD) function RNRQCDIn(MSR, EW, scheme, method, gt, ordMass, ord1S, &
+  R1S, lambda)
     type (VFNSMSR)     , intent(in) :: MSR
+    type (ElectroWeak) , intent(in) :: EW
     real (dp)          , intent(in) :: gt, lambda, R1S
     integer            , intent(in) :: ordMass, ord1S
     character (len = *), intent(in) :: scheme, method

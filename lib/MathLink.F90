@@ -5,11 +5,12 @@
 subroutine f90Delta1S(nl, orderAlp, runAlp, orderM, runM, muLam, xlam, method, &
 mZ, aMz, mt, R, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass; implicit none
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass; implicit none
   integer  , intent(in)                  :: nl, orderAlp, runAlp, runM, orderM
   real (dp), intent(in)                  :: muLam, xlam, mZ, aMz, mt, R
   character (len = *)       , intent(in) :: method
   real (dp), intent(out), dimension(0:4) :: res
+  type (ElectroWeak)                     :: EW
   integer                                :: i
   type (RNRQCD)                          :: NRQCD
   type (Alpha)                           :: alphaAll
@@ -27,8 +28,8 @@ mZ, aMz, mt, R, res)
   alphaMass = [ Running(nl - 1, runM, alphaAll, muLam), &
   Running(nl, runM, alphaAll, muLam) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'MSRn', method(:8), 0._dp, orderM, 4, R, xlam)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, 'MSRn', method(:8), 0._dp, orderM, 4, R, xlam)
   res = NRQCD%Delta1S( )
 
 end subroutine f90Delta1S
@@ -38,12 +39,13 @@ end subroutine f90Delta1S
 subroutine f90Qswitch(nl, orderAlp, runAlp, orderM, runM, ord1S, muLam, xlam, &
 method, mZ, aMz, mt, gt, R, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass; implicit none
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass; implicit none
   integer            , intent(in) :: nl, orderAlp, runAlp, runM, orderM, ord1S
   real (dp)          , intent(in) :: muLam, xlam, mZ, aMz, mt, R, gt
   character (len = *), intent(in) :: method
   real (dp), intent(out)          :: res
   integer                         :: i
+  type (ElectroWeak)              :: EW
   type (RNRQCD)                   :: NRQCD
   type (Alpha)                    :: alphaAll
   type (Running), dimension(2)    :: alphaMass
@@ -60,8 +62,8 @@ method, mZ, aMz, mt, gt, R, res)
   alphaMass = [ Running(nl - 1, runM, alphaAll, muLam), &
   Running(nl, runM, alphaAll, muLam) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'MSRn', method(:8), gt, orderM, ord1S, R, xlam)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, 'MSRn', method(:8), gt, orderM, ord1S, R, xlam)
   res =  NRQCD%Switch()
 
 end subroutine f90Qswitch
@@ -71,12 +73,13 @@ end subroutine f90Qswitch
 subroutine f90RNRQCD(nl, order, scheme, method, orderAlp, runAlp, orderMass, &
   runMass, ord1S, R1S, muLam, xlam, mZ, aMz, Q, mtpole, gt, h, nu, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass; implicit none
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass; implicit none
   real (dp)          , intent(in)  :: Q, mtpole, gt, h, nu, mZ, aMz, xlam, muLam, R1S
   character (len = *), intent(in)  :: scheme, method
   integer            , intent(in)  :: nl, orderAlp, runAlp, runMass, orderMass, order, ord1S
   real (dp)          , intent(out) :: res
   integer                          :: i
+  type (ElectroWeak)               :: EW
   type (RNRQCD)                    :: NRQCD
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -93,8 +96,8 @@ subroutine f90RNRQCD(nl, order, scheme, method, orderAlp, runAlp, orderMass, &
   alphaMass = [ Running(nl - 1, runMass, alphaAll, muLam), &
   Running(nl, runMass, alphaAll, muLam) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, scheme(:4), method(:8), gt, orderMass, ord1S, R1S, xlam )
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, scheme(:4), method(:8), gt, orderMass, ord1S, R1S, xlam )
 
   res = NRQCD%Xsec( order, q, h, nu )
 
@@ -104,11 +107,12 @@ end subroutine f90RNRQCD
 
 subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass;  implicit none
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
   real (dp)          , intent(in)  :: En, mtpole, gamtop, asoft, VcsNNLL, musoft
   integer            , intent(in)  :: nl, order
   real (dp)          , intent(out) :: res
   integer                          :: i
+  type (ElectroWeak)               :: EW
   type (RNRQCD)                    :: NRQCD
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -123,8 +127,8 @@ subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
   0._dp, 0._dp, 'analytic', 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'pole', 'analytic', gamtop, 0, 0, 0._dp, 0._dp)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(91.187_dp, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, 'pole', 'analytic', gamtop, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%A1pole(order, En, mtpole, asoft, VcsNNLL, musoft)
 
@@ -200,12 +204,13 @@ end subroutine f90SwitchOff
 
 subroutine f90VssLL(nl, ah, as, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  use VFNSMSRClass; implicit none
-  real (dp), intent(in)  :: ah, as
-  integer  , intent(in)  :: nl
-  real (dp), intent(out) :: res
-  integer                :: i
-  type (RNRQCD)          :: NRQCD
+  use RunningClass;  use VFNSMSRClass; use ElectroWeakClass; implicit none
+  real (dp)          , intent(in)  :: ah, as
+  integer            , intent(in)  :: nl
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (ElectroWeak)               :: EW
+  type (RNRQCD)                    :: NRQCD
   type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -218,8 +223,8 @@ subroutine f90VssLL(nl, ah, as, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(91.187_dp, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%VssLL(ah, as)
 
@@ -229,12 +234,13 @@ end subroutine f90VssLL
 
 subroutine f90Vk1sLL(nl, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass;  use VFNSMSRClass; implicit none
-  real (dp), intent(in)  :: as, au
-  integer  , intent(in)  :: nl
-  real (dp), intent(out) :: res
-  integer                :: i
-  type (RNRQCD)          :: NRQCD
+  use RunningClass;  use VFNSMSRClass; use ElectroWeakClass; implicit none
+  real (dp)          , intent(in)  :: au, as
+  integer            , intent(in)  :: nl
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (RNRQCD)                    :: NRQCD
+  type (ElectroWeak)               :: EW
   type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -247,8 +253,8 @@ subroutine f90Vk1sLL(nl, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(91.187_dp, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%Vk1sLL(as, au)
 
@@ -258,12 +264,13 @@ end subroutine f90Vk1sLL
 
 subroutine f90Vk2sLL(nl, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass;  implicit none
-  real (dp), intent(in)  :: as, au
-  integer  , intent(in)  :: nl
-  real (dp), intent(out) :: res
-  integer                :: i
-  type (RNRQCD)          :: NRQCD
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
+  real (dp)          , intent(in)  :: au, as
+  integer            , intent(in)  :: nl
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (RNRQCD)                    :: NRQCD
+  type (ElectroWeak)               :: EW
   type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -276,8 +283,8 @@ subroutine f90Vk2sLL(nl, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(91.187_dp, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%Vk2sLL(as, au)
 
@@ -287,12 +294,13 @@ end subroutine f90Vk2sLL
 
 subroutine f90VkeffsLL(nl, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass;  implicit none
-  real (dp), intent(in)  :: as, au
-  integer  , intent(in)  :: nl
-  real (dp), intent(out) :: res
-  integer                :: i
-  type (RNRQCD)          :: NRQCD
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
+  real (dp)          , intent(in)  :: au, as
+  integer            , intent(in)  :: nl
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (RNRQCD)                    :: NRQCD
+  type (ElectroWeak)               :: EW
   type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -305,8 +313,8 @@ subroutine f90VkeffsLL(nl, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(91.187_dp, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%VkeffsLL(as, au)
 
@@ -327,12 +335,13 @@ end subroutine f90VcsLL
 
 subroutine f90VrsLL(nl, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass;  implicit none
-  real (dp), intent(in)  :: as, au
-  integer  , intent(in)  :: nl
-  real (dp), intent(out) :: res
-  integer                :: i
-  type (RNRQCD)          :: NRQCD
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
+  real (dp)          , intent(in)  :: as, au
+  integer            , intent(in)  :: nl
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (ElectroWeak)               :: EW
+  type (RNRQCD)                    :: NRQCD
   type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -345,8 +354,8 @@ subroutine f90VrsLL(nl, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(91.187_dp, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%VrsLL(as, au)
 
@@ -356,12 +365,13 @@ end subroutine f90VrsLL
 
 subroutine f90V2sLL(nl, ah, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass;  implicit none
-  real (dp), intent(in)  :: as, au, ah
-  integer  , intent(in)  :: nl
-  real (dp), intent(out) :: res
-  integer                :: i
-  type (RNRQCD)          :: NRQCD
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
+  real (dp)          , intent(in)  :: as, au, ah
+  integer            , intent(in)  :: nl
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (ElectroWeak)               :: EW
+  type (RNRQCD)                    :: NRQCD
   type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -374,8 +384,8 @@ subroutine f90V2sLL(nl, ah, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(91.187_dp, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%V2sLL(ah, as, au)
 
@@ -385,12 +395,13 @@ end subroutine f90V2sLL
 
 subroutine f90VceffsNNLL(nl, asNNLL, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass;  implicit none
-  real (dp), intent(in)  :: as, au, asNNLL
-  integer  , intent(in)  :: nl
-  real (dp), intent(out) :: res
-  integer                :: i
-  type (RNRQCD)          :: NRQCD
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
+  real (dp)          , intent(in)  :: as, au, asNNLL
+  integer            , intent(in)  :: nl
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (ElectroWeak)               :: EW
+  type (RNRQCD)                    :: NRQCD
   type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -403,8 +414,8 @@ subroutine f90VceffsNNLL(nl, asNNLL, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(91.187_dp, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%VceffsNNLL(asNNLL, as, au)
 
@@ -414,12 +425,13 @@ end subroutine f90VceffsNNLL
 
 subroutine f90XiNLL(nl, ah, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass;  implicit none
-  real (dp), intent(in)  :: ah, as, au
-  integer  , intent(in)  :: nl
-  real (dp), intent(out) :: res
-  integer                :: i
-  type (RNRQCD)          :: NRQCD
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
+  real (dp)          , intent(in)  :: ah, as, au
+  integer            , intent(in)  :: nl
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (ElectroWeak)               :: EW
+  type (RNRQCD)                    :: NRQCD
   type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -432,8 +444,8 @@ subroutine f90XiNLL(nl, ah, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(91.187_dp, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%XiNLL(ah, as, au)
 
@@ -443,12 +455,13 @@ end subroutine f90XiNLL
 
 subroutine f90XiNNLLmixUsoft(nl, ah, as, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass;  implicit none
-  real (dp), intent(in)  :: ah, as
-  integer  , intent(in)  :: nl
-  real (dp), intent(out) :: res
-  integer                :: i
-  type (RNRQCD)          :: NRQCD
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
+  real (dp)          , intent(in)  :: ah, as
+  integer            , intent(in)  :: nl
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (ElectroWeak)               :: EW
+  type (RNRQCD)                    :: NRQCD
   type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -461,8 +474,8 @@ subroutine f90XiNNLLmixUsoft(nl, ah, as, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(91.187_dp, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%XiNNLLmixUsoft(ah, as)
 
@@ -472,12 +485,13 @@ end subroutine f90XiNNLLmixUsoft
 
 subroutine f90MLLc2(nl, ah, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass;  implicit none
-  real (dp), intent(in)  :: ah, au
-  integer  , intent(in)  :: nl
-  real (dp), intent(out) :: res
-  integer                :: i
-  type (RNRQCD)          :: NRQCD
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
+  real (dp)          , intent(in)  :: ah, au
+  integer            , intent(in)  :: nl
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (ElectroWeak)               :: EW
+  type (RNRQCD)                    :: NRQCD
   type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -490,8 +504,8 @@ subroutine f90MLLc2(nl, ah, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(91.187_dp, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%MLLc2(ah, au)
 
@@ -501,12 +515,13 @@ end subroutine f90MLLc2
 
 subroutine f90MNLLc1(nl, ah, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass;  implicit none
-  real (dp), intent(in)  :: ah, as, au
-  integer  , intent(in)  :: nl
-  real (dp), intent(out) :: res
-  integer                :: i
-  type (RNRQCD)          :: NRQCD
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
+  real (dp)          , intent(in)  :: ah, as, au
+  integer            , intent(in)  :: nl
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (ElectroWeak)               :: EW
+  type (RNRQCD)                    :: NRQCD
   type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -519,8 +534,8 @@ subroutine f90MNLLc1(nl, ah, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(91.187_dp, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%MNLLc1(ah, as, au)
 
@@ -530,12 +545,13 @@ end subroutine f90MNLLc1
 
 subroutine f90MNLLplusNNLLnonmixc1(nl, ah, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass;  implicit none
-  real (dp), intent(in)  :: ah, as, au
-  integer  , intent(in)  :: nl
-  real (dp), intent(out) :: res
-  integer                :: i
-  type (RNRQCD)          :: NRQCD
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
+  real (dp)          , intent(in)  :: ah, as, au
+  integer            , intent(in)  :: nl
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (ElectroWeak)               :: EW
+  type (RNRQCD)                    :: NRQCD
   type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -548,8 +564,8 @@ subroutine f90MNLLplusNNLLnonmixc1(nl, ah, as, au, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(91.187_dp, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%MNLLplusNNLLnonmixc1(ah, as, au)
 
@@ -559,12 +575,13 @@ end subroutine f90MNLLplusNNLLnonmixc1
 
 subroutine f90MNNLLAllc1InclSoftMixLog(nl, ah, as, au, nu, hh, ss, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass;  implicit none
-  real (dp), intent(in)  :: ah, as, au, nu, hh, ss
-  integer  , intent(in)  :: nl
-  real (dp), intent(out) :: res
-  integer                :: i
-  type (RNRQCD)          :: NRQCD
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
+  real (dp)          , intent(in)  :: ah, as, au, nu, hh, ss
+  integer            , intent(in)  :: nl
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (ElectroWeak)               :: EW
+  type (RNRQCD)                    :: NRQCD
   type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -578,7 +595,7 @@ subroutine f90MNNLLAllc1InclSoftMixLog(nl, ah, as, au, nu, hh, ss, res)
   alphaMass = Running(5, 0, alphaAll, 0._dp)
 
   MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
+  NRQCD = RNRQCD(MSR, EW, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%MNNLLAllc1InclSoftMixLog(ah, as, au, nu, hh, ss)
 
@@ -599,12 +616,13 @@ end subroutine f90XiNNLLSoftMixLogc1
 
 subroutine f90XiNNLLnonmix(nl, ah, as, au, hh, ss, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass;  implicit none
-  real (dp), intent(in)  :: ah, as, au, hh, ss
-  integer  , intent(in)  :: nl
-  real (dp), intent(out) :: res
-  type (RNRQCD)          :: NRQCD
-  integer                :: i
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
+  real (dp)          , intent(in)  :: ah, as, au, hh, ss
+  integer            , intent(in)  :: nl
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (ElectroWeak)               :: EW
+  type (RNRQCD)                    :: NRQCD
   type (VFNSMSR)                   :: MSR
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -617,8 +635,8 @@ subroutine f90XiNNLLnonmix(nl, ah, as, au, hh, ss, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp)
   alphaMass = [ Running(5, 0, alphaAll, 0._dp), Running(5, 0, alphaAll, 0._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(91.187_dp, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, 'pole', 'analytic', 0._dp, 0, 0, 0._dp, 0._dp)
 
   res = NRQCD%XiNNLLnonmix(ah, as, au, hh, ss)
 
@@ -6003,13 +6021,14 @@ subroutine f90RQCD(str, runAlp, runMass, ordMass, order, ord1S, R1S, method, &
 lambda, gt, mZ, amZ, mT, h, Q, res)
 
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass; implicit none
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass; implicit none
 
   character (len = *), intent(in ) :: str, method
   integer            , intent(in ) :: order, runAlp, runMass, ordMass, ord1S
   real (dp)          , intent(in ) :: mZ, amZ, h, mT, Q, gt, lambda, R1S
   real (dp)          , intent(out) :: res
   integer                          :: i
+  type (ElectroWeak)               :: EW
   type (RNRQCD)                    :: NRQCD
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -6029,8 +6048,8 @@ lambda, gt, mZ, amZ, mT, h, Q, res)
   alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
   Running(5, runMass, alphaAll, 1._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, str, method, gt, ordMass, ord1S, R1S, lambda)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, str, method, gt, ordMass, ord1S, R1S, lambda)
 
   res = NRQCD%RQCD(order, h, Q)
 
@@ -6042,13 +6061,14 @@ subroutine f90Rexp(str, runAlp, runMass, ordMass, order, ord1S, R1S, method, &
 lambda, gt, mZ, amZ, mT, mu, nu, Q, res)
 
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass; implicit none
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass; implicit none
 
   character (len = *), intent(in ) :: str, method
   integer            , intent(in ) :: order, runAlp, runMass, ordMass, ord1S
   real (dp)          , intent(in ) :: mZ, amZ, mu, nu, mT, Q, gt, lambda, R1S
   real (dp)          , intent(out) :: res
   integer                          :: i
+  type (ElectroWeak)               :: EW
   type (RNRQCD)                    :: NRQCD
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -6068,8 +6088,8 @@ lambda, gt, mZ, amZ, mT, mu, nu, Q, res)
   alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
   Running(5, runMass, alphaAll, 1._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, str, method, gt, ordMass, ord1S, R1S, lambda)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, str, method, gt, ordMass, ord1S, R1S, lambda)
 
   res = NRQCD%RExp(order, mu, nu, Q)
 
@@ -6081,13 +6101,14 @@ subroutine f90Rmatched(str, runAlp, runMass, ordMass, order, ord1S, R1S, method,
 lambda, gt, mZ, amZ, mT, mu, nu, v1, v2, Q, res)
 
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass; implicit none
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass; implicit none
 
   character (len = *), intent(in ) :: str, method
   integer            , intent(in ) :: order, runAlp, runMass, ordMass, ord1S
   real (dp)          , intent(in ) :: mZ, amZ, mu, nu, mT, Q, gt, lambda, R1S, v1, v2
   real (dp)          , intent(out) :: res
   integer                          :: i
+  type (ElectroWeak)               :: EW
   type (RNRQCD)                    :: NRQCD
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -6107,8 +6128,8 @@ lambda, gt, mZ, amZ, mT, mu, nu, v1, v2, Q, res)
   alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
   Running(5, runMass, alphaAll, 1._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, str, method, gt, ordMass, ord1S, R1S, lambda)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, str, method, gt, ordMass, ord1S, R1S, lambda)
 
   res = NRQCD%Rmatched(order, mu, nu, v1, v2, Q)
 
@@ -6120,7 +6141,7 @@ subroutine f90RmatchedList(str, runAlp, runMass, ordMass, order, ord1S, R1S, &
 method, lambda, gt, mZ, amZ, mT, h, hnu, v1, v2, Q0, Q1, deltaQ, res)
 
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
-  use RunningClass; use VFNSMSRClass; implicit none
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass; implicit none
 
   character (len = *), intent(in ) :: str, method
   integer            , intent(in ) :: order, runAlp, runMass, ordMass, ord1S
@@ -6128,6 +6149,7 @@ method, lambda, gt, mZ, amZ, mT, h, hnu, v1, v2, Q0, Q1, deltaQ, res)
   lambda, R1S, v1, v2
   real (dp), dimension( 2,0:Floor( (Q1 - Q0)/deltaQ ) ), intent(out) :: res
   integer                          :: i
+  type (ElectroWeak)               :: EW
   type (RNRQCD)                    :: NRQCD
   type (Alpha)                     :: alphaAll
   type (Running), dimension(2)     :: alphaMass
@@ -6147,8 +6169,8 @@ method, lambda, gt, mZ, amZ, mT, h, hnu, v1, v2, Q0, Q1, deltaQ, res)
   alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
   Running(5, runMass, alphaAll, 1._dp) ]
 
-  MSR = VFNSMSR(alphaMass)
-  NRQCD = RNRQCD(MSR, str, method, gt, ordMass, ord1S, R1S, lambda)
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(mZ, 2.4952_dp, 0.23119_dp)
+  NRQCD = RNRQCD(MSR, EW, str, method, gt, ordMass, ord1S, R1S, lambda)
 
   res = NRQCD%RmatchedList(order, h, hnu, v1, v2, Q0, Q1, deltaQ)
 

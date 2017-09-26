@@ -340,6 +340,8 @@ lib/CMakeFiles/libCaliper.dir/TTbar.F90.o.requires: lib/CMakeFiles/libCaliper.di
 lib/CMakeFiles/libCaliper.dir/TTbar.F90.o: lib/CMakeFiles/libCaliper.dir/constants.mod.stamp
 lib/CMakeFiles/libCaliper.dir/TTbar.F90.o.requires: lib/CMakeFiles/libCaliper.dir/derigamma.mod.proxy
 lib/CMakeFiles/libCaliper.dir/TTbar.F90.o: lib/CMakeFiles/libCaliper.dir/derigamma.mod.stamp
+lib/CMakeFiles/libCaliper.dir/TTbar.F90.o.requires: lib/CMakeFiles/libCaliper.dir/electroweakclass.mod.proxy
+lib/CMakeFiles/libCaliper.dir/TTbar.F90.o: lib/CMakeFiles/libCaliper.dir/electroweakclass.mod.stamp
 lib/CMakeFiles/libCaliper.dir/TTbar.F90.o.requires: lib/CMakeFiles/libCaliper.dir/nrqcdclass.mod.proxy
 lib/CMakeFiles/libCaliper.dir/TTbar.F90.o: lib/CMakeFiles/libCaliper.dir/nrqcdclass.mod.stamp
 lib/CMakeFiles/libCaliper.dir/TTbar.F90.o.requires: lib/CMakeFiles/libCaliper.dir/runningclass.mod.proxy
