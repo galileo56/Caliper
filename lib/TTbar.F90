@@ -135,11 +135,14 @@ contains
 
 ! ccccccccccc
 
-  real (dp) function SigmaMatched(self, order, h, nu, v1, v2, Q)
+  real (dp) function SigmaMatched(self, order, h, hnu, v1, v2, Q)
     class (RNRQCD)     , intent(inout) :: self
     Integer            , intent(in)    :: order
-    real (dp)          , intent(in)    :: h, Q, nu, v1, v2
+    real (dp)          , intent(in)    :: h, Q, hnu, v1, v2
     real (dp)        , dimension(2)    :: EWfactors
+    real (dp)                          :: nu
+
+    nu = hnu * vStar(Q, self%m1S, self%gt)
 
     EWfactors    = self%EW%EWfactors(self%nf, Q)
     SigmaMatched = FPi * ( self%run%alphaQED(Q)/Q )**2 * EWfactors(1) * &
@@ -149,23 +152,23 @@ contains
 
 ! ccccccccccc
 
-  real (dp) function SigmaMatchedRad(self, order, h, nu, v1, v2, Q, x, theta)
+  real (dp) function SigmaMatchedRad(self, order, h, hnu, v1, v2, Q, x, theta)
     class (RNRQCD)     , intent(inout) :: self
     Integer            , intent(in)    :: order
-    real (dp)          , intent(in)    :: h, Q, nu, v1, v2, x, theta
+    real (dp)          , intent(in)    :: h, Q, hnu, v1, v2, x, theta
 
     SigmaMatchedRad = self%run%alphaQED(Q)/Pi2 * g(x, theta) * &
-    self%SigmaMatched( order, h, nu, v1, v2, Q * sqrt(1 - 2 * x) )
+    self%SigmaMatched( order, h, hnu, v1, v2, Q * sqrt(1 - 2 * x) )
 
   end function SigmaMatchedRad
 
 ! ccccccccccc
 
-  real (dp) function SigmaMatchedRadCum(self, order, h, nu, v1, v2, Q, &
+  real (dp) function SigmaMatchedRadCum(self, order, h, hnu, v1, v2, Q, &
   x0, x1, theta)
     class (RNRQCD)     , intent(inout) :: self
     Integer            , intent(in)    :: order
-    real (dp)          , intent(in)    :: h, Q, nu, v1, v2, x0, x1, theta
+    real (dp)          , intent(in)    :: h, Q, hnu, v1, v2, x0, x1, theta
     real (dp)                          :: abserr
 
     call DAdapt(integrand, x0, x1, 1, prec, prec, SigmaMatchedRadCum, &
@@ -176,7 +179,7 @@ contains
     real (dp) function integrand(x)
       real (dp), intent(in) :: x
 
-      integrand = self%SigmaMatchedRad(order, h, nu, v1, v2, Q, x, theta)
+      integrand = self%SigmaMatchedRad(order, h, hnu, v1, v2, Q, x, theta)
 
     end function integrand
 
@@ -184,11 +187,11 @@ contains
 
 ! ccccccccccc
 
-  real (dp) function SigmaMatchedRadConeCum(self, order, h, nu, v1, v2, Q, &
+  real (dp) function SigmaMatchedRadConeCum(self, order, h, hnu, v1, v2, Q, &
   x0, x1, theta, deltaTheta)
     class (RNRQCD)     , intent(inout) :: self
     Integer            , intent(in)    :: order
-    real (dp)          , intent(in)    :: h, Q, nu, v1, v2, x0, x1, theta, deltaTheta
+    real (dp)          , intent(in)    :: h, Q, hnu, v1, v2, x0, x1, theta, deltaTheta
     real (dp)                          :: abserr
 
     call DAdapt(integrand, x0, x1, 1, prec, prec, SigmaMatchedRadConeCum,&
@@ -199,7 +202,7 @@ contains
     real (dp) function integrand(x)
       real (dp), intent(in) :: x
 
-      integrand = self%SigmaMatchedRadCone(order, h, nu, v1, v2, Q, x, &
+      integrand = self%SigmaMatchedRadCone(order, h, hnu, v1, v2, Q, x, &
       theta, deltaTheta)
 
     end function integrand
@@ -208,14 +211,14 @@ contains
 
 ! ccccccccccc
 
-  real (dp) function SigmaMatchedRadCone(self, order, h, nu, v1, v2, Q, &
+  real (dp) function SigmaMatchedRadCone(self, order, h, hnu, v1, v2, Q, &
   x, theta, deltaTheta)
     class (RNRQCD)     , intent(inout) :: self
     Integer            , intent(in)    :: order
-    real (dp)          , intent(in)    :: h, Q, nu, v1, v2, x, theta, deltaTheta
+    real (dp)          , intent(in)    :: h, Q, hnu, v1, v2, x, theta, deltaTheta
 
     SigmaMatchedRadCone = self%run%alphaQED(Q) * gInt(x, theta, deltaTheta) * &
-    self%SigmaMatched( order, h, nu, v1, v2, Q * sqrt(1 - 2 * x) )/Pi2
+    self%SigmaMatched( order, h, hnu, v1, v2, Q * sqrt(1 - 2 * x) )/Pi2
 
   end function SigmaMatchedRadCone
 
