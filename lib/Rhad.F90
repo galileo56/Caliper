@@ -318,7 +318,7 @@ module SigmaClass
     real (dp)          , intent(in) :: mu, Q
     character (len = *), intent(in) :: current
 
-    SigmaMass = 4 * Pi * ( self%run%alphaQED(mu)/Q )**2 * &
+    SigmaMass = 4 * Pi * ( self%run%alphaQED(Q)/Q )**2 * &
     self%RhadMass(current, order, mu, Q) * EWSum
 
   end function SigmaMass
