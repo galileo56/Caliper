@@ -147,24 +147,24 @@
 :Evaluate:  mmfromMSR::usage = "mmfromMSR[type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
 :Evaluate:  Rhad::usage = "Rhad[scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
 :Evaluate:  SigmaHad::usage = "SigmaHad[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
-:Evaluate:  SigmaRadiative::usage = "SigmaRadiative[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x, theta] computes the ISR massless total hadronic cross section."
-:Evaluate:  SigmaRadiativeCum::usage = "SigmaRadiativeCum[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, theta] computes the ISR massless total hadronic cross section."
-:Evaluate:  SigmaRadiativeCone::usage = "SigmaRadiativeCone[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x, theta, deltaTheta] computes the ISR massless total hadronic cross section."
-:Evaluate:  SigmaRadiativeConeCum::usage = "SigmaRadiativeConeCum[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, theta, deltaTheta] computes the ISR massless total hadronic cross section."
+:Evaluate:  SigmaRad::usage = "SigmaRad[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x, theta] computes the ISR massless total hadronic cross section."
+:Evaluate:  SigmaRadCum::usage = "SigmaRadCum[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, theta] computes the ISR massless total hadronic cross section."
+:Evaluate:  SigmaRadCone::usage = "SigmaRadCone[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x, theta, deltaTheta] computes the ISR massless total hadronic cross section."
+:Evaluate:  SigmaRadConeCum::usage = "SigmaRadConeCum[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, theta, deltaTheta] computes the ISR massless total hadronic cross section."
 :Evaluate:  RhadCoefs::usage = "RhadCoefs[nf] computes the massless total hadronic cross section series coefficients."
 :Evaluate:  RhadMass::usage = "RhadMass[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, mu, Q] computes the massive total hadronic cross section."
 :Evaluate:  SigmaMass::usage = "SigmaMass[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massive total hadronic cross section."
-:Evaluate:  SigmaMassRadiative::usage = "SigmaMassRadiative[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, eH, Q, x, theta] computes the ISR massive total hadronic cross section."
-:Evaluate:  SigmaMassRadiativeCum::usage = "SigmaMassRadiativeCum[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, theta] computes the ISR massive total hadronic cross section."
-:Evaluate:  SigmaMassRadiativeCone::usage = "SigmaMassRadiativeCone[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, eH, Q, x, theta, deltaTheta] computes the ISR massive total hadronic cross section."
-:Evaluate:  SigmaMassRadiativeConeCum::usage = "SigmaMassRadiativeConeCum[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, theta, deltaTheta] computes the ISR massive total hadronic cross section."
+:Evaluate:  SigmaMassRad::usage = "SigmaMassRad[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, eH, Q, x, theta] computes the ISR massive total hadronic cross section."
+:Evaluate:  SigmaMassRadCum::usage = "SigmaMassRadCum[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, theta] computes the ISR massive total hadronic cross section."
+:Evaluate:  SigmaMassRadCone::usage = "SigmaMassRadCone[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, eH, Q, x, theta, deltaTheta] computes the ISR massive total hadronic cross section."
+:Evaluate:  SigmaMassRadConeCum::usage = "SigmaMassRadConeCum[scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, theta, deltaTheta] computes the ISR massive total hadronic cross section."
 :Evaluate:  RQCD::usage = "RQCD[scheme, runAlpha, runMass, ordMass, ord1S, R1S, order, method, lambda, gt, Mz, aMz, mT, mu, Q] computes the massive total hadronic cross section for an unstable top quark."
 :Evaluate:  RExp::usage = "RExp[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, aMz, mT, mu, nu, Q] computes the threshold-expaded massive total hadronic cross section for an unstable top quark."
 :Evaluate:  SigmaMatched::usage = "Rmatched[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q] computes the matched massive total hadronic cross section for an unstable top quark."
-:Evaluate:  SigmaMatchedRadiativeCum::usage = "SigmaMatchedRadiativeCum[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x0, x1, theta] computes the ISR matched massive total hadronic cross section for an unstable top quark."
-:Evaluate:  SigmaMatchedRadiative::usage = "SigmaMatchedRadiative[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x, theta] computes the ISR matched massive total hadronic cross section for an unstable top quark."
-:Evaluate:  SigmaMatchedRadiativeCone::usage = "SigmaMatchedRadiativeCone[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x, theta, deltaTheta] computes the ISR matched massive total hadronic cross section for an unstable top quark."
-:Evaluate:  SigmaMatchedRadiativeConeCum::usage = "SigmaMatchedRadiativeConeCum[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x0, x1, theta, deltaTheta] computes the ISR matched massive total hadronic cross section for an unstable top quark."
+:Evaluate:  SigmaMatchedRadCum::usage = "SigmaMatchedRadCum[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x0, x1, theta] computes the ISR matched massive total hadronic cross section for an unstable top quark."
+:Evaluate:  SigmaMatchedRad::usage = "SigmaMatchedRad[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x, theta] computes the ISR matched massive total hadronic cross section for an unstable top quark."
+:Evaluate:  SigmaMatchedRadCone::usage = "SigmaMatchedRadCone[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x, theta, deltaTheta] computes the ISR matched massive total hadronic cross section for an unstable top quark."
+:Evaluate:  SigmaMatchedRadConeCum::usage = "SigmaMatchedRadConeCum[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x0, x1, theta, deltaTheta] computes the ISR matched massive total hadronic cross section for an unstable top quark."
 :Evaluate:  Rmatched::usage = "Rmatched[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, aMz, mT, mu, nu, v1, v2, Q] computes the matched massive total hadronic cross section for an unstable top quark."
 :Evaluate:  RmatchedList::usage = "RmatchedList[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, aMz, mT, h, hnu, v1, v2, Q0, Q1, deltaQ] computes the matched massive total hadronic cross section for an unstable top quark."
 :Evaluate:  LambdaQCD::usage = "LambdaQCD[scheme, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
@@ -2438,8 +2438,8 @@
 :End:
 
 :Begin:
-:Function:      sigmaradiative
-:Pattern:       SigmaRadiative[scheme_, current_, orderAlpha_, runAlpha_, order_,
+:Function:      sigmarad
+:Pattern:       SigmaRad[scheme_, current_, orderAlpha_, runAlpha_, order_,
                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,
                 muB_, mC_, muC_, eH_, Q_, x_, theta_]
 :Arguments:     {scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,
@@ -2452,8 +2452,8 @@
 :End:
 
 :Begin:
-:Function:      sigmaradiativecum
-:Pattern:       SigmaRadiativeCum[scheme_, current_, orderAlpha_, runAlpha_, order_,
+:Function:      sigmaradcum
+:Pattern:       SigmaRadCum[scheme_, current_, orderAlpha_, runAlpha_, order_,
                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,
                 muB_, mC_, muC_, eH_, Q_, x0_, x1_, theta_]
 :Arguments:     {scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,
@@ -2466,8 +2466,8 @@
 :End:
 
 :Begin:
-:Function:      sigmaradiativecone
-:Pattern:       SigmaRadiativeCone[scheme_, current_, orderAlpha_, runAlpha_, order_,
+:Function:      sigmaradcone
+:Pattern:       SigmaRadCone[scheme_, current_, orderAlpha_, runAlpha_, order_,
                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,
                 muB_, mC_, muC_, eH_, Q_, x_, theta_, deltaTheta_]
 :Arguments:     {scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,
@@ -2480,8 +2480,8 @@
 :End:
 
 :Begin:
-:Function:      sigmaradiativeconecum
-:Pattern:       SigmaRadiativeConeCum[scheme_, current_, orderAlpha_, runAlpha_, order_,
+:Function:      sigmaradconecum
+:Pattern:       SigmaRadConeCum[scheme_, current_, orderAlpha_, runAlpha_, order_,
                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,
                 muB_, mC_, muC_, eH_, Q_, x0_, x1_, theta_, deltaTheta_]
 :Arguments:     {scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,
@@ -2529,8 +2529,8 @@
 :End:
 
 :Begin:
-:Function:      sigmamassradiative
-:Pattern:       SigmaMassRadiative[scheme_, current_, orderAlpha_, runAlpha_,
+:Function:      sigmamassrad
+:Pattern:       SigmaMassRad[scheme_, current_, orderAlpha_, runAlpha_,
                 runMass_, order_, nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_,
                 mT_, muT_, mB_, muB_, mC_, muC_, eH_, Q_, x_, theta_]
 :Arguments:     {scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz,
@@ -2543,8 +2543,8 @@
 :End:
 
 :Begin:
-:Function:      sigmamassradiativecum
-:Pattern:       SigmaMassRadiativeCum[scheme_, current_, orderAlpha_, runAlpha_,
+:Function:      sigmamassradcum
+:Pattern:       SigmaMassRadCum[scheme_, current_, orderAlpha_, runAlpha_,
                 runMass_, order_, nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_,
                 mT_, muT_, mB_, muB_, mC_, muC_, eH_, Q_, x0_, x1_, theta_]
 :Arguments:     {scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz,
@@ -2557,8 +2557,8 @@
 :End:
 
 :Begin:
-:Function:      sigmamassradiativecone
-:Pattern:       SigmaMassRadiativeCone[scheme_, current_, orderAlpha_, runAlpha_,
+:Function:      sigmamassradcone
+:Pattern:       SigmaMassRadCone[scheme_, current_, orderAlpha_, runAlpha_,
                 runMass_, order_, nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_,
                 mT_, muT_, mB_, muB_, mC_, muC_, eH_, Q_, x_, theta_, deltaTheta_]
 :Arguments:     {scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz,
@@ -2571,8 +2571,8 @@
 :End:
 
 :Begin:
-:Function:      sigmamassradiativeconecum
-:Pattern:       SigmaMassRadiativeConeCum[scheme_, current_, orderAlpha_, runAlpha_,
+:Function:      sigmamassradconecum
+:Pattern:       SigmaMassRadConeCum[scheme_, current_, orderAlpha_, runAlpha_,
                 runMass_, order_, nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_,
                 mT_, muT_, mB_, muB_, mC_, muC_, eH_, Q_, x0_, x1_, theta_,
                 deltaTheta_]
@@ -2634,8 +2634,8 @@
 :End:
 
 :Begin:
-:Function:      sigmamatchedradiative
-:Pattern:       SigmaMatchedRadiative[scheme_, runAlpha_, runMass_, ordMass_,
+:Function:      sigmamatchedrad
+:Pattern:       SigmaMatchedRad[scheme_, runAlpha_, runMass_, ordMass_,
                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,
                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x_, theta_]
 :Arguments:     {scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,
@@ -2648,8 +2648,8 @@
 :End:
 
 :Begin:
-:Function:      sigmamatchedradiativecum
-:Pattern:       SigmaMatchedRadiativeCum[scheme_, runAlpha_, runMass_, ordMass_,
+:Function:      sigmamatchedradcum
+:Pattern:       SigmaMatchedRadCum[scheme_, runAlpha_, runMass_, ordMass_,
                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,
                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x0_, x1_,
                 theta_]
@@ -2663,8 +2663,8 @@
 :End:
 
 :Begin:
-:Function:      sigmamatchedradiativecone
-:Pattern:       SigmaMatchedRadiativeCone[scheme_, runAlpha_, runMass_, ordMass_,
+:Function:      sigmamatchedradcone
+:Pattern:       SigmaMatchedRadCone[scheme_, runAlpha_, runMass_, ordMass_,
                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,
                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x_, theta_,
                 deltaTheta_]
@@ -2678,8 +2678,8 @@
 :End:
 
 :Begin:
-:Function:      sigmamatchedradiativeconecum
-:Pattern:       SigmaMatchedRadiativeConeCum[scheme_, runAlpha_, runMass_, ordMass_,
+:Function:      sigmamatchedradconecum
+:Pattern:       SigmaMatchedRadConeCum[scheme_, runAlpha_, runMass_, ordMass_,
                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,
                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x0_, x1_,
                 theta_,deltaTheta_]
@@ -6223,53 +6223,53 @@ double mC, double muC, double mu, double Q){
   return res;
 }
 
-extern double f90sigmaradiative_(char const* str, char const* curr, int* orderAlpha,
+extern double f90sigmarad_(char const* str, char const* curr, int* orderAlpha,
 int* runAlpha, int* order, int* nf, double* Mz, double* gammaZ, double* thetaW,
 double* aMz, double* aMzQED, double* mT, double* muT, double* mB, double* muB,
 double* mC, double* muC, double* eH, double * Q, double* x, double* theta,
 double* res);
 
-static double sigmaradiative(char const* str, char const* curr, int orderAlpha,
+static double sigmarad(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int order, int nf, double Mz, double gammaZ, double thetaW,
 double aMz, double aMzQED, double mT, double muT, double mB, double muB,
 double mC, double muC, double eH, double Q, double x, double theta){
 
    double res;
 
-   f90sigmaradiative_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
+   f90sigmarad_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
    &gammaZ, &thetaW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &eH,
    &Q, &x, &theta, &res);
 
   return res;
 }
 
-extern double f90sigmaradiativecum_(char const* str, char const* curr, int* orderAlpha,
+extern double f90sigmaradcum_(char const* str, char const* curr, int* orderAlpha,
 int* runAlpha, int* order, int* nf, double* Mz, double* gammaZ, double* thetaW,
 double* aMz, double* aMzQED, double* mT, double* muT, double* mB, double* muB,
 double* mC, double* muC, double* eH, double * Q, double* x0, double* x1, double* theta,
 double* res);
 
-static double sigmaradiativecum(char const* str, char const* curr, int orderAlpha,
+static double sigmaradcum(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int order, int nf, double Mz, double gammaZ, double thetaW,
 double aMz, double aMzQED, double mT, double muT, double mB, double muB,
 double mC, double muC, double eH, double Q, double x0, double x1, double theta){
 
    double res;
 
-   f90sigmaradiativecum_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
+   f90sigmaradcum_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
    &gammaZ, &thetaW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &eH,
    &Q, &x0, &x1, &theta, &res);
 
   return res;
 }
 
-extern double f90sigmaradiativecone_(char const* str, char const* curr, int* orderAlpha,
+extern double f90sigmaradcone_(char const* str, char const* curr, int* orderAlpha,
 int* runAlpha, int* order, int* nf, double* Mz, double* gammaZ, double* thetaW,
 double* aMz, double* aMzQED, double* mT, double* muT, double* mB, double* muB,
 double* mC, double* muC, double* eH, double * Q, double* x, double* theta,
 double* deltaTheta, double* res);
 
-static double sigmaradiativecone(char const* str, char const* curr, int orderAlpha,
+static double sigmaradcone(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int order, int nf, double Mz, double gammaZ, double thetaW,
 double aMz, double aMzQED, double mT, double muT, double mB, double muB,
 double mC, double muC, double eH, double Q, double x, double theta,
@@ -6277,20 +6277,20 @@ double deltaTheta){
 
    double res;
 
-   f90sigmaradiativecone_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
+   f90sigmaradcone_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
    &gammaZ, &thetaW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &eH,
    &Q, &x, &theta, &deltaTheta, &res);
 
   return res;
 }
 
-extern double f90sigmaradiativeconecum_(char const* str, char const* curr,
+extern double f90sigmaradconecum_(char const* str, char const* curr,
 int* orderAlpha, int* runAlpha, int* order, int* nf, double* Mz, double* gammaZ,
 double* thetaW, double* aMz, double* aMzQED, double* mT, double* muT, double* mB,
 double* muB, double* mC, double* muC, double* eH, double * Q, double* theta,
 double* x0, double* x1, double* deltaTheta, double* res);
 
-static double sigmaradiativeconecum(char const* str, char const* curr, int orderAlpha,
+static double sigmaradconecum(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int order, int nf, double Mz, double gammaZ, double thetaW,
 double aMz, double aMzQED, double mT, double muT, double mB, double muB,
 double mC, double muC, double eH, double Q, double x0, double x1, double theta,
@@ -6298,7 +6298,7 @@ double deltaTheta){
 
    double res;
 
-   f90sigmaradiativeconecum_(str, curr, &orderAlpha, &runAlpha, &order, &nf,
+   f90sigmaradconecum_(str, curr, &orderAlpha, &runAlpha, &order, &nf,
    &Mz, &gammaZ, &thetaW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &eH,
    &Q, &x0, &x1, &theta, &deltaTheta, &res);
 
@@ -6352,33 +6352,33 @@ double muB, double mC, double muC, double mu, double Q){
  return res;
 }
 
-extern double f90sigmamassradiative_(char const* str, char const* curr, int* orderAlpha,
+extern double f90sigmamassrad_(char const* str, char const* curr, int* orderAlpha,
 int* runAlpha, int* runMass, int* order, int* nf, double* Mz, double* gammaZ,
 double* sinW, double* aMz, double* aMzQED, double* mT, double* muT, double* mB,
 double* muB, double* mC, double* muC, double* eH, double * Q, double* x,
 double* theta, double* res);
 
-static double sigmamassradiative(char const* str, char const* curr, int orderAlpha,
+static double sigmamassrad(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int runMass, int order, int nf, double Mz, double gammaZ,
 double sinW, double aMz, double aMzQED, double mT, double muT, double mB,
 double muB, double mC, double muC, double eH, double Q, double x, double theta){
 
   double res;
 
-  f90sigmamassradiative_(str, curr, &orderAlpha, &runAlpha, &runMass, &order,
+  f90sigmamassrad_(str, curr, &orderAlpha, &runAlpha, &runMass, &order,
   &nf, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &eH,
   &Q, &x, &theta, &res);
 
  return res;
 }
 
-extern double f90sigmamassradiativecum_(char const* str, char const* curr, int* orderAlpha,
+extern double f90sigmamassradcum_(char const* str, char const* curr, int* orderAlpha,
 int* runAlpha, int* runMass, int* order, int* nf, double* Mz, double* gammaZ,
 double* sinW, double* aMz, double* aMzQED, double* mT, double* muT, double* mB,
 double* muB, double* mC, double* muC, double* eH, double * Q, double* x0,
 double* x1, double* theta, double* res);
 
-static double sigmamassradiativecum(char const* str, char const* curr, int orderAlpha,
+static double sigmamassradcum(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int runMass, int order, int nf, double Mz, double gammaZ,
 double sinW, double aMz, double aMzQED, double mT, double muT, double mB,
 double muB, double mC, double muC, double eH, double Q, double x0, double x1,
@@ -6386,20 +6386,20 @@ double theta){
 
   double res;
 
-  f90sigmamassradiativecum_(str, curr, &orderAlpha, &runAlpha, &runMass, &order,
+  f90sigmamassradcum_(str, curr, &orderAlpha, &runAlpha, &runMass, &order,
   &nf, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &eH,
   &Q, &x0, &x1, &theta, &res);
 
  return res;
 }
 
-extern double f90sigmamassradiativecone_(char const* str, char const* curr, int* orderAlpha,
+extern double f90sigmamassradcone_(char const* str, char const* curr, int* orderAlpha,
 int* runAlpha, int* runMass, int* order, int* nf, double* Mz, double* gammaZ,
 double* sinW, double* aMz, double* aMzQED, double* mT, double* muT, double* mB,
 double* muB, double* mC, double* muC, double* eH, double * Q, double* x,
 double* theta, double* deltaTheta, double* res);
 
-static double sigmamassradiativecone(char const* str, char const* curr, int orderAlpha,
+static double sigmamassradcone(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int runMass, int order, int nf, double Mz, double gammaZ,
 double sinW, double aMz, double aMzQED, double mT, double muT, double mB,
 double muB, double mC, double muC, double eH, double Q, double x, double theta,
@@ -6407,21 +6407,21 @@ double deltaTheta){
 
   double res;
 
-  f90sigmamassradiativecone_(str, curr, &orderAlpha, &runAlpha, &runMass, &order,
+  f90sigmamassradcone_(str, curr, &orderAlpha, &runAlpha, &runMass, &order,
   &nf, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &eH,
   &Q, &x, &theta, &deltaTheta, &res);
 
  return res;
 }
 
-extern double f90sigmamassradiativeconecum_(char const* str, char const* curr,
+extern double f90sigmamassradconecum_(char const* str, char const* curr,
 int* orderAlpha, int* runAlpha, int* runMass, int* order, int* nf, double* Mz,
 double* gammaZ, double* sinW, double* aMz, double* aMzQED, double* mT,
 double* muT, double* mB, double* muB, double* mC, double* muC, double* eH,
 double * Q, double* x0, double* x1, double* theta, double* deltaTheta,
 double* res);
 
-static double sigmamassradiativeconecum(char const* str, char const* curr, int orderAlpha,
+static double sigmamassradconecum(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int runMass, int order, int nf, double Mz, double gammaZ,
 double sinW, double aMz, double aMzQED, double mT, double muT, double mB,
 double muB, double mC, double muC, double eH, double Q, double x0, double x1,
@@ -6429,7 +6429,7 @@ double theta, double deltaTheta){
 
   double res;
 
-  f90sigmamassradiativeconecum_(str, curr, &orderAlpha, &runAlpha, &runMass, &order,
+  f90sigmamassradconecum_(str, curr, &orderAlpha, &runAlpha, &runMass, &order,
   &nf, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &eH,
   &Q, &x0, &x1, &theta, &deltaTheta, &res);
 
@@ -6508,13 +6508,13 @@ double mu, double nu, double v1, double v2, double Q){
  return res;
 }
 
-extern double f90sigmamatchedradiative_(char const* str, int* runAlpha,
+extern double f90sigmamatchedrad_(char const* str, int* runAlpha,
 int* runMass, int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
 double* lambda, double* gt, double* Mz, double* gammaZ, double* sinW,
 double* aMz, double* aMzQED, double* mT, double* mu, double* nu, double* v1,
 double* v2, double* Q, double* x, double* theta, double* res);
 
-static double sigmamatchedradiative(char const* str, int runAlpha, int runMass,
+static double sigmamatchedrad(char const* str, int runAlpha, int runMass,
 int ordMass, int order, int ord1S, double R1S, char const* method, double lambda,
 double gt, double Mz, double gammaZ, double sinW, double aMz, double aMzQED,
 double mT, double mu, double nu, double v1, double v2, double Q, double x,
@@ -6522,20 +6522,20 @@ double theta){
 
   double res;
 
-  f90sigmamatchedradiative_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
+  f90sigmamatchedrad_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
   &R1S, method, &lambda, &gt, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &mu, &nu,
   &v1, &v2, &Q, &x, &theta, &res);
 
  return res;
 }
 
-extern double f90sigmamatchedradiativecum_(char const* str, int* runAlpha,
+extern double f90sigmamatchedradcum_(char const* str, int* runAlpha,
 int* runMass, int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
 double* lambda, double* gt, double* Mz, double* gammaZ, double* sinW,
 double* aMz, double* aMzQED, double* mT, double* mu, double* nu, double* v1,
 double* v2, double* Q, double* x0, double* x1, double* theta, double* res);
 
-static double sigmamatchedradiativecum(char const* str, int runAlpha, int runMass,
+static double sigmamatchedradcum(char const* str, int runAlpha, int runMass,
 int ordMass, int order, int ord1S, double R1S, char const* method, double lambda,
 double gt, double Mz, double gammaZ, double sinW, double aMz, double aMzQED,
 double mT, double mu, double nu, double v1, double v2, double Q, double x0,
@@ -6543,20 +6543,20 @@ double x1, double theta){
 
   double res;
 
-  f90sigmamatchedradiativecum_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
+  f90sigmamatchedradcum_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
   &R1S, method, &lambda, &gt, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &mu, &nu,
   &v1, &v2, &Q, &x0, &x1, &theta, &res);
 
  return res;
 }
 
-extern double f90sigmamatchedradiativecone_(char const* str, int* runAlpha,
+extern double f90sigmamatchedradcone_(char const* str, int* runAlpha,
 int* runMass, int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
 double* lambda, double* gt, double* Mz, double* gammaZ, double* sinW,
 double* aMz, double* aMzQED, double* mT, double* mu, double* nu, double* v1,
 double* v2, double* Q, double* x, double* theta, double* deltatheta, double* res);
 
-static double sigmamatchedradiativecone(char const* str, int runAlpha, int runMass,
+static double sigmamatchedradcone(char const* str, int runAlpha, int runMass,
 int ordMass, int order, int ord1S, double R1S, char const* method, double lambda,
 double gt, double Mz, double gammaZ, double sinW, double aMz, double aMzQED,
 double mT, double mu, double nu, double v1, double v2, double Q, double x,
@@ -6564,21 +6564,21 @@ double theta, double deltatheta){
 
   double res;
 
-  f90sigmamatchedradiativecone_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
+  f90sigmamatchedradcone_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
   &R1S, method, &lambda, &gt, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &mu, &nu,
   &v1, &v2, &Q, &x, &theta, &deltatheta, &res);
 
  return res;
 }
 
-extern double f90sigmamatchedradiativeconecum_(char const* str, int* runAlpha,
+extern double f90sigmamatchedradconecum_(char const* str, int* runAlpha,
 int* runMass, int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
 double* lambda, double* gt, double* Mz, double* gammaZ, double* sinW,
 double* aMz, double* aMzQED, double* mT, double* mu, double* nu, double* v1,
 double* v2, double* Q, double* x0, double* x1, double* theta, double* deltatheta,
 double* res);
 
-static double sigmamatchedradiativeconecum(char const* str, int runAlpha, int runMass,
+static double sigmamatchedradconecum(char const* str, int runAlpha, int runMass,
 int ordMass, int order, int ord1S, double R1S, char const* method, double lambda,
 double gt, double Mz, double gammaZ, double sinW, double aMz, double aMzQED,
 double mT, double mu, double nu, double v1, double v2, double Q, double x0,
@@ -6586,7 +6586,7 @@ double x1, double theta, double deltatheta){
 
   double res;
 
-  f90sigmamatchedradiativeconecum_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
+  f90sigmamatchedradconecum_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
   &R1S, method, &lambda, &gt, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &mu, &nu,
   &v1, &v2, &Q, &x0, &x1, &theta, &deltatheta, &res);
 

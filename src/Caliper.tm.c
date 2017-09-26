@@ -3744,53 +3744,53 @@ double mC, double muC, double mu, double Q){
   return res;
 }
 
-extern double f90sigmaradiative_(char const* str, char const* curr, int* orderAlpha,
+extern double f90sigmarad_(char const* str, char const* curr, int* orderAlpha,
 int* runAlpha, int* order, int* nf, double* Mz, double* gammaZ, double* thetaW,
 double* aMz, double* aMzQED, double* mT, double* muT, double* mB, double* muB,
 double* mC, double* muC, double* eH, double * Q, double* x, double* theta,
 double* res);
 
-static double sigmaradiative(char const* str, char const* curr, int orderAlpha,
+static double sigmarad(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int order, int nf, double Mz, double gammaZ, double thetaW,
 double aMz, double aMzQED, double mT, double muT, double mB, double muB,
 double mC, double muC, double eH, double Q, double x, double theta){
 
    double res;
 
-   f90sigmaradiative_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
+   f90sigmarad_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
    &gammaZ, &thetaW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &eH,
    &Q, &x, &theta, &res);
 
   return res;
 }
 
-extern double f90sigmaradiativecum_(char const* str, char const* curr, int* orderAlpha,
+extern double f90sigmaradcum_(char const* str, char const* curr, int* orderAlpha,
 int* runAlpha, int* order, int* nf, double* Mz, double* gammaZ, double* thetaW,
 double* aMz, double* aMzQED, double* mT, double* muT, double* mB, double* muB,
 double* mC, double* muC, double* eH, double * Q, double* x0, double* x1, double* theta,
 double* res);
 
-static double sigmaradiativecum(char const* str, char const* curr, int orderAlpha,
+static double sigmaradcum(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int order, int nf, double Mz, double gammaZ, double thetaW,
 double aMz, double aMzQED, double mT, double muT, double mB, double muB,
 double mC, double muC, double eH, double Q, double x0, double x1, double theta){
 
    double res;
 
-   f90sigmaradiativecum_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
+   f90sigmaradcum_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
    &gammaZ, &thetaW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &eH,
    &Q, &x0, &x1, &theta, &res);
 
   return res;
 }
 
-extern double f90sigmaradiativecone_(char const* str, char const* curr, int* orderAlpha,
+extern double f90sigmaradcone_(char const* str, char const* curr, int* orderAlpha,
 int* runAlpha, int* order, int* nf, double* Mz, double* gammaZ, double* thetaW,
 double* aMz, double* aMzQED, double* mT, double* muT, double* mB, double* muB,
 double* mC, double* muC, double* eH, double * Q, double* x, double* theta,
 double* deltaTheta, double* res);
 
-static double sigmaradiativecone(char const* str, char const* curr, int orderAlpha,
+static double sigmaradcone(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int order, int nf, double Mz, double gammaZ, double thetaW,
 double aMz, double aMzQED, double mT, double muT, double mB, double muB,
 double mC, double muC, double eH, double Q, double x, double theta,
@@ -3798,20 +3798,20 @@ double deltaTheta){
 
    double res;
 
-   f90sigmaradiativecone_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
+   f90sigmaradcone_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
    &gammaZ, &thetaW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &eH,
    &Q, &x, &theta, &deltaTheta, &res);
 
   return res;
 }
 
-extern double f90sigmaradiativeconecum_(char const* str, char const* curr,
+extern double f90sigmaradconecum_(char const* str, char const* curr,
 int* orderAlpha, int* runAlpha, int* order, int* nf, double* Mz, double* gammaZ,
 double* thetaW, double* aMz, double* aMzQED, double* mT, double* muT, double* mB,
 double* muB, double* mC, double* muC, double* eH, double * Q, double* theta,
 double* x0, double* x1, double* deltaTheta, double* res);
 
-static double sigmaradiativeconecum(char const* str, char const* curr, int orderAlpha,
+static double sigmaradconecum(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int order, int nf, double Mz, double gammaZ, double thetaW,
 double aMz, double aMzQED, double mT, double muT, double mB, double muB,
 double mC, double muC, double eH, double Q, double x0, double x1, double theta,
@@ -3819,7 +3819,7 @@ double deltaTheta){
 
    double res;
 
-   f90sigmaradiativeconecum_(str, curr, &orderAlpha, &runAlpha, &order, &nf,
+   f90sigmaradconecum_(str, curr, &orderAlpha, &runAlpha, &order, &nf,
    &Mz, &gammaZ, &thetaW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &eH,
    &Q, &x0, &x1, &theta, &deltaTheta, &res);
 
@@ -3873,33 +3873,33 @@ double muB, double mC, double muC, double mu, double Q){
  return res;
 }
 
-extern double f90sigmamassradiative_(char const* str, char const* curr, int* orderAlpha,
+extern double f90sigmamassrad_(char const* str, char const* curr, int* orderAlpha,
 int* runAlpha, int* runMass, int* order, int* nf, double* Mz, double* gammaZ,
 double* sinW, double* aMz, double* aMzQED, double* mT, double* muT, double* mB,
 double* muB, double* mC, double* muC, double* eH, double * Q, double* x,
 double* theta, double* res);
 
-static double sigmamassradiative(char const* str, char const* curr, int orderAlpha,
+static double sigmamassrad(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int runMass, int order, int nf, double Mz, double gammaZ,
 double sinW, double aMz, double aMzQED, double mT, double muT, double mB,
 double muB, double mC, double muC, double eH, double Q, double x, double theta){
 
   double res;
 
-  f90sigmamassradiative_(str, curr, &orderAlpha, &runAlpha, &runMass, &order,
+  f90sigmamassrad_(str, curr, &orderAlpha, &runAlpha, &runMass, &order,
   &nf, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &eH,
   &Q, &x, &theta, &res);
 
  return res;
 }
 
-extern double f90sigmamassradiativecum_(char const* str, char const* curr, int* orderAlpha,
+extern double f90sigmamassradcum_(char const* str, char const* curr, int* orderAlpha,
 int* runAlpha, int* runMass, int* order, int* nf, double* Mz, double* gammaZ,
 double* sinW, double* aMz, double* aMzQED, double* mT, double* muT, double* mB,
 double* muB, double* mC, double* muC, double* eH, double * Q, double* x0,
 double* x1, double* theta, double* res);
 
-static double sigmamassradiativecum(char const* str, char const* curr, int orderAlpha,
+static double sigmamassradcum(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int runMass, int order, int nf, double Mz, double gammaZ,
 double sinW, double aMz, double aMzQED, double mT, double muT, double mB,
 double muB, double mC, double muC, double eH, double Q, double x0, double x1,
@@ -3907,20 +3907,20 @@ double theta){
 
   double res;
 
-  f90sigmamassradiativecum_(str, curr, &orderAlpha, &runAlpha, &runMass, &order,
+  f90sigmamassradcum_(str, curr, &orderAlpha, &runAlpha, &runMass, &order,
   &nf, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &eH,
   &Q, &x0, &x1, &theta, &res);
 
  return res;
 }
 
-extern double f90sigmamassradiativecone_(char const* str, char const* curr, int* orderAlpha,
+extern double f90sigmamassradcone_(char const* str, char const* curr, int* orderAlpha,
 int* runAlpha, int* runMass, int* order, int* nf, double* Mz, double* gammaZ,
 double* sinW, double* aMz, double* aMzQED, double* mT, double* muT, double* mB,
 double* muB, double* mC, double* muC, double* eH, double * Q, double* x,
 double* theta, double* deltaTheta, double* res);
 
-static double sigmamassradiativecone(char const* str, char const* curr, int orderAlpha,
+static double sigmamassradcone(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int runMass, int order, int nf, double Mz, double gammaZ,
 double sinW, double aMz, double aMzQED, double mT, double muT, double mB,
 double muB, double mC, double muC, double eH, double Q, double x, double theta,
@@ -3928,21 +3928,21 @@ double deltaTheta){
 
   double res;
 
-  f90sigmamassradiativecone_(str, curr, &orderAlpha, &runAlpha, &runMass, &order,
+  f90sigmamassradcone_(str, curr, &orderAlpha, &runAlpha, &runMass, &order,
   &nf, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &eH,
   &Q, &x, &theta, &deltaTheta, &res);
 
  return res;
 }
 
-extern double f90sigmamassradiativeconecum_(char const* str, char const* curr,
+extern double f90sigmamassradconecum_(char const* str, char const* curr,
 int* orderAlpha, int* runAlpha, int* runMass, int* order, int* nf, double* Mz,
 double* gammaZ, double* sinW, double* aMz, double* aMzQED, double* mT,
 double* muT, double* mB, double* muB, double* mC, double* muC, double* eH,
 double * Q, double* x0, double* x1, double* theta, double* deltaTheta,
 double* res);
 
-static double sigmamassradiativeconecum(char const* str, char const* curr, int orderAlpha,
+static double sigmamassradconecum(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int runMass, int order, int nf, double Mz, double gammaZ,
 double sinW, double aMz, double aMzQED, double mT, double muT, double mB,
 double muB, double mC, double muC, double eH, double Q, double x0, double x1,
@@ -3950,7 +3950,7 @@ double theta, double deltaTheta){
 
   double res;
 
-  f90sigmamassradiativeconecum_(str, curr, &orderAlpha, &runAlpha, &runMass, &order,
+  f90sigmamassradconecum_(str, curr, &orderAlpha, &runAlpha, &runMass, &order,
   &nf, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &eH,
   &Q, &x0, &x1, &theta, &deltaTheta, &res);
 
@@ -4029,13 +4029,13 @@ double mu, double nu, double v1, double v2, double Q){
  return res;
 }
 
-extern double f90sigmamatchedradiative_(char const* str, int* runAlpha,
+extern double f90sigmamatchedrad_(char const* str, int* runAlpha,
 int* runMass, int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
 double* lambda, double* gt, double* Mz, double* gammaZ, double* sinW,
 double* aMz, double* aMzQED, double* mT, double* mu, double* nu, double* v1,
 double* v2, double* Q, double* x, double* theta, double* res);
 
-static double sigmamatchedradiative(char const* str, int runAlpha, int runMass,
+static double sigmamatchedrad(char const* str, int runAlpha, int runMass,
 int ordMass, int order, int ord1S, double R1S, char const* method, double lambda,
 double gt, double Mz, double gammaZ, double sinW, double aMz, double aMzQED,
 double mT, double mu, double nu, double v1, double v2, double Q, double x,
@@ -4043,20 +4043,20 @@ double theta){
 
   double res;
 
-  f90sigmamatchedradiative_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
+  f90sigmamatchedrad_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
   &R1S, method, &lambda, &gt, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &mu, &nu,
   &v1, &v2, &Q, &x, &theta, &res);
 
  return res;
 }
 
-extern double f90sigmamatchedradiativecum_(char const* str, int* runAlpha,
+extern double f90sigmamatchedradcum_(char const* str, int* runAlpha,
 int* runMass, int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
 double* lambda, double* gt, double* Mz, double* gammaZ, double* sinW,
 double* aMz, double* aMzQED, double* mT, double* mu, double* nu, double* v1,
 double* v2, double* Q, double* x0, double* x1, double* theta, double* res);
 
-static double sigmamatchedradiativecum(char const* str, int runAlpha, int runMass,
+static double sigmamatchedradcum(char const* str, int runAlpha, int runMass,
 int ordMass, int order, int ord1S, double R1S, char const* method, double lambda,
 double gt, double Mz, double gammaZ, double sinW, double aMz, double aMzQED,
 double mT, double mu, double nu, double v1, double v2, double Q, double x0,
@@ -4064,20 +4064,20 @@ double x1, double theta){
 
   double res;
 
-  f90sigmamatchedradiativecum_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
+  f90sigmamatchedradcum_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
   &R1S, method, &lambda, &gt, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &mu, &nu,
   &v1, &v2, &Q, &x0, &x1, &theta, &res);
 
  return res;
 }
 
-extern double f90sigmamatchedradiativecone_(char const* str, int* runAlpha,
+extern double f90sigmamatchedradcone_(char const* str, int* runAlpha,
 int* runMass, int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
 double* lambda, double* gt, double* Mz, double* gammaZ, double* sinW,
 double* aMz, double* aMzQED, double* mT, double* mu, double* nu, double* v1,
 double* v2, double* Q, double* x, double* theta, double* deltatheta, double* res);
 
-static double sigmamatchedradiativecone(char const* str, int runAlpha, int runMass,
+static double sigmamatchedradcone(char const* str, int runAlpha, int runMass,
 int ordMass, int order, int ord1S, double R1S, char const* method, double lambda,
 double gt, double Mz, double gammaZ, double sinW, double aMz, double aMzQED,
 double mT, double mu, double nu, double v1, double v2, double Q, double x,
@@ -4085,21 +4085,21 @@ double theta, double deltatheta){
 
   double res;
 
-  f90sigmamatchedradiativecone_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
+  f90sigmamatchedradcone_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
   &R1S, method, &lambda, &gt, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &mu, &nu,
   &v1, &v2, &Q, &x, &theta, &deltatheta, &res);
 
  return res;
 }
 
-extern double f90sigmamatchedradiativeconecum_(char const* str, int* runAlpha,
+extern double f90sigmamatchedradconecum_(char const* str, int* runAlpha,
 int* runMass, int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
 double* lambda, double* gt, double* Mz, double* gammaZ, double* sinW,
 double* aMz, double* aMzQED, double* mT, double* mu, double* nu, double* v1,
 double* v2, double* Q, double* x0, double* x1, double* theta, double* deltatheta,
 double* res);
 
-static double sigmamatchedradiativeconecum(char const* str, int runAlpha, int runMass,
+static double sigmamatchedradconecum(char const* str, int runAlpha, int runMass,
 int ordMass, int order, int ord1S, double R1S, char const* method, double lambda,
 double gt, double Mz, double gammaZ, double sinW, double aMz, double aMzQED,
 double mT, double mu, double nu, double v1, double v2, double Q, double x0,
@@ -4107,7 +4107,7 @@ double x1, double theta, double deltatheta){
 
   double res;
 
-  f90sigmamatchedradiativeconecum_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
+  f90sigmamatchedradconecum_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
   &R1S, method, &lambda, &gt, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &mu, &nu,
   &v1, &v2, &Q, &x0, &x1, &theta, &deltatheta, &res);
 
@@ -15148,7 +15148,7 @@ L0:	return res;
 } /* _tr186 */
 
 
-double sigmaradiative P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21));
+double sigmarad P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21));
 
 #if MLPROTOTYPES
 static int _tr187( MLINK mlp)
@@ -15202,7 +15202,7 @@ static int _tr187(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp21) ) goto L20;
 	if ( ! MLNewPacket(mlp) ) goto L21;
 
-	_rp0 = sigmaradiative(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21);
+	_rp0 = sigmarad(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
@@ -15213,7 +15213,7 @@ L0:	return res;
 } /* _tr187 */
 
 
-double sigmaradiativecum P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22));
+double sigmaradcum P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22));
 
 #if MLPROTOTYPES
 static int _tr188( MLINK mlp)
@@ -15269,7 +15269,7 @@ static int _tr188(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp22) ) goto L21;
 	if ( ! MLNewPacket(mlp) ) goto L22;
 
-	_rp0 = sigmaradiativecum(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22);
+	_rp0 = sigmaradcum(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
@@ -15280,7 +15280,7 @@ L0:	return res;
 } /* _tr188 */
 
 
-double sigmaradiativecone P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22));
+double sigmaradcone P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22));
 
 #if MLPROTOTYPES
 static int _tr189( MLINK mlp)
@@ -15336,7 +15336,7 @@ static int _tr189(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp22) ) goto L21;
 	if ( ! MLNewPacket(mlp) ) goto L22;
 
-	_rp0 = sigmaradiativecone(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22);
+	_rp0 = sigmaradcone(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
@@ -15347,7 +15347,7 @@ L0:	return res;
 } /* _tr189 */
 
 
-double sigmaradiativeconecum P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23));
+double sigmaradconecum P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23));
 
 #if MLPROTOTYPES
 static int _tr190( MLINK mlp)
@@ -15405,7 +15405,7 @@ static int _tr190(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
 	if ( ! MLNewPacket(mlp) ) goto L23;
 
-	_rp0 = sigmaradiativeconecum(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23);
+	_rp0 = sigmaradconecum(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
@@ -15561,7 +15561,7 @@ L0:	return res;
 } /* _tr193 */
 
 
-double sigmamassradiative P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, int _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22));
+double sigmamassrad P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, int _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22));
 
 #if MLPROTOTYPES
 static int _tr194( MLINK mlp)
@@ -15617,7 +15617,7 @@ static int _tr194(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp22) ) goto L21;
 	if ( ! MLNewPacket(mlp) ) goto L22;
 
-	_rp0 = sigmamassradiative(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22);
+	_rp0 = sigmamassrad(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
@@ -15628,7 +15628,7 @@ L0:	return res;
 } /* _tr194 */
 
 
-double sigmamassradiativecum P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, int _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23));
+double sigmamassradcum P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, int _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23));
 
 #if MLPROTOTYPES
 static int _tr195( MLINK mlp)
@@ -15686,7 +15686,7 @@ static int _tr195(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
 	if ( ! MLNewPacket(mlp) ) goto L23;
 
-	_rp0 = sigmamassradiativecum(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23);
+	_rp0 = sigmamassradcum(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
@@ -15697,7 +15697,7 @@ L0:	return res;
 } /* _tr195 */
 
 
-double sigmamassradiativecone P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, int _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23));
+double sigmamassradcone P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, int _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23));
 
 #if MLPROTOTYPES
 static int _tr196( MLINK mlp)
@@ -15755,7 +15755,7 @@ static int _tr196(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
 	if ( ! MLNewPacket(mlp) ) goto L23;
 
-	_rp0 = sigmamassradiativecone(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23);
+	_rp0 = sigmamassradcone(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
@@ -15766,7 +15766,7 @@ L0:	return res;
 } /* _tr196 */
 
 
-double sigmamassradiativeconecum P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, int _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24));
+double sigmamassradconecum P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, int _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24));
 
 #if MLPROTOTYPES
 static int _tr197( MLINK mlp)
@@ -15826,7 +15826,7 @@ static int _tr197(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp24) ) goto L23;
 	if ( ! MLNewPacket(mlp) ) goto L24;
 
-	_rp0 = sigmamassradiativeconecum(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24);
+	_rp0 = sigmamassradconecum(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
@@ -16069,7 +16069,7 @@ L0:	return res;
 } /* _tr201 */
 
 
-double sigmamatchedradiative P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, const char * _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23));
+double sigmamatchedrad P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, const char * _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23));
 
 #if MLPROTOTYPES
 static int _tr202( MLINK mlp)
@@ -16127,7 +16127,7 @@ static int _tr202(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
 	if ( ! MLNewPacket(mlp) ) goto L23;
 
-	_rp0 = sigmamatchedradiative(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23);
+	_rp0 = sigmamatchedrad(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
@@ -16138,7 +16138,7 @@ L0:	return res;
 } /* _tr202 */
 
 
-double sigmamatchedradiativecum P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, const char * _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24));
+double sigmamatchedradcum P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, const char * _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24));
 
 #if MLPROTOTYPES
 static int _tr203( MLINK mlp)
@@ -16198,7 +16198,7 @@ static int _tr203(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp24) ) goto L23;
 	if ( ! MLNewPacket(mlp) ) goto L24;
 
-	_rp0 = sigmamatchedradiativecum(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24);
+	_rp0 = sigmamatchedradcum(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
@@ -16209,7 +16209,7 @@ L0:	return res;
 } /* _tr203 */
 
 
-double sigmamatchedradiativecone P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, const char * _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24));
+double sigmamatchedradcone P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, const char * _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24));
 
 #if MLPROTOTYPES
 static int _tr204( MLINK mlp)
@@ -16269,7 +16269,7 @@ static int _tr204(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp24) ) goto L23;
 	if ( ! MLNewPacket(mlp) ) goto L24;
 
-	_rp0 = sigmamatchedradiativecone(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24);
+	_rp0 = sigmamatchedradcone(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
@@ -16280,7 +16280,7 @@ L0:	return res;
 } /* _tr204 */
 
 
-double sigmamatchedradiativeconecum P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, const char * _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25));
+double sigmamatchedradconecum P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, const char * _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25));
 
 #if MLPROTOTYPES
 static int _tr205( MLINK mlp)
@@ -16342,7 +16342,7 @@ static int _tr205(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp25) ) goto L24;
 	if ( ! MLNewPacket(mlp) ) goto L25;
 
-	_rp0 = sigmamatchedradiativeconecum(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25);
+	_rp0 = sigmamatchedradconecum(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
@@ -16829,25 +16829,25 @@ static struct func {
 		{13, 0, _tr184, "deltamsbar" },
 		{15, 0, _tr185, "rhad" },
 		{19, 0, _tr186, "sigmahad" },
-		{21, 0, _tr187, "sigmaradiative" },
-		{22, 0, _tr188, "sigmaradiativecum" },
-		{22, 0, _tr189, "sigmaradiativecone" },
-		{23, 0, _tr190, "sigmaradiativeconecum" },
+		{21, 0, _tr187, "sigmarad" },
+		{22, 0, _tr188, "sigmaradcum" },
+		{22, 0, _tr189, "sigmaradcone" },
+		{23, 0, _tr190, "sigmaradconecum" },
 		{ 1, 0, _tr191, "rhadcoefs" },
 		{19, 0, _tr192, "rhadmass" },
 		{20, 0, _tr193, "sigmamass" },
-		{22, 0, _tr194, "sigmamassradiative" },
-		{23, 0, _tr195, "sigmamassradiativecum" },
-		{23, 0, _tr196, "sigmamassradiativecone" },
-		{24, 0, _tr197, "sigmamassradiativeconecum" },
+		{22, 0, _tr194, "sigmamassrad" },
+		{23, 0, _tr195, "sigmamassradcum" },
+		{23, 0, _tr196, "sigmamassradcone" },
+		{24, 0, _tr197, "sigmamassradconecum" },
 		{15, 0, _tr198, "rqcd" },
 		{16, 0, _tr199, "rexp" },
 		{18, 0, _tr200, "rmatched" },
 		{21, 0, _tr201, "sigmamatched" },
-		{23, 0, _tr202, "sigmamatchedradiative" },
-		{24, 0, _tr203, "sigmamatchedradiativecum" },
-		{24, 0, _tr204, "sigmamatchedradiativecone" },
-		{25, 0, _tr205, "sigmamatchedradiativeconecum" },
+		{23, 0, _tr202, "sigmamatchedrad" },
+		{24, 0, _tr203, "sigmamatchedradcum" },
+		{24, 0, _tr204, "sigmamatchedradcone" },
+		{25, 0, _tr205, "sigmamatchedradconecum" },
 		{20, 0, _tr206, "rmatchedlist" },
 		{14, 0, _tr207, "lambdaqcd" },
 		{ 5, 0, _tr208, "kernels" },
@@ -17422,26 +17422,25 @@ static const char* evalstrs[] = {
 	"muB, mC, muC, mu, Q] computes the massless total hadronic cross ",
 	"section.\"",
 	(const char*)0,
-	"SigmaRadiative::usage = \"SigmaRadiative[scheme, current, orderAl",
-	"pha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, m",
-	"T, muT, mB, muB, mC, muC, eH, Q, x, theta] computes the ISR mass",
-	"less total hadronic cross section.\"",
+	"SigmaRad::usage = \"SigmaRad[scheme, current, orderAlpha, runAlph",
+	"a, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, ",
+	"muB, mC, muC, eH, Q, x, theta] computes the ISR massless total h",
+	"adronic cross section.\"",
 	(const char*)0,
-	"SigmaRadiativeCum::usage = \"SigmaRadiativeCum[scheme, current, o",
-	"rderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMz",
-	"QED, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, theta] computes t",
-	"he ISR massless total hadronic cross section.\"",
+	"SigmaRadCum::usage = \"SigmaRadCum[scheme, current, orderAlpha, r",
+	"unAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT",
+	", mB, muB, mC, muC, eH, Q, x0, x1, theta] computes the ISR massl",
+	"ess total hadronic cross section.\"",
 	(const char*)0,
-	"SigmaRadiativeCone::usage = \"SigmaRadiativeCone[scheme, current,",
-	" orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, a",
-	"MzQED, mT, muT, mB, muB, mC, muC, eH, Q, x, theta, deltaTheta] c",
-	"omputes the ISR massless total hadronic cross section.\"",
+	"SigmaRadCone::usage = \"SigmaRadCone[scheme, current, orderAlpha,",
+	" runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, m",
+	"uT, mB, muB, mC, muC, eH, Q, x, theta, deltaTheta] computes the ",
+	"ISR massless total hadronic cross section.\"",
 	(const char*)0,
-	"SigmaRadiativeConeCum::usage = \"SigmaRadiativeConeCum[scheme, cu",
-	"rrent, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, ",
-	"aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, theta, de",
-	"ltaTheta] computes the ISR massless total hadronic cross section",
-	".\"",
+	"SigmaRadConeCum::usage = \"SigmaRadConeCum[scheme, current, order",
+	"Alpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED,",
+	" mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, theta, deltaTheta] co",
+	"mputes the ISR massless total hadronic cross section.\"",
 	(const char*)0,
 	"RhadCoefs::usage = \"RhadCoefs[nf] computes the massless total ha",
 	"dronic cross section series coefficients.\"",
@@ -17456,26 +17455,25 @@ static const char* evalstrs[] = {
 	"B, muB, mC, muC, mu, Q] computes the massive total hadronic cros",
 	"s section.\"",
 	(const char*)0,
-	"SigmaMassRadiative::usage = \"SigmaMassRadiative[scheme, current,",
-	" orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2Theta",
-	"W, aMz, mT, muT, mB, muB, mC, muC, eH, Q, x, theta] computes the",
-	" ISR massive total hadronic cross section.\"",
+	"SigmaMassRad::usage = \"SigmaMassRad[scheme, current, orderAlpha,",
+	" runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz, mT, ",
+	"muT, mB, muB, mC, muC, eH, Q, x, theta] computes the ISR massive",
+	" total hadronic cross section.\"",
 	(const char*)0,
-	"SigmaMassRadiativeCum::usage = \"SigmaMassRadiativeCum[scheme, cu",
-	"rrent, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin",
-	"2ThetaW, aMz, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, theta] c",
-	"omputes the ISR massive total hadronic cross section.\"",
+	"SigmaMassRadCum::usage = \"SigmaMassRadCum[scheme, current, order",
+	"Alpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, aMz",
+	", mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, theta] computes the ",
+	"ISR massive total hadronic cross section.\"",
 	(const char*)0,
-	"SigmaMassRadiativeCone::usage = \"SigmaMassRadiativeCone[scheme, ",
-	"current, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, s",
-	"in2ThetaW, aMz, mT, muT, mB, muB, mC, muC, eH, Q, x, theta, delt",
-	"aTheta] computes the ISR massive total hadronic cross section.\"",
+	"SigmaMassRadCone::usage = \"SigmaMassRadCone[scheme, current, ord",
+	"erAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2ThetaW, a",
+	"Mz, mT, muT, mB, muB, mC, muC, eH, Q, x, theta, deltaTheta] comp",
+	"utes the ISR massive total hadronic cross section.\"",
 	(const char*)0,
-	"SigmaMassRadiativeConeCum::usage = \"SigmaMassRadiativeConeCum[sc",
-	"heme, current, orderAlpha, runAlpha, runMass, order, nf, Mz, Gam",
-	"maZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, ",
-	"theta, deltaTheta] computes the ISR massive total hadronic cross",
-	" section.\"",
+	"SigmaMassRadConeCum::usage = \"SigmaMassRadConeCum[scheme, curren",
+	"t, orderAlpha, runAlpha, runMass, order, nf, Mz, GammaZ, sin2The",
+	"taW, aMz, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, theta, delta",
+	"Theta] computes the ISR massive total hadronic cross section.\"",
 	(const char*)0,
 	"RQCD::usage = \"RQCD[scheme, runAlpha, runMass, ordMass, ord1S, R",
 	"1S, order, method, lambda, gt, Mz, aMz, mT, mu, Q] computes the ",
@@ -17491,29 +17489,29 @@ static const char* evalstrs[] = {
 	", aMzQED, mT, mu, nu, v1, v2, Q] computes the matched massive to",
 	"tal hadronic cross section for an unstable top quark.\"",
 	(const char*)0,
-	"SigmaMatchedRadiativeCum::usage = \"SigmaMatchedRadiativeCum[sche",
-	"me, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambd",
-	"a, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x0,",
-	" x1, theta] computes the ISR matched massive total hadronic cros",
-	"s section for an unstable top quark.\"",
+	"SigmaMatchedRadCum::usage = \"SigmaMatchedRadCum[scheme, runAlpha",
+	", runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, g",
+	"ammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x0, x1, theta] ",
+	"computes the ISR matched massive total hadronic cross section fo",
+	"r an unstable top quark.\"",
 	(const char*)0,
-	"SigmaMatchedRadiative::usage = \"SigmaMatchedRadiative[scheme, ru",
-	"nAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt,",
-	" Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x, theta]",
-	" computes the ISR matched massive total hadronic cross section f",
-	"or an unstable top quark.\"",
+	"SigmaMatchedRad::usage = \"SigmaMatchedRad[scheme, runAlpha, runM",
+	"ass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, gammaZ,",
+	" sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x, theta] computes th",
+	"e ISR matched massive total hadronic cross section for an unstab",
+	"le top quark.\"",
 	(const char*)0,
-	"SigmaMatchedRadiativeCone::usage = \"SigmaMatchedRadiativeCone[sc",
-	"heme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lam",
-	"bda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x",
-	", theta, deltaTheta] computes the ISR matched massive total hadr",
-	"onic cross section for an unstable top quark.\"",
+	"SigmaMatchedRadCone::usage = \"SigmaMatchedRadCone[scheme, runAlp",
+	"ha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz,",
+	" gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x, theta, del",
+	"taTheta] computes the ISR matched massive total hadronic cross s",
+	"ection for an unstable top quark.\"",
 	(const char*)0,
-	"SigmaMatchedRadiativeConeCum::usage = \"SigmaMatchedRadiativeCone",
-	"Cum[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, metho",
-	"d, lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2",
-	", Q, x0, x1, theta, deltaTheta] computes the ISR matched massive",
-	" total hadronic cross section for an unstable top quark.\"",
+	"SigmaMatchedRadConeCum::usage = \"SigmaMatchedRadConeCum[scheme, ",
+	"runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, g",
+	"t, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x0, x1,",
+	" theta, deltaTheta] computes the ISR matched massive total hadro",
+	"nic cross section for an unstable top quark.\"",
 	(const char*)0,
 	"Rmatched::usage = \"Rmatched[scheme, runAlpha, runMass, ordMass, ",
 	"order, ord1S, R1S, method, lambda, gt, Mz, aMz, mT, mu, nu, v1, ",
@@ -18151,25 +18149,25 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"DeltaMSbar[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,                  mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 184);
 	if (_res) _res = _definepattern(mlp, (char *)"Rhad[scheme_, orderAlpha_, runAlpha_, order_, nf_, Mz_, aMz_,                 mT_, muT_, mB_, muB_, mC_, muC_, mu_, Q_]", (char *)"{scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB,                  muB, mC, muC, mu, Q}", 185);
 	if (_res) _res = _definepattern(mlp, (char *)"SigmaHad[scheme_, current_, orderAlpha_, runAlpha_, order_,                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,                 muB_, mC_, muC_, mu_, Q_]", (char *)"{scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,                  sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, mu, Q}", 186);
-	if (_res) _res = _definepattern(mlp, (char *)"SigmaRadiative[scheme_, current_, orderAlpha_, runAlpha_, order_,                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,                 muB_, mC_, muC_, eH_, Q_, x_, theta_]", (char *)"{scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,                  sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x,                  theta}", 187);
-	if (_res) _res = _definepattern(mlp, (char *)"SigmaRadiativeCum[scheme_, current_, orderAlpha_, runAlpha_, order_,                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,                 muB_, mC_, muC_, eH_, Q_, x0_, x1_, theta_]", (char *)"{scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,                  sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x0,                  x1, theta}", 188);
-	if (_res) _res = _definepattern(mlp, (char *)"SigmaRadiativeCone[scheme_, current_, orderAlpha_, runAlpha_, order_,                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,                 muB_, mC_, muC_, eH_, Q_, x_, theta_, deltaTheta_]", (char *)"{scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,                  sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x,                  theta, deltaTheta}", 189);
-	if (_res) _res = _definepattern(mlp, (char *)"SigmaRadiativeConeCum[scheme_, current_, orderAlpha_, runAlpha_, order_,                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,                 muB_, mC_, muC_, eH_, Q_, x0_, x1_, theta_, deltaTheta_]", (char *)"{scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,                  sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x0,                  x1, theta, deltaTheta}", 190);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaRad[scheme_, current_, orderAlpha_, runAlpha_, order_,                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,                 muB_, mC_, muC_, eH_, Q_, x_, theta_]", (char *)"{scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,                  sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x,                  theta}", 187);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaRadCum[scheme_, current_, orderAlpha_, runAlpha_, order_,                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,                 muB_, mC_, muC_, eH_, Q_, x0_, x1_, theta_]", (char *)"{scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,                  sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x0,                  x1, theta}", 188);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaRadCone[scheme_, current_, orderAlpha_, runAlpha_, order_,                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,                 muB_, mC_, muC_, eH_, Q_, x_, theta_, deltaTheta_]", (char *)"{scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,                  sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x,                  theta, deltaTheta}", 189);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaRadConeCum[scheme_, current_, orderAlpha_, runAlpha_, order_,                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,                 muB_, mC_, muC_, eH_, Q_, x0_, x1_, theta_, deltaTheta_]", (char *)"{scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,                  sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x0,                  x1, theta, deltaTheta}", 190);
 	if (_res) _res = _definepattern(mlp, (char *)"RhadCoefs[nf_]", (char *)"{nf}", 191);
 	if (_res) _res = _definepattern(mlp, (char *)"RhadMass[scheme_, current_, orderAlpha_, runAlpha_, runMass_,                 order_, nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, mT_, muT_, mB_,                 muB_, mC_, muC_, mu_, Q_]", (char *)"{scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz,                 GammaZ, sin2ThetaW, aMz, mT, muT, mB, muB, mC, muC, mu, Q}", 192);
 	if (_res) _res = _definepattern(mlp, (char *)"SigmaMass[scheme_, current_, orderAlpha_, runAlpha_, runMass_,                 order_, nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_,                 muT_, mB_, muB_, mC_, muC_, mu_, Q_]", (char *)"{scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz,                 GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, mu,                 Q}", 193);
-	if (_res) _res = _definepattern(mlp, (char *)"SigmaMassRadiative[scheme_, current_, orderAlpha_, runAlpha_,                 runMass_, order_, nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_,                 mT_, muT_, mB_, muB_, mC_, muC_, eH_, Q_, x_, theta_]", (char *)"{scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz,                 GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH,                 Q, x, theta}", 194);
-	if (_res) _res = _definepattern(mlp, (char *)"SigmaMassRadiativeCum[scheme_, current_, orderAlpha_, runAlpha_,                 runMass_, order_, nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_,                 mT_, muT_, mB_, muB_, mC_, muC_, eH_, Q_, x0_, x1_, theta_]", (char *)"{scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz,                 GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH,                 Q, x0, x1, theta}", 195);
-	if (_res) _res = _definepattern(mlp, (char *)"SigmaMassRadiativeCone[scheme_, current_, orderAlpha_, runAlpha_,                 runMass_, order_, nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_,                 mT_, muT_, mB_, muB_, mC_, muC_, eH_, Q_, x_, theta_, deltaTheta_]", (char *)"{scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz,                 GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH,                 Q, x, theta, deltaTheta}", 196);
-	if (_res) _res = _definepattern(mlp, (char *)"SigmaMassRadiativeConeCum[scheme_, current_, orderAlpha_, runAlpha_,                 runMass_, order_, nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_,                 mT_, muT_, mB_, muB_, mC_, muC_, eH_, Q_, x0_, x1_, theta_,                 deltaTheta_]", (char *)"{scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz,                 GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH,                 Q, x0, x1, theta, deltaTheta}", 197);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaMassRad[scheme_, current_, orderAlpha_, runAlpha_,                 runMass_, order_, nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_,                 mT_, muT_, mB_, muB_, mC_, muC_, eH_, Q_, x_, theta_]", (char *)"{scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz,                 GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH,                 Q, x, theta}", 194);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaMassRadCum[scheme_, current_, orderAlpha_, runAlpha_,                 runMass_, order_, nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_,                 mT_, muT_, mB_, muB_, mC_, muC_, eH_, Q_, x0_, x1_, theta_]", (char *)"{scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz,                 GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH,                 Q, x0, x1, theta}", 195);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaMassRadCone[scheme_, current_, orderAlpha_, runAlpha_,                 runMass_, order_, nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_,                 mT_, muT_, mB_, muB_, mC_, muC_, eH_, Q_, x_, theta_, deltaTheta_]", (char *)"{scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz,                 GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH,                 Q, x, theta, deltaTheta}", 196);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaMassRadConeCum[scheme_, current_, orderAlpha_, runAlpha_,                 runMass_, order_, nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_,                 mT_, muT_, mB_, muB_, mC_, muC_, eH_, Q_, x0_, x1_, theta_,                 deltaTheta_]", (char *)"{scheme, current, orderAlpha, runAlpha, runMass, order, nf, Mz,                 GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH,                 Q, x0, x1, theta, deltaTheta}", 197);
 	if (_res) _res = _definepattern(mlp, (char *)"RQCD[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,                 R1S_, method_, lambda_, gt_, Mz_, aMz_, mT_, mu_, Q_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, aMz, mT, mu, Q}", 198);
 	if (_res) _res = _definepattern(mlp, (char *)"RExp[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,                 R1S_, method_, lambda_, gt_, Mz_, aMz_, mT_, mu_, nu_, Q_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, aMz, mT, mu, nu, Q}", 199);
 	if (_res) _res = _definepattern(mlp, (char *)"Rmatched[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,                 R1S_, method_, lambda_, gt_, Mz_, aMz_, mT_, mu_, nu_, v1_, v2_,                 Q_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, aMz, mT, mu, nu, v1, v2, Q}", 200);
 	if (_res) _res = _definepattern(mlp, (char *)"SigmaMatched[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,                 R1S_, method_, lambda_, gt_, Mz_, gammaZ_, sinW_, aMz_, aMzQED_,                 mT_, mu_, nu_, v1_, v2_, Q_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q}", 201);
-	if (_res) _res = _definepattern(mlp, (char *)"SigmaMatchedRadiative[scheme_, runAlpha_, runMass_, ordMass_,                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x_, theta_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2,                 Q, x, theta}", 202);
-	if (_res) _res = _definepattern(mlp, (char *)"SigmaMatchedRadiativeCum[scheme_, runAlpha_, runMass_, ordMass_,                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x0_, x1_,                 theta_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2,                 Q, x0, x1, theta}", 203);
-	if (_res) _res = _definepattern(mlp, (char *)"SigmaMatchedRadiativeCone[scheme_, runAlpha_, runMass_, ordMass_,                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x_, theta_,                 deltaTheta_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2,                 Q, x, theta, deltaTheta}", 204);
-	if (_res) _res = _definepattern(mlp, (char *)"SigmaMatchedRadiativeConeCum[scheme_, runAlpha_, runMass_, ordMass_,                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x0_, x1_,                 theta_,deltaTheta_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2,                 Q, x0, x1, theta, deltaTheta}", 205);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaMatchedRad[scheme_, runAlpha_, runMass_, ordMass_,                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x_, theta_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2,                 Q, x, theta}", 202);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaMatchedRadCum[scheme_, runAlpha_, runMass_, ordMass_,                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x0_, x1_,                 theta_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2,                 Q, x0, x1, theta}", 203);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaMatchedRadCone[scheme_, runAlpha_, runMass_, ordMass_,                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x_, theta_,                 deltaTheta_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2,                 Q, x, theta, deltaTheta}", 204);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaMatchedRadConeCum[scheme_, runAlpha_, runMass_, ordMass_,                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x0_, x1_,                 theta_,deltaTheta_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2,                 Q, x0, x1, theta, deltaTheta}", 205);
 	if (_res) _res = _definepattern(mlp, (char *)"RmatchedList[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,                 R1S_, method_, lambda_, gt_, Mz_, aMz_, mT_, mu_, nu_, v1_, v2_,                 Q0_, Q1_, deltaQ_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, aMz, mT, mu, nu, v1, v2, Q0, Q1, deltaQ}", 206);
 	if (_res) _res = _definepattern(mlp, (char *)"LambdaQCD[scheme_, order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_,                  mB_, muB_, mC_, muC_, mu_]", (char *)"{scheme, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 207);
 	if (_res) _res = _definepattern(mlp, (char *)"Kernel[n_, width_, w_, mu_, p_]", (char *)"{n, width, w, mu, p}", 208);

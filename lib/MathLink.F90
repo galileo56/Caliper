@@ -5647,7 +5647,7 @@ end subroutine f90SigmaHad
 
 !ccccccccccccccc
 
-subroutine f90SigmaRadiative(str, curr, orderAlp, runAlp, order, nf, mZ, &
+subroutine f90SigmaRad(str, curr, orderAlp, runAlp, order, nf, mZ, &
 gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, eH, Q, x, theta, &
 res)
 
@@ -5675,13 +5675,13 @@ res)
   alphaMass = Running(nf, runAlp, alphaAll, muC)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   MatEl     = Sigma(alphaMass, EW)
-  res       = MatEl%SigmaRadiative( curr(:6), order, eH, Q, x, theta )
+  res       = MatEl%SigmaRad( curr(:6), order, eH, Q, x, theta )
 
-end subroutine f90SigmaRadiative
+end subroutine f90SigmaRad
 
 !ccccccccccccccc
 
-subroutine f90SigmaRadiativeCum(str, curr, orderAlp, runAlp, order, nf, mZ, &
+subroutine f90SigmaRadCum(str, curr, orderAlp, runAlp, order, nf, mZ, &
 gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, &
 theta, res)
 
@@ -5709,13 +5709,13 @@ theta, res)
   alphaMass = Running(nf, runAlp, alphaAll, muC)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   MatEl     = Sigma(alphaMass, EW)
-  res       = MatEl%SigmaRadiativeCum( curr(:6), order, eH, Q, x0, x1, theta )
+  res       = MatEl%SigmaRadCum( curr(:6), order, eH, Q, x0, x1, theta )
 
-end subroutine f90SigmaRadiativeCum
+end subroutine f90SigmaRadCum
 
 !ccccccccccccccc
 
-subroutine f90SigmaRadiativeCone(str, curr, orderAlp, runAlp, order, nf, mZ, &
+subroutine f90SigmaRadCone(str, curr, orderAlp, runAlp, order, nf, mZ, &
 gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, eH, Q, x, theta, &
 deltaTheta, res)
 
@@ -5743,14 +5743,14 @@ deltaTheta, res)
   alphaMass = Running(nf, runAlp, alphaAll, muC)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   MatEl     = Sigma(alphaMass, EW)
-  res       = MatEl%SigmaRadiativeCone( curr(:6), order, eH, Q, x, theta,&
+  res       = MatEl%SigmaRadCone( curr(:6), order, eH, Q, x, theta,&
   deltaTheta )
 
-end subroutine f90SigmaRadiativeCone
+end subroutine f90SigmaRadCone
 
 !ccccccccccccccc
 
-subroutine f90SigmaRadiativeConeCum(str, curr, orderAlp, runAlp, order, nf, mZ, &
+subroutine f90SigmaRadConeCum(str, curr, orderAlp, runAlp, order, nf, mZ, &
 gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, &
 theta, deltaTheta, res)
 
@@ -5778,10 +5778,10 @@ theta, deltaTheta, res)
   alphaMass = Running(nf, runAlp, alphaAll, muC)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   MatEl     = Sigma(alphaMass, EW)
-  res       = MatEl%SigmaRadiativeConeCum( curr(:6), order, eH, Q, x0, x1, &
+  res       = MatEl%SigmaRadConeCum( curr(:6), order, eH, Q, x0, x1, &
   theta, deltaTheta )
 
-end subroutine f90SigmaRadiativeConeCum
+end subroutine f90SigmaRadConeCum
 
 !ccccccccccccccc
 
@@ -5847,7 +5847,7 @@ end subroutine f90SigmaMass
 
 !ccccccccccccccc
 
-subroutine f90SigmaMassRadiative(str, curr, orderAlp, runAlp, runMass, order, &
+subroutine f90SigmaMassRad(str, curr, orderAlp, runAlp, runMass, order, &
 nf, mZ, gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, eH, Q, x, &
 theta, res)
 
@@ -5875,13 +5875,13 @@ theta, res)
   alphaMass = Running(nf, runMass, alphaAll, 0._dp)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   MatEl     = Sigma(alphaMass, EW)
-  res       = MatEl%SigmaMassRadiative(curr(:6), order, eH, Q, x, theta)
+  res       = MatEl%SigmaMassRad(curr(:6), order, eH, Q, x, theta)
 
-end subroutine f90SigmaMassRadiative
+end subroutine f90SigmaMassRad
 
 !ccccccccccccccc
 
-subroutine f90SigmaMassRadiativeCum(str, curr, orderAlp, runAlp, runMass, order, &
+subroutine f90SigmaMassRadCum(str, curr, orderAlp, runAlp, runMass, order, &
 nf, mZ, gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, eH, Q, x0, &
 x1, theta, res)
 
@@ -5909,13 +5909,13 @@ x1, theta, res)
   alphaMass = Running(nf, runMass, alphaAll, 0._dp)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   MatEl     = Sigma(alphaMass, EW)
-  res       = MatEl%SigmaMassRadiativeCum(curr(:6), order, eH, Q, x0, x1, theta)
+  res       = MatEl%SigmaMassRadCum(curr(:6), order, eH, Q, x0, x1, theta)
 
-end subroutine f90SigmaMassRadiativeCum
+end subroutine f90SigmaMassRadCum
 
 !ccccccccccccccc
 
-subroutine f90SigmaMassRadiativeCone(str, curr, orderAlp, runAlp, runMass, order, &
+subroutine f90SigmaMassRadCone(str, curr, orderAlp, runAlp, runMass, order, &
 nf, mZ, gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, eH, Q, x, &
 theta, deltaTheta, res)
 
@@ -5943,13 +5943,13 @@ theta, deltaTheta, res)
   alphaMass = Running(nf, runMass, alphaAll, 0._dp)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   MatEl     = Sigma(alphaMass, EW)
-  res       = MatEl%SigmaMassRadiativeCone(curr(:6), order, eH, Q, x, theta, deltaTheta)
+  res       = MatEl%SigmaMassRadCone(curr(:6), order, eH, Q, x, theta, deltaTheta)
 
-end subroutine f90SigmaMassRadiativeCone
+end subroutine f90SigmaMassRadCone
 
 !ccccccccccccccc
 
-subroutine f90SigmaMassRadiativeConeCum(str, curr, orderAlp, runAlp, runMass,  &
+subroutine f90SigmaMassRadConeCum(str, curr, orderAlp, runAlp, runMass,  &
 order, nf, mZ, gammaZ, sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, eH, &
 Q, x0, x1, theta, deltaTheta, res)
 
@@ -5977,10 +5977,10 @@ Q, x0, x1, theta, deltaTheta, res)
   alphaMass = Running(nf, runMass, alphaAll, 0._dp)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   MatEl     = Sigma(alphaMass, EW)
-  res       = MatEl%SigmaMassRadiativeConeCum(curr(:6), order, eH, Q, x0, x1, &
+  res       = MatEl%SigmaMassRadConeCum(curr(:6), order, eH, Q, x0, x1, &
   theta, deltaTheta)
 
-end subroutine f90SigmaMassRadiativeConeCum
+end subroutine f90SigmaMassRadConeCum
 
 !ccccccccccccccc
 
@@ -6178,7 +6178,7 @@ end subroutine f90SigmaMatched
 
 !ccccccccccccccc
 
-subroutine f90SigmaMatchedRadiative(str, runAlp, runMass, ordMass, order, &
+subroutine f90SigmaMatchedRad(str, runAlp, runMass, ordMass, order, &
 ord1S, R1S, method, lambda, gt, mZ, gammaZ, sinW, amZ, amZQED, mT, mu, nu, &
 v1, v2, Q, x, theta, res)
 
@@ -6214,13 +6214,13 @@ v1, v2, Q, x, theta, res)
   MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(mZ, gammaZ, sinW)
   NRQCD = RNRQCD(MSR, EW, str, method, gt, ordMass, ord1S, R1S, lambda)
 
-  res = NRQCD%SigmaMatchedRadiative(order, mu, nu, v1, v2, Q, x, theta)
+  res = NRQCD%SigmaMatchedRad(order, mu, nu, v1, v2, Q, x, theta)
 
-end subroutine f90SigmaMatchedRadiative
+end subroutine f90SigmaMatchedRad
 
 !ccccccccccccccc
 
-subroutine f90SigmaMatchedRadiativeCum(str, runAlp, runMass, ordMass, order, &
+subroutine f90SigmaMatchedRadCum(str, runAlp, runMass, ordMass, order, &
 ord1S, R1S, method, lambda, gt, mZ, gammaZ, sinW, amZ, amZQED, mT, mu, nu, &
 v1, v2, Q, x0, x1, theta, res)
 
@@ -6256,13 +6256,13 @@ v1, v2, Q, x0, x1, theta, res)
   MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(mZ, gammaZ, sinW)
   NRQCD = RNRQCD(MSR, EW, str, method, gt, ordMass, ord1S, R1S, lambda)
 
-  res = NRQCD%SigmaMatchedRadiativeCum(order, mu, nu, v1, v2, Q, x0, x1, theta)
+  res = NRQCD%SigmaMatchedRadCum(order, mu, nu, v1, v2, Q, x0, x1, theta)
 
-end subroutine f90SigmaMatchedRadiativeCum
+end subroutine f90SigmaMatchedRadCum
 
 !ccccccccccccccc
 
-subroutine f90SigmaMatchedRadiativeCone(str, runAlp, runMass, ordMass, order, &
+subroutine f90SigmaMatchedRadCone(str, runAlp, runMass, ordMass, order, &
 ord1S, R1S, method, lambda, gt, mZ, gammaZ, sinW, amZ, amZQED, mT, mu, nu, v1,&
 v2, Q, x, theta, deltaTheta, res)
 
@@ -6298,14 +6298,14 @@ v2, Q, x, theta, deltaTheta, res)
   MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(mZ, gammaZ, sinW)
   NRQCD = RNRQCD(MSR, EW, str, method, gt, ordMass, ord1S, R1S, lambda)
 
-  res = NRQCD%SigmaMatchedRadiativeCone(order, mu, nu, v1, v2, Q, x, theta, &
+  res = NRQCD%SigmaMatchedRadCone(order, mu, nu, v1, v2, Q, x, theta, &
   deltaTheta)
 
-end subroutine f90SigmaMatchedRadiativeCone
+end subroutine f90SigmaMatchedRadCone
 
 !ccccccccccccccc
 
-subroutine f90SigmaMatchedRadiativeConeCum(str, runAlp, runMass, ordMass, order, &
+subroutine f90SigmaMatchedRadConeCum(str, runAlp, runMass, ordMass, order, &
 ord1S, R1S, method, lambda, gt, mZ, gammaZ, sinW, amZ, amZQED, mT, mu, nu, v1,&
 v2, Q, x0, x1, theta, deltaTheta, res)
 
@@ -6341,10 +6341,10 @@ v2, Q, x0, x1, theta, deltaTheta, res)
   MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(mZ, gammaZ, sinW)
   NRQCD = RNRQCD(MSR, EW, str, method, gt, ordMass, ord1S, R1S, lambda)
 
-  res = NRQCD%SigmaMatchedRadiativeConeCum(order, mu, nu, v1, v2, Q, x0, x1, &
+  res = NRQCD%SigmaMatchedRadConeCum(order, mu, nu, v1, v2, Q, x0, x1, &
   theta, deltaTheta)
 
-end subroutine f90SigmaMatchedRadiativeConeCum
+end subroutine f90SigmaMatchedRadConeCum
 
 !ccccccccccccccc
 
