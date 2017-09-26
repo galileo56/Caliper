@@ -4199,7 +4199,7 @@ real (dp) function H3F2Exact(w, x)
    H3F2Exact = F32Inf(w, x)
    if ( abs(H3F2Exact) > 0 ) return
 
-   H3F2Exact = dGauss(HyperInt, 0._dp, 1._dp, prec)
+   H3F2Exact = DGauss(HyperInt, 0._dp, 1._dp, prec)
 
    contains
 

@@ -5,7 +5,8 @@ module RNRQCDClass
   use constants, only: dp, Pi, Pi2, l2, Zeta3, Euler, Pi3, prec; use ToppikClass
   use DeriGamma, only: DiGam, trigam ; use RunningClass; use AnomDimClass
   use AlphaClass; use NRQCDClass; use VFNSMSRClass; use SigmaClass
-  use ElectroWeakClass; use adapt; implicit none ;  private
+  use ElectroWeakClass; use adapt; use QuadPack, only: qags
+  implicit none ;  private
 
   real (dp)   , parameter :: FPi = 4 * Pi
   complex (dp), parameter :: cI = (0,1)
@@ -167,7 +168,8 @@ contains
     real (dp)          , intent(in)    :: h, Q, nu, v1, v2, x0, x1, theta
     real (dp)                          :: abserr
 
-    call DAdapt(integrand, x0, x1, 1, prec, prec, SigmaMatchedRadiativeCum, abserr)
+    call DAdapt(integrand, x0, x1, 1, prec, prec, SigmaMatchedRadiativeCum, &
+    abserr)
 
   contains
 
@@ -189,7 +191,8 @@ contains
     real (dp)          , intent(in)    :: h, Q, nu, v1, v2, x0, x1, theta, deltaTheta
     real (dp)                          :: abserr
 
-    call DAdapt(integrand, x0, x1, 1, prec, prec, SigmaMatchedRadiativeConeCum, abserr)
+    call DAdapt(integrand, x0, x1, 1, prec, prec, SigmaMatchedRadiativeConeCum,&
+    abserr)
 
   contains
 

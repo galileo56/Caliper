@@ -346,6 +346,8 @@ CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o.requires: CMakeFiles/subdir_mods.dir/
 CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o: CMakeFiles/subdir_mods.dir/electroweakclass.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o.requires: CMakeFiles/subdir_mods.dir/nrqcdclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o: CMakeFiles/subdir_mods.dir/nrqcdclass.mod.stamp
+CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o.requires: CMakeFiles/subdir_mods.dir/quadpack.mod.proxy
+CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o: CMakeFiles/subdir_mods.dir/quadpack.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o.requires: CMakeFiles/subdir_mods.dir/runningclass.mod.proxy
 CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o: CMakeFiles/subdir_mods.dir/runningclass.mod.stamp
 CMakeFiles/subdir_mods.dir/lib/TTbar.F90.o.requires: CMakeFiles/subdir_mods.dir/sigmaclass.mod.proxy

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 
-project(Caliper C Fortran)
+project(Caliper C CXX Fortran)
 
 ###############
 ## REQUIREMENTS & SETUP
