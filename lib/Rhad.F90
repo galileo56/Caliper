@@ -287,7 +287,7 @@ module SigmaClass
     mu = Q * sqrt(1 - 2 * x)
 
     SigmaMassRad = self%run%alphaQED(Q)/Pi2 * g(x, theta) * &
-    self%SigmaHad( current, order, mu, eH * mu )
+    self%SigmaMass( current, order, eH * mu, mu )
 
   end function SigmaMassRad
 
@@ -306,7 +306,7 @@ module SigmaClass
     mu = Q * sqrt(1 - 2 * x)
 
     SigmaMassRadCone = self%run%alphaQED(Q) * gInt(x, theta, deltaTheta) &
-    * 2 * self%SigmaMass( current, order, mu, eH * mu )/Pi
+    * 2 * self%SigmaMass( current, order, eH * mu, mu )/Pi
 
   end function SigmaMassRadCone
 
