@@ -142,7 +142,7 @@ contains
     real (dp)        , dimension(2)    :: EWfactors
 
     EWfactors    = self%EW%EWfactors(self%nf, Q)
-    SigmaMatched = FPi * ( self%run%alphaQED(h * Q)/Q )**2 * EWfactors(1) * &
+    SigmaMatched = FPi * ( self%run%alphaQED(Q)/Q )**2 * EWfactors(1) * &
     self%Rmatched(order, h, nu, v1, v2, Q)
 
   end function SigmaMatched

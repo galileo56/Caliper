@@ -150,7 +150,7 @@ module SigmaClass
       SigmaMassless = sum(EWfactors)
     end if
 
-    SigmaMassless = 4 * Pi * ( self%run%alphaQED(mu)/Q )**2 * SigmaMassless * &
+    SigmaMassless = 4 * Pi * ( self%run%alphaQED(Q)/Q )**2 * SigmaMassless * &
     self%Rhad(order, mu, Q)
 
   end function SigmaMassless
