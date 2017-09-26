@@ -5614,7 +5614,7 @@ end subroutine f90Rhad
 
 !ccccccccccccccc
 
-subroutine f90SigmaMassless(str, curr, orderAlp, runAlp, order, nf, mZ, gammaZ, &
+subroutine f90SigmaHad(str, curr, orderAlp, runAlp, order, nf, mZ, gammaZ, &
 sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, mu, Q, res)
 
   use RunningClass; use AlphaClass; use SigmaClass;  use ElectroWeakClass
@@ -5641,9 +5641,9 @@ sin2ThetaW, amZ, amZQED, mT, muT, mB, muB, mC, muC, mu, Q, res)
   alphaMass = Running(nf, runAlp, alphaAll, muC)
   EW        = ElectroWeak(mZ, gammaZ, sin2ThetaW)
   MatEl     = Sigma(alphaMass, EW)
-  res       = MatEl%SigmaMassless( curr(:6), order, mu, Q )
+  res       = MatEl%SigmaHad( curr(:6), order, mu, Q )
 
-end subroutine f90SigmaMassless
+end subroutine f90SigmaHad
 
 !ccccccccccccccc
 

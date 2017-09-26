@@ -146,7 +146,7 @@
 :Evaluate:  OptimalR::usage = "OptimalR[type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda] computes the Optimal R scale for quarkonium."
 :Evaluate:  mmfromMSR::usage = "mmfromMSR[type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
 :Evaluate:  Rhad::usage = "Rhad[scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
-:Evaluate:  SigmaMassless::usage = "SigmaMassless[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
+:Evaluate:  SigmaHad::usage = "SigmaHad[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
 :Evaluate:  SigmaRadiative::usage = "SigmaRadiative[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x, theta] computes the ISR massless total hadronic cross section."
 :Evaluate:  SigmaRadiativeCum::usage = "SigmaRadiativeCum[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x0, x1, theta] computes the ISR massless total hadronic cross section."
 :Evaluate:  SigmaRadiativeCone::usage = "SigmaRadiativeCone[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x, theta, deltaTheta] computes the ISR massless total hadronic cross section."
@@ -2425,8 +2425,8 @@
 :End:
 
 :Begin:
-:Function:      sigmamassless
-:Pattern:       SigmaMassless[scheme_, current_, orderAlpha_, runAlpha_, order_,
+:Function:      sigmahad
+:Pattern:       SigmaHad[scheme_, current_, orderAlpha_, runAlpha_, order_,
                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,
                 muB_, mC_, muC_, mu_, Q_]
 :Arguments:     {scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,
@@ -6205,19 +6205,19 @@ double mu, double Q){
   return res;
 }
 
-extern double f90sigmamassless_(char const* str, char const* curr, int* orderAlpha,
+extern double f90sigmahad_(char const* str, char const* curr, int* orderAlpha,
 int* runAlpha, int* order, int* nf, double* Mz, double* gammaZ, double* thetaW,
 double* aMz, double* aMzQED, double* mT, double* muT, double* mB, double* muB,
 double* mC, double* muC, double* mu, double * Q, double* res);
 
-static double sigmamassless(char const* str, char const* curr, int orderAlpha,
+static double sigmahad(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int order, int nf, double Mz, double gammaZ, double thetaW,
 double aMz, double aMzQED, double mT, double muT, double mB, double muB,
 double mC, double muC, double mu, double Q){
 
    double res;
 
-   f90sigmamassless_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
+   f90sigmahad_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
    &gammaZ, &thetaW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &mu, &Q, &res);
 
   return res;

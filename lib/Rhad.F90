@@ -25,7 +25,7 @@ module SigmaClass
    contains
 
     procedure, pass(self), public :: RhadMass, SetAlpha, SetMTop, SetMBottom, &
-    Rhad, SetMCharm, RHadCoefs, SigmaMassless, SigmaMass, SigmaRadiative, &
+    Rhad, SetMCharm, RHadCoefs, SigmaHad, SigmaMass, SigmaRadiative, &
     SigmaMassRadiative, SigmaMassRadiativeCone, SigmaRadiativeCone, &
     SigmaMassRadiativeConeCum, SigmaMassRadiativeCum, SigmaRadiativeConeCum, &
     SigmaRadiativeCum
@@ -133,7 +133,7 @@ module SigmaClass
 
 !ccccccccccccccc
 
-  real (dp) function SigmaMassless(self, current, order, mu, Q)
+  real (dp) function SigmaHad(self, current, order, mu, Q)
     class (Sigma)      , intent(in) :: self
     Integer            , intent(in) :: order
     real (dp)          , intent(in) :: mu, Q
@@ -143,17 +143,17 @@ module SigmaClass
     EWfactors = self%EW%EWfactors(self%nf, Q)
 
     if (current(:6) == 'vector') then
-      SigmaMassless = EWfactors(1)
+      SigmaHad = EWfactors(1)
     else if (current(:5) == 'axial') then
-      SigmaMassless = EWfactors(2)
+      SigmaHad = EWfactors(2)
     else if (current(:3) == 'all') then
-      SigmaMassless = sum(EWfactors)
+      SigmaHad = sum(EWfactors)
     end if
 
-    SigmaMassless = 4 * Pi * ( self%run%alphaQED(Q)/Q )**2 * SigmaMassless * &
+    SigmaHad = 4 * Pi * ( self%run%alphaQED(Q)/Q )**2 * SigmaHad * &
     self%Rhad(order, mu, Q)
 
-  end function SigmaMassless
+  end function SigmaHad
 
 !ccccccccccccccc
 
@@ -167,7 +167,7 @@ module SigmaClass
     mu = Q * sqrt(1 - 2 * x)
 
     SigmaRadiative = self%run%alphaQED(Q)/Pi2 * g(x, theta) * &
-    self%SigmaMassless( current, order, mu, eH * mu )
+    self%SigmaHad( current, order, mu, eH * mu )
 
   end function SigmaRadiative
 
@@ -270,7 +270,7 @@ module SigmaClass
     mu = Q * sqrt(1 - 2 * x)
 
     SigmaRadiativeCone = 2 * self%run%alphaQED(Q) * gInt(x, theta, deltaTheta) &
-    * self%SigmaMassless( current, order, mu, eH * mu )/Pi
+    * self%SigmaHad( current, order, mu, eH * mu )/Pi
 
   end function SigmaRadiativeCone
 
@@ -288,7 +288,7 @@ module SigmaClass
     mu = Q * sqrt(1 - 2 * x)
 
     SigmaMassRadiative = self%run%alphaQED(Q)/Pi2 * g(x, theta) * &
-    self%SigmaMassless( current, order, mu, eH * mu )
+    self%SigmaHad( current, order, mu, eH * mu )
 
   end function SigmaMassRadiative
 
@@ -888,7 +888,7 @@ real (dp) function g(x, theta)
 
   c2 = cos(theta)**2
 
-  g = (  1 - 2 * x + (1 + c2) * x**2 ) / (1 - c2) / x
+  g = ( 1 - 2 * x + (1 + c2) * x**2 )/(1 - c2)/x
 
 end function g
 

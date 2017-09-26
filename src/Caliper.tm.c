@@ -3726,19 +3726,19 @@ double mu, double Q){
   return res;
 }
 
-extern double f90sigmamassless_(char const* str, char const* curr, int* orderAlpha,
+extern double f90sigmahad_(char const* str, char const* curr, int* orderAlpha,
 int* runAlpha, int* order, int* nf, double* Mz, double* gammaZ, double* thetaW,
 double* aMz, double* aMzQED, double* mT, double* muT, double* mB, double* muB,
 double* mC, double* muC, double* mu, double * Q, double* res);
 
-static double sigmamassless(char const* str, char const* curr, int orderAlpha,
+static double sigmahad(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int order, int nf, double Mz, double gammaZ, double thetaW,
 double aMz, double aMzQED, double mT, double muT, double mB, double muB,
 double mC, double muC, double mu, double Q){
 
    double res;
 
-   f90sigmamassless_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
+   f90sigmahad_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
    &gammaZ, &thetaW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &mu, &Q, &res);
 
   return res;
@@ -15087,7 +15087,7 @@ L0:	return res;
 } /* _tr185 */
 
 
-double sigmamassless P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19));
+double sigmahad P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19));
 
 #if MLPROTOTYPES
 static int _tr186( MLINK mlp)
@@ -15137,7 +15137,7 @@ static int _tr186(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp19) ) goto L18;
 	if ( ! MLNewPacket(mlp) ) goto L19;
 
-	_rp0 = sigmamassless(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19);
+	_rp0 = sigmahad(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
@@ -16828,7 +16828,7 @@ static struct func {
 		{16, 0, _tr183, "mmfromjetmass" },
 		{13, 0, _tr184, "deltamsbar" },
 		{15, 0, _tr185, "rhad" },
-		{19, 0, _tr186, "sigmamassless" },
+		{19, 0, _tr186, "sigmahad" },
 		{21, 0, _tr187, "sigmaradiative" },
 		{22, 0, _tr188, "sigmaradiativecum" },
 		{22, 0, _tr189, "sigmaradiativecone" },
@@ -17417,10 +17417,10 @@ static const char* evalstrs[] = {
 	" aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless to",
 	"tal hadronic cross section.\"",
 	(const char*)0,
-	"SigmaMassless::usage = \"SigmaMassless[scheme, current, orderAlph",
-	"a, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT,",
-	" muT, mB, muB, mC, muC, mu, Q] computes the massless total hadro",
-	"nic cross section.\"",
+	"SigmaHad::usage = \"SigmaHad[scheme, current, orderAlpha, runAlph",
+	"a, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, ",
+	"muB, mC, muC, mu, Q] computes the massless total hadronic cross ",
+	"section.\"",
 	(const char*)0,
 	"SigmaRadiative::usage = \"SigmaRadiative[scheme, current, orderAl",
 	"pha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, m",
@@ -18150,7 +18150,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"mmFromJetMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, muLambda_, R_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC,                  muC, muLambda, R, mu}", 183);
 	if (_res) _res = _definepattern(mlp, (char *)"DeltaMSbar[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,                  mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 184);
 	if (_res) _res = _definepattern(mlp, (char *)"Rhad[scheme_, orderAlpha_, runAlpha_, order_, nf_, Mz_, aMz_,                 mT_, muT_, mB_, muB_, mC_, muC_, mu_, Q_]", (char *)"{scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB,                  muB, mC, muC, mu, Q}", 185);
-	if (_res) _res = _definepattern(mlp, (char *)"SigmaMassless[scheme_, current_, orderAlpha_, runAlpha_, order_,                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,                 muB_, mC_, muC_, mu_, Q_]", (char *)"{scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,                  sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, mu, Q}", 186);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaHad[scheme_, current_, orderAlpha_, runAlpha_, order_,                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,                 muB_, mC_, muC_, mu_, Q_]", (char *)"{scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,                  sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, mu, Q}", 186);
 	if (_res) _res = _definepattern(mlp, (char *)"SigmaRadiative[scheme_, current_, orderAlpha_, runAlpha_, order_,                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,                 muB_, mC_, muC_, eH_, Q_, x_, theta_]", (char *)"{scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,                  sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x,                  theta}", 187);
 	if (_res) _res = _definepattern(mlp, (char *)"SigmaRadiativeCum[scheme_, current_, orderAlpha_, runAlpha_, order_,                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,                 muB_, mC_, muC_, eH_, Q_, x0_, x1_, theta_]", (char *)"{scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,                  sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x0,                  x1, theta}", 188);
 	if (_res) _res = _definepattern(mlp, (char *)"SigmaRadiativeCone[scheme_, current_, orderAlpha_, runAlpha_, order_,                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,                 muB_, mC_, muC_, eH_, Q_, x_, theta_, deltaTheta_]", (char *)"{scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,                  sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x,                  theta, deltaTheta}", 189);
