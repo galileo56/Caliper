@@ -353,7 +353,7 @@ module SigmaClass
         if ( self%scheme(:5) == 'MSbar' ) then
 
           delta = self%run%MSbarDeltaMu(mu)
-          RhadMass = RhadMass + A0MS(current, m) * delta(1)/mb
+          RhadMass = RhadMass + A0MS(current, m) * delta(1)
 
         end if
       end if
