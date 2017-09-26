@@ -43,9 +43,9 @@ module SigmaClass
 !ccccccccccccccc
 
    type (Sigma) function InitSigma(run, EW)
-    type (Running), intent(in) :: run
-    type (ElectroWeak)         :: EW
-    integer                    :: nf
+    type (Running)    , intent(in) :: run
+    type (ElectroWeak), intent(in) :: EW
+    integer                        :: nf
 
     InitSigma%run = run           ;   InitSigma%andim = run%adim()
     nf = InitSigma%andim%numFlav();   InitSigma%nf    = nf
