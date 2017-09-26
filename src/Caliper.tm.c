@@ -289,7 +289,7 @@ MLYDEFN( devyield_result, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
-# line 2695 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
+# line 2772 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
 #include "mathlink.h"
 #include "ftypes.h"
 #include <stdio.h>
@@ -3993,7 +3993,7 @@ double Mz, double aMz, double mT, double mu, double nu, double Q){
 
 extern double f90rmatched_(char const* str, int* runAlpha, int* runMass,
 int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
-double* lambda, double* gt, double* Mz,  double* aMz, double* mT, double* mu,
+double* lambda, double* gt, double* Mz, double* aMz, double* mT, double* mu,
 double* nu, double* v1, double* v2, double* Q, double* res);
 
 static double rmatched(char const* str, int runAlpha, int runMass, int ordMass,
@@ -4005,6 +4005,111 @@ double Q){
 
   f90rmatched_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S, &R1S, method,
   &lambda, &gt, &Mz, &aMz, &mT, &mu, &nu, &v1, &v2, &Q, &res);
+
+ return res;
+}
+
+extern double f90sigmamatched_(char const* str, int* runAlpha, int* runMass,
+int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
+double* lambda, double* gt, double* Mz, double* gammaZ, double* sinW,
+double* aMz, double* aMzQED, double* mT, double* mu, double* nu, double* v1,
+double* v2, double* Q, double* res);
+
+static double sigmamatched(char const* str, int runAlpha, int runMass, int ordMass,
+int order, int ord1S, double R1S, char const* method, double lambda, double gt,
+double Mz, double gammaZ, double sinW, double aMz, double aMzQED, double mT,
+double mu, double nu, double v1, double v2, double Q){
+
+  double res;
+
+  f90sigmamatched_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S, &R1S,
+  method, &lambda, &gt, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &mu, &nu,
+  &v1, &v2, &Q, &res);
+
+ return res;
+}
+
+extern double f90sigmamatchedradiative_(char const* str, int* runAlpha,
+int* runMass, int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
+double* lambda, double* gt, double* Mz, double* gammaZ, double* sinW,
+double* aMz, double* aMzQED, double* mT, double* mu, double* nu, double* v1,
+double* v2, double* Q, double* x, double* theta, double* res);
+
+static double sigmamatchedradiative(char const* str, int runAlpha, int runMass,
+int ordMass, int order, int ord1S, double R1S, char const* method, double lambda,
+double gt, double Mz, double gammaZ, double sinW, double aMz, double aMzQED,
+double mT, double mu, double nu, double v1, double v2, double Q, double x,
+double theta){
+
+  double res;
+
+  f90sigmamatchedradiative_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
+  &R1S, method, &lambda, &gt, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &mu, &nu,
+  &v1, &v2, &Q, &x, &theta, &res);
+
+ return res;
+}
+
+extern double f90sigmamatchedradiativecum_(char const* str, int* runAlpha,
+int* runMass, int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
+double* lambda, double* gt, double* Mz, double* gammaZ, double* sinW,
+double* aMz, double* aMzQED, double* mT, double* mu, double* nu, double* v1,
+double* v2, double* Q, double* x0, double* x1, double* theta, double* res);
+
+static double sigmamatchedradiativecum(char const* str, int runAlpha, int runMass,
+int ordMass, int order, int ord1S, double R1S, char const* method, double lambda,
+double gt, double Mz, double gammaZ, double sinW, double aMz, double aMzQED,
+double mT, double mu, double nu, double v1, double v2, double Q, double x0,
+double x1, double theta){
+
+  double res;
+
+  f90sigmamatchedradiativecum_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
+  &R1S, method, &lambda, &gt, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &mu, &nu,
+  &v1, &v2, &Q, &x0, &x1, &theta, &res);
+
+ return res;
+}
+
+extern double f90sigmamatchedradiativecone_(char const* str, int* runAlpha,
+int* runMass, int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
+double* lambda, double* gt, double* Mz, double* gammaZ, double* sinW,
+double* aMz, double* aMzQED, double* mT, double* mu, double* nu, double* v1,
+double* v2, double* Q, double* x, double* theta, double* deltatheta, double* res);
+
+static double sigmamatchedradiativecone(char const* str, int runAlpha, int runMass,
+int ordMass, int order, int ord1S, double R1S, char const* method, double lambda,
+double gt, double Mz, double gammaZ, double sinW, double aMz, double aMzQED,
+double mT, double mu, double nu, double v1, double v2, double Q, double x,
+double theta, double deltatheta){
+
+  double res;
+
+  f90sigmamatchedradiativecone_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
+  &R1S, method, &lambda, &gt, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &mu, &nu,
+  &v1, &v2, &Q, &x, &theta, &deltatheta, &res);
+
+ return res;
+}
+
+extern double f90sigmamatchedradiativeconecum_(char const* str, int* runAlpha,
+int* runMass, int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
+double* lambda, double* gt, double* Mz, double* gammaZ, double* sinW,
+double* aMz, double* aMzQED, double* mT, double* mu, double* nu, double* v1,
+double* v2, double* Q, double* x0, double* x1, double* theta, double* deltatheta,
+double* res);
+
+static double sigmamatchedradiativeconecum(char const* str, int runAlpha, int runMass,
+int ordMass, int order, int ord1S, double R1S, char const* method, double lambda,
+double gt, double Mz, double gammaZ, double sinW, double aMz, double aMzQED,
+double mT, double mu, double nu, double v1, double v2, double Q, double x0,
+double x1, double theta, double deltatheta){
+
+  double res;
+
+  f90sigmamatchedradiativeconecum_(str, &runAlpha, &runMass, &ordMass, &order, &ord1S,
+  &R1S, method, &lambda, &gt, &Mz, &gammaZ, &sinW, &aMz, &aMzQED, &mT, &mu, &nu,
+  &v1, &v2, &Q, &x0, &x1, &theta, &deltatheta, &res);
 
  return res;
 }
@@ -4065,7 +4170,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 4069 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
+# line 4174 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
 
 
 void hypgeo P(( double _tp1, double _tp2, double _tp3, double _tp4, double _tp5, double _tp6, double _tp7, double _tp8));
@@ -15899,12 +16004,361 @@ L0:	return res;
 } /* _tr200 */
 
 
-void rmatchedlist P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, const char * _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20));
+double sigmamatched P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, const char * _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21));
 
 #if MLPROTOTYPES
 static int _tr201( MLINK mlp)
 #else
 static int _tr201(mlp) MLINK mlp;
+#endif
+{
+	int	res = 0;
+	const char * _tp1;
+	int _tp2;
+	int _tp3;
+	int _tp4;
+	int _tp5;
+	int _tp6;
+	double _tp7;
+	const char * _tp8;
+	double _tp9;
+	double _tp10;
+	double _tp11;
+	double _tp12;
+	double _tp13;
+	double _tp14;
+	double _tp15;
+	double _tp16;
+	double _tp17;
+	double _tp18;
+	double _tp19;
+	double _tp20;
+	double _tp21;
+	double _rp0;
+	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
+	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
+	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
+	if ( ! MLGetInteger( mlp, &_tp5) ) goto L4;
+	if ( ! MLGetInteger( mlp, &_tp6) ) goto L5;
+	if ( ! MLGetReal( mlp, &_tp7) ) goto L6;
+	if ( ! MLGetString( mlp, &_tp8) ) goto L7;
+	if ( ! MLGetReal( mlp, &_tp9) ) goto L8;
+	if ( ! MLGetReal( mlp, &_tp10) ) goto L9;
+	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
+	if ( ! MLGetReal( mlp, &_tp12) ) goto L11;
+	if ( ! MLGetReal( mlp, &_tp13) ) goto L12;
+	if ( ! MLGetReal( mlp, &_tp14) ) goto L13;
+	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
+	if ( ! MLGetReal( mlp, &_tp16) ) goto L15;
+	if ( ! MLGetReal( mlp, &_tp17) ) goto L16;
+	if ( ! MLGetReal( mlp, &_tp18) ) goto L17;
+	if ( ! MLGetReal( mlp, &_tp19) ) goto L18;
+	if ( ! MLGetReal( mlp, &_tp20) ) goto L19;
+	if ( ! MLGetReal( mlp, &_tp21) ) goto L20;
+	if ( ! MLNewPacket(mlp) ) goto L21;
+
+	_rp0 = sigmamatched(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21);
+
+	res = MLAbort ?
+		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
+L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(mlp, _tp8);
+L7: L6: L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
+
+L0:	return res;
+} /* _tr201 */
+
+
+double sigmamatchedradiative P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, const char * _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23));
+
+#if MLPROTOTYPES
+static int _tr202( MLINK mlp)
+#else
+static int _tr202(mlp) MLINK mlp;
+#endif
+{
+	int	res = 0;
+	const char * _tp1;
+	int _tp2;
+	int _tp3;
+	int _tp4;
+	int _tp5;
+	int _tp6;
+	double _tp7;
+	const char * _tp8;
+	double _tp9;
+	double _tp10;
+	double _tp11;
+	double _tp12;
+	double _tp13;
+	double _tp14;
+	double _tp15;
+	double _tp16;
+	double _tp17;
+	double _tp18;
+	double _tp19;
+	double _tp20;
+	double _tp21;
+	double _tp22;
+	double _tp23;
+	double _rp0;
+	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
+	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
+	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
+	if ( ! MLGetInteger( mlp, &_tp5) ) goto L4;
+	if ( ! MLGetInteger( mlp, &_tp6) ) goto L5;
+	if ( ! MLGetReal( mlp, &_tp7) ) goto L6;
+	if ( ! MLGetString( mlp, &_tp8) ) goto L7;
+	if ( ! MLGetReal( mlp, &_tp9) ) goto L8;
+	if ( ! MLGetReal( mlp, &_tp10) ) goto L9;
+	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
+	if ( ! MLGetReal( mlp, &_tp12) ) goto L11;
+	if ( ! MLGetReal( mlp, &_tp13) ) goto L12;
+	if ( ! MLGetReal( mlp, &_tp14) ) goto L13;
+	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
+	if ( ! MLGetReal( mlp, &_tp16) ) goto L15;
+	if ( ! MLGetReal( mlp, &_tp17) ) goto L16;
+	if ( ! MLGetReal( mlp, &_tp18) ) goto L17;
+	if ( ! MLGetReal( mlp, &_tp19) ) goto L18;
+	if ( ! MLGetReal( mlp, &_tp20) ) goto L19;
+	if ( ! MLGetReal( mlp, &_tp21) ) goto L20;
+	if ( ! MLGetReal( mlp, &_tp22) ) goto L21;
+	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
+	if ( ! MLNewPacket(mlp) ) goto L23;
+
+	_rp0 = sigmamatchedradiative(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23);
+
+	res = MLAbort ?
+		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
+L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(mlp, _tp8);
+L7: L6: L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
+
+L0:	return res;
+} /* _tr202 */
+
+
+double sigmamatchedradiativecum P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, const char * _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24));
+
+#if MLPROTOTYPES
+static int _tr203( MLINK mlp)
+#else
+static int _tr203(mlp) MLINK mlp;
+#endif
+{
+	int	res = 0;
+	const char * _tp1;
+	int _tp2;
+	int _tp3;
+	int _tp4;
+	int _tp5;
+	int _tp6;
+	double _tp7;
+	const char * _tp8;
+	double _tp9;
+	double _tp10;
+	double _tp11;
+	double _tp12;
+	double _tp13;
+	double _tp14;
+	double _tp15;
+	double _tp16;
+	double _tp17;
+	double _tp18;
+	double _tp19;
+	double _tp20;
+	double _tp21;
+	double _tp22;
+	double _tp23;
+	double _tp24;
+	double _rp0;
+	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
+	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
+	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
+	if ( ! MLGetInteger( mlp, &_tp5) ) goto L4;
+	if ( ! MLGetInteger( mlp, &_tp6) ) goto L5;
+	if ( ! MLGetReal( mlp, &_tp7) ) goto L6;
+	if ( ! MLGetString( mlp, &_tp8) ) goto L7;
+	if ( ! MLGetReal( mlp, &_tp9) ) goto L8;
+	if ( ! MLGetReal( mlp, &_tp10) ) goto L9;
+	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
+	if ( ! MLGetReal( mlp, &_tp12) ) goto L11;
+	if ( ! MLGetReal( mlp, &_tp13) ) goto L12;
+	if ( ! MLGetReal( mlp, &_tp14) ) goto L13;
+	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
+	if ( ! MLGetReal( mlp, &_tp16) ) goto L15;
+	if ( ! MLGetReal( mlp, &_tp17) ) goto L16;
+	if ( ! MLGetReal( mlp, &_tp18) ) goto L17;
+	if ( ! MLGetReal( mlp, &_tp19) ) goto L18;
+	if ( ! MLGetReal( mlp, &_tp20) ) goto L19;
+	if ( ! MLGetReal( mlp, &_tp21) ) goto L20;
+	if ( ! MLGetReal( mlp, &_tp22) ) goto L21;
+	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
+	if ( ! MLGetReal( mlp, &_tp24) ) goto L23;
+	if ( ! MLNewPacket(mlp) ) goto L24;
+
+	_rp0 = sigmamatchedradiativecum(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24);
+
+	res = MLAbort ?
+		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
+L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(mlp, _tp8);
+L7: L6: L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
+
+L0:	return res;
+} /* _tr203 */
+
+
+double sigmamatchedradiativecone P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, const char * _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24));
+
+#if MLPROTOTYPES
+static int _tr204( MLINK mlp)
+#else
+static int _tr204(mlp) MLINK mlp;
+#endif
+{
+	int	res = 0;
+	const char * _tp1;
+	int _tp2;
+	int _tp3;
+	int _tp4;
+	int _tp5;
+	int _tp6;
+	double _tp7;
+	const char * _tp8;
+	double _tp9;
+	double _tp10;
+	double _tp11;
+	double _tp12;
+	double _tp13;
+	double _tp14;
+	double _tp15;
+	double _tp16;
+	double _tp17;
+	double _tp18;
+	double _tp19;
+	double _tp20;
+	double _tp21;
+	double _tp22;
+	double _tp23;
+	double _tp24;
+	double _rp0;
+	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
+	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
+	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
+	if ( ! MLGetInteger( mlp, &_tp5) ) goto L4;
+	if ( ! MLGetInteger( mlp, &_tp6) ) goto L5;
+	if ( ! MLGetReal( mlp, &_tp7) ) goto L6;
+	if ( ! MLGetString( mlp, &_tp8) ) goto L7;
+	if ( ! MLGetReal( mlp, &_tp9) ) goto L8;
+	if ( ! MLGetReal( mlp, &_tp10) ) goto L9;
+	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
+	if ( ! MLGetReal( mlp, &_tp12) ) goto L11;
+	if ( ! MLGetReal( mlp, &_tp13) ) goto L12;
+	if ( ! MLGetReal( mlp, &_tp14) ) goto L13;
+	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
+	if ( ! MLGetReal( mlp, &_tp16) ) goto L15;
+	if ( ! MLGetReal( mlp, &_tp17) ) goto L16;
+	if ( ! MLGetReal( mlp, &_tp18) ) goto L17;
+	if ( ! MLGetReal( mlp, &_tp19) ) goto L18;
+	if ( ! MLGetReal( mlp, &_tp20) ) goto L19;
+	if ( ! MLGetReal( mlp, &_tp21) ) goto L20;
+	if ( ! MLGetReal( mlp, &_tp22) ) goto L21;
+	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
+	if ( ! MLGetReal( mlp, &_tp24) ) goto L23;
+	if ( ! MLNewPacket(mlp) ) goto L24;
+
+	_rp0 = sigmamatchedradiativecone(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24);
+
+	res = MLAbort ?
+		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
+L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(mlp, _tp8);
+L7: L6: L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
+
+L0:	return res;
+} /* _tr204 */
+
+
+double sigmamatchedradiativeconecum P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, const char * _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25));
+
+#if MLPROTOTYPES
+static int _tr205( MLINK mlp)
+#else
+static int _tr205(mlp) MLINK mlp;
+#endif
+{
+	int	res = 0;
+	const char * _tp1;
+	int _tp2;
+	int _tp3;
+	int _tp4;
+	int _tp5;
+	int _tp6;
+	double _tp7;
+	const char * _tp8;
+	double _tp9;
+	double _tp10;
+	double _tp11;
+	double _tp12;
+	double _tp13;
+	double _tp14;
+	double _tp15;
+	double _tp16;
+	double _tp17;
+	double _tp18;
+	double _tp19;
+	double _tp20;
+	double _tp21;
+	double _tp22;
+	double _tp23;
+	double _tp24;
+	double _tp25;
+	double _rp0;
+	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
+	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
+	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
+	if ( ! MLGetInteger( mlp, &_tp5) ) goto L4;
+	if ( ! MLGetInteger( mlp, &_tp6) ) goto L5;
+	if ( ! MLGetReal( mlp, &_tp7) ) goto L6;
+	if ( ! MLGetString( mlp, &_tp8) ) goto L7;
+	if ( ! MLGetReal( mlp, &_tp9) ) goto L8;
+	if ( ! MLGetReal( mlp, &_tp10) ) goto L9;
+	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
+	if ( ! MLGetReal( mlp, &_tp12) ) goto L11;
+	if ( ! MLGetReal( mlp, &_tp13) ) goto L12;
+	if ( ! MLGetReal( mlp, &_tp14) ) goto L13;
+	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
+	if ( ! MLGetReal( mlp, &_tp16) ) goto L15;
+	if ( ! MLGetReal( mlp, &_tp17) ) goto L16;
+	if ( ! MLGetReal( mlp, &_tp18) ) goto L17;
+	if ( ! MLGetReal( mlp, &_tp19) ) goto L18;
+	if ( ! MLGetReal( mlp, &_tp20) ) goto L19;
+	if ( ! MLGetReal( mlp, &_tp21) ) goto L20;
+	if ( ! MLGetReal( mlp, &_tp22) ) goto L21;
+	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
+	if ( ! MLGetReal( mlp, &_tp24) ) goto L23;
+	if ( ! MLGetReal( mlp, &_tp25) ) goto L24;
+	if ( ! MLNewPacket(mlp) ) goto L25;
+
+	_rp0 = sigmamatchedradiativeconecum(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25);
+
+	res = MLAbort ?
+		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
+L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(mlp, _tp8);
+L7: L6: L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
+
+L0:	return res;
+} /* _tr205 */
+
+
+void rmatchedlist P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, const char * _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20));
+
+#if MLPROTOTYPES
+static int _tr206( MLINK mlp)
+#else
+static int _tr206(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -15957,15 +16411,15 @@ L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(m
 L7: L6: L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr201 */
+} /* _tr206 */
 
 
 double lambdaqcd P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14));
 
 #if MLPROTOTYPES
-static int _tr202( MLINK mlp)
+static int _tr207( MLINK mlp)
 #else
-static int _tr202(mlp) MLINK mlp;
+static int _tr207(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -16007,15 +16461,15 @@ static int _tr202(mlp) MLINK mlp;
 L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr202 */
+} /* _tr207 */
 
 
 void kernels P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5));
 
 #if MLPROTOTYPES
-static int _tr203( MLINK mlp)
+static int _tr208( MLINK mlp)
 #else
-static int _tr203(mlp) MLINK mlp;
+static int _tr208(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -16036,15 +16490,15 @@ static int _tr203(mlp) MLINK mlp;
 	res = 1;
 L5: L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr203 */
+} /* _tr208 */
 
 
 void gammaderlist P(( int _tp1, double _tp2));
 
 #if MLPROTOTYPES
-static int _tr204( MLINK mlp)
+static int _tr209( MLINK mlp)
 #else
-static int _tr204(mlp) MLINK mlp;
+static int _tr209(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -16059,15 +16513,15 @@ static int _tr204(mlp) MLINK mlp;
 	res = 1;
 L2: L1: 
 L0:	return res;
-} /* _tr204 */
+} /* _tr209 */
 
 
 void polygamma P(( int _tp1, double _tp2));
 
 #if MLPROTOTYPES
-static int _tr205( MLINK mlp)
+static int _tr210( MLINK mlp)
 #else
-static int _tr205(mlp) MLINK mlp;
+static int _tr210(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -16082,15 +16536,15 @@ static int _tr205(mlp) MLINK mlp;
 	res = 1;
 L2: L1: 
 L0:	return res;
-} /* _tr205 */
+} /* _tr210 */
 
 
 void nglkernels P(( int _tp1, int _tp2, int _tp3, double _tp4, double * _tp5, long _tpl5, double _tp6, double * _tp7, long _tpl7));
 
 #if MLPROTOTYPES
-static int _tr206( MLINK mlp)
+static int _tr211( MLINK mlp)
 #else
-static int _tr206(mlp) MLINK mlp;
+static int _tr211(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -16119,15 +16573,15 @@ L7:	MLReleaseReal64List(mlp, _tp7, _tpl7);
 L6: L5:	MLReleaseReal64List(mlp, _tp5, _tpl5);
 L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr206 */
+} /* _tr211 */
 
 
 double nglintegral P(( int _tp1, int _tp2, double _tp3, double _tp4));
 
 #if MLPROTOTYPES
-static int _tr207( MLINK mlp)
+static int _tr212( MLINK mlp)
 #else
-static int _tr207(mlp) MLINK mlp;
+static int _tr212(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -16148,15 +16602,15 @@ static int _tr207(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr207 */
+} /* _tr212 */
 
 
 double ngldoubleintegral P(( int _tp1, int _tp2, double _tp3, double _tp4, double _tp5));
 
 #if MLPROTOTYPES
-static int _tr208( MLINK mlp)
+static int _tr213( MLINK mlp)
 #else
-static int _tr208(mlp) MLINK mlp;
+static int _tr213(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -16179,7 +16633,7 @@ static int _tr208(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
 L5: L4: L3: L2: L1: 
 L0:	return res;
-} /* _tr208 */
+} /* _tr213 */
 
 
 static struct func {
@@ -16187,7 +16641,7 @@ static struct func {
 	int   manual;
 	int   (*f_func)P((MLINK));
 	const char  *f_name;
-	} _tramps[209] = {
+	} _tramps[214] = {
 		{ 8, 0, _tr0, "hypgeo" },
 		{ 2, 0, _tr1, "cdigamma" },
 		{ 2, 0, _tr2, "ctrigamma" },
@@ -16389,14 +16843,19 @@ static struct func {
 		{15, 0, _tr198, "rqcd" },
 		{16, 0, _tr199, "rexp" },
 		{18, 0, _tr200, "rmatched" },
-		{20, 0, _tr201, "rmatchedlist" },
-		{14, 0, _tr202, "lambdaqcd" },
-		{ 5, 0, _tr203, "kernels" },
-		{ 2, 0, _tr204, "gammaderlist" },
-		{ 2, 0, _tr205, "polygamma" },
-		{ 7, 0, _tr206, "nglkernels" },
-		{ 4, 0, _tr207, "nglintegral" },
-		{ 5, 0, _tr208, "ngldoubleintegral" }
+		{21, 0, _tr201, "sigmamatched" },
+		{23, 0, _tr202, "sigmamatchedradiative" },
+		{24, 0, _tr203, "sigmamatchedradiativecum" },
+		{24, 0, _tr204, "sigmamatchedradiativecone" },
+		{25, 0, _tr205, "sigmamatchedradiativeconecum" },
+		{20, 0, _tr206, "rmatchedlist" },
+		{14, 0, _tr207, "lambdaqcd" },
+		{ 5, 0, _tr208, "kernels" },
+		{ 2, 0, _tr209, "gammaderlist" },
+		{ 2, 0, _tr210, "polygamma" },
+		{ 7, 0, _tr211, "nglkernels" },
+		{ 4, 0, _tr212, "nglintegral" },
+		{ 5, 0, _tr213, "ngldoubleintegral" }
 		};
 
 static const char* evalstrs[] = {
@@ -17027,6 +17486,35 @@ static const char* evalstrs[] = {
 	"the threshold-expaded massive total hadronic cross section for a",
 	"n unstable top quark.\"",
 	(const char*)0,
+	"SigmaMatched::usage = \"Rmatched[scheme, runAlpha, runMass, ordMa",
+	"ss, order, ord1S, R1S, method, lambda, gt, Mz, gammaZ, sinW, aMz",
+	", aMzQED, mT, mu, nu, v1, v2, Q] computes the matched massive to",
+	"tal hadronic cross section for an unstable top quark.\"",
+	(const char*)0,
+	"SigmaMatchedRadiativeCum::usage = \"SigmaMatchedRadiativeCum[sche",
+	"me, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambd",
+	"a, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x0,",
+	" x1, theta] computes the ISR matched massive total hadronic cros",
+	"s section for an unstable top quark.\"",
+	(const char*)0,
+	"SigmaMatchedRadiative::usage = \"SigmaMatchedRadiative[scheme, ru",
+	"nAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt,",
+	" Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x, theta]",
+	" computes the ISR matched massive total hadronic cross section f",
+	"or an unstable top quark.\"",
+	(const char*)0,
+	"SigmaMatchedRadiativeCone::usage = \"SigmaMatchedRadiativeCone[sc",
+	"heme, runAlpha, runMass, ordMass, order, ord1S, R1S, method, lam",
+	"bda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x",
+	", theta, deltaTheta] computes the ISR matched massive total hadr",
+	"onic cross section for an unstable top quark.\"",
+	(const char*)0,
+	"SigmaMatchedRadiativeConeCum::usage = \"SigmaMatchedRadiativeCone",
+	"Cum[scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, metho",
+	"d, lambda, gt, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2",
+	", Q, x0, x1, theta, deltaTheta] computes the ISR matched massive",
+	" total hadronic cross section for an unstable top quark.\"",
+	(const char*)0,
 	"Rmatched::usage = \"Rmatched[scheme, runAlpha, runMass, ordMass, ",
 	"order, ord1S, R1S, method, lambda, gt, Mz, aMz, mT, mu, nu, v1, ",
 	"v2, Q] computes the matched massive total hadronic cross section",
@@ -17248,7 +17736,7 @@ static const char* evalstrs[] = {
 	(const char*)0,
 	(const char*)0
 };
-#define CARDOF_EVALSTRS 209
+#define CARDOF_EVALSTRS 214
 
 static int _definepattern P(( MLINK, char*, char*, int));
 
@@ -17471,6 +17959,11 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _doevalstr( mlp, 203);
 	if (_res) _res = _doevalstr( mlp, 204);
 	if (_res) _res = _doevalstr( mlp, 205);
+	if (_res) _res = _doevalstr( mlp, 206);
+	if (_res) _res = _doevalstr( mlp, 207);
+	if (_res) _res = _doevalstr( mlp, 208);
+	if (_res) _res = _doevalstr( mlp, 209);
+	if (_res) _res = _doevalstr( mlp, 210);
 	if (_res) _res = _definepattern(mlp, (char *)"HypGeo[a_, b_, c_, z_]", (char *)"{Re[a], Im[a], Re[b], Im[b], Re[c], Im[c], Re[z], Im[z]}", 0);
 	if (_res) _res = _definepattern(mlp, (char *)"CdiGamma[z_]", (char *)"{Re[z], Im[z]}", 1);
 	if (_res) _res = _definepattern(mlp, (char *)"CtriGamma[z_]", (char *)"{Re[z], Im[z]}", 2);
@@ -17672,17 +18165,22 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"RQCD[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,                 R1S_, method_, lambda_, gt_, Mz_, aMz_, mT_, mu_, Q_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, aMz, mT, mu, Q}", 198);
 	if (_res) _res = _definepattern(mlp, (char *)"RExp[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,                 R1S_, method_, lambda_, gt_, Mz_, aMz_, mT_, mu_, nu_, Q_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, aMz, mT, mu, nu, Q}", 199);
 	if (_res) _res = _definepattern(mlp, (char *)"Rmatched[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,                 R1S_, method_, lambda_, gt_, Mz_, aMz_, mT_, mu_, nu_, v1_, v2_,                 Q_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, aMz, mT, mu, nu, v1, v2, Q}", 200);
-	if (_res) _res = _definepattern(mlp, (char *)"RmatchedList[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,                 R1S_, method_, lambda_, gt_, Mz_, aMz_, mT_, mu_, nu_, v1_, v2_,                 Q0_, Q1_, deltaQ_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, aMz, mT, mu, nu, v1, v2, Q0, Q1, deltaQ}", 201);
-	if (_res) _res = _definepattern(mlp, (char *)"LambdaQCD[scheme_, order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_,                  mB_, muB_, mC_, muC_, mu_]", (char *)"{scheme, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 202);
-	if (_res) _res = _definepattern(mlp, (char *)"Kernel[n_, width_, w_, mu_, p_]", (char *)"{n, width, w, mu, p}", 203);
-	if (_res) _res = _definepattern(mlp, (char *)"GammaDerList[n_, w_]", (char *)"{n, w}", 204);
-	if (_res) _res = _definepattern(mlp, (char *)"polyGamma[n_, w_]", (char *)"{n, w}", 205);
-	if (_res) _res = _definepattern(mlp, (char *)"NGLKernel[n_, n1_, n2_, width_, w_, mu_, p_]", (char *)"{n, n1, n2, width, w, mu, p}", 206);
-	if (_res) _res = _definepattern(mlp, (char *)"NGLIntegral[nf_, pow_, w1_, w2_]", (char *)"{nf, pow, w1, w2}", 207);
-	if (_res) _res = _definepattern(mlp, (char *)"NGLDoubleIntegral[nf_, pow_, w1_, w2_, r_]", (char *)"{nf, pow, w1, w2, r}", 208);
-	if (_res) _res = _doevalstr( mlp, 206);
-	if (_res) _res = _doevalstr( mlp, 207);
-	if (_res) _res = _doevalstr( mlp, 208);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaMatched[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,                 R1S_, method_, lambda_, gt_, Mz_, gammaZ_, sinW_, aMz_, aMzQED_,                 mT_, mu_, nu_, v1_, v2_, Q_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, gammaZ, singW, aMz, aMzQED, mT, mu, nu, v1, v2, Q}", 201);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaMatchedRadiative[scheme_, runAlpha_, runMass_, ordMass_,                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x_, theta_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, gammaZ, singW, aMz, aMzQED, mT, mu, nu, v1, v2,                 Q, x, theta}", 202);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaMatchedRadiativeCum[scheme_, runAlpha_, runMass_, ordMass_,                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x0_, x1_,                 theta_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, gammaZ, singW, aMz, aMzQED, mT, mu, nu, v1, v2,                 Q, x0, x1, theta}", 203);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaMatchedRadiativeCone[scheme_, runAlpha_, runMass_, ordMass_,                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x_, theta_,                 deltaTheta_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, gammaZ, singW, aMz, aMzQED, mT, mu, nu, v1, v2,                 Q, x, theta, deltaTheta}", 204);
+	if (_res) _res = _definepattern(mlp, (char *)"SigmaMatchedRadiativeConeCum[scheme_, runAlpha_, runMass_, ordMass_,                 order_, ord1S_, R1S_, method_, lambda_, gt_, Mz_, gammaZ_,                 sinW_, aMz_, aMzQED_, mT_, mu_, nu_, v1_, v2_, Q_, x0_, x1_,                 theta_,deltaTheta_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, gammaZ, singW, aMz, aMzQED, mT, mu, nu, v1, v2,                 Q, x0, x1, theta, deltaTheta}", 205);
+	if (_res) _res = _definepattern(mlp, (char *)"RmatchedList[scheme_, runAlpha_, runMass_, ordMass_, order_, ord1S_,                 R1S_, method_, lambda_, gt_, Mz_, aMz_, mT_, mu_, nu_, v1_, v2_,                 Q0_, Q1_, deltaQ_]", (char *)"{scheme, runAlpha, runMass, ordMass, order, ord1S, R1S, method,                 lambda, gt, Mz, aMz, mT, mu, nu, v1, v2, Q0, Q1, deltaQ}", 206);
+	if (_res) _res = _definepattern(mlp, (char *)"LambdaQCD[scheme_, order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_,                  mB_, muB_, mC_, muC_, mu_]", (char *)"{scheme, order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 207);
+	if (_res) _res = _definepattern(mlp, (char *)"Kernel[n_, width_, w_, mu_, p_]", (char *)"{n, width, w, mu, p}", 208);
+	if (_res) _res = _definepattern(mlp, (char *)"GammaDerList[n_, w_]", (char *)"{n, w}", 209);
+	if (_res) _res = _definepattern(mlp, (char *)"polyGamma[n_, w_]", (char *)"{n, w}", 210);
+	if (_res) _res = _definepattern(mlp, (char *)"NGLKernel[n_, n1_, n2_, width_, w_, mu_, p_]", (char *)"{n, n1, n2, width, w, mu, p}", 211);
+	if (_res) _res = _definepattern(mlp, (char *)"NGLIntegral[nf_, pow_, w1_, w2_]", (char *)"{nf, pow, w1, w2}", 212);
+	if (_res) _res = _definepattern(mlp, (char *)"NGLDoubleIntegral[nf_, pow_, w1_, w2_, r_]", (char *)"{nf, pow, w1, w2, r}", 213);
+	if (_res) _res = _doevalstr( mlp, 211);
+	if (_res) _res = _doevalstr( mlp, 212);
+	if (_res) _res = _doevalstr( mlp, 213);
 	if (_res) _res = MLPutSymbol( mlp, "End");
 	if (_res) _res = MLFlush( mlp);
 	return _res;
@@ -17695,7 +18193,7 @@ int MLDoCallPacket( MLINK mlp)
 int MLDoCallPacket( mlp) MLINK mlp;
 #endif
 {
-	return _MLDoCallPacket( mlp, _tramps, 209);
+	return _MLDoCallPacket( mlp, _tramps, 214);
 } /* MLDoCallPacket */
 
 /******************************* begin trailer ********************************/
