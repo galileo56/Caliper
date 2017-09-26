@@ -6137,6 +6137,217 @@ end subroutine f90Rmatched
 
 !ccccccccccccccc
 
+subroutine f90SigmaMatched(str, runAlp, runMass, ordMass, order, ord1S, R1S, method, &
+lambda, gt, mZ, gammaZ, sinW, amZ, amZQED, mT, mu, nu, v1, v2, Q, res)
+
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass; implicit none
+
+  character (len = *), intent(in ) :: str, method
+  integer            , intent(in ) :: order, runAlp, runMass, ordMass, ord1S
+  real (dp)          , intent(in ) :: mZ, amZ, mu, nu, mT, Q, gt, lambda, R1S, &
+  v1, v2, gammaZ, sinW, amZQED
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (ElectroWeak)               :: EW
+  type (RNRQCD)                    :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running), dimension(2)     :: alphaMass
+  type (VFNSMSR)                   :: MSR
+  type (AnomDim), dimension(3:6)   :: AnDim
+  character (len = 5)              :: alphaScheme
+
+  alphaScheme = 'pole'; if ( str(:4) /= 'pole' ) alphaScheme = 'MSbar'
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, runAlp, runAlp, mZ, aMz, mT, mT, &
+  0._dp, 0._dp, 0._dp, 0._dp, 'analytic', amZQED)
+
+  alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
+  Running(5, runMass, alphaAll, 1._dp) ]
+
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(mZ, gammaZ, sinW)
+  NRQCD = RNRQCD(MSR, EW, str, method, gt, ordMass, ord1S, R1S, lambda)
+
+  res = NRQCD%SigmaMatched(order, mu, nu, v1, v2, Q)
+
+end subroutine f90SigmaMatched
+
+!ccccccccccccccc
+
+subroutine f90SigmaMatchedRadiative(str, runAlp, runMass, ordMass, order, &
+ord1S, R1S, method, lambda, gt, mZ, gammaZ, sinW, amZ, amZQED, mT, mu, nu, &
+v1, v2, Q, x, theta, res)
+
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass; implicit none
+
+  character (len = *), intent(in ) :: str, method
+  integer            , intent(in ) :: order, runAlp, runMass, ordMass, ord1S
+  real (dp)          , intent(in ) :: mZ, amZ, mu, nu, mT, Q, gt, lambda, R1S, &
+  v1, v2, gammaZ, sinW, amZQED, x, theta
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (ElectroWeak)               :: EW
+  type (RNRQCD)                    :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running), dimension(2)     :: alphaMass
+  type (VFNSMSR)                   :: MSR
+  type (AnomDim), dimension(3:6)   :: AnDim
+  character (len = 5)              :: alphaScheme
+
+  alphaScheme = 'pole'; if ( str(:4) /= 'pole' ) alphaScheme = 'MSbar'
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, runAlp, runAlp, mZ, aMz, mT, mT, &
+  0._dp, 0._dp, 0._dp, 0._dp, 'analytic', amZQED)
+
+  alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
+  Running(5, runMass, alphaAll, 1._dp) ]
+
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(mZ, gammaZ, sinW)
+  NRQCD = RNRQCD(MSR, EW, str, method, gt, ordMass, ord1S, R1S, lambda)
+
+  res = NRQCD%SigmaMatchedRadiative(order, mu, nu, v1, v2, Q, x, theta)
+
+end subroutine f90SigmaMatchedRadiative
+
+!ccccccccccccccc
+
+subroutine f90SigmaMatchedRadiativeCum(str, runAlp, runMass, ordMass, order, &
+ord1S, R1S, method, lambda, gt, mZ, gammaZ, sinW, amZ, amZQED, mT, mu, nu, &
+v1, v2, Q, x0, x1, theta, res)
+
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass; implicit none
+
+  character (len = *), intent(in ) :: str, method
+  integer            , intent(in ) :: order, runAlp, runMass, ordMass, ord1S
+  real (dp)          , intent(in ) :: mZ, amZ, mu, nu, mT, Q, gt, lambda, R1S, &
+  v1, v2, gammaZ, sinW, amZQED, x0, x1, theta
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (ElectroWeak)               :: EW
+  type (RNRQCD)                    :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running), dimension(2)     :: alphaMass
+  type (VFNSMSR)                   :: MSR
+  type (AnomDim), dimension(3:6)   :: AnDim
+  character (len = 5)              :: alphaScheme
+
+  alphaScheme = 'pole'; if ( str(:4) /= 'pole' ) alphaScheme = 'MSbar'
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, runAlp, runAlp, mZ, aMz, mT, mT, &
+  0._dp, 0._dp, 0._dp, 0._dp, 'analytic', amZQED)
+
+  alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
+  Running(5, runMass, alphaAll, 1._dp) ]
+
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(mZ, gammaZ, sinW)
+  NRQCD = RNRQCD(MSR, EW, str, method, gt, ordMass, ord1S, R1S, lambda)
+
+  res = NRQCD%SigmaMatchedRadiativeCum(order, mu, nu, v1, v2, Q, x0, x1, theta)
+
+end subroutine f90SigmaMatchedRadiativeCum
+
+!ccccccccccccccc
+
+subroutine f90SigmaMatchedRadiativeCone(str, runAlp, runMass, ordMass, order, &
+ord1S, R1S, method, lambda, gt, mZ, gammaZ, sinW, amZ, amZQED, mT, mu, nu, v1,&
+v2, Q, x, theta, deltaTheta, res)
+
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass; implicit none
+
+  character (len = *), intent(in ) :: str, method
+  integer            , intent(in ) :: order, runAlp, runMass, ordMass, ord1S
+  real (dp)          , intent(in ) :: mZ, amZ, mu, nu, mT, Q, gt, lambda, R1S, &
+  v1, v2, gammaZ, sinW, amZQED, x, theta, deltaTheta
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (ElectroWeak)               :: EW
+  type (RNRQCD)                    :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running), dimension(2)     :: alphaMass
+  type (VFNSMSR)                   :: MSR
+  type (AnomDim), dimension(3:6)   :: AnDim
+  character (len = 5)              :: alphaScheme
+
+  alphaScheme = 'pole'; if ( str(:4) /= 'pole' ) alphaScheme = 'MSbar'
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, runAlp, runAlp, mZ, aMz, mT, mT, &
+  0._dp, 0._dp, 0._dp, 0._dp, 'analytic', amZQED)
+
+  alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
+  Running(5, runMass, alphaAll, 1._dp) ]
+
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(mZ, gammaZ, sinW)
+  NRQCD = RNRQCD(MSR, EW, str, method, gt, ordMass, ord1S, R1S, lambda)
+
+  res = NRQCD%SigmaMatchedRadiativeCone(order, mu, nu, v1, v2, Q, x, theta, &
+  deltaTheta)
+
+end subroutine f90SigmaMatchedRadiativeCone
+
+!ccccccccccccccc
+
+subroutine f90SigmaMatchedRadiativeConeCum(str, runAlp, runMass, ordMass, order, &
+ord1S, R1S, method, lambda, gt, mZ, gammaZ, sinW, amZ, amZQED, mT, mu, nu, v1,&
+v2, Q, x0, x1, theta, deltaTheta, res)
+
+  use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
+  use RunningClass; use VFNSMSRClass; use ElectroWeakClass; implicit none
+
+  character (len = *), intent(in ) :: str, method
+  integer            , intent(in ) :: order, runAlp, runMass, ordMass, ord1S
+  real (dp)          , intent(in ) :: mZ, amZ, mu, nu, mT, Q, gt, lambda, R1S, &
+  v1, v2, gammaZ, sinW, amZQED, x0, x1, theta, deltaTheta
+  real (dp)          , intent(out) :: res
+  integer                          :: i
+  type (ElectroWeak)               :: EW
+  type (RNRQCD)                    :: NRQCD
+  type (Alpha)                     :: alphaAll
+  type (Running), dimension(2)     :: alphaMass
+  type (VFNSMSR)                   :: MSR
+  type (AnomDim), dimension(3:6)   :: AnDim
+  character (len = 5)              :: alphaScheme
+
+  alphaScheme = 'pole'; if ( str(:4) /= 'pole' ) alphaScheme = 'MSbar'
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, runAlp, runAlp, mZ, aMz, mT, mT, &
+  0._dp, 0._dp, 0._dp, 0._dp, 'analytic', amZQED)
+
+  alphaMass = [ Running(4, runMass, alphaAll, 1._dp), &
+  Running(5, runMass, alphaAll, 1._dp) ]
+
+  MSR = VFNSMSR(alphaMass);   EW = ElectroWeak(mZ, gammaZ, sinW)
+  NRQCD = RNRQCD(MSR, EW, str, method, gt, ordMass, ord1S, R1S, lambda)
+
+  res = NRQCD%SigmaMatchedRadiativeConeCum(order, mu, nu, v1, v2, Q, x0, x1, &
+  theta, deltaTheta)
+
+end subroutine f90SigmaMatchedRadiativeConeCum
+
+!ccccccccccccccc
+
 subroutine f90RmatchedList(str, runAlp, runMass, ordMass, order, ord1S, R1S, &
 method, lambda, gt, mZ, amZ, mT, h, hnu, v1, v2, Q0, Q1, deltaQ, res)
 
