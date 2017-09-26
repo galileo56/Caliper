@@ -3999,7 +3999,7 @@ mC, muC, mu, res)
   end do
 
   alphaOb = alpha( Andim, order, run, mZ, amZ, mT, muT, mB, &
-  muB, mC, muC, method(:9) )
+  muB, mC, muC, method(:9), 0._dp )
 
   res     = alphaOb%alphaQCD(nf, mu)
 

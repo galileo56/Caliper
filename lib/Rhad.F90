@@ -125,7 +125,7 @@ module SigmaClass
     integer                                  :: n
 
     rQ = 1 ; n = min(order,4) - 1
-    if (order > 1) rQ(2:) = matmul( PowList0( log(mu/Q), n ), self%RhadCoef(:n,2:n) )
+    if (order > 1) rQ(2:) = matmul( PowList0( log(mu/Q), n ), self%RhadCoef(:n,2:n+1) )
 
     Rhad = dot_product( PowList0( self%run%alphaQCD(mu)/Pi, n + 1 ), rQ )
 
