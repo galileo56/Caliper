@@ -50,6 +50,9 @@ include_directories(${Library_MODDIR})
 FILE(GLOB libSources lib/*.F90)
 add_library(subdir_mods ${libSources})
 
+## include the information from ./libC/CmakeLists.txt
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libC)
+
 ###############
 ## EXE & LINKING & INSTALL
 

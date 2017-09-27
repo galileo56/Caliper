@@ -195,6 +195,19 @@ libCaliper/fast:
 	$(MAKE) -f lib/CMakeFiles/libCaliper.dir/build.make lib/CMakeFiles/libCaliper.dir/build
 .PHONY : libCaliper/fast
 
+#=============================================================================
+# Target rules for targets named libradreturn
+
+# Build rule for target.
+libradreturn: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 libradreturn
+.PHONY : libradreturn
+
+# fast build rule for target.
+libradreturn/fast:
+	$(MAKE) -f libC/CMakeFiles/libradreturn.dir/build.make libC/CMakeFiles/libradreturn.dir/build
+.PHONY : libradreturn/fast
+
 lib/Adapt.o: lib/Adapt.F90.o
 
 .PHONY : lib/Adapt.o
@@ -885,6 +898,7 @@ help:
 	@echo "... list_install_components"
 	@echo "... subdir_mods"
 	@echo "... libCaliper"
+	@echo "... libradreturn"
 	@echo "... lib/Adapt.o"
 	@echo "... lib/Adapt.i"
 	@echo "... lib/Adapt.s"
