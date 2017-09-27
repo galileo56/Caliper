@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/Users/vmateu/GitHub/Caliper/libC/radRet.cpp" "/Users/vmateu/GitHub/Caliper/build/libC/CMakeFiles/libradreturn.dir/radRet.cpp.o"
+  "/Users/vmateu/GitHub/Caliper/src/hello-world.cpp" "/Users/vmateu/GitHub/Caliper/build/CMakeFiles/hello-world.dir/src/hello-world.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "AppleClang")
 
@@ -12,10 +12,12 @@ set(CMAKE_CXX_COMPILER_ID "AppleClang")
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../"
   "../include"
+  "/Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mathlink.framework/Headers"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
+  "/Users/vmateu/GitHub/Caliper/build/libC/CMakeFiles/libradreturn.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

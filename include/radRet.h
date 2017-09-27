@@ -1,5 +1,5 @@
-#ifndef RADRED_H
-#define RADRED_H
+#ifndef RADRET_H
+#define RADRET_H
 
 double sigmahad(char const* str, char const* curr, int orderAlp, int runAlp,
 int order, int nf, double mZ, double gammaZ, double sin2ThetaW, double amZ,
@@ -85,4 +85,4 @@ double gt, double Mz, double gammaZ, double sinW, double aMz, double aMzQED,
 double mT, double mu, double nu, double v1, double v2, double Q, double x0,
 double x1, double theta, double deltatheta);
 
-#endif // RADRED_H
+#endif // RADRET_H

@@ -45,6 +45,7 @@ set(CMAKE_Fortran_FLAGS "${addition_fortran}" CACHE STRING "Flags used by the co
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory(lib)
+include_directories(include)
 
 include_directories(${Library_MODDIR})
 FILE(GLOB libSources lib/*.F90)
@@ -75,6 +76,9 @@ if(Mathematica_MathLink_LIBRARY)
 	add_executable(Caliper src/Caliper.tm.c)
 	target_link_libraries(Caliper libCaliper ${Mathematica_MathLink_LIBRARY} ${M_LIB} ${DL_LIB} ${UUID_LIB} ${RT_LIB})
 
+add_executable(hello-world ${CMAKE_CURRENT_SOURCE_DIR}/src/hello-world.cpp)
+target_link_libraries(hello-world libradreturn)
+
 	#add_executable(testprog src/testprog.F90)
 	#target_link_libraries(testprog libCaliper subdir_mods)
 
@@ -93,5 +97,7 @@ if(Mathematica_MathLink_LIBRARY)
 		install(CODE "execute_process(COMMAND install_name_tool -change @executable_path/../Frameworks/mathlink.framework/Versions/4.36/mathlink ${Mathematica_MathLink_LIBRARY}/mathlink ${CMAKE_CURRENT_SOURCE_DIR}/bin/Caliper OUTPUT_QUIET)")
 	endif()
 endif()
+
+install(TARGETS hello-world DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 #install(TARGETS testprog DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)

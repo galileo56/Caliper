@@ -6,5 +6,5 @@ CXX_FLAGS =
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/Users/vmateu/GitHub/Caliper -I/Users/vmateu/GitHub/Caliper/include 
+CXX_INCLUDES = -I/Users/vmateu/GitHub/Caliper -I/Users/vmateu/GitHub/Caliper/include -I/Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mathlink.framework/Headers 
 

@@ -1,3 +1,5 @@
+#include "radRet.h"
+
 extern "C" void f90sigmahad_(char const* str, char const* curr, int* orderAlp,
 int* runAlp, int* order, int* nf, double* mZ, double* gammaZ, double* sin2ThetaW,
 double* amZ, double* amZQED, double* mT, double* muT, double* mB, double* muB,

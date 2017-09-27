@@ -34,6 +34,7 @@ set(CMAKE_Fortran_COMPILER_ID "GNU")
 # The include file search paths:
 set(CMAKE_Fortran_TARGET_INCLUDE_PATH
   "../"
+  "../include"
   "/Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mathlink.framework/Headers"
   )
 
