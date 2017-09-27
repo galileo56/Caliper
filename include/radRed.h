@@ -1,3 +1,6 @@
+#ifndef RADRED_H
+#define RADRED_H
+
 double sigmahad(char const* str, char const* curr, int orderAlp, int runAlp,
 int order, int nf, double mZ, double gammaZ, double sin2ThetaW, double amZ,
 double amZQED, double mT, double muT, double mB, double muB, double mC,
@@ -81,3 +84,5 @@ int ordMass, int order, int ord1S, double R1S, char const* method, double lambda
 double gt, double Mz, double gammaZ, double sinW, double aMz, double aMzQED,
 double mT, double mu, double nu, double v1, double v2, double Q, double x0,
 double x1, double theta, double deltatheta);
+
+#endif // RADRED_H
