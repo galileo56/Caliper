@@ -16,12 +16,6 @@ message(STATUS "Operating system: ${OperatingSystem}")
 ## set correct RPath for external (dynamic) libraries
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
 
-## find mathematica on the system
-## Sascha Kratky's FindMathematica cmake module: https://github.com/sakra/FindMathematica/ [accessed 2015-03-06 01:00 AM]
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/tools")
-find_package(Mathematica REQUIRED)
-message(STATUS "Mathematica Version found: " ${Mathematica_VERSION})
-
 ###############
 ## COMPILER FLAGS
 
@@ -83,21 +77,7 @@ endif()
 add_executable(hello-world ${CMAKE_CURRENT_SOURCE_DIR}/src/hello-world.cpp)
 target_link_libraries(hello-world libradreturn libCaliper)
 
-	#add_executable(testprog src/testprog.F90)
-	#target_link_libraries(testprog libCaliper subdir_mods)
-
 ###############
 ## INSTALL
 
-if(Mathematica_MathLink_LIBRARY)
-	install(TARGETS Caliper DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-
-	if("${OperatingSystem}" STREQUAL "Mac OS X")
-		install(CODE "execute_process(COMMAND install_name_tool -change @executable_path/../Frameworks/mathlink.framework/Versions/${Mathematica_MathLink_VERSION}/mathlink ${Mathematica_MathLink_LIBRARY}/mathlink ${CMAKE_CURRENT_SOURCE_DIR}/bin/Caliper OUTPUT_QUIET)")
-		install(CODE "execute_process(COMMAND install_name_tool -change @executable_path/../Frameworks/mathlink.framework/Versions/4.36/mathlink ${Mathematica_MathLink_LIBRARY}/mathlink ${CMAKE_CURRENT_SOURCE_DIR}/bin/Caliper OUTPUT_QUIET)")
-	endif()
-endif()
-
 install(TARGETS hello-world DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-
-#install(TARGETS testprog DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
