@@ -77,7 +77,7 @@ if(Mathematica_MathLink_LIBRARY)
 	target_link_libraries(Caliper libCaliper ${Mathematica_MathLink_LIBRARY} ${M_LIB} ${DL_LIB} ${UUID_LIB} ${RT_LIB})
 
 add_executable(hello-world ${CMAKE_CURRENT_SOURCE_DIR}/src/hello-world.cpp)
-target_link_libraries(hello-world libradreturn)
+target_link_libraries(hello-world libradreturn libCaliper)
 
 	#add_executable(testprog src/testprog.F90)
 	#target_link_libraries(testprog libCaliper subdir_mods)

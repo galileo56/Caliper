@@ -18,6 +18,7 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
   "/Users/vmateu/GitHub/Caliper/build/libC/CMakeFiles/libradreturn.dir/DependInfo.cmake"
+  "/Users/vmateu/GitHub/Caliper/build/lib/CMakeFiles/libCaliper.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

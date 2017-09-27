@@ -14,7 +14,7 @@ int main () //can I comment here?
     //Default options of the xsection_calculator
     double photon_energy, x;
     int order = 1; //Only 1 loop implemented.
-    int scheme = 1; //0 for pole mass, 1 for m_s bar
+    // char* scheme = "MSbar";
     double energy_cm = 500;
     double eH = 1;
     double alphaQED = 1/127.925;
@@ -33,14 +33,18 @@ int main () //can I comment here?
 
   cout << x << "  " << photon_energy << "  " << energy_cm * (1 - 2 * x) << " "
   << " " << sigmarad("MSbar", "all", 4, 4, 1, 6, 91.187, 2.5042, 0.2312,
-  0.1181, alphaQED, 160., 160., 4.2, 4.2, 1.3, 1.3, 1., energy_cm, x, angle) << "\n\n" ;
+  0.1181, alphaQED, 160., 160., 4.2, 4.2, 1.3, 1.3, 1., energy_cm, x, angle) <<
+  "  " << sigmaradcone("MSbar", "all", 4, 4, 1, 6, 91.187, 2.5042, 0.2312,
+  0.1181, alphaQED, 160., 160., 4.2, 4.2, 1.3, 1.3, 1., energy_cm, x, angle,
+  half_aperture) << "\n\n" ;
 
-  // cout << x << "  " << photon_energy << "  " << energy_cm * (1 - 2 * x) << " " << rhad6.sigmaMassRadiative(x) << " " << rhad6.sigmaMassRadiativeCone(x) << "\n\n" ;
   }
 
     cout << "\n integration over the cone and E_photon between 9 and 11 GeV \n\n";
 
-  //  cout << rhad6.sigmaMassRadiativeConeCum(0.018, 0.022) << "\n";
+   cout << sigmaradconecum("MSbar", "all", 4, 4, 1, 6, 91.187, 2.5042, 0.2312,
+  0.1181, alphaQED, 160., 160., 4.2, 4.2, 1.3, 1.3, 1., energy_cm, 0.018, 0.022,
+  angle, half_aperture) << "\n";
 
     return 0;
 }

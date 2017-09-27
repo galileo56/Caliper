@@ -91,6 +91,7 @@ hello__world_EXTERNAL_OBJECTS =
 hello-world: CMakeFiles/hello-world.dir/src/hello-world.cpp.o
 hello-world: CMakeFiles/hello-world.dir/build.make
 hello-world: libC/liblibradreturn.a
+hello-world: lib/liblibCaliper.a
 hello-world: CMakeFiles/hello-world.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/vmateu/GitHub/Caliper/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable hello-world"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/hello-world.dir/link.txt --verbose=$(VERBOSE)

@@ -63,6 +63,7 @@ CMAKE_BINARY_DIR = /Users/vmateu/GitHub/Caliper/build
 # Target rules for target CMakeFiles/hello-world.dir
 
 # All Build rule for target.
+CMakeFiles/hello-world.dir/all: lib/CMakeFiles/libCaliper.dir/all
 CMakeFiles/hello-world.dir/all: libC/CMakeFiles/libradreturn.dir/all
 	$(MAKE) -f CMakeFiles/hello-world.dir/build.make CMakeFiles/hello-world.dir/depend
 	$(MAKE) -f CMakeFiles/hello-world.dir/build.make CMakeFiles/hello-world.dir/build
@@ -76,7 +77,7 @@ all: CMakeFiles/hello-world.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/hello-world.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/vmateu/GitHub/Caliper/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/vmateu/GitHub/Caliper/build/CMakeFiles 29
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/hello-world.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/vmateu/GitHub/Caliper/build/CMakeFiles 0
 .PHONY : CMakeFiles/hello-world.dir/rule
