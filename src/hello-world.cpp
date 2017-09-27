@@ -51,7 +51,7 @@ int main () //can I comment here?
    nf, mZ, gammaZ, sin2ThetaW, alphamZ, alphaQED, mT, mT, mB, mB, mC, mC, eH,
    energy_cm, 0.018, 0.022, angle, half_aperture) << "\n";
 
-    cout << "NRQCD matched to Fixed Order distribution, 1S-MSRb scheme, highest order \n\n";
+    cout << "\nNRQCD matched to Fixed Order distribution, 1S-MSRb scheme, highest order \n\n";
     for (int i = 1; i < 52; i++) {
     photon_energy = energy_cm * 0.018 + (i - 1)/25.;
     x = photon_energy/energy_cm;
