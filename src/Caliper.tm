@@ -11,6 +11,7 @@
 :Evaluate:  sin2ThetaWdef    = 0.23119
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
+:Evaluate:  aQEDdef          = 0.00781751
 
 :Evaluate:  QSwitch::usage = "Delta1S[nl, orderAlpha, runAlpha, orderMass, runMass, ord1S, muLam, xLam, method, mZ, aMz, mt, gt, R]"
 :Evaluate:  Delta1S::usage = "Delta1S[nl, orderAlpha, runAlpha, orderMass, runMass, muLam, xLam, method, mZ, aMz, mt, R]"

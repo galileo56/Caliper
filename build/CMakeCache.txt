@@ -283,7 +283,7 @@ Mathematica_ROOT_DIR:PATH=/Applications/Mathematica.app
 
 //prefer Mathematica libraries linked with LLVM libc++ to those
 // linked with GNU libstdc++?
-Mathematica_USE_LIBCXX_LIBRARIES:BOOL=OFF
+Mathematica_USE_LIBCXX_LIBRARIES:BOOL=ON
 
 //prefer minimal Mathematica libraries to full libraries?
 Mathematica_USE_MINIMAL_LIBRARIES:BOOL=OFF
@@ -552,7 +552,7 @@ Mathematica_ROOT_DIR_LAST:INTERNAL=/Applications/Mathematica.app
 //Last value of Mathematica_SYSTEM_IDS.
 Mathematica_SYSTEM_IDS_LAST:INTERNAL=MacOSX-x86-64
 //Last value of Mathematica_USE_LIBCXX_LIBRARIES.
-Mathematica_USE_LIBCXX_LIBRARIES_LAST:INTERNAL=OFF
+Mathematica_USE_LIBCXX_LIBRARIES_LAST:INTERNAL=ON
 //Last value of Mathematica_USE_MINIMAL_LIBRARIES.
 Mathematica_USE_MINIMAL_LIBRARIES_LAST:INTERNAL=OFF
 //Last value of Mathematica_USE_STATIC_LIBRARIES.

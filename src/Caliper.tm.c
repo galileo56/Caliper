@@ -289,7 +289,7 @@ MLYDEFN( devyield_result, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
-# line 2772 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
+# line 2773 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
 #include "mathlink.h"
 #include "ftypes.h"
 #include <stdio.h>
@@ -16881,6 +16881,8 @@ static const char* evalstrs[] = {
 	(const char*)0,
 	"sin2ThetaWPythia = 0.2312",
 	(const char*)0,
+	"aQEDdef          = 0.00781751",
+	(const char*)0,
 	"QSwitch::usage = \"Delta1S[nl, orderAlpha, runAlpha, orderMass, r",
 	"unMass, ord1S, muLam, xLam, method, mZ, aMz, mt, gt, R]\"",
 	(const char*)0,
@@ -17486,32 +17488,32 @@ static const char* evalstrs[] = {
 	(const char*)0,
 	"SigmaMatched::usage = \"Rmatched[scheme, runAlpha, runMass, ordMa",
 	"ss, order, ord1S, R1S, method, lambda, gt, Mz, gammaZ, sinW, aMz",
-	", aMzQED, mT, mu, nu, v1, v2, Q] computes the matched massive to",
-	"tal hadronic cross section for an unstable top quark.\"",
+	", aMzQED, mT, mu, hnu, v1, v2, Q] computes the matched massive t",
+	"otal hadronic cross section for an unstable top quark.\"",
 	(const char*)0,
 	"SigmaMatchedRadCum::usage = \"SigmaMatchedRadCum[scheme, runAlpha",
 	", runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, g",
-	"ammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x0, x1, theta] ",
-	"computes the ISR matched massive total hadronic cross section fo",
-	"r an unstable top quark.\"",
+	"ammaZ, sinW, aMz, aMzQED, mT, mu, hnu, v1, v2, Q, x0, x1, theta]",
+	" computes the ISR matched massive total hadronic cross section f",
+	"or an unstable top quark.\"",
 	(const char*)0,
 	"SigmaMatchedRad::usage = \"SigmaMatchedRad[scheme, runAlpha, runM",
 	"ass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz, gammaZ,",
-	" sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x, theta] computes th",
-	"e ISR matched massive total hadronic cross section for an unstab",
-	"le top quark.\"",
+	" sinW, aMz, aMzQED, mT, mu, hnu, v1, v2, Q, x, theta] computes t",
+	"he ISR matched massive total hadronic cross section for an unsta",
+	"ble top quark.\"",
 	(const char*)0,
 	"SigmaMatchedRadCone::usage = \"SigmaMatchedRadCone[scheme, runAlp",
 	"ha, runMass, ordMass, order, ord1S, R1S, method, lambda, gt, Mz,",
-	" gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x, theta, del",
-	"taTheta] computes the ISR matched massive total hadronic cross s",
-	"ection for an unstable top quark.\"",
+	" gammaZ, sinW, aMz, aMzQED, mT, mu, hnu, v1, v2, Q, x, theta, de",
+	"ltaTheta] computes the ISR matched massive total hadronic cross ",
+	"section for an unstable top quark.\"",
 	(const char*)0,
 	"SigmaMatchedRadConeCum::usage = \"SigmaMatchedRadConeCum[scheme, ",
 	"runAlpha, runMass, ordMass, order, ord1S, R1S, method, lambda, g",
-	"t, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, nu, v1, v2, Q, x0, x1,",
-	" theta, deltaTheta] computes the ISR matched massive total hadro",
-	"nic cross section for an unstable top quark.\"",
+	"t, Mz, gammaZ, sinW, aMz, aMzQED, mT, mu, hnu, v1, v2, Q, x0, x1",
+	", theta, deltaTheta] computes the ISR matched massive total hadr",
+	"onic cross section for an unstable top quark.\"",
 	(const char*)0,
 	"Rmatched::usage = \"Rmatched[scheme, runAlpha, runMass, ordMass, ",
 	"order, ord1S, R1S, method, lambda, gt, Mz, aMz, mT, mu, nu, v1, ",
@@ -17734,7 +17736,7 @@ static const char* evalstrs[] = {
 	(const char*)0,
 	(const char*)0
 };
-#define CARDOF_EVALSTRS 214
+#define CARDOF_EVALSTRS 215
 
 static int _definepattern P(( MLINK, char*, char*, int));
 
@@ -17962,6 +17964,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _doevalstr( mlp, 208);
 	if (_res) _res = _doevalstr( mlp, 209);
 	if (_res) _res = _doevalstr( mlp, 210);
+	if (_res) _res = _doevalstr( mlp, 211);
 	if (_res) _res = _definepattern(mlp, (char *)"HypGeo[a_, b_, c_, z_]", (char *)"{Re[a], Im[a], Re[b], Im[b], Re[c], Im[c], Re[z], Im[z]}", 0);
 	if (_res) _res = _definepattern(mlp, (char *)"CdiGamma[z_]", (char *)"{Re[z], Im[z]}", 1);
 	if (_res) _res = _definepattern(mlp, (char *)"CtriGamma[z_]", (char *)"{Re[z], Im[z]}", 2);
@@ -18176,9 +18179,9 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"NGLKernel[n_, n1_, n2_, width_, w_, mu_, p_]", (char *)"{n, n1, n2, width, w, mu, p}", 211);
 	if (_res) _res = _definepattern(mlp, (char *)"NGLIntegral[nf_, pow_, w1_, w2_]", (char *)"{nf, pow, w1, w2}", 212);
 	if (_res) _res = _definepattern(mlp, (char *)"NGLDoubleIntegral[nf_, pow_, w1_, w2_, r_]", (char *)"{nf, pow, w1, w2, r}", 213);
-	if (_res) _res = _doevalstr( mlp, 211);
 	if (_res) _res = _doevalstr( mlp, 212);
 	if (_res) _res = _doevalstr( mlp, 213);
+	if (_res) _res = _doevalstr( mlp, 214);
 	if (_res) _res = MLPutSymbol( mlp, "End");
 	if (_res) _res = MLFlush( mlp);
 	return _res;
