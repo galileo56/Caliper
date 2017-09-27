@@ -1,3 +1,5 @@
+#include "radRet.h"
+
 extern "C" void f90sigmahad_(char const* str, char const* curr, int* orderAlp,
 int* runAlp, int* order, int* nf, double* mZ, double* gammaZ, double* sin2ThetaW,
 double* amZ, double* amZQED, double* mT, double* muT, double* mB, double* muB,
@@ -75,13 +77,13 @@ double* lambda, double* gt, double* Mz, double* gammaZ, double* sinW,
 double* aMz, double* aMzQED, double* mT, double* mu, double* nu, double* v1,
 double* v2, double* Q, double* x0, double* x1, double* theta, double* res);
 
-extern "C" f90sigmamatchedradcone_(char const* str, int* runAlpha,
+extern "C" void f90sigmamatchedradcone_(char const* str, int* runAlpha,
 int* runMass, int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
 double* lambda, double* gt, double* Mz, double* gammaZ, double* sinW,
 double* aMz, double* aMzQED, double* mT, double* mu, double* nu, double* v1,
 double* v2, double* Q, double* x, double* theta, double* deltatheta, double* res);
 
-extern "C"f90sigmamatchedradconecum_(char const* str, int* runAlpha,
+extern "C" void f90sigmamatchedradconecum_(char const* str, int* runAlpha,
 int* runMass, int* ordMass, int* order, int* ord1S, double* R1S, char const* method,
 double* lambda, double* gt, double* Mz, double* gammaZ, double* sinW,
 double* aMz, double* aMzQED, double* mT, double* mu, double* nu, double* v1,
@@ -89,14 +91,14 @@ double* v2, double* Q, double* x0, double* x1, double* theta, double* deltatheta
 double* res);
 
 double sigmahad(char const* str, char const* curr, int orderAlp, int runAlp,
-int order, int nf, double mZ, double gammaZ, double sin2ThetaW, double amZ,
-double amZQED, double mT, double muT, double mB, double muB, double mC,
+int order, int nf, double mZ, double gammaZ, double sin2ThetaW, double aMz,
+double aMzQED, double mT, double muT, double mB, double muB, double mC,
 double muC, double mu, double Q){
 
   double res;
 
-  f90sigmahad_(str, curr, &orderAlpha, &runAlpha, &order, &nf, &Mz,
-  &gammaZ, &thetaW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &mu, &Q, &res);
+  f90sigmahad_(str, curr, &orderAlp, &runAlp, &order, &nf, &mZ, &gammaZ,
+  &sin2ThetaW, &aMz, &aMzQED, &mT, &muT, &mB, &muB, &mC, &muC, &mu, &Q, &res);
 
   return res;
 }

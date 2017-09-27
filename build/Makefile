@@ -92,6 +92,16 @@ install/fast: preinstall/fast
 	/opt/local/bin/cmake -P cmake_install.cmake
 .PHONY : install/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -113,16 +123,6 @@ edit_cache:
 edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
-
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -155,6 +155,19 @@ preinstall/fast:
 depend:
 	$(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
+
+#=============================================================================
+# Target rules for targets named hello-world
+
+# Build rule for target.
+hello-world: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hello-world
+.PHONY : hello-world
+
+# fast build rule for target.
+hello-world/fast:
+	$(MAKE) -f CMakeFiles/hello-world.dir/build.make CMakeFiles/hello-world.dir/build
+.PHONY : hello-world/fast
 
 #=============================================================================
 # Target rules for targets named Caliper
@@ -194,6 +207,19 @@ libCaliper: cmake_check_build_system
 libCaliper/fast:
 	$(MAKE) -f lib/CMakeFiles/libCaliper.dir/build.make lib/CMakeFiles/libCaliper.dir/build
 .PHONY : libCaliper/fast
+
+#=============================================================================
+# Target rules for targets named libradreturn
+
+# Build rule for target.
+libradreturn: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 libradreturn
+.PHONY : libradreturn
+
+# fast build rule for target.
+libradreturn/fast:
+	$(MAKE) -f libC/CMakeFiles/libradreturn.dir/build.make libC/CMakeFiles/libradreturn.dir/build
+.PHONY : libradreturn/fast
 
 lib/Adapt.o: lib/Adapt.F90.o
 
@@ -870,6 +896,33 @@ src/Caliper.tm.c.s:
 	$(MAKE) -f CMakeFiles/Caliper.dir/build.make CMakeFiles/Caliper.dir/src/Caliper.tm.c.s
 .PHONY : src/Caliper.tm.c.s
 
+src/hello-world.o: src/hello-world.cpp.o
+
+.PHONY : src/hello-world.o
+
+# target to build an object file
+src/hello-world.cpp.o:
+	$(MAKE) -f CMakeFiles/hello-world.dir/build.make CMakeFiles/hello-world.dir/src/hello-world.cpp.o
+.PHONY : src/hello-world.cpp.o
+
+src/hello-world.i: src/hello-world.cpp.i
+
+.PHONY : src/hello-world.i
+
+# target to preprocess a source file
+src/hello-world.cpp.i:
+	$(MAKE) -f CMakeFiles/hello-world.dir/build.make CMakeFiles/hello-world.dir/src/hello-world.cpp.i
+.PHONY : src/hello-world.cpp.i
+
+src/hello-world.s: src/hello-world.cpp.s
+
+.PHONY : src/hello-world.s
+
+# target to generate assembly for a file
+src/hello-world.cpp.s:
+	$(MAKE) -f CMakeFiles/hello-world.dir/build.make CMakeFiles/hello-world.dir/src/hello-world.cpp.s
+.PHONY : src/hello-world.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -879,12 +932,14 @@ help:
 	@echo "... install/local"
 	@echo "... install/strip"
 	@echo "... install"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
+	@echo "... hello-world"
 	@echo "... Caliper"
-	@echo "... list_install_components"
 	@echo "... subdir_mods"
 	@echo "... libCaliper"
+	@echo "... libradreturn"
 	@echo "... lib/Adapt.o"
 	@echo "... lib/Adapt.i"
 	@echo "... lib/Adapt.s"
@@ -960,6 +1015,9 @@ help:
 	@echo "... src/Caliper.tm.o"
 	@echo "... src/Caliper.tm.i"
 	@echo "... src/Caliper.tm.s"
+	@echo "... src/hello-world.o"
+	@echo "... src/hello-world.i"
+	@echo "... src/hello-world.s"
 .PHONY : help
 
 
