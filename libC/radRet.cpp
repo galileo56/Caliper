@@ -174,7 +174,7 @@ double muB, double mC, double muC, double mu, double Q){
  return res;
 }
 
-static double sigmamassrad(char const* str, char const* curr, int orderAlpha,
+double sigmamassrad(char const* str, char const* curr, int orderAlpha,
 int runAlpha, int runMass, int order, int nf, double Mz, double gammaZ,
 double sinW, double aMz, double aMzQED, double mT, double muT, double mB,
 double muB, double mC, double muC, double eH, double Q, double x, double theta){
