@@ -63,8 +63,10 @@ module RunningClass
       InitRun%mH = AlphaOb%scales('mT'); InitRun%mL = AlphaOb%scales('mB')
     else if (nf == 4) then
       InitRun%mH = AlphaOb%scales('mB'); InitRun%mL = AlphaOb%scales('mC')
-    else if (nf < 4) then
+    else if (nf == 3) then
       InitRun%mH = AlphaOb%scales('mC'); InitRun%mL = 0
+    else
+      InitRun%mH = 0; InitRun%mL = 0      
     end if
 
     InitRun%tab = MSbarDeltaPiece(nf - 1, 1)
