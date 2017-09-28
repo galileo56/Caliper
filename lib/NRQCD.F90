@@ -83,6 +83,8 @@ module NRQCDClass
       InNRQCD%rat = InNRQCD%alphaOb%scales('muT')/InNRQCD%mH
     else if (nf == 4) then
       InNRQCD%rat = InNRQCD%alphaOb%scales('muB')/InNRQCD%mH
+    else if (nf == 3) then
+      InNRQCD%rat = InNRQCD%alphaOb%scales('muC')/InNRQCD%mH
     end if
 
     if (  alphaScheme(:4) == 'pole' ) then
@@ -220,6 +222,8 @@ module NRQCDClass
         call self%alphaMass%SetMTop(m, mu)
       else if (self%nf == 4) then
         call self%alphaMass%SetMBottom(m, mu)
+      else if (self%nf == 3) then
+        call self%alphaMass%setMCharm(m, mu)
       end if
 
     else
@@ -228,6 +232,8 @@ module NRQCDClass
         call self%alphaMass%SetMTop(m, self%rat * m)
       else if (self%nf == 4) then
         call self%alphaMass%SetMBottom(m, self%rat * m)
+      else if (self%nf == 3) then
+        call self%alphaMass%SetMCharm(m, self%rat * m)
       end if
 
     end if

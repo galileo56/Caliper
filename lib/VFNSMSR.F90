@@ -779,6 +779,11 @@ contains
       call self%alphaMass(1)%SetMBottom(m, mu)
       call self%alphaMass(2)%SetMBottom(m, mu)
       call self%alphaOb%SetMBottom(m, mu)
+
+    else if (self%nf == 3) then
+      call self%alphaMass(1)%SetMCharm(m, mu)
+      call self%alphaMass(2)%SetMCharm(m, mu)
+      call self%alphaOb%SetMBottom(m, mu)
     end if
 
   end subroutine setMass
