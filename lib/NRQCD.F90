@@ -515,10 +515,11 @@ module NRQCDClass
     integer            , intent(in)    :: order, n
     real (dp)          , intent(in)    :: mu, R, lambda, mUpsilon
     real (dp)                          :: a
+    integer                            :: i
 
     MassFitter = FindRoot(mUpsilon/2)
 
-    do
+    do i = 1, 20
       a = FindRoot(MassFitter);  if ( abs(a - MassFitter) < 1e-10_dp ) exit
       MassFitter = a
     end do
