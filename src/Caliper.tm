@@ -145,6 +145,7 @@
 :Evaluate:  ErrMatrices::usage = "ErrMatrices[qnlist, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm] Computes the average values of the masses and derivatives wrt alpha and mc, perturbative uncertainties and covariance matrix."
 :Evaluate:  NRQCDError::usage = "NRQCDError[n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x] computes the quarkonium energy levels, including perturbative error."
 :Evaluate:  OptimalR::usage = "OptimalR[type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda] computes the Optimal R scale for quarkonium."
+:Evaluate:  OptimalR2::usage = "OptimalR2[n, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mass] computes the Optimal R scale for quarkonium."
 :Evaluate:  mmfromMSR::usage = "mmfromMSR[type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
 :Evaluate:  Rhad::usage = "Rhad[scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
 :Evaluate:  SigmaHad::usage = "SigmaHad[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
@@ -2368,6 +2369,17 @@
 :ArgumentTypes: {String, Real, String, Integer, Integer, Integer, Integer,
                  Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
                  Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      optimalr2
+:Pattern:       OptimalR2[n_, orderAlpha_, runAlpha_, order_, run_, nf_, Mz_,
+                aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mass_]
+:Arguments:     {n, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB,
+                 muB, mC, muC, mass}
+:ArgumentTypes: {Real, Integer, Integer, Integer, Integer, Integer, Real, Real,
+                 Real, Real, Real, Real, Real, Real, Real}
 :ReturnType:     Real
 :End:
 
@@ -6121,6 +6133,22 @@ double muC, double lambda, double mu){
 
   f90optimalr_(type, &n, str, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz,
    &aMz, &mT, &muT, &mB, &muB, &mC, &muC,&lambda, &mu, &res);
+
+  return res;
+}
+
+extern double f90optimalr2_(double* n, int* orderAlpha, int* runAlpha,
+int* order, int* run, int* nf, double* Mz, double* aMz, double* mT, double* muT,
+double* mB, double* muB, double* mC, double* muC, double* mass, double* res);
+
+static double optimalr2(double n, int orderAlpha, int runAlpha, int order,
+int run, int nf, double Mz, double aMz, double mT, double muT, double mB,
+double muB, double mC, double muC, double mass){
+
+  double res;
+
+  f90optimalr2_(&n, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT,
+  &muT, &mB, &muB, &mC, &muC, &mass, &res);
 
   return res;
 }

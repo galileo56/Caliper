@@ -4158,6 +4158,34 @@ mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, mu, res)
 
 end subroutine f90OptimalR
 
+
+!ccccccccccccccc
+
+subroutine f90OptimalR2(n, orderAlp, runAlp, order, run, nf, mZ, amZ, mT, muT, &
+mB, muB, mC, muC, mass, res)
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  implicit none
+
+  integer            , intent(in ) :: orderAlp, runAlp, order, run, nf
+  real (dp)          , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, muC, n, mass
+  real (dp)          , intent(out) :: res
+  type (Running)                   :: alphaMass
+  type (Alpha)                     :: alphaAll
+  type (AnomDim), dimension(3:6)   :: AnDim
+  integer                          :: i
+
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
+
+  alphaMass = Running(nf, run, alphaAll, 100._dp)
+  res = alphaMass%OptimalR2( n, mass )
+
+end subroutine f90OptimalR2
+
 !ccccccccccccccc
 
 subroutine f90UpsilonDeltaCharm(n, l, alp, mb, mc, res)

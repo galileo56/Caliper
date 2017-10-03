@@ -24,7 +24,7 @@ module RunningClass
     DiffDelta, orders, adim, DiffDeltaHadron, MSbarDeltaMu, MSbarMassLow, &
     AlphaAll, DeltaGapMatching, DiffRMass, mmFromMSR, PoleMass, gammaR, sCoef,  &
     SetMTop, SetMBottom, SetMCharm, SetLambda, SetAlpha, scales, numFlav,DiffR, &
-    PSdelta, OptimalR, MSRMatching, MSREvol, AlphaQED, scheme
+    PSdelta, OptimalR, MSRMatching, MSREvol, AlphaQED, scheme, OptimalR2
 
     procedure, pass(self), private :: alphaQCDReal, alphaQCDComplex, &
     wTildeReal, wTildeComplex, kTildeReal, kTildeComplex, RunningMass
@@ -66,7 +66,7 @@ module RunningClass
     else if (nf == 3) then
       InitRun%mH = AlphaOb%scales('mC'); InitRun%mL = 0
     else
-      InitRun%mH = 0; InitRun%mL = 0      
+      InitRun%mH = 0; InitRun%mL = 0
     end if
 
     InitRun%tab = MSbarDeltaPiece(nf - 1, 1)
@@ -553,6 +553,29 @@ module RunningClass
     end function root
 
   end function OptimalR
+
+!ccccccccccccccc
+
+  real (dp) function OptimalR2(self, n, mass)
+    class (Running)                    , intent(in) :: self
+    real (dp)                          , intent(in) :: n, mass
+    integer                                         :: IFLAG
+    real (dp)                                       :: a, b, c
+
+    a = 0.5_dp; b = self%mH
+
+    call DFZERO(root, a, b, c, 1e-9_dp, 1e-9_dp, IFLAG); OptimalR2 = a
+
+  contains
+
+    real (dp) function root(x)
+      real (dp), intent(in) :: x
+
+      root = n * x - 4 * Mass * self%alphaQCD(x)/3
+
+    end function root
+
+  end function OptimalR2
 
 !ccccccccccccccc
 
