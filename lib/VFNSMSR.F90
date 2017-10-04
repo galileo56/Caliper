@@ -794,7 +794,7 @@ contains
     class (VFNSMSR), intent(inout) :: self
     real (dp)      , intent(in   ) :: alpha
 
-    call self%AlphaOb%SetAlpha(alpha)
+    call self%AlphaOb%SetAlpha(alpha, 0._dp)
     call self%alphaMass(1)%SetAlpha(alpha)
     call self%alphaMass(2)%SetAlpha(alpha)
 

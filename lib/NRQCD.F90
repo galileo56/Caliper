@@ -263,7 +263,7 @@ module NRQCDClass
     class (NRQCD), intent(inout) :: self
     real (dp)    , intent(in   ) :: alpha
 
-    call self%AlphaOb%SetAlpha(alpha)  ;  call self%MSR%SetAlpha(alpha)
+    call self%AlphaOb%SetAlpha(alpha, 0._dp)  ;  call self%MSR%SetAlpha(alpha)
     call self%alphaMass%SetAlpha(alpha)
 
   end subroutine SetAlpha

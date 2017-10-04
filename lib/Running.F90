@@ -129,7 +129,7 @@ module RunningClass
     class (Running), intent(inout) :: self
     real (dp)      , intent(in   ) :: alpha
 
-    call self%AlphaOb%SetAlpha(alpha)
+    call self%AlphaOb%SetAlpha(alpha, 0._dp)
 
   end subroutine SetAlpha
 
