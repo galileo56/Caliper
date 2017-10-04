@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mathlink.framework/Headers/mathlink.h
+windows.h
+-
+windows.h
+-
+windows.h
+-
+windows.h
+-
+sys/types.h
+-
+sys/types.h
+-
+
+/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c
+Carbon/Carbon.h
+-
+mathlink/mathlink.h
+-
+mathlink.h
+/Users/vmateu/GitHub/Caliper/src/mathlink.h
+mathlink.h
+/Users/vmateu/GitHub/Caliper/src/mathlink.h
+ftypes.h
+/Users/vmateu/GitHub/Caliper/src/ftypes.h
+stdio.h
+-
+unistd.h
+-
+math.h
+-
+
+/Users/vmateu/GitHub/Caliper/src/ftypes.h
+complex
+-
+

@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/radRet.h
+
+/Users/vmateu/GitHub/Caliper/src/hello-world.cpp
+iostream
+-
+string
+-
+radRet.h
+/Users/vmateu/GitHub/Caliper/src/radRet.h
+
