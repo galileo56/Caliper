@@ -608,7 +608,7 @@ module SingularClass
     class (SingularMassless), intent(inout) :: self
     real (dp)               , intent(in)    :: alpha
 
-    call self%alpha%setAlpha(alpha)
+    call self%alpha%setAlpha(alpha, 0._dp)
 
     select type (self)
     type is (SingularMass); call self%massNS%setAlpha(alpha)

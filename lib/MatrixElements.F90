@@ -722,7 +722,7 @@ module MatrixElementsClass
     class (MatricesElements), intent(inout) :: self
     real (dp)               , intent(in)    :: alpha
 
-    call self%AlphaAll%SetAlpha(alpha); call self%AlphaMass%SetAlpha(alpha)
+    call self%AlphaAll%SetAlpha(alpha, 0._dp); call self%AlphaMass%SetAlpha(alpha)
 
     select type (self)
     class is (MatricesElementsMass)

@@ -1,7 +1,8 @@
 
 module CumulantClass
   use ProfilesClass; use SingularClass; use ModelClass; use MassiveNSClass
-  use constants, only: dp, prec, d1mach; use adapt; use QuadPack, only: qags; implicit none;  private
+  use constants, only: dp, prec, d1mach; use adapt; use QuadPack, only: qags
+  implicit none;  private
 
 !ccccccccccccccc
 
@@ -17,8 +18,8 @@ module CumulantClass
 
     final                                 :: delete_object
     procedure, pass(self), private        :: SetScales
-    procedure, pass(self), public         :: ListDistPiece, ListDist, ListBin, BinPiece, &
-                                             Bin, ListBinPiece, FindOrigin
+    procedure, pass(self), public         :: ListDistPiece, ListDist, ListBin, &
+    Bin, ListBinPiece, FindOrigin, BinPiece
   end type CumulantMassless
 
 !ccccccccccccccc
