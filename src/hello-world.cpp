@@ -51,16 +51,16 @@ int main () //can I comment here?
    nf, mZ, gammaZ, sin2ThetaW, alphamZ, alphaQED, mT, mT, mB, mB, mC, mC, eH,
    energy_cm, 0.018, 0.022, angle, half_aperture) << "\n";
 
-    cout << "\nNRQCD matched to Fixed Order distribution, 1S-MSRb scheme, highest order \n\n";
+    cout << "\nNRQCD matched to Fixed Order distribution, 1S-MSRn scheme, highest order \n\n";
     for (int i = 1; i < 52; i++) {
     photon_energy = energy_cm * 0.018 + (i - 1)/25.;
     x = photon_energy/energy_cm;
 
     cout << x << "  " << photon_energy << "  " << energy_cm * (1 - 2 * x) << " "
-    << " " << sigmamatchedrad("MSRb", runAlp, runMass, ordMass, ordNRQCD,
+    << " " << sigmamatchedrad("MSRn", runAlp, runMass, ordMass, ordNRQCD,
     ord1S, R1S, "numeric", lambda, gt, mZ, gammaZ, sin2ThetaW, alphamZ, alphaQED,
     mT, eH, hnu, v1, v2, energy_cm, x, angle) <<
-    "  " << sigmamatchedradcone("MSRb", runAlp, runMass, ordMass, ordNRQCD,
+    "  " << sigmamatchedradcone("MSRn", runAlp, runMass, ordMass, ordNRQCD,
     ord1S, R1S, "numeric", lambda, gt, mZ, gammaZ, sin2ThetaW, alphamZ, alphaQED,
     mT, eH, hnu, v1, v2, energy_cm, x, angle, half_aperture) << "\n\n" ;
 
@@ -68,7 +68,7 @@ int main () //can I comment here?
 
     cout << "\n integration over the cone and E_photon between 9 and 11 GeV \n\n";
 
-   cout << sigmamatchedradconecum("MSRb", runAlp, runMass, ordMass, ordNRQCD,
+   cout << sigmamatchedradconecum("MSRn", runAlp, runMass, ordMass, ordNRQCD,
    ord1S, R1S, "numeric", lambda, gt, mZ, gammaZ, sin2ThetaW, alphamZ, alphaQED,
    mT, eH, hnu, v1, v2, energy_cm, 0.018, 0.022, angle, half_aperture) << "\n";
 

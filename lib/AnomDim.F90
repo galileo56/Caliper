@@ -37,18 +37,18 @@ module AnomDimClass
     real (dp), dimension(0:4)     :: gammaMass
     real (dp), dimension(0:3)     :: gammaHard, gammaB, gammaJet, gammaSoft, &
     cusp, gtilde, gl
-    real (dp), dimension(4)       :: sCoefMSRp, sCoefMSRn, betaList, &
-    gammaRp,  gammaRn, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, &
-    sCoefMSRInc3, gammaRInc3
+    real (dp), dimension(4)       :: sCoefMSRp, sCoefMSRn, betaList, gammaRp, &
+    gammaRn, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, gammaRInc3,  &
+    sCoefMSRInc3
 
   contains
 
     procedure, pass(self), public :: expandAlpha, wTildeExpand, kTildeExpand, &
     sCoef, DeltaMu, betaQCD, numFlav, DeltaR, DeltaRHadron, Gfun, DeltaRMass, &
     bHQETgamma, wTildeHm, GammaRComputer, sCoefRecursive, N12Generic, PScoef, &
-    sCoefHadron, scheme, MSRDelta, sCoefLambda, N12, P12, sCoefGeneric, cCoeff,&
-    P12Generic, MatchingAlpha, MatchingAlphaLog, MatchingAlphaUp, alphaMatching, &
-    betaQED
+    sCoefHadron, scheme, MSRDelta, sCoefLambda, P12, sCoefGeneric, cCoeff,    &
+    P12Generic, MatchingAlpha, MatchingAlphaLog, MatchingAlphaUp, betaQED,    &
+    alphaMatching, N12
 
     procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
     kTildeComplex, rootReal, rootComplex
