@@ -1,4 +1,4 @@
-# Install script for directory: /Users/vmateu/GitHub/Caliper/libC
+# Install script for directory: /Users/vicent/GitHub/Caliper/libC
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
