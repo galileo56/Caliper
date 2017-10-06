@@ -48,7 +48,7 @@ module AnomDimClass
     bHQETgamma, wTildeHm, GammaRComputer, sCoefRecursive, N12Generic, PScoef, &
     sCoefHadron, scheme, MSRDelta, sCoefLambda, P12, sCoefGeneric, cCoeff,    &
     P12Generic, MatchingAlpha, MatchingAlphaLog, MatchingAlphaUp, betaQED,    &
-    alphaMatching, N12
+    alphaMatching, N12, N12Ratio
 
     procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
     kTildeComplex, rootReal, rootComplex
@@ -936,6 +936,36 @@ module AnomDimClass
      N12 = self%beta(0) * gamma( 1 + self%bHat(1) )/2/Pi * self%P12(order, type, lambda)
 
   end function N12
+
+!ccccccccccccccc
+
+  real (dp) function N12Ratio(self, order, type, lambda)
+     class (AnomDim)            , intent(in) :: self
+     real (dp)                  , intent(in) :: lambda
+     character (len = *)        , intent(in) :: type
+     integer                    , intent(in) :: order
+     real (dp)              , dimension(0:3) :: sCoef
+     real (dp), dimension( 0:min(order, 3) ) :: poch
+     real (dp)                               :: b1
+     integer                                 :: k, n
+
+     N12Ratio = 0; n = min(order, 3); b1 = self%bHat(1)
+
+     sCoef = self%sCoefLambda(type, lambda)
+
+     do k = 0, n
+
+       poch(:n - 1 - k) = PochHammerList(1 + b1 + k, n - k)
+
+       N12Ratio = N12Ratio + sCoef(k) * sum( self%gl(:n-k) * poch(n-k:0:-1)  )
+
+     end do
+
+     poch = PochHammerList(1 + b1, n)
+
+     N12Ratio =  N12Ratio * self%beta(0)/2/Pi/sum( self%gl(:n) * poch(n:0:-1) )
+
+  end function N12Ratio
 
 !ccccccccccccccc
 

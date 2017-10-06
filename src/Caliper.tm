@@ -115,6 +115,7 @@
 :Evaluate:  PSCoef::usage = "PSCoef[nf, lg] computes the PS mass series coefficients"
 :Evaluate:  N12Generic::usage = "N12Generic[aCoef, order, nf, lambda] computes the renormalon sum rule"
 :Evaluate:  N12::usage = "N12[str, order, nf, lambda, err] computes the renormalon sum rule"
+:Evaluate:  N12Ratio::usage = "N12Ratio[str, order, nf, lambda, err] computes the renormalon residue by the ration method"
 :Evaluate:  Delta::usage = "Delta[str, nf, mu, R] computes the soft renormalon subtractions"
 :Evaluate:  DeltaGap::usage = "DeltaGap[str, orderAlpha, runAlpha, runMass, nf, mZ, aMz, mT, muT, mB, muB, mC, muC, mu, R] computes the soft renormalon subtractions"
 :Evaluate:  PSDelta::usage = "PSDelta[orderAlpha, runAlpha, nf, mZ, aMz, mT, muT, mB, muB, mC, muC, mu, R, lg] computes the PS mass subtractions"
@@ -1629,6 +1630,14 @@
 :Begin:
 :Function:      n12
 :Pattern:       N12[str_, order_, nf_, Lambda_, err_]
+:Arguments:     {str, order, nf, Lambda, err}
+:ArgumentTypes: {String, Integer, Integer, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      n12ratio
+:Pattern:       N12Ratio[str_, order_, nf_, Lambda_, err_]
 :Arguments:     {str, order, nf, Lambda, err}
 :ArgumentTypes: {String, Integer, Integer, Real, Real}
 :ReturnType:    Real
@@ -4790,6 +4799,17 @@ static double n12(char const* str, int nf, int order, double lambda, double err)
 
 }
 
+extern double f90n12ratio_(char const* str, int* nf, int* order, double* labmda,
+  double* err, double* result);
+
+static double n12ratio(char const* str, int nf, int order, double lambda, double err){
+  double result;
+
+   f90n12ratio_(str, &nf, &order, &lambda, &err, &result);
+   return result;
+
+}
+
 extern double f90n12generic_(double* aCoef, int* nf, int* order, double* labmda,
   double* result);
 
@@ -5483,7 +5503,7 @@ static double taylor(double c[], long clen, double lambda, int k){
 }
 
 extern double f90momentmodel_(double* c, int* clen, double* lambda, int* k,
-                              double* result);
+double* result);
 
 static double momentmodel(double c[], long clen, double lambda, int k){
   double res;
