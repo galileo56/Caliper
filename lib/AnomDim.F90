@@ -39,7 +39,7 @@ module AnomDimClass
     cusp, gtilde, gl
     real (dp), dimension(4)       :: sCoefMSRp, sCoefMSRn, betaList, gammaRp, &
     gammaRn, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, gammaRInc3,  &
-    sCoefMSRInc3
+    sCoefMSRInc3, aRS, sCoefRS, gammaRS
 
   contains
 
@@ -74,8 +74,9 @@ module AnomDimClass
     integer            , intent(in) :: nf         ! number of active flavors
     real (dp)          , intent(in) :: G4         ! cusp anomalous dimension
     real (dp), optional, intent(in) :: err        ! 4-loop MS-bar to pole conversion error
+    real (dp), dimension(0:4)       :: beta2List, beta
     real (dp), dimension(4)         :: betaList
-    real (dp), dimension(0:4)       :: beta
+    real (dp), dimension(-3:3)      :: poch
     integer                         :: n
 
     InAdim%err = 0; if ( present(err) ) InAdim%err = err
@@ -108,6 +109,7 @@ module AnomDimClass
     end if
 
     betaList = PowList( 1/beta(0)/2, 4 ); InAdim%betaList = betaList
+    beta2List = PowList0( beta(0)/2, 3 )
 
     InAdim%bHat(0) = 1; InAdim%cCoef(0) = 1
 
@@ -123,12 +125,21 @@ module AnomDimClass
       InAdim%gTilde(n + 1) = sum( powList(-1,n + 1) * InAdim%bHat(2:n+2) * InAdim%gTilde(n:0:-1) )/(n+1)
     end do
 
+    poch(0:-3:-1) = 1/PochHammerList( - InAdim%bHat(1), 3 ) * powList0(-1,3)
+    poch(0:) = PochHammerList( 1 + InAdim%bHat(1), 3 )
+
+    do n = 1, 4
+      InAdim%aRS(n) =  Pi * sum( InAdim%gl * poch(n-1:n-4:-1) ) * beta2List(n - 1)
+    end do
+
+    InAdim%gammaRS       = InAdim%GammaRComputer( InAdim%aRS )
     InAdim%gammaRp       = InAdim%GammaRComputer( InAdim%MSRDelta('MSRp') )
     InAdim%gammaRn       = InAdim%GammaRComputer( MSbarDelta(nf    , 0, InAdim%err) )
     InAdim%gammaRInc1    = InAdim%GammaRComputer( MSbarDelta(nf    , 1, InAdim%err) )
     InAdim%gammaRInc2    = InAdim%GammaRComputer( MSbarDelta(nf - 1, 1, InAdim%err) )
     InAdim%gammaRInc3    = InAdim%GammaRComputer( MSbarDelta(nf + 1, 1, InAdim%err) )
 
+    InAdim%sCoefRS       = InAdim%sCoefRecursive( InAdim%aRS )
     InAdim%sCoefMSRp     = InAdim%sCoefRecursive( InAdim%MSRDelta('MSRp') )
     InAdim%sCoefMSRn     = InAdim%sCoefRecursive( MSbarDelta(nf   ,  0, InAdim%err) )
     InAdim%sCoefMSRInc1  = InAdim%sCoefRecursive( MSbarDelta(nf   ,  1, InAdim%err) )
@@ -862,13 +873,16 @@ module AnomDimClass
     if ( str(:12) == 'sCoefMSRInc2'    ) bet(1:) = self%sCoefMSRInc2
     if ( str(:12) == 'sCoefMSRInc3'    ) bet(1:) = self%sCoefMSRInc3
     if ( str( :9) == 'sCoefMSRn'       ) bet(1:) = self%sCoefMSRn
+    if ( str( :7) == 'sCoefRS'         ) bet(1:) = self%sCoefRS
     if ( str( :8) == 'betaList'        ) bet(1:) = self%betaList
     if ( str( :9) == 'gammaRInc1'      ) bet(1:) = self%gammaRInc1
     if ( str(:10) == 'gammaRInc2'      ) bet(1:) = self%gammaRInc2
     if ( str(:10) == 'gammaRInc3'      ) bet(1:) = self%gammaRInc3
     if ( str( :7) == 'gammaRp'         ) bet(1:) = self%gammaRp
     if ( str( :7) == 'gammaRn'         ) bet(1:) = self%gammaRn
+    if ( str( :7) == 'gammaRS'         ) bet(1:) = self%gammaRS
     if ( str( :6) == 'betQED'          ) bet(1:) = self%beta0QED
+    if ( str( :7) == 'RSdelta'         ) bet(1:) = self%aRS
 
   end function betaQCD
 
@@ -1362,6 +1376,10 @@ end function MatchingAlphaLog
       coef = MSbarDelta(self%nf, 1, self%err)
       b = getInverse( self%alphaMatching(self%nf + 1) )
       call alphaReExpand( coef, b(:4) )
+
+    else if ( type(:2) == 'RS' ) then
+
+      coef = self%aRS
 
     else if ( type(:5) == 'charm' ) then
 

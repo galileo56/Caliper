@@ -6530,7 +6530,8 @@ mB, muB, mC, muC, mu, R, res)
 
   muM = tiny(1._dp)
 
-  if ( str(:3) == 'MSR' .or. str(:8) == 'MSbarLow' .or. str(:7) == 'JetMass' ) muM = 2 * mu
+  if ( str(:3) == 'MSR' .or. str(:2) == 'RS' .or. str(:8) == 'MSbarLow' &
+  .or. str(:7) == 'JetMass' ) muM = 2 * mu
 
   do i = 3, 6
     AnDim(i) = AnomDim('MSbar', i, 0._dp)

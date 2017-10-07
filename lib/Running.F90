@@ -696,7 +696,8 @@ module RunningClass
   real (dp) function DeltaGapMatching(self)
     class (Running), intent(in) :: self
 
-    DeltaGapMatching = ExpEuler * self%mL * ( self%alphaQCD(self%mL)/Pi )**2 * deltaMass(0._dp, 1._dp)
+    DeltaGapMatching = ExpEuler * self%mL * ( self%alphaQCD(self%mL)/Pi )**2 * &
+    deltaMass(0._dp, 1._dp)
 
   end function DeltaGapMatching
 
