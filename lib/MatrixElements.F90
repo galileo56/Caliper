@@ -1501,21 +1501,6 @@ module MatrixElementsClass
 
 !ccccccccccccccc
 
-  pure function factList(n) result(list)
-    integer, intent(in)       :: n
-    integer                   :: i
-    real (dp), dimension(0:n) :: list
-
-    list(0) = 1
-
-    do i = 1, n
-      list(i) = list(i - 1) * i
-    end do
-
-  end function factList
-
-!ccccccccccccccc
-
   real (dp) function NGLDoubleIntegral(pow, nf, w1, w2, r)
     real (dp), intent(in) :: w1, w2, r
     integer  , intent(in) :: pow, nf

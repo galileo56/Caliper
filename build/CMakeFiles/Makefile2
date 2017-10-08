@@ -63,8 +63,8 @@ CMAKE_BINARY_DIR = /Users/vmateu/GitHub/Caliper/build
 # Target rules for target CMakeFiles/hello-world.dir
 
 # All Build rule for target.
-CMakeFiles/hello-world.dir/all: libC/CMakeFiles/libradreturn.dir/all
 CMakeFiles/hello-world.dir/all: lib/CMakeFiles/libCaliper.dir/all
+CMakeFiles/hello-world.dir/all: libC/CMakeFiles/libradreturn.dir/all
 	$(MAKE) -f CMakeFiles/hello-world.dir/build.make CMakeFiles/hello-world.dir/depend
 	$(MAKE) -f CMakeFiles/hello-world.dir/build.make CMakeFiles/hello-world.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/vmateu/GitHub/Caliper/build/CMakeFiles --progress-num=3,4 "Built target hello-world"

@@ -63,7 +63,7 @@ module NRQCDClass
     InNRQCD%n = n; alphaScheme = InNRQCD%alphaMass%scheme()
     InNRQCD%Andim = InNRQCD%alphaMass%adim(); InNRQCD%l = l
     InNRQCD%mH = MSR%mass(); InNRQCD%nf = nf; InNRQCD%c = 0; InNRQCD%j = j
-    InNRQCD%listFact = factList(3); InNRQCD%cnl = 0; InNRQCD%s = s; h3 = 0
+    InNRQCD%listFact = factListInt(3); InNRQCD%cnl = 0; InNRQCD%s = s; h3 = 0
     InNRQCD%alphaOb = MSR%AlphaAll(); beta = InNRQCD%Andim%betaQCD('beta')
     InNRQCD%beta = beta;  InNRQCD%average = average; InNRQCD%h2 = 0; c2h = 0
     InNRQCD%cnf = 0
@@ -1329,7 +1329,7 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-  pure function factList(n) result(list)
+  pure function factListInt(n) result(list)
     integer, intent(in)     :: n
     integer, dimension(0:n) :: list
     integer                 :: i
@@ -1340,7 +1340,7 @@ module NRQCDClass
       list(i) = list(i - 1) * i
     end do
 
-  end function factList
+  end function factListInt
 
 !ccccccccccccccc
 

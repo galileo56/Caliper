@@ -12,7 +12,7 @@ module AnomDimClass
   deltaCharm2, deltaCharm2Der, gammaRcharm2, gammaRcharm3, deltaCharm3, p,   &
   deltaCharm3Der, deltaCharmNh, deltaCharmNhDer, P2int, DeltaBottomCharm,    &
   GammaRBottomCharm, deltaCharmNL, deltaCharmNLDer, deltaCharmGlueDer, &
-  alphaMatch, PowList0
+  alphaMatch, PowList0, factList
 
   interface PowList
     module procedure   :: PowListDP, PowListInt, PowListComp
@@ -48,7 +48,7 @@ module AnomDimClass
     bHQETgamma, wTildeHm, GammaRComputer, sCoefRecursive, N12Generic, PScoef, &
     sCoefHadron, scheme, MSRDelta, sCoefLambda, P12, sCoefGeneric, cCoeff,    &
     P12Generic, MatchingAlpha, MatchingAlphaLog, MatchingAlphaUp, betaQED,    &
-    alphaMatching, N12, N12Ratio
+    alphaMatching, N12, N12Ratio, N12Residue
 
     procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
     kTildeComplex, rootReal, rootComplex
@@ -969,7 +969,7 @@ module AnomDimClass
 
      do k = 0, n
 
-       poch(:n - 1 - k) = PochHammerList(1 + b1 + k, n - k)
+       poch(:n - k) = PochHammerList(1 + b1 + k, n - k)
 
        N12Ratio = N12Ratio + sCoef(k) * sum( self%gl(:n-k) * poch(n-k:0:-1)  )
 
@@ -980,6 +980,43 @@ module AnomDimClass
      N12Ratio =  N12Ratio * self%beta(0)/2/Pi/sum( self%gl(:n) * poch(n:0:-1) )
 
   end function N12Ratio
+
+!ccccccccccccccc
+
+  real (dp) function N12Residue(self, order, type, lambda)
+     class (AnomDim)            , intent(in) :: self
+     real (dp)                  , intent(in) :: lambda
+     character (len = *)        , intent(in) :: type
+     integer                    , intent(in) :: order
+     real (dp)              , dimension(0:3) :: sCoef
+     real (dp), dimension( 0:min(order, 3) ) :: poch, listfact
+     real (dp), dimension(   min(order, 4) ) :: a
+     real (dp)                               :: b1
+     integer                                 :: k, n, i
+
+     N12Residue = 0; n = min(order, 3); b1 = self%bHat(1); a = 0
+
+     sCoef = self%sCoefLambda(type, lambda)
+
+     do i = 1, n + 1
+       do k = 0, i - 1
+
+       poch(:n - 1 - k) = PochHammerList(1 + b1 + k, i - 1 - k)
+
+       a(i) = a(i) + sCoef(k) * sum( self%gl(:i - 1 - k) * poch(i - 1 - k:0:-1)  )
+
+       end do
+     end do
+
+     poch = PochHammerList(-b1, n); listfact = factList(n)
+
+     do k = 0, n
+       N12Residue =  N12Residue + a(k + 1) * poch(n - k)/listfact(k)/listfact(n - k)
+     end do
+
+     N12Residue = N12Residue * self%beta(0)/2/Pi
+
+  end function N12Residue
 
 !ccccccccccccccc
 
@@ -2240,6 +2277,21 @@ end function MatchingAlphaLog
     end if
 
   end function p
+
+!ccccccccccccccc
+
+  pure function factList(n) result(list)
+    integer, intent(in)       :: n
+    integer                   :: i
+    real (dp), dimension(0:n) :: list
+
+    list(0) = 1
+
+    do i = 1, n
+      list(i) = list(i - 1) * i
+    end do
+
+  end function factList
 
 !ccccccccccccccc
 

@@ -3888,6 +3888,20 @@ end subroutine f90N12Ratio
 
 !ccccccccccccccc
 
+subroutine f90N12Residue(str, order, nf, lambda, err, res)
+  use AnomDimClass;  use constants, only: dp; implicit none
+  character (len = *), intent(in ) :: str
+  integer            , intent(in ) :: nf, order
+  real (dp)          , intent(in ) :: lambda, err
+  real (dp)          , intent(out) :: res
+  type (AnomDim)                   :: run
+
+  run = AnomDim('MSbar', nf, 0._dp, err);  res = run%N12Residue(order, str, lambda)
+
+end subroutine f90N12Residue
+
+!ccccccccccccccc
+
 subroutine f90N12Generic(a, order, nf, lambda, res)
   use AnomDimClass;  use constants, only: dp; implicit none
   real (dp), dimension(4), intent(in ) :: a
