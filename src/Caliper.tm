@@ -117,6 +117,7 @@
 :Evaluate:  N12::usage = "N12[str, order, nf, lambda, err] computes the renormalon sum rule"
 :Evaluate:  N12Ratio::usage = "N12Ratio[str, order, nf, lambda, err] computes the renormalon residue by the ratio method"
 :Evaluate:  N12Residue::usage = "N12Residue[str, order, nf, lambda, err] computes the renormalon residue by the residue method"
+:Evaluate:  N12RS::usage = "N12RS[str, order, n, nf, lambda, err] computes the renormalon residue by the MSR-RS mass consistency"
 :Evaluate:  Delta::usage = "Delta[str, nf, mu, R] computes the soft renormalon subtractions"
 :Evaluate:  DeltaGap::usage = "DeltaGap[str, orderAlpha, runAlpha, runMass, nf, mZ, aMz, mT, muT, mB, muB, mC, muC, mu, R] computes the soft renormalon subtractions"
 :Evaluate:  PSDelta::usage = "PSDelta[orderAlpha, runAlpha, nf, mZ, aMz, mT, muT, mB, muB, mC, muC, mu, R, lg] computes the PS mass subtractions"
@@ -1649,6 +1650,14 @@
 :Pattern:       N12Residue[str_, order_, nf_, Lambda_, err_]
 :Arguments:     {str, order, nf, Lambda, err}
 :ArgumentTypes: {String, Integer, Integer, Real, Real}
+:ReturnType:    Real
+:End:
+
+:Begin:
+:Function:      n12rs
+:Pattern:       N12RS[str_, order_, n_, nf_, Lambda_, err_]
+:Arguments:     {str, order, n, nf, Lambda, err}
+:ArgumentTypes: {String, Integer, Integer, Integer, Real, Real}
 :ReturnType:    Real
 :End:
 
@@ -4826,6 +4835,18 @@ static double n12residue(char const* str, int nf, int order, double lambda, doub
   double result;
 
    f90n12residue_(str, &nf, &order, &lambda, &err, &result);
+   return result;
+
+}
+
+extern double f90n12rs_(char const* str, int* nf, int* n, int* order,
+  double* labmda, double* err, double* result);
+
+static double n12rs(char const* str, int nf, int n, int order, double lambda,
+double err){
+  double result;
+
+   f90n12rs_(str, &nf, &n, &order, &lambda, &err, &result);
    return result;
 
 }

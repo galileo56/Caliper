@@ -48,7 +48,7 @@ module AnomDimClass
     bHQETgamma, wTildeHm, GammaRComputer, sCoefRecursive, N12Generic, PScoef, &
     sCoefHadron, scheme, MSRDelta, sCoefLambda, P12, sCoefGeneric, cCoeff,    &
     P12Generic, MatchingAlpha, MatchingAlphaLog, MatchingAlphaUp, betaQED,    &
-    alphaMatching, N12, N12Ratio, N12Residue
+    alphaMatching, N12, N12Ratio, N12Residue, N12RS
 
     procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
     kTildeComplex, rootReal, rootComplex
@@ -1003,15 +1003,15 @@ module AnomDimClass
 !ccccccccccccccc
 
   real (dp) function N12Residue(self, order, type, lambda)
-     class (AnomDim)            , intent(in) :: self
-     real (dp)                  , intent(in) :: lambda
-     character (len = *)        , intent(in) :: type
-     integer                    , intent(in) :: order
-     real (dp)              , dimension(0:3) :: sCoef
-     real (dp), dimension( 0:min(order, 3) ) :: poch, listfact
-     real (dp), dimension(   min(order, 4) ) :: a
-     real (dp)                               :: b1
-     integer                                 :: k, n, i
+     class (AnomDim)              , intent(in) :: self
+     real (dp)                    , intent(in) :: lambda
+     character (len = *)          , intent(in) :: type
+     integer                      , intent(in) :: order
+     real (dp)                , dimension(0:3) :: sCoef
+     real (dp)  , dimension( 0:min(order, 3) ) :: poch, listfact
+     real (dp), dimension( min(order + 1, 4) ) :: a
+     real (dp)                                 :: b1
+     integer                                   :: k, n, i
 
      N12Residue = 0; n = min(order, 3); b1 = self%bHat(1); a = 0
 
@@ -1021,8 +1021,7 @@ module AnomDimClass
        do k = 0, i - 1
 
        poch(:n - 1 - k) = PochHammerList(1 + b1 + k, i - 1 - k)
-
-       a(i) = a(i) + sCoef(k) * sum( self%gl(:i - 1 - k) * poch(i - 1 - k:0:-1)  )
+       a(i) = a(i) + sCoef(k) * sum( self%gl(:i - 1 - k) * poch(i - 1 - k:0:-1) )
 
        end do
      end do
@@ -1038,42 +1037,42 @@ module AnomDimClass
   end function N12Residue
 
 
-  !ccccccccccccccc
+!ccccccccccccccc
 
   real (dp) function N12RS(self, order, m, type, lambda)
-     class (AnomDim)            , intent(in) :: self
-     real (dp)                  , intent(in) :: lambda
-     character (len = *)        , intent(in) :: type
-     integer                    , intent(in) :: order
-     real (dp)              , dimension(0:3) :: sCoef
-     real (dp), dimension(0:6)               :: poch
-     integer  , dimension(0:4)               :: signlist
-     real (dp)                               :: b1, suma, a
-     integer                                 :: k, n, m, l
+    class (AnomDim)            , intent(in) :: self
+    real (dp)                  , intent(in) :: lambda
+    character (len = *)        , intent(in) :: type
+    integer                    , intent(in) :: order
+    real (dp)              , dimension(0:3) :: sCoef
+    real (dp), dimension(-3:6)              :: poch
+    integer  , dimension(0:4)               :: signlist
+    real (dp)                               :: b1, suma, a
+    integer                                 :: k, n, m, l
 
-     N12RS = 0; if (m < 4) return
-     n = min(order, 3); b1 = self%bHat(1); a = 0
+    N12RS = 0; if (m > 4) return; n = min(order, 3); b1 = self%bHat(1); a = 0
 
-     sCoef = self%sCoefLambda(type, lambda)
+    sCoef = self%sCoefLambda(type, lambda)
 
-     do k = 0, m - 1
+    do k = 0, m - 1
+     poch(0:n - 1 - k) = PochHammerList(1 + b1 + k, m - 1 - k)
+     a = a + sCoef(k) * sum( self%gl(:m - 1 - k) * poch(m - 1 - k:0:-1)  )
+    end do
 
-       poch(:n - 1 - k) = PochHammerList(1 + b1 + k, m - 1 - k)
+    signlist = PowList0(-1,4)
 
-       a = a + sCoef(k) * sum( self%gl(:m - 1 - k) * poch(m - 1 - k:0:-1)  )
+    do k = 0, n
+     poch(0:n + 1 + k - m) = PochHammerList( - b1 - k, n + 1 + k - m )
+     l = max(m - k, 0)
+     suma = sum( self%gl(l:n) * signlist(l:n)/poch(1 + k + l - m:n + 1 + k - m) )
+     N12RS = N12RS + sCoef(k) * suma * (-1)**k
+    end do
 
-     end do
+    poch(0:-n:-1) = 1/PochHammerList( - b1, n ) * powList0(-1,n)
+    poch(0:n)     = PochHammerList( 1 + b1, n )
 
-     signlist = PowList0(-1,4)
-
-     do k = 0, 3
-       poch(0:4 + k - m) = PochHammerList( - b1 - k, 4 + k - n )
-       l = max(n - k, 0)
-       suma = sum( self%gl(l:) * signlist(l:)/poch(1+k+l-n:4+k-m) )
-       N12RS = N12RS + sCoef(k) * suma * (-1)**k
-     end do
-
-     N12RS = a - N12RS * self%beta2List(m) * signlist(m)
+    N12RS = self%beta2List(1) * ( a - N12RS * signlist(m) )/Pi/&
+    sum( self%gl(:n) * poch(m - 1:m - n - 1:-1) )
 
   end function N12RS
 
