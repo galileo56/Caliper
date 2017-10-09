@@ -39,7 +39,7 @@ module AnomDimClass
     cusp, gtilde, gl
     real (dp), dimension(4)       :: sCoefMSRp, sCoefMSRn, betaList, gammaRp, &
     gammaRn, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, gammaRInc3,  &
-    sCoefMSRInc3, aRS, sCoefRS, gammaRS
+    sCoefMSRInc3, aRS, aRSn, aRSp, sCoefRS, gammaRS
 
   contains
 
@@ -76,8 +76,10 @@ module AnomDimClass
     real (dp), optional, intent(in) :: err        ! 4-loop MS-bar to pole conversion error
     real (dp), dimension(0:4)       :: beta2List, beta
     real (dp), dimension(4)         :: betaList
-    real (dp), dimension(-3:3)      :: poch
-    integer                         :: n
+    real (dp), dimension(-3:6)      :: poch
+    integer                         :: n, k, l
+    integer, dimension(0:4)         :: signlist
+    real (dp)                       :: suma
 
     InAdim%err = 0; if ( present(err) ) InAdim%err = err
 
@@ -109,7 +111,7 @@ module AnomDimClass
     end if
 
     betaList = PowList( 1/beta(0)/2, 4 ); InAdim%betaList = betaList
-    beta2List = PowList0( beta(0)/2, 3 )
+    beta2List = PowList0( beta(0)/2, 4 )
 
     InAdim%bHat(0) = 1; InAdim%cCoef(0) = 1
 
@@ -126,7 +128,7 @@ module AnomDimClass
     end do
 
     poch(0:-3:-1) = 1/PochHammerList( - InAdim%bHat(1), 3 ) * powList0(-1,3)
-    poch(0:) = PochHammerList( 1 + InAdim%bHat(1), 3 )
+    poch(0:3) = PochHammerList( 1 + InAdim%bHat(1), 3 )
 
     do n = 1, 4
       InAdim%aRS(n) =  Pi * sum( InAdim%gl * poch(n-1:n-4:-1) ) * beta2List(n - 1)
@@ -159,6 +161,21 @@ module AnomDimClass
     if (nf == 6) InAdim%beta0QED = InAdim%beta0QED + 4._dp/3     ! add top
 
     InAdim%beta0QED = 4 * InAdim%beta0QED/3
+
+    InAdim%aRSn = 0; InAdim%aRSp = 0; signlist = PowList0(-1,4)
+
+    do n = 1, 4
+      do k = 0, 3
+        poch(0:4 + k - n) = PochHammerList( - InAdim%bHat(1) - k, 4 + k - n )
+        l = max(n - k, 0)
+        suma = sum( InAdim%gl(l:) * signlist(l:)/poch(1+k+l-n:4+k-n) )
+        InAdim%aRSn(n) = InAdim%aRSn(n) + InAdim%sCoefMSRn(k+1) * suma * (-1)**k
+        InAdim%aRSp(n) = InAdim%aRSp(n) + InAdim%sCoefMSRp(k+1) * suma * (-1)**k
+      end do
+    end do
+
+    InAdim%aRSn = InAdim%aRSn * beta2List(1:) * signlist(1:)
+    InAdim%aRSp = InAdim%aRSp * beta2List(1:) * signlist(1:)
 
    end function InAdim
 
@@ -883,6 +900,8 @@ module AnomDimClass
     if ( str( :7) == 'gammaRS'         ) bet(1:) = self%gammaRS
     if ( str( :6) == 'betQED'          ) bet(1:) = self%beta0QED
     if ( str( :7) == 'RSdelta'         ) bet(1:) = self%aRS
+    if ( str( :8) == 'RSndelta'        ) bet(1:) = self%aRSn
+    if ( str( :8) == 'RSpdelta'        ) bet(1:) = self%aRSp
 
   end function betaQCD
 
