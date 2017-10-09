@@ -104,10 +104,8 @@ module AnomDimClass
     InAdim%gammaHm(:,0) = - InAdim%gammaSoft - InAdim%gammaB
 
     if (str(:5) == 'MSbar') then
-
       InAdim%gammaHm(:1,1) = [ 512._dp/9, 2142.6359241459822_dp - 177.726619506625_dp * nf ]
       InAdim%gammaHm(0,2)  =  709.0476903676573_dp -  63.20987654320987_dp * nf
-
     end if
 
     betaList = PowList( 1/beta(0)/2, 4 ); InAdim%betaList = betaList
@@ -127,21 +125,12 @@ module AnomDimClass
       InAdim%gTilde(n + 1) = sum( powList(-1,n + 1) * InAdim%bHat(2:n+2) * InAdim%gTilde(n:0:-1) )/(n+1)
     end do
 
-    poch(0:-3:-1) = 1/PochHammerList( - InAdim%bHat(1), 3 ) * powList0(-1,3)
-    poch(0:3) = PochHammerList( 1 + InAdim%bHat(1), 3 )
-
-    do n = 1, 4
-      InAdim%aRS(n) =  Pi * sum( InAdim%gl * poch(n-1:n-4:-1) ) * beta2List(n - 1)
-    end do
-
-    InAdim%gammaRS       = InAdim%GammaRComputer( InAdim%aRS )
     InAdim%gammaRp       = InAdim%GammaRComputer( InAdim%MSRDelta('MSRp') )
     InAdim%gammaRn       = InAdim%GammaRComputer( MSbarDelta(nf    , 0, InAdim%err) )
     InAdim%gammaRInc1    = InAdim%GammaRComputer( MSbarDelta(nf    , 1, InAdim%err) )
     InAdim%gammaRInc2    = InAdim%GammaRComputer( MSbarDelta(nf - 1, 1, InAdim%err) )
     InAdim%gammaRInc3    = InAdim%GammaRComputer( MSbarDelta(nf + 1, 1, InAdim%err) )
 
-    InAdim%sCoefRS       = InAdim%sCoefRecursive( InAdim%aRS )
     InAdim%sCoefMSRp     = InAdim%sCoefRecursive( InAdim%MSRDelta('MSRp') )
     InAdim%sCoefMSRn     = InAdim%sCoefRecursive( MSbarDelta(nf   ,  0, InAdim%err) )
     InAdim%sCoefMSRInc1  = InAdim%sCoefRecursive( MSbarDelta(nf   ,  1, InAdim%err) )
@@ -176,6 +165,18 @@ module AnomDimClass
 
     InAdim%aRSn = InAdim%MSRDelta('MSRn') - InAdim%aRSn * beta2List(1:) * signlist(1:)
     InAdim%aRSp = InAdim%MSRDelta('MSRp') - InAdim%aRSp * beta2List(1:) * signlist(1:)
+
+    poch(0:-3:-1) = 1/PochHammerList( - InAdim%bHat(1), 3 ) * powList0(-1,3)
+    poch(0:3) = PochHammerList( 1 + InAdim%bHat(1), 3 )
+
+    do n = 1, 4
+      InAdim%aRS(n) = Pi * sum( InAdim%gl * poch(n-1:n-4:-1) ) * beta2List(n - 1)
+    end do
+
+    InAdim%aRS = InAdim%aRS * InAdim%N12(3, 'Natural', 1._dp)
+
+    InAdim%gammaRS = InAdim%GammaRComputer( InAdim%aRS )
+    InAdim%sCoefRS = InAdim%sCoefRecursive( InAdim%aRS )
 
    end function InAdim
 

@@ -14,7 +14,7 @@ module RunningClass
     type (AnomDim)              :: andim
     type (Alpha)                :: AlphaOb
     real (dp), dimension(0:4)   :: beta, gamma
-    real (dp), dimension(4)     :: bHat, sCoefP, sCoefN, gammaRn, gammaRp
+    real (dp), dimension(4)     :: bHat, sCoefP, sCoefN, gammaRn, gammaRp, gammaRS, sCoefRS
     real (dp)                   :: muLambda, mH, mL
     real (dp), dimension(0:4,4) :: tab
 
@@ -80,6 +80,10 @@ module RunningClass
     InitRun%gammaRp = sCoef(1:)
     sCoef = 0; sCoef = InitRun%andim%betaQCD('MSRndelta')
     InitRun%gammaRn = sCoef(1:)
+    sCoef = 0; sCoef = InitRun%andim%betaQCD('RSdelta')
+    InitRun%gammaRS = sCoef(1:)
+    sCoef = InitRun%andim%betaQCD('sCoefRS')
+    InitRun%sCoefRS = sCoef(1:);
 
    end function InitRun
 
@@ -94,6 +98,8 @@ module RunningClass
       res = self%gammaRn
     else if ( type(:4) == 'MSRp' ) then
       res = self%gammaRp
+    else if ( type(:2) == 'RS' ) then
+      res = self%gammaRS
     end if
 
   end function gammaR
@@ -109,6 +115,8 @@ module RunningClass
       res = self%sCoefN
     else if ( type(:4) == 'MSRp' ) then
       res = self%sCoefP
+    else if ( type(:2) == 'RS' ) then
+      res = self%sCoefRS
     end if
 
   end function sCoef
@@ -423,9 +431,7 @@ module RunningClass
       matmul(  powList( - log(lambda), self%runMass-1 ), gammaLog(2:,:)  )   )
 
     else
-
       lan = 1
-
     end if
 
     if ( method(:8) == 'analytic' ) then
@@ -592,6 +598,9 @@ module RunningClass
     else if ( type(:4) == 'MSRn' ) then
       c = MSbarDelta(self%nf, 1); a = MSbarDelta(self%nf, 0)
       b = self%andim%MatchingAlphaUp()
+    else if ( type(:2) == 'RS' ) then
+      c = MSbarDelta(self%nf, 1); b = self%andim%betaQCD('RSdelta'); a = b(2:)
+      b = 0; b = self%andim%MatchingAlphaUp()
       call alphaReExpand( a, b(:4) );  a = c - a
     else if ( type(:5) == 'charm' ) then
       a = self%andim%MSRDelta('charm') - MSbarDelta(self%nf - 1, 1)
