@@ -33,7 +33,7 @@ module AnomDimClass
     real (dp), dimension(0:4,5)   :: AlphaMatchLog, AlphaMatchInvLog
     real (dp), dimension(0:3,0:3) :: gammaHm
     real (dp), dimension(0:4)     :: bHat, bCoef, cCoef
-    real (dp), dimension(0:4)     :: beta
+    real (dp), dimension(0:4)     :: beta, beta2List
     real (dp), dimension(0:4)     :: gammaMass
     real (dp), dimension(0:3)     :: gammaHard, gammaB, gammaJet, gammaSoft, &
     cusp, gtilde, gl
@@ -111,7 +111,7 @@ module AnomDimClass
     end if
 
     betaList = PowList( 1/beta(0)/2, 4 ); InAdim%betaList = betaList
-    beta2List = PowList0( beta(0)/2, 4 )
+    beta2List = PowList0( beta(0)/2, 4 ); InAdim%beta2List = beta2List
 
     InAdim%bHat(0) = 1; InAdim%cCoef(0) = 1
 
@@ -174,8 +174,8 @@ module AnomDimClass
       end do
     end do
 
-    InAdim%aRSn = InAdim%aRSn * beta2List(1:) * signlist(1:)
-    InAdim%aRSp = InAdim%aRSp * beta2List(1:) * signlist(1:)
+    InAdim%aRSn = InAdim%MSRDelta('MSRn') - InAdim%aRSn * beta2List(1:) * signlist(1:)
+    InAdim%aRSp = InAdim%MSRDelta('MSRp') - InAdim%aRSp * beta2List(1:) * signlist(1:)
 
    end function InAdim
 
@@ -1036,6 +1036,46 @@ module AnomDimClass
      N12Residue = N12Residue * self%beta(0)/2/Pi
 
   end function N12Residue
+
+
+  !ccccccccccccccc
+
+  real (dp) function N12RS(self, order, m, type, lambda)
+     class (AnomDim)            , intent(in) :: self
+     real (dp)                  , intent(in) :: lambda
+     character (len = *)        , intent(in) :: type
+     integer                    , intent(in) :: order
+     real (dp)              , dimension(0:3) :: sCoef
+     real (dp), dimension(0:6)               :: poch
+     integer  , dimension(0:4)               :: signlist
+     real (dp)                               :: b1, suma, a
+     integer                                 :: k, n, m, l
+
+     N12RS = 0; if (m < 4) return
+     n = min(order, 3); b1 = self%bHat(1); a = 0
+
+     sCoef = self%sCoefLambda(type, lambda)
+
+     do k = 0, m - 1
+
+       poch(:n - 1 - k) = PochHammerList(1 + b1 + k, m - 1 - k)
+
+       a = a + sCoef(k) * sum( self%gl(:m - 1 - k) * poch(m - 1 - k:0:-1)  )
+
+     end do
+
+     signlist = PowList0(-1,4)
+
+     do k = 0, 3
+       poch(0:4 + k - m) = PochHammerList( - b1 - k, 4 + k - n )
+       l = max(n - k, 0)
+       suma = sum( self%gl(l:) * signlist(l:)/poch(1+k+l-n:4+k-m) )
+       N12RS = N12RS + sCoef(k) * suma * (-1)**k
+     end do
+
+     N12RS = a - N12RS * self%beta2List(m) * signlist(m)
+
+  end function N12RS
 
 !ccccccccccccccc
 
