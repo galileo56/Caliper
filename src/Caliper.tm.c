@@ -3484,20 +3484,20 @@ char const* str, char const* average, char const* method, char const* counting,
 int* orderAlpha, int* runAlpha, int* order, int* run, int* n, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
 double* muC, double* lambda1, double* lambda2, double* lam, double* mu,
-double* R, double* res);
+double* R, int* ndim, double* res);
 
 static double chi2nrqcd(int qnlist[], long len1, double datalist[], long len2,
 int m, char const* charm, char const* str, char const* average, char const* method,
 char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
 int n, double Mz, double aMz, double mT, double muT, double mB, double muB,
-double mC, double muC, double lambda1, double lambda2, double lam, double mu,
-double R){
+double mC, double muC, double lambda1, double lambda2, double lam, double mu[],
+long lenMu, double R[], long lenR){
 
-  double res;
+  double res; int ndim = lenMu;
 
   f90chi2nrqcd_(qnlist, datalist, &m, charm, str, average, method, counting,
   &orderAlpha, &runAlpha, &order, &run, &nf, &n, &Mz, &aMz, &mT, &muT, &mB, &muB,
-  &mC, &muC, &lambda1, &lambda2, &lam, &mu, &R, &res);
+  &mC, &muC, &lambda1, &lambda2, &lam, mu, R, &ndim, &res);
 
    return res;
 
@@ -3508,20 +3508,20 @@ char const* str, char const* average, char const* method, char const* counting,
 int* orderAlpha, int* runAlpha, int* order, int* run, int* n, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
 double* muC, double* lambda1, double* lambda2, double* lam, double* mu,
-double* R, double* res);
+double* R, int* ndim, double* res);
 
 static void chi2minnrqcd(int qnlist[], long len1, double datalist[], long len2,
 int m, char const* charm, char const* str, char const* average, char const* method,
 char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
 int n, double Mz, double aMz, double mT, double muT, double mB, double muB,
-double mC, double muC, double lambda1, double lambda2, double lam, double mu,
-double R){
+double mC, double muC, double lambda1, double lambda2, double lam, double mu[],
+long lenMu, double R[], long lenR){
 
-  double res[2];
+  double res[2]; int ndim = lenMu;
 
   f90chi2minnrqcd_(qnlist, datalist, &m, charm, str, average, method, counting,
   &orderAlpha, &runAlpha, &order, &run, &nf, &n, &Mz, &aMz, &mT, &muT, &mB, &muB,
-  &mC, &muC, &lambda1, &lambda2, &lam, &mu, &R, res);
+  &mC, &muC, &lambda1, &lambda2, &lam, mu, R, &ndim, res);
 
    MLPutRealList(stdlink, res, 2);
 
@@ -3532,20 +3532,20 @@ char const* str, char const* average, char const* method, char const* counting,
 int* orderAlpha, int* runAlpha, int* order, int* run, int* n, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
 double* muC, double* lambda1, double* lambda2, double* lam, double* mu,
-double* R, double* res);
+double* R, int* ndim, double* res);
 
 static void chi2minalphanrqcd(int qnlist[], long len1, double datalist[], long len2,
 int m, char const* charm, char const* str, char const* average, char const* method,
 char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
 int n, double Mz, double aMz, double mT, double muT, double mB, double muB,
-double mC, double muC, double lambda1, double lambda2, double lam, double mu,
-double R){
+double mC, double muC, double lambda1, double lambda2, double lam, double mu[],
+long lenMu, double R[], long lenR){
 
-  double res[3];
+  double res[3]; int ndim = lenMu;
 
   f90chi2minalphanrqcd_(qnlist, datalist, &m, charm, str, average, method, counting,
   &orderAlpha, &runAlpha, &order, &run, &nf, &n, &Mz, &aMz, &mT, &muT, &mB, &muB,
-  &mC, &muC, &lambda1, &lambda2, &lam, &mu, &R, res);
+  &mC, &muC, &lambda1, &lambda2, &lam, mu, R, &ndim, res);
 
    MLPutRealList(stdlink, res, 3);
 
@@ -14790,7 +14790,7 @@ L0:	return res;
 } /* _tr180 */
 
 
-double chi2nrqcd P(( int * _tp1, long _tpl1, double * _tp2, long _tpl2, int _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, int _tp9, int _tp10, int _tp11, int _tp12, int _tp13, int _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double _tp27));
+double chi2nrqcd P(( int * _tp1, long _tpl1, double * _tp2, long _tpl2, int _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, int _tp9, int _tp10, int _tp11, int _tp12, int _tp13, int _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double * _tp26, long _tpl26, double * _tp27, long _tpl27));
 
 #if MLPROTOTYPES
 static int _tr181( MLINK mlp)
@@ -14826,8 +14826,10 @@ static int _tr181(mlp) MLINK mlp;
 	double _tp23;
 	double _tp24;
 	double _tp25;
-	double _tp26;
-	double _tp27;
+	double * _tp26;
+	long _tpl26;
+	double * _tp27;
+	long _tpl27;
 	double _rp0;
 	if ( ! MLGetIntegerList( mlp, &_tp1, &_tpl1) ) goto L0;
 	if ( ! MLGetRealList( mlp, &_tp2, &_tpl2) ) goto L1;
@@ -14854,15 +14856,17 @@ static int _tr181(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
 	if ( ! MLGetReal( mlp, &_tp24) ) goto L23;
 	if ( ! MLGetReal( mlp, &_tp25) ) goto L24;
-	if ( ! MLGetReal( mlp, &_tp26) ) goto L25;
-	if ( ! MLGetReal( mlp, &_tp27) ) goto L26;
+	if ( ! MLGetRealList( mlp, &_tp26, &_tpl26) ) goto L25;
+	if ( ! MLGetRealList( mlp, &_tp27, &_tpl27) ) goto L26;
 	if ( ! MLNewPacket(mlp) ) goto L27;
 
-	_rp0 = chi2nrqcd(_tp1, _tpl1, _tp2, _tpl2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tp27);
+	_rp0 = chi2nrqcd(_tp1, _tpl1, _tp2, _tpl2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tpl26, _tp27, _tpl27);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L27: L26: L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(mlp, _tp8);
+L27:	MLReleaseReal64List(mlp, _tp27, _tpl27);
+L26:	MLReleaseReal64List(mlp, _tp26, _tpl26);
+L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(mlp, _tp8);
 L7:	MLReleaseString(mlp, _tp7);
 L6:	MLReleaseString(mlp, _tp6);
 L5:	MLReleaseString(mlp, _tp5);
@@ -14874,7 +14878,7 @@ L0:	return res;
 } /* _tr181 */
 
 
-void chi2minnrqcd P(( int * _tp1, long _tpl1, double * _tp2, long _tpl2, int _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, int _tp9, int _tp10, int _tp11, int _tp12, int _tp13, int _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double _tp27));
+void chi2minnrqcd P(( int * _tp1, long _tpl1, double * _tp2, long _tpl2, int _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, int _tp9, int _tp10, int _tp11, int _tp12, int _tp13, int _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double * _tp26, long _tpl26, double * _tp27, long _tpl27));
 
 #if MLPROTOTYPES
 static int _tr182( MLINK mlp)
@@ -14910,8 +14914,10 @@ static int _tr182(mlp) MLINK mlp;
 	double _tp23;
 	double _tp24;
 	double _tp25;
-	double _tp26;
-	double _tp27;
+	double * _tp26;
+	long _tpl26;
+	double * _tp27;
+	long _tpl27;
 	if ( ! MLGetIntegerList( mlp, &_tp1, &_tpl1) ) goto L0;
 	if ( ! MLGetRealList( mlp, &_tp2, &_tpl2) ) goto L1;
 	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
@@ -14937,14 +14943,16 @@ static int _tr182(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
 	if ( ! MLGetReal( mlp, &_tp24) ) goto L23;
 	if ( ! MLGetReal( mlp, &_tp25) ) goto L24;
-	if ( ! MLGetReal( mlp, &_tp26) ) goto L25;
-	if ( ! MLGetReal( mlp, &_tp27) ) goto L26;
+	if ( ! MLGetRealList( mlp, &_tp26, &_tpl26) ) goto L25;
+	if ( ! MLGetRealList( mlp, &_tp27, &_tpl27) ) goto L26;
 	if ( ! MLNewPacket(mlp) ) goto L27;
 
-	chi2minnrqcd(_tp1, _tpl1, _tp2, _tpl2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tp27);
+	chi2minnrqcd(_tp1, _tpl1, _tp2, _tpl2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tpl26, _tp27, _tpl27);
 
 	res = 1;
-L27: L26: L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(mlp, _tp8);
+L27:	MLReleaseReal64List(mlp, _tp27, _tpl27);
+L26:	MLReleaseReal64List(mlp, _tp26, _tpl26);
+L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(mlp, _tp8);
 L7:	MLReleaseString(mlp, _tp7);
 L6:	MLReleaseString(mlp, _tp6);
 L5:	MLReleaseString(mlp, _tp5);
@@ -14956,7 +14964,7 @@ L0:	return res;
 } /* _tr182 */
 
 
-void chi2minalphanrqcd P(( int * _tp1, long _tpl1, double * _tp2, long _tpl2, int _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, int _tp9, int _tp10, int _tp11, int _tp12, int _tp13, int _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double _tp27));
+void chi2minalphanrqcd P(( int * _tp1, long _tpl1, double * _tp2, long _tpl2, int _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, int _tp9, int _tp10, int _tp11, int _tp12, int _tp13, int _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double * _tp26, long _tpl26, double * _tp27, long _tpl27));
 
 #if MLPROTOTYPES
 static int _tr183( MLINK mlp)
@@ -14992,8 +15000,10 @@ static int _tr183(mlp) MLINK mlp;
 	double _tp23;
 	double _tp24;
 	double _tp25;
-	double _tp26;
-	double _tp27;
+	double * _tp26;
+	long _tpl26;
+	double * _tp27;
+	long _tpl27;
 	if ( ! MLGetIntegerList( mlp, &_tp1, &_tpl1) ) goto L0;
 	if ( ! MLGetRealList( mlp, &_tp2, &_tpl2) ) goto L1;
 	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
@@ -15019,14 +15029,16 @@ static int _tr183(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
 	if ( ! MLGetReal( mlp, &_tp24) ) goto L23;
 	if ( ! MLGetReal( mlp, &_tp25) ) goto L24;
-	if ( ! MLGetReal( mlp, &_tp26) ) goto L25;
-	if ( ! MLGetReal( mlp, &_tp27) ) goto L26;
+	if ( ! MLGetRealList( mlp, &_tp26, &_tpl26) ) goto L25;
+	if ( ! MLGetRealList( mlp, &_tp27, &_tpl27) ) goto L26;
 	if ( ! MLNewPacket(mlp) ) goto L27;
 
-	chi2minalphanrqcd(_tp1, _tpl1, _tp2, _tpl2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tp27);
+	chi2minalphanrqcd(_tp1, _tpl1, _tp2, _tpl2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tpl26, _tp27, _tpl27);
 
 	res = 1;
-L27: L26: L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(mlp, _tp8);
+L27:	MLReleaseReal64List(mlp, _tp27, _tpl27);
+L26:	MLReleaseReal64List(mlp, _tp26, _tpl26);
+L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(mlp, _tp8);
 L7:	MLReleaseString(mlp, _tp7);
 L6:	MLReleaseString(mlp, _tp6);
 L5:	MLReleaseString(mlp, _tp5);
