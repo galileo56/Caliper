@@ -28,6 +28,131 @@ module Constants
 
 end module Constants
 
+subroutine f90compass_search ( function_handle, m, x0, delta_tol, delta_init, &
+  k_max, x, fx, k )
+
+  use Constants, only: dp
+
+!*****************************************************************************80
+!
+!! COMPASS_SEARCH carries out a direct search minimization algorithm.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    05 January 2012
+!
+!   Edited by Vicent Mateu, 15-06-2016
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Reference:
+!
+!    Tamara Kolda, Robert Michael Lewis, Virginia Torczon,
+!    Optimization by Direct Search: New Perspectives on Some Classical
+!    and Modern Methods,
+!    SIAM Review,
+!    Volume 45, Number 3, 2003, pages 385-482.
+!
+!  Parameters:
+!
+!    Input, external real (dp) FUNCTION_HANDLE, the name of
+!    a FORTRAN90 function which evaluates the function to be minimized, of the
+!    form FUNCTION FUNCTION_HANDLE ( M, X ).
+!
+!    Input, integer M, the number of variables.
+!
+!    Input, real (dp) X0(M), a starting estimate for the minimizer.
+!
+!    Input, real (dp) DELTA_TOL, the smallest step size that is allowed.
+!
+!    Input, real (dp) DELTA_INIT, the starting stepsize.
+!
+!    Input, integer K_MAX, the maximum number of steps allowed.
+!
+!    Output, real (dp) X(M), the estimated minimizer.
+!
+!    Output, real (dp) FX, the function value at X.
+!
+!    Output, integer K, the number of steps taken.
+
+  implicit none
+
+  logical :: decrease
+  integer, intent(in) :: m, k_max
+  integer, intent(out) :: k
+  real (dp), intent(in) :: delta_init, delta_tol
+  real (dp), intent(out) :: fx
+  real (dp), dimension(m), intent(in) :: x0
+  real (dp), dimension(m), intent(out) :: x
+
+  real (dp), external :: function_handle
+  real (dp), dimension(m) :: xd
+  integer :: i, ii
+  real (dp) :: delta, fxd, s
+
+  k = 0; x = x0; fx = function_handle ( m, x )
+
+  if ( delta_tol <= 0 ) then
+    write ( *, '(a)' ) ' '
+    write ( *, '(a)' ) 'COMPASS_SEARCH - Fatal error!'
+    write ( *, '(a)' ) '  DELTA_TOL <= 0.0.'
+    write ( *, '(a,g14.6)' ) '  DELTA_TOL = ', delta_tol
+    stop
+  end if
+
+  if ( delta_init <= delta_tol ) then
+    write ( *, '(a)' ) ' '
+    write ( *, '(a)' ) 'COMPASS_SEARCH - Fatal error!'
+    write ( *, '(a)' ) '  DELTA_INIT < DELTA_TOL.'
+    write ( *, '(a,g14.6)' ) '  DELTA_INIT = ', delta_init
+    write ( *, '(a,g14.6)' ) '  DELTA_TOL = ', delta_tol
+    stop
+  end if
+
+  delta = delta_init
+
+  do while ( k < k_max )
+
+    k = k + 1
+
+!  For each coordinate direction I, seek a lower function value
+!  by increasing or decreasing X(I) by DELTA.
+
+    decrease = .false. ;  s = 1;  i = 1
+
+    do ii = 1, 2 * m
+
+      xd = x;  xd(i) = xd(i) + s * delta;  fxd = function_handle ( m, xd )
+
+!  As soon as a decrease is noticed, accept the new point.
+
+      if ( fxd < fx ) then
+        x = xd;  fx = fxd;  decrease = .true.
+        exit
+      end if
+
+      s = - s
+      if ( s == 1 ) i = i + 1
+
+    end do
+
+!  If no decrease occurred, reduce DELTA.
+
+    if ( .not. decrease ) then
+      delta = delta / 2
+      if ( delta < delta_tol ) exit
+    end if
+
+  end do
+
+end subroutine f90compass_search
+
 ! cccccccccccccccccccc
 
 function GaussRand(x0, sigma, n) result(list)

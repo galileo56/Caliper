@@ -2,7 +2,7 @@ module NRQCDClass
   use Constants, only: dp, pi2, d1mach, Pi ;  use RunningClass; use AlphaClass
   use AnomDimClass; use VFNSMSRClass; implicit none ; private
 
-  public :: CorrMattNRQCD, CorrMattGridNRQCD, Chi2NRQCD
+  public :: CorrMattNRQCD, CorrMattGridNRQCD, Chi2NRQCD, Chi2MinNRQCD
 
 !ccccccccccccccc
 
@@ -213,9 +213,11 @@ module NRQCDClass
     real (dp)          , intent(in)    :: m
     real (dp), optional, intent(in)    :: mu
 
-    self%mH = m;    call self%MSR%setMass(m, mu)
+    self%mH = m
 
     if ( present(mu) ) then
+
+      call self%MSR%setMass(m, mu)
 
       if (self%nf == 5) then
         call self%alphaMass%SetMTop(m, mu)
@@ -226,6 +228,8 @@ module NRQCDClass
       end if
 
     else
+
+      call self%MSR%setMass(m, self%rat * m)
 
       if (self%nf == 5) then
         call self%alphaMass%SetMTop(m, self%rat * m)
@@ -1897,17 +1901,17 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-real (dp) function Chi2NRQCD(UpsilonList, datalist, dim, order, n, mu, R, lambda, &
-method, counting)
+real (dp) function Chi2NRQCD(UpsilonList, datalist, dim, order, n, mu, R, &
+lambda, method, counting)
 
   type (NRQCD), dimension(dim), intent(inout) :: UpsilonList
-  real (dp)  , dimension(2,dim), intent(in)    :: datalist
-  character (len = *)          , intent(in)    :: method, counting
-  integer                      , intent(in)    :: order, dim, n
-  real (dp)                    , intent(in)    :: lambda, mu, R
-  real (dp), dimension(dim)                    :: MassList
-  real (dp), dimension(0:4)                    :: list
-  integer                                      :: i
+  real (dp) , dimension(2,dim), intent(in)    :: datalist
+  character (len = *)          , intent(in)   :: method, counting
+  integer                      , intent(in)   :: order, dim, n
+  real (dp)                    , intent(in)   :: lambda, mu, R
+  real (dp), dimension(dim)                   :: MassList
+  real (dp), dimension(0:4)                   :: list
+  integer                                     :: i
 
   do i = 1, dim
     list = UpsilonList(i)%En(order, mu, R, lambda, method(:8), counting(:5))
@@ -1917,6 +1921,50 @@ method, counting)
   Chi2NRQCD = sum(   (  ( MassList - datalist(1,:) )/datalist(2,:)  )**2   )
 
 end function Chi2NRQCD
+
+!ccccccccccccccc
+
+function Chi2MinNRQCD(UpsilonList, datalist, dim, order, n, mu, R, &
+lambda, method, counting) result(res)
+
+type (NRQCD), dimension(dim), intent(inout) :: UpsilonList
+real (dp) , dimension(2,dim), intent(in)    :: datalist
+character (len = *)          , intent(in)   :: method, counting
+integer                      , intent(in)   :: order, dim, n
+real (dp)                    , intent(in)   :: lambda, mu, R
+real (dp), dimension(2)                     :: res
+real (dp)                                   :: delta_tol, delta_init
+real (dp), dimension(1)                     :: x0, x
+integer                                     :: k_max, ktot
+
+delta_tol = 1.e-7_dp; delta_init = 1.e-2_dp;  k_max = 100000000
+x0(1) = 4.2_dp
+
+call f90compass_search( chi2, 1, x0, delta_tol, delta_init, k_max, x, res(2), ktot )
+
+  res(1) = x(1)
+
+contains
+
+  real (dp) function chi2(nn,mass)
+    real (dp), dimension(nn), intent(in) :: mass
+    integer                , intent(in) :: nn
+    integer                             :: j
+
+    if ( mass(1) < 3 .or. mass(1) > 5) then
+      chi2 = 1.e300_dp; return
+    end if
+
+    do j = 1, dim
+      call UpsilonList(j)%setMass( mass(1) )
+    end do
+
+    chi2 = Chi2NRQCD(UpsilonList, datalist, dim, order, n, mu, R, lambda, &
+    method, counting)
+
+  end function chi2
+
+end function Chi2MinNRQCD
 
 !ccccccccccccccc
 

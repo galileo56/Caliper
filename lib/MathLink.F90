@@ -4734,6 +4734,54 @@ end subroutine f90Chi2NRQCD
 
 !ccccccccccccccc
 
+subroutine f90Chi2MinNRQCD(qnList, datalist, m, charm, scheme, average, method,  &
+counting, orderAlp, runAlp, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, &
+muC, lambda1, lambda2, lam, mu, R, res)
+
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
+
+  real (dp), dimension(2) , intent(out) :: res
+  character (len = *)      , intent(in) :: method, scheme, charm, average, counting
+  integer , dimension(4,m) , intent(in) :: qnList
+  real(dp), dimension(2,m) , intent(in) :: dataList
+  integer                  , intent(in) :: orderAlp, runAlp, order, run, m, nl, n
+  real (dp)                , intent(in) :: mZ, amZ, mT, muT, mB, muB, mC, muC, &
+  lambda1, lam, mu, R, lambda2
+
+  character (len = 5)                   :: alphaScheme
+  type (NRQCD), dimension(m)            :: Upsilon
+  type (VFNSMSR)                        :: MSR
+  type (Alpha)                          :: alphaAll
+  type (Running), dimension(2)          :: alphaMass
+  type (AnomDim), dimension(3:6)        :: AnDim
+  integer                               :: i
+
+  alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
+
+  alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
+  Running(nl, run, alphaAll, lambda1) ]
+
+  MSR = VFNSMSR(alphaMass)
+
+  do i = 1, m
+    Upsilon(i) = NRQCD( charm(:4), scheme(:5), average(:3), MSR, qnList(1,i), &
+    qnList(2,i), qnList(3,i), qnList(4,i) )
+  end do
+
+  res = Chi2MinNRQCD(Upsilon, datalist, m, order, n, mu, R, lam, method(:8), counting(:5))
+
+end subroutine f90Chi2MinNRQCD
+
+!ccccccccccccccc
+
 subroutine f90CorrMat(qnList, m, charm, scheme, average, method, counting,     &
 orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, &
 lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm, massList, &
