@@ -4996,6 +4996,34 @@ end subroutine f90MSRMass
 
 !ccccccccccccccc
 
+subroutine f90RSMass(type, orderAlp, runAlp, order, run, nf, mZ, &
+amZ, mT, muT, mB, muB, mC, muC, R, res)
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  implicit none
+
+  character (len = *), intent(in) :: type
+  integer           , intent(in ) :: orderAlp, runAlp, order, run, nf
+  real (dp)         , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, muC, R
+  real (dp)         , intent(out) :: res
+  type (Running)                  :: alphaMass
+  type (Alpha)                    :: alphaAll
+  type (AnomDim), dimension(3:6)  :: AnDim
+  integer                         :: i
+
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
+
+  alphaMass = Running(nf, run, alphaAll, 1._dp)
+  res       = alphaMass%RSMass( type, order, R )
+
+end subroutine f90RSMass
+
+!ccccccccccccccc
+
 subroutine f90MSRVFNS(up, type, method, orderAlp, runAlp, order, run, nf, mZ, &
 amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R, res)
   use RunningClass;  use AlphaClass   ;  use constants, only: dp

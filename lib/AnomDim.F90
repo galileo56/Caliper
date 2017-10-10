@@ -987,8 +987,8 @@ module AnomDimClass
 
      N12 = 0
 
-     if ( type(:7) == 'Natural'   ) N12 = self%N12n
-     if ( type(:9) == 'Practical' ) N12 = self%N12p
+     if ( type(:3) == 'RSn'   ) N12 = self%N12n
+     if ( type(:3) == 'RSp' ) N12 = self%N12p
 
   end function N12
 

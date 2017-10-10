@@ -389,7 +389,6 @@ module RunningClass
     integer                         :: i
     real (dp)                       :: matching, alphaM, poch, bR, bm
 
-
     matching = 1; RSMass = 0; gl = self%andim%betaQCD('gl')
     bR = 2 * pi/self%beta(0); bm = bR/self%alphaQCD(self%mH)
     bR = bR/self%alphaQCD(R); poch = 1
@@ -419,11 +418,11 @@ module RunningClass
       real (dp)             :: poch, pow, new
       integer               :: n
 
-      D = - b**(-a) * exp(-b) * gamma(a) * cos(pi * a)
+      D = b**(-a) * exp(-b) * gamma(a) * cos(pi * a)
 
       poch = 1; pow = 1
 
-      do n = 0, 10
+      do n = 0, 100
         poch = poch * (a + n)
         new = pow/poch; D = D + new; if ( abs(new) < 1.e-7_dp ) return
         pow = - b * pow
