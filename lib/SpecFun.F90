@@ -28,6 +28,8 @@ module Constants
 
 end module Constants
 
+! cccccccccccccccccccc
+
 subroutine f90compass_search ( function_handle, m, x0, delta_tol, delta_init, &
   k_max, x, fx, k )
 
@@ -83,10 +85,10 @@ subroutine f90compass_search ( function_handle, m, x0, delta_tol, delta_init, &
 
   implicit none
 
-  logical :: decrease
-  integer, intent(in) :: m, k_max
-  integer, intent(out) :: k
-  real (dp), intent(in) :: delta_init, delta_tol
+  logical                :: decrease
+  integer, intent(in)    :: m, k_max
+  integer , intent(out)  :: k
+  real (dp), intent(in)  :: delta_init, delta_tol
   real (dp), intent(out) :: fx
   real (dp), dimension(m), intent(in) :: x0
   real (dp), dimension(m), intent(out) :: x

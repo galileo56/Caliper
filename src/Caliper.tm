@@ -2365,7 +2365,7 @@
 :ArgumentTypes: {IntegerList, RealList, Integer, String, String, String,
                  String, String, Integer, Integer, Integer, Integer, Integer,
                  Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
-                 Real, Real, Real, Real}
+                 Real, Real, RealList, RealList}
 :ReturnType:     Real
 :End:
 
@@ -2382,7 +2382,7 @@
 :ArgumentTypes: {IntegerList, RealList, Integer, String, String, String,
                  String, String, Integer, Integer, Integer, Integer, Integer,
                  Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
-                 Real, Real, Real, Real}
+                 Real, Real, RealList, RealList}
 :ReturnType:     Manual
 :End:
 
@@ -2399,7 +2399,7 @@
 :ArgumentTypes: {IntegerList, RealList, Integer, String, String, String,
                  String, String, Integer, Integer, Integer, Integer, Integer,
                  Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
-                 Real, Real, Real, Real}
+                 Real, Real, RealList, RealList}
 :ReturnType:     Manual
 :End:
 
@@ -6070,20 +6070,20 @@ char const* str, char const* average, char const* method, char const* counting,
 int* orderAlpha, int* runAlpha, int* order, int* run, int* n, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
 double* muC, double* lambda1, double* lambda2, double* lam, double* mu,
-double* R, double* res);
+double* R, int* ndim, double* res);
 
 static double chi2nrqcd(int qnlist[], long len1, double datalist[], long len2,
 int m, char const* charm, char const* str, char const* average, char const* method,
 char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
 int n, double Mz, double aMz, double mT, double muT, double mB, double muB,
-double mC, double muC, double lambda1, double lambda2, double lam, double mu,
-double R){
+double mC, double muC, double lambda1, double lambda2, double lam, double mu[],
+long lenMu, double R[], long lenR){
 
-  double res;
+  double res; int ndim = lenMu;
 
   f90chi2nrqcd_(qnlist, datalist, &m, charm, str, average, method, counting,
   &orderAlpha, &runAlpha, &order, &run, &nf, &n, &Mz, &aMz, &mT, &muT, &mB, &muB,
-  &mC, &muC, &lambda1, &lambda2, &lam, &mu, &R, &res);
+  &mC, &muC, &lambda1, &lambda2, &lam, mu, R, &ndim, &res);
 
    return res;
 
@@ -6094,20 +6094,20 @@ char const* str, char const* average, char const* method, char const* counting,
 int* orderAlpha, int* runAlpha, int* order, int* run, int* n, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
 double* muC, double* lambda1, double* lambda2, double* lam, double* mu,
-double* R, double* res);
+double* R, int* ndim, double* res);
 
 static void chi2minnrqcd(int qnlist[], long len1, double datalist[], long len2,
 int m, char const* charm, char const* str, char const* average, char const* method,
 char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
 int n, double Mz, double aMz, double mT, double muT, double mB, double muB,
-double mC, double muC, double lambda1, double lambda2, double lam, double mu,
-double R){
+double mC, double muC, double lambda1, double lambda2, double lam, double mu[],
+long lenMu, double R[], long lenR){
 
-  double res[2];
+  double res[2]; int ndim = lenMu;
 
   f90chi2minnrqcd_(qnlist, datalist, &m, charm, str, average, method, counting,
   &orderAlpha, &runAlpha, &order, &run, &nf, &n, &Mz, &aMz, &mT, &muT, &mB, &muB,
-  &mC, &muC, &lambda1, &lambda2, &lam, &mu, &R, res);
+  &mC, &muC, &lambda1, &lambda2, &lam, mu, R, &ndim, res);
 
    MLPutRealList(stdlink, res, 2);
 
@@ -6118,20 +6118,20 @@ char const* str, char const* average, char const* method, char const* counting,
 int* orderAlpha, int* runAlpha, int* order, int* run, int* n, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
 double* muC, double* lambda1, double* lambda2, double* lam, double* mu,
-double* R, double* res);
+double* R, int* ndim, double* res);
 
 static void chi2minalphanrqcd(int qnlist[], long len1, double datalist[], long len2,
 int m, char const* charm, char const* str, char const* average, char const* method,
 char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
 int n, double Mz, double aMz, double mT, double muT, double mB, double muB,
-double mC, double muC, double lambda1, double lambda2, double lam, double mu,
-double R){
+double mC, double muC, double lambda1, double lambda2, double lam, double mu[],
+long lenMu, double R[], long lenR){
 
-  double res[3];
+  double res[3]; int ndim = lenMu;
 
   f90chi2minalphanrqcd_(qnlist, datalist, &m, charm, str, average, method, counting,
   &orderAlpha, &runAlpha, &order, &run, &nf, &n, &Mz, &aMz, &mT, &muT, &mB, &muB,
-  &mC, &muC, &lambda1, &lambda2, &lam, &mu, &R, res);
+  &mC, &muC, &lambda1, &lambda2, &lam, mu, R, &ndim, res);
 
    MLPutRealList(stdlink, res, 3);
 
