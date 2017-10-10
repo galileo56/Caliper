@@ -28,7 +28,7 @@ module AnomDimClass
     private
     integer                       :: nf
     character (len = 5)           :: str
-    real (dp)                     :: G4, err, beta0QED
+    real (dp)                     :: G4, err, beta0QED, N12p, N12n
     real (dp), dimension(5)       :: AlphaMatch, AlphaMatchInv, AlphaMatchUp
     real (dp), dimension(0:4,5)   :: AlphaMatchLog, AlphaMatchInvLog
     real (dp), dimension(0:3,0:3) :: gammaHm
@@ -48,7 +48,7 @@ module AnomDimClass
     bHQETgamma, wTildeHm, GammaRComputer, sCoefRecursive, N12Generic, PScoef, &
     sCoefHadron, scheme, MSRDelta, sCoefLambda, P12, sCoefGeneric, cCoeff,    &
     P12Generic, MatchingAlpha, MatchingAlphaLog, MatchingAlphaUp, betaQED,    &
-    alphaMatching, N12, N12Ratio, N12Residue, N12RS
+    alphaMatching, N12, N12Ratio, N12Residue, N12RS, N12SumRule
 
     procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
     kTildeComplex, rootReal, rootComplex
@@ -173,8 +173,11 @@ module AnomDimClass
       InAdim%aRS(n) = Pi * sum( InAdim%gl * poch(n-1:n-4:-1) ) * beta2List(n - 1)
     end do
 
-    InAdim%aRSn = InAdim%aRS * InAdim%N12(3, 'Natural', 1._dp)
-    InAdim%aRSp = InAdim%aRS * InAdim%N12(3, 'Practical', 1._dp)
+    InAdim%N12p = InAdim%N12SumRule(3, 'Practical', 1._dp)
+    InAdim%N12n = InAdim%N12SumRule(3, 'Natural'  , 1._dp)
+
+    InAdim%aRSn = InAdim%aRS * InAdim%N12n
+    InAdim%aRSp = InAdim%aRS * InAdim%N12p
 
     InAdim%gammaRSn = InAdim%GammaRComputer( InAdim%aRSn )
     InAdim%sCoefRSn = InAdim%sCoefRecursive( InAdim%aRSn )
@@ -965,13 +968,27 @@ module AnomDimClass
 
 !ccccccccccccccc
 
-  real (dp) function N12(self, order, type, lambda)
+  real (dp) function N12SumRule(self, order, type, lambda)
      class (AnomDim)      , intent(in) :: self
      real (dp)            , intent(in) :: lambda
      character (len = *)  , intent(in) :: type
      integer              , intent(in) :: order
 
-     N12 = self%beta(0) * gamma( 1 + self%bHat(1) )/2/Pi * self%P12(order, type, lambda)
+     N12SumRule = self%beta(0) * gamma( 1 + self%bHat(1) )/2/Pi * &
+     self%P12(order, type, lambda)
+
+  end function N12SumRule
+
+!ccccccccccccccc
+
+  real (dp) function N12(self, type)
+     class (AnomDim)    , intent(in) :: self
+     character (len = *), intent(in) :: type
+
+     N12 = 0
+
+     if ( type(:7) == 'Natural'   ) N12 = self%N12n
+     if ( type(:9) == 'Practical' ) N12 = self%N12p
 
   end function N12
 

@@ -567,7 +567,7 @@ contains
           res = self%LowMass('up', 'MSRn', order, self%mL, lambda, method)
         end if
 
-        res = res + self%AlphaMass(1)%MSREvol('MSRp', order, R, lambda, method)
+        res = res + self%AlphaMass(1)%MSREvol('MSRp', R, lambda, method)
 
       else
         matching = - 1

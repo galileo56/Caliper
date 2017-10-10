@@ -3868,7 +3868,7 @@ subroutine f90N12(str, order, nf, lambda, err, res)
   real (dp)          , intent(out) :: res
   type (AnomDim)                   :: run
 
-  run = AnomDim('MSbar', nf, 0._dp, err);  res = run%N12(order, str, lambda)
+  run = AnomDim('MSbar', nf, 0._dp, err);  res = run%N12SumRule(order, str, lambda)
 
 end subroutine f90N12
 

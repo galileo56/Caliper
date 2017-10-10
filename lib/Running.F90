@@ -21,11 +21,11 @@ module RunningClass
 
     contains
 
-    procedure, pass(self), public :: MSbarMass, MSRMass, lambdaQCD, DiffDeltaMu,  &
+    procedure, pass(self), public :: MSbarMass, MSRMass, lambdaQCD, DiffDeltaMu,&
     DiffDelta, orders, adim, DiffDeltaHadron, MSbarDeltaMu, MSbarMassLow, &
     AlphaAll, DeltaGapMatching, DiffRMass, mmFromMSR, PoleMass, gammaR, sCoef,  &
     SetMTop, SetMBottom, SetMCharm, SetLambda, SetAlpha, scales, numFlav,DiffR, &
-    PSdelta, OptimalR, MSRMatching, MSREvol, AlphaQED, scheme, OptimalR2
+    PSdelta, OptimalR, MSRMatching, MSREvol, AlphaQED, scheme, OptimalR2, RSmass
 
     procedure, pass(self), private :: alphaQCDReal, alphaQCDComplex, &
     wTildeReal, wTildeComplex, kTildeReal, kTildeComplex, RunningMass
@@ -379,6 +379,62 @@ module RunningClass
 
 !ccccccccccccccc
 
+  real (dp) function RSMass(self, type, order, R)
+    class (Running)    , intent(in) :: self
+    real (dp)          , intent(in) :: R
+    integer            , intent(in) :: order
+    character (len = *), intent(in) :: type
+    real (dp)        , dimension(4) :: a
+    real (dp)      , dimension(0:4) :: gl
+    integer                         :: i
+    real (dp)                       :: matching, alphaM, poch, bR, bm
+
+
+    matching = 1; RSMass = 0; gl = self%andim%betaQCD('gl')
+    bR = 2 * pi/self%beta(0); bm = bR/self%alphaQCD(self%mH)
+    bR = bR/self%alphaQCD(R); poch = 1
+
+    do i = 0, self%runMass
+
+      RSMass = RSMass + gl(i)/poch * (  self%mH * D( i - self%bHat(1), bm ) - &
+      R * D( i - self%bHat(1), bR )  )
+
+      if (i < self%runMass) poch = poch * ( self%bHat(1) - i )
+
+    end do
+
+    if ( order > 0 ) then
+      alphaM = self%AlphaOb%alphaQCD(self%nf + 1, self%mH)/Pi
+      a = self%MSRMatching(type); i = min(order, 4)
+      matching = 1 + dot_product( a(:i), PowList(alphaM, i) )
+    end if
+
+    RSMass = 2 * Pi * self%andim%N12(type) * RSMass/self%beta(0) + &
+    self%mH * matching
+
+  contains
+
+    real (dp) function D(a,b)
+      real (dp), intent(in) :: a, b
+      real (dp)             :: poch, pow, new
+      integer               :: n
+
+      D = - b**(-a) * exp(-b) * gamma(a) * cos(pi * a)
+
+      poch = 1; pow = 1
+
+      do n = 0, 10
+        poch = poch * (a + n)
+        new = pow/poch; D = D + new; if ( abs(new) < 1.e-7_dp ) return
+        pow = - b * pow
+      end do
+
+    end function
+
+  end
+
+!ccccccccccccccc
+
   real (dp) function MSRMass(self, type, order, R, lambda, method)
     class (Running)                    , intent(in) :: self
     real (dp)                          , intent(in) :: R
@@ -405,23 +461,25 @@ module RunningClass
 
     matching = 1
 
-     if ( self%runMass > 0 .and. type(:4) == 'MSRn' ) then
+     if (  ( order > 1 .and. type(:4) == 'MSRn' ) .or. &
+     ( order > 0 .and. type(:2) == 'RS' )  ) then
+
       alphaM = self%AlphaOb%alphaQCD(self%nf + 1, self%mH)/Pi
       a = self%MSRMatching(type); i = min(order, 4)
       matching = 1 + dot_product( a(:i), PowList(alphaM, i) )
+
      end if
 
-     MSRMass = self%mH * matching + self%MSREvol(type, order, R, lan, met)
+     MSRMass = self%mH * matching + self%MSREvol(type, R, lan, met)
 
   end function MSRMass
 
 !ccccccccccccccc
 
-  real (dp) function MSREvol(self, type, order, R, lambda, method)
+  real (dp) function MSREvol(self, type, R, lambda, method)
     class (Running)                    , intent(in) :: self
     real (dp)                          , intent(in) :: R, lambda
     character (len = *)                , intent(in) :: type, method
-    integer                            , intent(in) :: order
     real (dp)                        , dimension(4) :: gammaR
     real (dp), dimension(self%runMass,self%runMass) :: gammaLog
     real (dp), dimension(self%runMass)              :: gamm, alphaList, lglist
@@ -607,6 +665,7 @@ module RunningClass
     else if ( type(:4) == 'MSRn' ) then
       c = MSbarDelta(self%nf, 1); a = MSbarDelta(self%nf, 0)
       b = self%andim%MatchingAlphaUp()
+      call alphaReExpand( a, b(:4) );  a = c - a
     else if ( type(:2) == 'RS' ) then
       c = MSbarDelta(self%nf, 1); b = self%andim%betaQCD(type(:3)//'delta'); a = b(2:)
       b = 0; b = self%andim%MatchingAlphaUp()
