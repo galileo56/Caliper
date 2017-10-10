@@ -2,7 +2,7 @@ module NRQCDClass
   use Constants, only: dp, pi2, d1mach, Pi ;  use RunningClass; use AlphaClass
   use AnomDimClass; use VFNSMSRClass; implicit none ; private
 
-  public :: CorrMattNRQCD
+  public :: CorrMattNRQCD, CorrMattGridNRQCD, Chi2NRQCD
 
 !ccccccccccccccc
 
@@ -29,7 +29,6 @@ module NRQCDClass
     ZeroBin, DeltaCharmBin, MassIter, EnExpand, DeltaCharmBin3, DeltaCharmDer, &
     DeltaCharmExact, DeltaCharmDerBin, MassError, EnError, MassList, NRQCDList, &
     DeltaCharmBinBend, setCharm, SetAlpha, EnDerAlpha, EnDerCharm, UpsilonList
-
   end type NRQCD
 
 !ccccccccccccccc
@@ -1839,7 +1838,7 @@ module NRQCDClass
   subroutine CorrMattNRQCD(UpsilonList, dim, n, mu0, mu1, deltaMu, R0, R1, &
   deltaR, lambda, method, counting, epsAlpha, epsCharm, massList, corMat)
 
-    class (NRQCD), dimension(dim), intent(inout) :: UpsilonList
+    type (NRQCD), dimension(dim), intent(inout) :: UpsilonList
     character (len = *)          , intent(in)    :: method, counting
     integer                      , intent(in)    :: n, dim
     real (dp)                    , intent(in)    :: lambda, mu0, mu1, R1, deltaMu, &
@@ -1898,7 +1897,26 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-end module NRQCDClass
+real (dp) function Chi2NRQCD(UpsilonList, datalist, dim, order, n, mu, R, lambda, &
+method, counting)
+
+  type (NRQCD), dimension(dim), intent(inout) :: UpsilonList
+  real (dp)  , dimension(2,dim), intent(in)    :: datalist
+  character (len = *)          , intent(in)    :: method, counting
+  integer                      , intent(in)    :: order, dim, n
+  real (dp)                    , intent(in)    :: lambda, mu, R
+  real (dp), dimension(dim)                    :: MassList
+  real (dp), dimension(0:4)                    :: list
+  integer                                      :: i
+
+  do i = 1, dim
+    list = UpsilonList(i)%En(order, mu, R, lambda, method(:8), counting(:5))
+    MassList(i) = sum(  list( :min(4,n) )  )
+  end do
+
+  Chi2NRQCD = sum(   (  ( MassList - datalist(1,:) )/datalist(2,:)  )**2   )
+
+end function Chi2NRQCD
 
 !ccccccccccccccc
 
@@ -1906,9 +1924,7 @@ subroutine CorrMattGridNRQCD(UpsilonList, dim, n, mu0, mu1, deltaMu, R0, R1, &
 deltaR, m0, m1, deltaM, lambda, method, counting, epsAlpha, epsCharm, mList, &
 massList, corMat)
 
-  use constants, only: dp; use NRQCDClass; implicit none
-
-  class (NRQCD), dimension(dim), intent(inout) :: UpsilonList
+  type (NRQCD), dimension(dim), intent(inout) :: UpsilonList
   character (len = *)          , intent(in)    :: method, counting
   integer                      , intent(in)    :: n, dim
   real (dp)                    , intent(in)    :: lambda, mu0, mu1, R1, deltaMu, &
@@ -1937,3 +1953,7 @@ massList, corMat)
   end do
 
 end subroutine CorrMattGridNRQCD
+
+!ccccccccccccccc
+
+end module NRQCDClass

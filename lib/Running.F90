@@ -424,7 +424,7 @@ module RunningClass
 
       do n = 0, 100
         poch = poch * (a + n)
-        new = pow/poch; D = D + new; if ( abs(new) < 1.e-7_dp ) return
+        new = pow/poch; D = D + new; if ( abs(new) < prec ) return
         pow = - b * pow
       end do
 

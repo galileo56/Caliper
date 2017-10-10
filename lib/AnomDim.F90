@@ -1258,7 +1258,7 @@ module AnomDimClass
     t0 = - 2 * pi/self%beta(0);  t1 = t0/a1;  t0 = t0/a0;  DeltaR = 0
 
     do i = 1, order
-      if (  abs( sCoef(i) ) < d1mach(1)  ) cycle
+      if (  abs( sCoef(i) ) <= d1mach(1)  ) cycle
       Gcorre = inteCorre( - self%bhat(1) - i, t0, t1 )
       DeltaR = DeltaR + sCoef(i) * Gcorre
     end do
@@ -2013,7 +2013,7 @@ end function MatchingAlphaLog
       do
         r4 = r2 * r4; i = i + 1; corr = ( 2 * F(i) * lr + G(i) ) * r4
         deltaCharm2 = deltaCharm2 - 4 * corr/3
-        if ( abs(corr) <= 1e-13_dp ) exit
+        if ( abs(corr) <= d1mach(1) ) exit
       end do
 
     else if ( 1000 * abs(r - 1) <= 1 ) then
