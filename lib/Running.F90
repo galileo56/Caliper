@@ -393,7 +393,7 @@ module RunningClass
     bR = 2 * pi/self%beta(0); bm = bR/self%alphaQCD(self%mH)
     bR = bR/self%alphaQCD(R); poch = 1
 
-    do i = 0, self%runMass
+    do i = 0, self%runMass - 1
 
       RSMass = RSMass + gl(i)/poch * (  self%mH * D( i - self%bHat(1), bm ) - &
       R * D( i - self%bHat(1), bR )  )
