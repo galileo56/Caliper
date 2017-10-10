@@ -2,7 +2,7 @@ module NRQCDClass
   use Constants, only: dp, pi2, d1mach, Pi ;  use RunningClass; use AlphaClass
   use AnomDimClass; use VFNSMSRClass; implicit none ; private
 
-  public :: CorrMattNRQCD, CorrMattGridNRQCD, Chi2NRQCD, Chi2MinNRQCD
+  public :: CorrMattNRQCD, CorrMattGridNRQCD, Chi2NRQCD, Chi2MinNRQCD, Chi2MinAlphaNRQCD
 
 !ccccccccccccccc
 
@@ -1948,8 +1948,8 @@ contains
 
   real (dp) function chi2(nn,mass)
     real (dp), dimension(nn), intent(in) :: mass
-    integer                , intent(in) :: nn
-    integer                             :: j
+    integer                 , intent(in) :: nn
+    integer                              :: j
 
     if ( mass(1) < 3 .or. mass(1) > 5) then
       chi2 = 1.e300_dp; return
@@ -1965,6 +1965,51 @@ contains
   end function chi2
 
 end function Chi2MinNRQCD
+
+!ccccccccccccccc
+
+function Chi2MinAlphaNRQCD(UpsilonList, datalist, dim, order, n, mu, R, &
+lambda, method, counting) result(res)
+
+type (NRQCD), dimension(dim), intent(inout) :: UpsilonList
+real (dp) , dimension(2,dim), intent(in)    :: datalist
+character (len = *)          , intent(in)   :: method, counting
+integer                      , intent(in)   :: order, dim, n
+real (dp)                    , intent(in)   :: lambda, mu, R
+real (dp), dimension(3)                     :: res
+real (dp)                                   :: delta_tol, delta_init
+real (dp), dimension(2)                     :: x0, x
+integer                                     :: k_max, ktot
+
+delta_tol = 1.e-7_dp; delta_init = 1.e-2_dp;  k_max = 100000000
+x0 = [4.2_dp, 0.118_dp]
+
+call f90compass_search( chi2, 2, x0, delta_tol, delta_init, k_max, x, res(3), ktot )
+
+  res(:2) = x
+
+contains
+
+  real (dp) function chi2(nn, x)
+    real (dp), dimension(nn), intent(in) :: x
+    integer                 , intent(in) :: nn
+    integer                              :: j
+
+    if ( x(1) < 3 .or. x(1) > 5 .or. x(2) < 0.09_dp .or. x(2) > 0.125_dp) then
+      chi2 = 1.e300_dp; return
+    end if
+
+    do j = 1, dim
+      call UpsilonList(j)%setMass( x(1) )
+      call UpsilonList(j)%setAlpha( x(2) )
+    end do
+
+    chi2 = Chi2NRQCD(UpsilonList, datalist, dim, order, n, mu, R, lambda, &
+    method, counting)
+
+  end function chi2
+
+end function Chi2MinAlphaNRQCD
 
 !ccccccccccccccc
 
