@@ -2,7 +2,8 @@ module NRQCDClass
   use Constants, only: dp, pi2, d1mach, Pi ;  use RunningClass; use AlphaClass
   use AnomDimClass; use VFNSMSRClass; implicit none ; private
 
-  public :: CorrMattNRQCD, CorrMattGridNRQCD, Chi2NRQCD, Chi2MinNRQCD, Chi2MinAlphaNRQCD
+  public :: CorrMattNRQCD, CorrMattGridNRQCD, Chi2NRQCD, Chi2MinNRQCD, &
+  Chi2MinAlphaMbNRQCD, Chi2MinAlphaNRQCD
 
 !ccccccccccccccc
 
@@ -1959,8 +1960,7 @@ real (dp), dimension(1)                     :: x0, x
 real (dp), dimension(2,-1:2)                :: list
 integer                                     :: k_max, ktot, i
 
-delta_tol = 1.e-7_dp; delta_init = 1.e-2_dp;  k_max = 100000000
-x0(1) = mH
+delta_tol = 1.e-7_dp; delta_init = 1.e-3_dp;  k_max = 100000000; x0(1) = mH
 
 call f90compass_search( chi2, 1, x0, delta_tol, delta_init, k_max, x, res(3), ktot )
 
@@ -1997,7 +1997,59 @@ end function Chi2MinNRQCD
 
 !ccccccccccccccc
 
-function Chi2MinAlphaNRQCD(UpsilonList, datalist, dim, order, n, mH, alpha, &
+function Chi2MinAlphaNRQCD(UpsilonList, datalist, dim, order, n, alpha, muList, &
+RList, ndim, lambda, method, counting) result(res)
+
+type (NRQCD), dimension(dim), intent(inout) :: UpsilonList
+real (dp) , dimension(2,dim), intent(in)    :: datalist
+character (len = *)          , intent(in)   :: method, counting
+integer                      , intent(in)   :: order, dim, n, ndim
+real (dp)                    , intent(in)   :: lambda, alpha
+real (dp), dimension(ndim)   , intent(in)   :: muList, RList
+real (dp), dimension(3)                     :: res
+real (dp)                                   :: delta_tol, delta_init
+real (dp), dimension(1)                     :: x0, x
+real (dp), dimension(2,-1:2)                :: list
+integer                                     :: k_max, ktot, i
+
+delta_tol = 1.e-7_dp; delta_init = 1.e-3_dp;  k_max = 100000000; x0(1) = alpha
+
+call f90compass_search( chi2, 1, x0, delta_tol, delta_init, k_max, x, res(3), ktot )
+
+  res(1) = x(1)
+
+  do i = 0, 1
+    list(1,i+1)= x(1) + 0.001_dp * i; list(2,i + 1) = chi2(1, [list(1,i + 1)] )
+    list(1,-i) = x(1) - 0.001_dp * i; list(2,   -i) = chi2(1, [list(1,  - i)] )
+  end do
+
+  res(2) = sqrt( sum( ( list(1,:) - res(1) )**2 )/sum( list(2,:) - res(3) )  )
+
+contains
+
+  real (dp) function chi2(nn,mass)
+    real (dp), dimension(nn), intent(in) :: mass
+    integer                 , intent(in) :: nn
+    integer                              :: j
+
+    if ( mass(1) < 2 * alpha/3 .or. mass(1) > 3 * alpha/2) then
+      chi2 = 1.e300_dp; return
+    end if
+
+    do j = 1, dim
+      call UpsilonList(j)%setAlpha( mass(1) )
+    end do
+
+    chi2 = Chi2NRQCD(UpsilonList, datalist, dim, order, n, muList, RList, ndim, &
+    lambda, method, counting)
+
+  end function chi2
+
+end function Chi2MinAlphaNRQCD
+
+!ccccccccccccccc
+
+function Chi2MinAlphaMbNRQCD(UpsilonList, datalist, dim, order, n, mH, alpha, &
 muList, RList, ndim, lambda, method, counting) result(res)
 
 type (NRQCD), dimension(dim), intent(inout) :: UpsilonList
@@ -2015,8 +2067,7 @@ real (dp), dimension(2,2)                   :: sigma, sigma2
 real (dp), dimension(3)                     :: B, sol
 integer                                     :: k_max, ktot, i, j
 
-delta_tol = 1.e-7_dp; delta_init = 1.e-2_dp;  k_max = 100000000
-x0 = [mH, alpha]
+delta_tol = 1.e-7_dp; delta_init = 1.e-3_dp;  k_max = 100000000; x0 = [mH, alpha]
 
 call f90compass_search( chi2, 2, x0, delta_tol, delta_init, k_max, x, res(6), ktot )
 
@@ -2051,7 +2102,7 @@ contains
     integer                 , intent(in) :: nn
     integer                              :: j
 
-    if ( x(1) < 2*mH/3 .or. x(1) > 3 * mH/2 .or. x(2) < 2*alpha/3 .or. x(2) > 3*alpha/2) then
+    if ( x(1) < 2 * mH/3 .or. x(1) > 3 * mH/2 .or. x(2) < 2 * alpha/3 .or. x(2) > 3 * alpha/2) then
       chi2 = 1.e300_dp; return
     end if
 
@@ -2065,7 +2116,7 @@ contains
 
   end function chi2
 
-end function Chi2MinAlphaNRQCD
+end function Chi2MinAlphaMbNRQCD
 
 !ccccccccccccccc
 
