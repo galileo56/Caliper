@@ -30,6 +30,94 @@ end module Constants
 
 ! cccccccccccccccccccc
 
+  subroutine inverse(aa, c, n)
+!============================================================
+! Inverse matrix
+! Method: Based on Doolittle LU factorization for Ax=b
+! Alex G. December 2009
+!-----------------------------------------------------------
+! input ...
+! a(n,n) - array of coefficients for matrix A
+! n      - dimension
+! output ...
+! c(n,n) - inverse matrix of A
+! comments ...
+! the original matrix a(n,n) will be destroyed
+! during the calculation
+!===========================================================
+  use constants, only: dp; implicit none
+  integer, intent(in)                    :: n
+  real (dp), dimension(n,n), intent(in)  :: aa
+  real (dp), dimension(n,n), intent(out) :: c
+  real (dp), dimension(n,n)              :: a, l, u
+  real (dp), dimension(n)                :: b, d, x
+  real (dp)                              :: coeff
+  integer                                :: i, j, k
+
+  ! step 0: initialization for matrices L and U and b
+  ! Fortran 90/95 aloows such operations on matrices
+  L = 0; U = 0; b = 0; a = aa
+
+  ! step 1: forward elimination
+  do k = 1, n - 1
+     do i=k+1,n
+        coeff=a(i,k)/a(k,k)
+        L(i,k) = coeff
+        do j = k + 1, n
+           a(i,j) = a(i,j) - coeff*a(k,j)
+        end do
+     end do
+  end do
+
+  ! Step 2: prepare L and U matrices
+  ! L matrix is a matrix of the elimination coefficient
+  ! + the diagonal elements are 1
+
+  do i = 1, n
+    L(i,i) = 1
+  end do
+  ! U matrix is the upper triangular part of A
+  do j=1,n
+    do i=1,j
+      U(i,j) = a(i,j)
+    end do
+  end do
+
+  ! Step 3: compute columns of the inverse matrix C
+  do k = 1, n
+    b(k) = 1
+    d(1) = b(1)
+  ! Step 3a: Solve Ld=b using the forward substitution
+    do i=2,n
+      d(i)=b(i)
+      do j=1,i-1
+        d(i) = d(i) - L(i,j)*d(j)
+      end do
+    end do
+  ! Step 3b: Solve Ux=d using the back substitution
+    x(n)=d(n)/U(n,n)
+    do i = n-1,1,-1
+      x(i) = d(i)
+      do j=n,i+1,-1
+        x(i)=x(i)-U(i,j)*x(j)
+      end do
+      x(i) = x(i)/u(i,i)
+    end do
+
+  ! Step 3c: fill the solutions x(n) into column k of C
+
+    do i=1,n
+      c(i,k) = x(i)
+    end do
+
+    b(k)=0
+
+  end do
+
+end subroutine inverse
+
+! cccccccccccccccccccc
+
 subroutine f90compass_search ( function_handle, m, x0, delta_tol, delta_init, &
   k_max, x, fx, k )
 
@@ -831,14 +919,14 @@ subroutine dfZero(F, B, C, R, RE, AE, IFLAG)
 !            and F(C) have opposite signs.
 !***LIBRARY   SLATEC
 !***CATEGORY  F1B
-!***TYPE      DOUBLE PRECISION (FZERO-S, DFZERO-D)
+!***TYPE      real (dp) (FZERO-S, DFZERO-D)
 !***KEYWORDS  BISECTION, NONLINEAR, ROOTS, ZEROS
 !***AUTHOR  Shampine, L. F., (SNLA)
 !           Watts, H. A., (SNLA)
 !***DESCRIPTION
 !
-!     DFZERO searches for a zero of a DOUBLE PRECISION function F(X)
-!     between the given DOUBLE PRECISION values B and C until the width
+!     DFZERO searches for a zero of a real (dp) function F(X)
+!     between the given real (dp) values B and C until the width
 !     of the interval (B,C) has collapsed to within a tolerance
 !     specified by the stopping criterion,
 !        ABS(B-C)  <=  2.*(RW*ABS(B)+AE).
@@ -847,18 +935,18 @@ subroutine dfZero(F, B, C, R, RE, AE, IFLAG)
 !
 !     Description Of Arguments
 !
-!   F     :EXT   - Name of the DOUBLE PRECISION external function.  This
+!   F     :EXT   - Name of the real (dp) external function.  This
 !                  name must be in an EXTERNAL statement in the calling
 !                  program.  F must be a function of one DOUBLE
 !                  PRECISION argument.
 !
-!   B     :INOUT - One end of the DOUBLE PRECISION interval (B,C).  The
+!   B     :INOUT - One end of the real (dp) interval (B,C).  The
 !                  value returned for B usually is the better
 !                  approximation to a zero of F.
 !
-!   C     :INOUT - The other end of the DOUBLE PRECISION interval (B,C)
+!   C     :INOUT - The other end of the real (dp) interval (B,C)
 !
-!   R     :IN    - A (better) DOUBLE PRECISION guess of a zero of F
+!   R     :IN    - A (better) real (dp) guess of a zero of F
 !                  which could help in speeding up convergence.  If F(B)
 !                  and F(R) have opposite signs, a root will be found in
 !                  the interval (B,R);  if not, but F(R) and F(C) have
@@ -2292,7 +2380,7 @@ recursive subroutine DPSifN(X, N, KODE, M, ANS, NZ, IERR)
 !
 !***LIBRARY   SLATEC
 !***CATEGORY  C7C
-!***TYPE      DOUBLE PRECISION (PSifN-S, DPSifN-D)
+!***TYPE      real (dp) (PSifN-S, DPSifN-D)
 !***KEYWORDS  DERIVATIVES OF THE GAMMA FUNCTION, POLYGAMMA FUNCTION,
 !             PSI FUNCTION
 !***AUTHOR  Amos, D. E., (SNLA)
@@ -2325,7 +2413,7 @@ recursive subroutine DPSifN(X, N, KODE, M, ANS, NZ, IERR)
 !         Note that call DPSifN(X,0,1,1,ANS) results in
 !                   ANS = -PSI(X)
 !
-!     Input      X is DOUBLE PRECISION
+!     Input      X is real (dp)
 !           X      - Argument, X  >  0._dp
 !           N      - First member of the sequence, 0  <=  N  <=  100
 !                    N=0 gives ANS(1) = -PSI(X)       for KODE=1
@@ -2338,7 +2426,7 @@ recursive subroutine DPSifN(X, N, KODE, M, ANS, NZ, IERR)
 !                    ANS(1) = -PSI(X) + LN(X) is returned.
 !           M      - Number of members of the sequence, M >= 1
 !
-!    Output     ANS is DOUBLE PRECISION
+!    Output     ANS is real (dp)
 !           ANS    - A vector of length at least M whose first M
 !                    components contain the sequence of derivatives
 !                    scaled according to KODE.
@@ -3223,7 +3311,7 @@ FUNCTION I1MACH (I)
 !     DATA IMACH(16) /       1024 /
 !
 !     MACHINE CONSTANTS FOR THE HP 2100
-!     3 WORD DOUBLE PRECISION OPTION WITH FTN4
+!     3 WORD real (dp) OPTION WITH FTN4
 !
 !     DATA IMACH( 1) /          5 /
 !     DATA IMACH( 2) /          6 /
@@ -3243,7 +3331,7 @@ FUNCTION I1MACH (I)
 !     DATA IMACH(16) /        127 /
 !
 !     MACHINE CONSTANTS FOR THE HP 2100
-!     4 WORD DOUBLE PRECISION OPTION WITH FTN4
+!     4 WORD real (dp) OPTION WITH FTN4
 !
 !     DATA IMACH( 1) /          5 /
 !     DATA IMACH( 2) /          6 /
