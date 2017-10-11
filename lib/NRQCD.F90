@@ -1944,14 +1944,14 @@ end function Chi2NRQCD
 
 !ccccccccccccccc
 
-function Chi2MinNRQCD(UpsilonList, datalist, dim, order, n, muList, RList, ndim, &
-lambda, method, counting) result(res)
+function Chi2MinNRQCD(UpsilonList, datalist, dim, order, n, mH, muList, RList, &
+ndim, lambda, method, counting) result(res)
 
 type (NRQCD), dimension(dim), intent(inout) :: UpsilonList
 real (dp) , dimension(2,dim), intent(in)    :: datalist
 character (len = *)          , intent(in)   :: method, counting
 integer                      , intent(in)   :: order, dim, n, ndim
-real (dp)                    , intent(in)   :: lambda
+real (dp)                    , intent(in)   :: lambda, mH
 real (dp), dimension(ndim)   , intent(in)   :: muList, RList
 real (dp), dimension(2)                     :: res
 real (dp)                                   :: delta_tol, delta_init
@@ -1959,7 +1959,7 @@ real (dp), dimension(1)                     :: x0, x
 integer                                     :: k_max, ktot
 
 delta_tol = 1.e-7_dp; delta_init = 1.e-2_dp;  k_max = 100000000
-x0(1) = 4.2_dp
+x0(1) = mH
 
 call f90compass_search( chi2, 1, x0, delta_tol, delta_init, k_max, x, res(2), ktot )
 
@@ -1972,7 +1972,7 @@ contains
     integer                 , intent(in) :: nn
     integer                              :: j
 
-    if ( mass(1) < 3 .or. mass(1) > 5) then
+    if ( mass(1) < 2*mH/3 .or. mass(1) > 3 * mH/2) then
       chi2 = 1.e300_dp; return
     end if
 
@@ -1989,14 +1989,14 @@ end function Chi2MinNRQCD
 
 !ccccccccccccccc
 
-function Chi2MinAlphaNRQCD(UpsilonList, datalist, dim, order, n, muList, RList, &
-ndim, lambda, method, counting) result(res)
+function Chi2MinAlphaNRQCD(UpsilonList, datalist, dim, order, n, mH, alpha, &
+muList, RList, ndim, lambda, method, counting) result(res)
 
 type (NRQCD), dimension(dim), intent(inout) :: UpsilonList
 real (dp) , dimension(2,dim), intent(in)    :: datalist
 character (len = *)          , intent(in)   :: method, counting
 integer                      , intent(in)   :: order, dim, n, ndim
-real (dp)                    , intent(in)   :: lambda
+real (dp)                    , intent(in)   :: lambda, mH, alpha
 real (dp), dimension(ndim)   , intent(in)   :: muList, RList
 real (dp), dimension(3)                     :: res
 real (dp)                                   :: delta_tol, delta_init
@@ -2004,7 +2004,7 @@ real (dp), dimension(2)                     :: x0, x
 integer                                     :: k_max, ktot
 
 delta_tol = 1.e-7_dp; delta_init = 1.e-2_dp;  k_max = 100000000
-x0 = [4.2_dp, 0.118_dp]
+x0 = [mH, alpha]
 
 call f90compass_search( chi2, 2, x0, delta_tol, delta_init, k_max, x, res(3), ktot )
 
@@ -2017,7 +2017,7 @@ contains
     integer                 , intent(in) :: nn
     integer                              :: j
 
-    if ( x(1) < 3 .or. x(1) > 5 .or. x(2) < 0.09_dp .or. x(2) > 0.125_dp) then
+    if ( x(1) < 2*mH/3 .or. x(1) > 3 * mH/2 .or. x(2) < 2*alpha/3 .or. x(2) > 3*alpha/2) then
       chi2 = 1.e300_dp; return
     end if
 

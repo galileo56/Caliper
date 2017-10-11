@@ -4736,8 +4736,8 @@ end subroutine f90Chi2NRQCD
 
 !ccccccccccccccc
 
-subroutine f90Chi2MinNRQCD(qnList, datalist, m, charm, scheme, average, method,  &
-counting, orderAlp, runAlp, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, &
+subroutine f90Chi2MinNRQCD(qnList, datalist, m, charm, scheme, average, method,&
+counting, orderAlp, runAlp, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC,  &
 muC, lambda1, lambda2, lam, muList, RList, ndim, res)
 
   use RunningClass;  use AlphaClass;  use constants, only: dp
@@ -4759,6 +4759,7 @@ muC, lambda1, lambda2, lam, muList, RList, ndim, res)
   type (Running), dimension(2)          :: alphaMass
   type (AnomDim), dimension(3:6)        :: AnDim
   integer                               :: i
+  real (dp)                             :: mH
 
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
@@ -4779,7 +4780,11 @@ muC, lambda1, lambda2, lam, muList, RList, ndim, res)
     qnList(2,i), qnList(3,i), qnList(4,i) )
   end do
 
-  res = Chi2MinNRQCD(Upsilon, datalist, m, order, n, muList, RList, ndim, &
+  if (nl == 5) mH = mT
+  if (nl == 4) mH = mB
+  if (nl == 3) mH = mC
+
+  res = Chi2MinNRQCD(Upsilon, datalist, m, order, n, mH, muList, RList, ndim, &
   lam, method(:8), counting(:5))
 
 end subroutine f90Chi2MinNRQCD
@@ -4810,6 +4815,7 @@ muC, lambda1, lambda2, lam, muList, RList, ndim, res)
   type (Running), dimension(2)          :: alphaMass
   type (AnomDim), dimension(3:6)        :: AnDim
   integer                               :: i
+  real (dp)                             :: mH
 
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 
@@ -4830,7 +4836,11 @@ muC, lambda1, lambda2, lam, muList, RList, ndim, res)
     qnList(2,i), qnList(3,i), qnList(4,i) )
   end do
 
-  res = Chi2MinAlphaNRQCD(Upsilon, datalist, m, order, n, muList, RList, ndim, &
+  if (nl == 5) mH = mT
+  if (nl == 4) mH = mB
+  if (nl == 3) mH = mC
+
+  res = Chi2MinAlphaNRQCD(Upsilon, datalist, m, order, n, mH, amZ, muList, RList, ndim, &
   lam, method(:8), counting(:5))
 
 end subroutine f90Chi2MinAlphaNRQCD
