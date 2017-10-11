@@ -1953,17 +1953,25 @@ character (len = *)          , intent(in)   :: method, counting
 integer                      , intent(in)   :: order, dim, n, ndim
 real (dp)                    , intent(in)   :: lambda, mH
 real (dp), dimension(ndim)   , intent(in)   :: muList, RList
-real (dp), dimension(2)                     :: res
+real (dp), dimension(3)                     :: res
 real (dp)                                   :: delta_tol, delta_init
 real (dp), dimension(1)                     :: x0, x
-integer                                     :: k_max, ktot
+real (dp), dimension(2,-1:2)                :: list
+integer                                     :: k_max, ktot, i
 
 delta_tol = 1.e-7_dp; delta_init = 1.e-2_dp;  k_max = 100000000
 x0(1) = mH
 
-call f90compass_search( chi2, 1, x0, delta_tol, delta_init, k_max, x, res(2), ktot )
+call f90compass_search( chi2, 1, x0, delta_tol, delta_init, k_max, x, res(3), ktot )
 
   res(1) = x(1)
+
+  do i = 0, 1
+    list(1,i+1)= x(1) + 0.01_dp * i; list(2,i + 1) = chi2(1, [list(1,i + 1)] )
+    list(1,-i) = x(1) - 0.01_dp * i; list(2,   -i) = chi2(1, [list(1,  - i)] )
+  end do
+
+  res(2) = sqrt( sum( ( list(1,:) - res(1) )**2 )/sum( list(2,:) - res(3) )  )
 
 contains
 

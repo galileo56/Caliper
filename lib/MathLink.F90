@@ -4743,7 +4743,7 @@ muC, lambda1, lambda2, lam, muList, RList, ndim, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
-  real (dp), dimension(2) , intent(out) :: res
+  real (dp), dimension(3) , intent(out) :: res
   character (len = *)      , intent(in) :: method, scheme, charm, average, counting
   integer , dimension(4,m) , intent(in) :: qnList
   real(dp), dimension(2,m) , intent(in) :: dataList

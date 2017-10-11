@@ -6103,13 +6103,13 @@ int n, double Mz, double aMz, double mT, double muT, double mB, double muB,
 double mC, double muC, double lambda1, double lambda2, double lam, double mu[],
 long lenMu, double R[], long lenR){
 
-  double res[2]; int ndim = lenMu;
+  double res[3]; int ndim = lenMu;
 
   f90chi2minnrqcd_(qnlist, datalist, &m, charm, str, average, method, counting,
   &orderAlpha, &runAlpha, &order, &run, &nf, &n, &Mz, &aMz, &mT, &muT, &mB, &muB,
   &mC, &muC, &lambda1, &lambda2, &lam, mu, R, &ndim, res);
 
-   MLPutRealList(stdlink, res, 2);
+   MLPutRealList(stdlink, res, 3);
 
 }
 
