@@ -39,7 +39,8 @@ module AnomDimClass
     cusp, gtilde, gl
     real (dp), dimension(4)       :: sCoefMSRp, sCoefMSRn, betaList, gammaRp, &
     gammaRn, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, gammaRInc3,  &
-    sCoefMSRInc3, aRSn, aRSp, sCoefRSn, gammaRSn, sCoefRSp, gammaRSp, aRS
+    sCoefMSRInc3, aRSn, aRSp, sCoefRSn, gammaRSn, sCoefRSp, gammaRSp, aRS,    &
+    Qln, Qlp
 
   contains
 
@@ -77,9 +78,9 @@ module AnomDimClass
     real (dp), dimension(0:4)       :: beta2List, beta
     real (dp), dimension(4)         :: betaList
     real (dp), dimension(-3:6)      :: poch
-    integer                         :: n!, k, l
+    integer                         :: n, k, l
     integer, dimension(0:4)         :: signlist
-    ! real (dp)                       :: suma
+    real (dp)                       :: suma
 
     InAdim%err = 0; if ( present(err) ) InAdim%err = err
 
@@ -151,20 +152,20 @@ module AnomDimClass
 
     InAdim%beta0QED = 4 * InAdim%beta0QED/3; signlist = PowList0(-1,4)
 
-    ! InAdim%aRSn = 0; InAdim%aRSp = 0
+    InAdim%Qln = 0; InAdim%Qlp = 0
 
-    ! do n = 1, 4
-    !   do k = 0, 3
-    !     poch(0:4 + k - n) = PochHammerList( - InAdim%bHat(1) - k, 4 + k - n )
-    !     l = max(n - k, 0)
-    !     suma = sum( InAdim%gl(l:) * signlist(l:)/poch(1+k+l-n:4+k-n) )
-    !     InAdim%aRSn(n) = InAdim%aRSn(n) + InAdim%sCoefMSRn(k+1) * suma * (-1)**k
-    !     InAdim%aRSp(n) = InAdim%aRSp(n) + InAdim%sCoefMSRp(k+1) * suma * (-1)**k
-    !   end do
-    ! end do
-    !
-    ! InAdim%aRSn = InAdim%MSRDelta('MSRn') - InAdim%aRSn * beta2List(1:) * signlist(1:)
-    ! InAdim%aRSp = InAdim%MSRDelta('MSRp') - InAdim%aRSp * beta2List(1:) * signlist(1:)
+    do n = 1, 4
+      do k = 0, 3
+        poch(0:4 + k - n) = PochHammerList( - InAdim%bHat(1) - k, 4 + k - n )
+        l = max(n - k, 0)
+        suma = sum( InAdim%gl(l:) * signlist(l:)/poch(1+k+l-n:4+k-n) )
+        InAdim%Qln(n) = InAdim%aRSn(n) + InAdim%sCoefMSRn(k+1) * suma * (-1)**k
+        InAdim%Qlp(n) = InAdim%aRSp(n) + InAdim%sCoefMSRp(k+1) * suma * (-1)**k
+      end do
+    end do
+
+    InAdim%Qln = InAdim%Qln * beta2List(1:) * signlist(1:)
+    InAdim%Qlp = InAdim%Qlp * beta2List(1:) * signlist(1:)
 
     poch(0:-3:-1) = 1/PochHammerList( - InAdim%bHat(1), 3 ) * powList0(-1,3)
     poch(0:3) = PochHammerList( 1 + InAdim%bHat(1), 3 )
@@ -910,6 +911,8 @@ module AnomDimClass
     if ( str( :8) == 'RSpdelta'        ) bet(1:) = self%aRSp
     if ( str( :8) == 'RSndelta'        ) bet(1:) = self%aRSn
     if ( str( :7) == 'RSdelta'         ) bet(1:) = self%aRS
+    if ( str( :3) == 'Qln'             ) bet(1:) = self%Qln
+    if ( str( :3) == 'Qlp'             ) bet(1:) = self%Qlp
 
   end function betaQCD
 
@@ -987,8 +990,8 @@ module AnomDimClass
 
      N12 = 0
 
-     if ( type(:3) == 'RSn'   ) N12 = self%N12n
-     if ( type(:3) == 'RSp' ) N12 = self%N12p
+     if ( type(:3) == 'RSn' .or. type(:4) == 'MSRn' ) N12 = self%N12n
+     if ( type(:3) == 'RSp' .or. type(:4) == 'MSRp' ) N12 = self%N12p
 
   end function N12
 

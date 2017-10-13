@@ -385,13 +385,14 @@ module RunningClass
     integer            , intent(in) :: order
     character (len = *), intent(in) :: type
     real (dp)        , dimension(4) :: a
-    real (dp)      , dimension(0:4) :: gl
+    real (dp)      , dimension(0:4) :: gl, Ql
     integer                         :: i
-    real (dp)                       :: matching, alphaM, poch, bR, bm
+    real (dp)                       :: matching, alphaM, alphaH, alphaR, poch, bR, bm
+    real (dp), dimension(self%runMass) :: aHlist, aRlist
 
-    matching = 1; RSMass = 0; gl = self%andim%betaQCD('gl')
-    bR = 2 * pi/self%beta(0); bm = bR/self%alphaQCD(self%mH)
-    bR = bR/self%alphaQCD(R); poch = 1
+    matching = 1; RSMass = 0; gl = self%andim%betaQCD('gl'); poch = 1
+    alphaH = self%alphaQCD(self%mH); alphaR = self%alphaQCD(R)
+    bR = 2 * pi/self%beta(0); bm = bR/alphaH;  bR = bR/alphaR
 
     do i = 0, self%runMass - 1
 
@@ -411,24 +412,52 @@ module RunningClass
     RSMass = 2 * Pi * self%andim%N12(type) * RSMass/self%beta(0) + &
     self%mH * matching
 
+    if ( type(:3) == 'MSR' ) then
+
+      aHlist = PowList(alphaH/Pi, self%runMass)
+      aRlist = PowList(alphaR/Pi, self%runMass)
+      Ql = self%andim%betaQCD( 'Ql'//type(4:4) )
+
+      RSMass = RSMass + sum(  Ql(1:) * ( self%mH * aHlist -  R * aRlist )  ) ! they are evaluated at diffefent alphaS'
+
+    end if
+
   contains
 
     real (dp) function D(a,b)
       real (dp), intent(in) :: a, b
+      real (dp)             :: poch, pow, new, fac
+      integer               :: n
+
+      D = - b**(-a) * gamma(a) * cos(pi * a)
+
+      poch = a; pow = 1; fac = 1
+
+      do n = 0, 100
+        new = pow/poch/fac; D = D + new; if ( abs(new) < prec ) exit
+        pow = b * pow; poch = poch + 1; fac = fac * (n + 1)
+      end do
+
+      D = exp(-b) * D
+
+    end function D
+
+    real (dp) function D2(a,b)
+      real (dp), intent(in) :: a, b
       real (dp)             :: poch, pow, new
       integer               :: n
 
-      D = b**(-a) * exp(-b) * gamma(a) * cos(pi * a)
+      D2 = b**(-a) * exp(-b) * gamma(a) * cos(pi * a)
 
       poch = 1; pow = 1
 
       do n = 0, 100
         poch = poch * (a + n)
-        new = pow/poch; D = D + new; if ( abs(new) < prec ) return
+        new = pow/poch; D2 = D2 + new; if ( abs(new) < prec ) return
         pow = - b * pow
       end do
 
-    end function
+    end function D2
 
   end
 
