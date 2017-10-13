@@ -50,7 +50,7 @@ module AnomDimClass
     sCoefHadron, scheme, MSRDelta, sCoefLambda, P12, sCoefGeneric, cCoeff,    &
     P12Generic, MatchingAlpha, MatchingAlphaLog, MatchingAlphaUp, betaQED,    &
     alphaMatching, N12, N12Ratio, N12Residue, N12RS, N12SumRule, aFromS, Ql,  &
-    anLambda
+    anLambda, aNasy
 
     procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
     kTildeComplex, rootReal, rootComplex
@@ -1051,25 +1051,26 @@ module AnomDimClass
 
 !ccccccccccccccc
 
-  function Ql(self, type, lambda) result(a)
-     class (AnomDim)            , intent(in) :: self
-    real (dp)                  , intent(in) :: lambda
+  function Ql(self, type, order, lambda) result(a)
+     class (AnomDim)           , intent(in) :: self
     character (len = *)        , intent(in) :: type
+    integer                    , intent(in) :: order
+    real (dp)                  , intent(in) :: lambda
     real (dp)              , dimension(0:3) :: sCoef
     real (dp)                               :: b1, suma
     real (dp), dimension(4)                 :: a
     real (dp), dimension(0:6)               :: poch
     integer  , dimension(0:4)               :: signlist
-    integer                                 :: n, k, l
+    integer                                 :: n, k, l, ord
 
     sCoef = self%sCoefLambda(type, lambda); b1 = self%bHat(1); a = 0
-    signlist = PowList0(-1,4)
+    signlist = PowList0(-1,4); ord = min(order, 4)
 
     do n = 1, 4
-      do k = 0, 3
-        poch(0:4 + k - n) = PochHammerList( - b1 - k, 4 + k - n )
+      do k = 0, ord - 1
+        poch(0:ord + k - n) = PochHammerList( - b1 - k, ord + k - n )
         l = max(n - k, 0)
-        suma = sum( self%gl(l:) * signlist(l:)/poch(1+k+l-n:4+k-n) )
+        suma = sum( self%gl(l:ord-1) * signlist(l:ord-1)/poch(1+k+l-n:ord+k-n) )
         a(n) = a(n) + sCoef(k) * suma * (-1)**k
       end do
     end do
@@ -1077,6 +1078,31 @@ module AnomDimClass
     a = a * self%beta2List(1:) * signlist(1:)
 
   end function Ql
+
+!ccccccccccccccc
+
+  function aNasy(self, type, order, lambda) result(a)
+     class (AnomDim)           , intent(in) :: self
+    character (len = *)        , intent(in) :: type
+    integer                    , intent(in) :: order
+    real (dp)                  , intent(in) :: lambda
+    real (dp)                               :: b1
+    real (dp), dimension(4)                 :: a
+    real (dp), dimension(-3:3)              :: poch
+    integer                                 :: n, ord
+
+    b1 = self%bHat(1); ord = min(order, 4)
+
+    poch(0:1 - ord:-1) = 1/PochHammerList( - b1, ord - 1 ) * powList0(-1,ord - 1)
+    poch(0:ord - 1)    = PochHammerList( 1 + b1, ord - 1 )
+
+    do n = 1, 4
+      a(n) = Pi * sum( self%gl(:ord - 1) * poch(n-1:n-ord:-1) ) * self%beta2List(n - 1)
+    end do
+
+    a = a * self%N12SumRule(ord - 1, type, lambda)
+
+  end function aNasy
 
 !ccccccccccccccc
 

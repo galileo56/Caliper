@@ -107,7 +107,8 @@
 :Evaluate:  sCoef::usage = "sCoef[str, nf] computes the soft R anomalous Dimension"
 :Evaluate:  sCoefGamma::usage = "sCoefGamma[gamma, n, nf] computes the soft R anomalous Dimension"
 :Evaluate:  sCoefLambda::usage = "sCoefLambda[str, nf, lambda] computes the MSR R-anomalous Dimension"
-:Evaluate:  Ql::usage = "Ql[str, nf, lambda] computes the Ql coefficients"
+:Evaluate:  Ql::usage = "Ql[str, nf, order, lambda] computes the Ql coefficients"
+:Evaluate:  aNasy::usage = "aNasy[str, nf, order, lambda] computes the asymptotic aN coefficients"
 :Evaluate:  aFromS::usage = "aFromS[str, nf, lambda] computes the a coefficients from the sCoefs"
 :Evaluate:  anLambda::usage = "anLambda[str, nf, lambda] computes the lambda dependence of the a coefficients"
 :Evaluate:  AnomDim::usage = "AnomDim[str, nf, G4] computes the QCD anomalous dimension"
@@ -1607,9 +1608,17 @@
 
 :Begin:
 :Function:      ql
-:Pattern:       Ql[str_, nf_, G4_]
-:Arguments:     {str, nf, G4}
-:ArgumentTypes: {String, Integer, Real}
+:Pattern:       Ql[str_, nf_, order_, G4_]
+:Arguments:     {str, nf, order, G4}
+:ArgumentTypes: {String, Integer, Integer, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      anasy
+:Pattern:       aNasy[str_, nf_, order_, G4_]
+:Arguments:     {str, nf, order, G4}
+:ArgumentTypes: {String, Integer, Integer, Real}
 :ReturnType:    Manual
 :End:
 
@@ -4867,12 +4876,23 @@ static void afroms(char const* str, int nf, double G4){
    MLEndPacket(stdlink);
 }
 
-extern double f90ql_(char const* str, int* nf, double* G4, double* result);
+extern double f90ql_(char const* str, int* nf, int* nl, double* G4, double* result);
 
-static void ql(char const* str, int nf, double G4){
+static void ql(char const* str, int nf, int order, double G4){
   double result[4];
 
-   f90ql_(str, &nf, &G4, result);
+   f90ql_(str, &nf, &order, &G4, result);
+
+   MLPutRealList(stdlink, result, 4);
+   MLEndPacket(stdlink);
+}
+
+extern double f90anasy_(char const* str, int* nf, int* nl, double* G4, double* result);
+
+static void anasy(char const* str, int nf, int order, double G4){
+  double result[4];
+
+   f90anasy_(str, &nf, &order, &G4, result);
 
    MLPutRealList(stdlink, result, 4);
    MLEndPacket(stdlink);

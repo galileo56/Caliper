@@ -3849,15 +3849,29 @@ end subroutine f90AfromS
 
 !ccccccccccccccc
 
-subroutine f90Ql(str, nf, lambda, beta)
+subroutine f90aNasy(str, nf, order, lambda, beta)
   use AnomDimClass;  use constants, only: dp; implicit none
   character (len = *)    , intent(in )  :: str
   real (dp)              , intent(in )  :: lambda
-  integer                , intent(in )  :: nf
+  integer                , intent(in )  :: nf, order
   real (dp), dimension(4), intent(out)  :: beta
   type (AnomDim)                        :: run
 
-  run = AnomDim('MSbar', nf, 0._dp);  beta = run%Ql(str, lambda)
+  run = AnomDim('MSbar', nf, 0._dp);  beta = run%aNasy(str, order, lambda)
+
+end subroutine f90aNasy
+
+!ccccccccccccccc
+
+subroutine f90Ql(str, nf, order, lambda, beta)
+  use AnomDimClass;  use constants, only: dp; implicit none
+  character (len = *)    , intent(in )  :: str
+  real (dp)              , intent(in )  :: lambda
+  integer                , intent(in )  :: nf, order
+  real (dp), dimension(4), intent(out)  :: beta
+  type (AnomDim)                        :: run
+
+  run = AnomDim('MSbar', nf, 0._dp);  beta = run%Ql(str, order, lambda)
 
 end subroutine f90Ql
 
