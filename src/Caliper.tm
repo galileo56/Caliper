@@ -107,6 +107,8 @@
 :Evaluate:  sCoef::usage = "sCoef[str, nf] computes the soft R anomalous Dimension"
 :Evaluate:  sCoefGamma::usage = "sCoefGamma[gamma, n, nf] computes the soft R anomalous Dimension"
 :Evaluate:  sCoefLambda::usage = "sCoefLambda[str, nf, lambda] computes the MSR R-anomalous Dimension"
+:Evaluate:  aFromS::usage = "aFromS[str, nf, lambda] computes the a coefficients"
+:Evaluate:  anLambda::usage = "anLambda[str, nf, lambda] computes the a coefficients"
 :Evaluate:  AnomDim::usage = "AnomDim[str, nf, G4] computes the QCD anomalous dimension"
 :Evaluate:  MSbarDeltaPiece::usage = "MSbarDeltaPiece[nl, nh] computes the pole to MS-bar relation"
 :Evaluate:  AlphaMatchingLog::usage = "AlphaMatchingLog[str, direction, nf] computes the alpha threshold matching"
@@ -1589,6 +1591,22 @@
 :Begin:
 :Function:      anomdim
 :Pattern:       AnomDim[str_, nf_, G4_]
+:Arguments:     {str, nf, G4}
+:ArgumentTypes: {String, Integer, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      afroms
+:Pattern:       aFromS[str_, nf_, G4_]
+:Arguments:     {str, nf, G4}
+:ArgumentTypes: {String, Integer, Real}
+:ReturnType:    Manual
+:End:
+
+:Begin:
+:Function:      anlambda
+:Pattern:       anLambda[str_, nf_, G4_]
 :Arguments:     {str, nf, G4}
 :ArgumentTypes: {String, Integer, Real}
 :ReturnType:    Manual
@@ -4826,6 +4844,28 @@ static void anomdim(char const* str, int nf, double G4){
    f90anomdim_(str, &nf, &G4, result);
 
    MLPutRealList(stdlink, result, 5);
+   MLEndPacket(stdlink);
+}
+
+extern double f90afroms_(char const* str, int* nf, double* G4, double* result);
+
+static void afroms(char const* str, int nf, double G4){
+  double result[4];
+
+   f90afroms_(str, &nf, &G4, result);
+
+   MLPutRealList(stdlink, result, 4);
+   MLEndPacket(stdlink);
+}
+
+extern double f90anlambda_(char const* str, int* nf, double* G4, double* result);
+
+static void anlambda(char const* str, int nf, double G4){
+  double result[4];
+
+   f90anlambda_(str, &nf, &G4, result);
+
+   MLPutRealList(stdlink, result, 4);
    MLEndPacket(stdlink);
 }
 

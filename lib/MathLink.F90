@@ -3835,6 +3835,34 @@ end subroutine f90AnomDim
 
 !ccccccccccccccc
 
+subroutine f90AfromS(str, nf, lambda, beta)
+  use AnomDimClass;  use constants, only: dp; implicit none
+  character (len = *)    , intent(in )  :: str
+  real (dp)              , intent(in )  :: lambda
+  integer                , intent(in )  :: nf
+  real (dp), dimension(4), intent(out)  :: beta
+  type (AnomDim)                        :: run
+
+  run = AnomDim('MSbar', nf, 0._dp);  beta = run%aFromS(str, lambda)
+
+end subroutine f90AfromS
+
+!ccccccccccccccc
+
+subroutine f90anLambda(str, nf, lambda, beta)
+  use AnomDimClass;  use constants, only: dp; implicit none
+  character (len = *)    , intent(in )  :: str
+  real (dp)              , intent(in )  :: lambda
+  integer                , intent(in )  :: nf
+  real (dp), dimension(4), intent(out)  :: beta
+  type (AnomDim)                        :: run
+
+  run = AnomDim('MSbar', nf, 0._dp);  beta = run%anLambda(str, lambda)
+
+end subroutine f90anLambda
+
+!ccccccccccccccc
+
 subroutine f90cCoef(nf, order, n, beta)
   use AnomDimClass;  use constants, only: dp; implicit none
   integer                  , intent(in ) :: nf, order, n

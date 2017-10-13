@@ -429,7 +429,10 @@ module RunningClass
       matching = 1 + dot_product( a(:i), PowList(alphaM, i) )
     end if
 
-    RSMass = 2 * Pi * self%andim%N12(type) * RSMass/self%beta(0) + &
+    ! RSMass = 2 * Pi * self%andim%N12(type) * RSMass/self%beta(0) + &
+    ! self%mH * matching
+
+    RSMass = 2 * Pi * self%andim%N12SumRule(3, type, lambda) * RSMass/self%beta(0) + &
     self%mH * matching
 
     if ( type(:3) == 'MSR' .and. method(:2) == 'FO' ) Ql = self%andim%MSRdelta( 'Ql'//type(4:4) )

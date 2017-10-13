@@ -84,7 +84,7 @@ module MatrixElementsClass
     real (dp)                                   :: MSMass, MSLow, alphaB
     real (dp), dimension(3)                     :: DeltaMJet
     real (dp), dimension(4)                     :: deltaMSRn, DeltaMSRp, &
-    deltaMSLow, deltaMS, deltaRS, deltaRSn, deltaRSp
+    deltaMSLow, deltaMS, deltaRSn, deltaRSp
 
     contains
 

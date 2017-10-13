@@ -49,7 +49,7 @@ module AnomDimClass
     bHQETgamma, wTildeHm, GammaRComputer, sCoefRecursive, N12Generic, PScoef, &
     sCoefHadron, scheme, MSRDelta, sCoefLambda, P12, sCoefGeneric, cCoeff,    &
     P12Generic, MatchingAlpha, MatchingAlphaLog, MatchingAlphaUp, betaQED,    &
-    alphaMatching, N12, N12Ratio, N12Residue, N12RS, N12SumRule
+    alphaMatching, N12, N12Ratio, N12Residue, N12RS, N12SumRule, aFromS, anLambda
 
     procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
     kTildeComplex, rootReal, rootComplex
@@ -1009,6 +1009,47 @@ module AnomDimClass
 
 !ccccccccccccccc
 
+  function anLambda(self, type, lambda) result(a)
+     class (AnomDim)            , intent(in) :: self
+    real (dp)                  , intent(in) :: lambda
+    character (len = *)        , intent(in) :: type
+    real (dp), dimension(4)                 :: a
+    real (dp), dimension(0:4,4)             :: b
+
+    b(0,:) = self%MSRDelta(type); call self%expandAlpha(b)
+    a = matmul( powList0( -log(lambda), 4 ), b )
+
+  end function anLambda
+
+!ccccccccccccccc
+
+  function aFromS(self, type, lambda) result(a)
+     class (AnomDim)            , intent(in) :: self
+    real (dp)                  , intent(in) :: lambda
+    character (len = *)        , intent(in) :: type
+    real (dp)              , dimension(0:3) :: sCoef
+    real (dp)                               :: b1
+    real (dp), dimension(4)                 :: a
+    real (dp), dimension(0:3)               :: poch
+    integer                                 :: i, k
+
+    sCoef = self%sCoefLambda(type, lambda); b1 = self%bHat(1); a = 0
+
+    do i = 1, 4
+      do k = 0, i - 1
+
+      poch(:2 - k) = PochHammerList(1 + b1 + k, i - 1 - k)
+      a(i) = a(i) + sCoef(k) * sum( self%gl(:i - 1 - k) * poch(i - 1 - k:0:-1) )
+
+      end do
+    end do
+
+    a = a * self%beta2List(1:)
+
+  end function aFromS
+
+!ccccccccccccccc
+
   real (dp) function N12Ratio(self, order, type, lambda)
      class (AnomDim)            , intent(in) :: self
      real (dp)                  , intent(in) :: lambda
@@ -1130,10 +1171,18 @@ module AnomDimClass
        sCoef = self%sCoefMSRInc2
      else if ( type(:4) == 'Inc3' ) then
        sCoef = self%sCoefMSRInc3
-     else if ( type(:7) == 'Natural' ) then
+     else if ( type(:7) == 'Natural' .or. type(:4) == 'MSRn' ) then
        sCoef = self%sCoefMSRn
-     else if ( type(:9) == 'Practical' ) then
+     else if ( type(:9) == 'Practical' .or. type(:4) == 'MSRp' ) then
        sCoef = self%sCoefMSRp
+     else if ( type(:3) == 'RSn' ) then
+       sCoef = self%sCoefRSn
+     else if ( type(:3) == 'RSp' ) then
+       sCoef = self%sCoefRSp
+     else if ( type(:3) == 'Qln' ) then
+       sCoef = self%sCoefQln
+     else if ( type(:3) == 'Qlp' ) then
+       sCoef = self%sCoefQlp
      end if
 
      res = self%sCoefGeneric(sCoef, lambda)
