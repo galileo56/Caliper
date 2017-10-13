@@ -49,7 +49,8 @@ module AnomDimClass
     bHQETgamma, wTildeHm, GammaRComputer, sCoefRecursive, N12Generic, PScoef, &
     sCoefHadron, scheme, MSRDelta, sCoefLambda, P12, sCoefGeneric, cCoeff,    &
     P12Generic, MatchingAlpha, MatchingAlphaLog, MatchingAlphaUp, betaQED,    &
-    alphaMatching, N12, N12Ratio, N12Residue, N12RS, N12SumRule, aFromS, anLambda
+    alphaMatching, N12, N12Ratio, N12Residue, N12RS, N12SumRule, aFromS, Ql,  &
+    anLambda
 
     procedure, pass(self), private ::  wTildeReal, wTildeComplex, kTildeReal, &
     kTildeComplex, rootReal, rootComplex
@@ -1047,6 +1048,35 @@ module AnomDimClass
     a = a * self%beta2List(1:)
 
   end function aFromS
+
+!ccccccccccccccc
+
+  function Ql(self, type, lambda) result(a)
+     class (AnomDim)            , intent(in) :: self
+    real (dp)                  , intent(in) :: lambda
+    character (len = *)        , intent(in) :: type
+    real (dp)              , dimension(0:3) :: sCoef
+    real (dp)                               :: b1, suma
+    real (dp), dimension(4)                 :: a
+    real (dp), dimension(0:6)               :: poch
+    integer  , dimension(0:4)               :: signlist
+    integer                                 :: n, k, l
+
+    sCoef = self%sCoefLambda(type, lambda); b1 = self%bHat(1); a = 0
+    signlist = PowList0(-1,4)
+
+    do n = 1, 4
+      do k = 0, 3
+        poch(0:4 + k - n) = PochHammerList( - b1 - k, 4 + k - n )
+        l = max(n - k, 0)
+        suma = sum( self%gl(l:) * signlist(l:)/poch(1+k+l-n:4+k-n) )
+        a(n) = a(n) + sCoef(k) * suma * (-1)**k
+      end do
+    end do
+
+    a = a * self%beta2List(1:) * signlist(1:)
+
+  end function Ql
 
 !ccccccccccccccc
 
