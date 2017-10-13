@@ -14,8 +14,8 @@ module RunningClass
     type (AnomDim)              :: andim
     type (Alpha)                :: AlphaOb
     real (dp), dimension(0:4)   :: beta, gamma
-    real (dp), dimension(4)     :: bHat, sCoefP, sCoefN, gammaRn, gammaRp, gammaRSn, &
-    sCoefRSn, gammaRSp, sCoefRSp
+    real (dp), dimension(4)     :: sCoefP, sCoefN, gammaRn, gammaRp, gammaRSn, &
+    sCoefRSn, gammaRSp, sCoefRSp, gammaQn, gammaQp, bHat, sCoefQln, sCoefQlp
     real (dp)                   :: muLambda, mH, mL
     real (dp), dimension(0:4,4) :: tab
 
@@ -89,6 +89,14 @@ module RunningClass
     InitRun%gammaRSp = sCoef(1:)
     sCoef = InitRun%andim%betaQCD('sCoefRSp')
     InitRun%sCoefRSp = sCoef(1:)
+    sCoef = 0; sCoef = InitRun%andim%betaQCD('Qln')
+    InitRun%gammaQn = sCoef(1:)
+    sCoef = 0; sCoef = InitRun%andim%betaQCD('Qlp')
+    InitRun%gammaQp = sCoef(1:)
+    sCoef = 0; sCoef = InitRun%andim%betaQCD('sCoefQln')
+    InitRun%sCoefQln = sCoef(1:)
+    sCoef = 0; sCoef = InitRun%andim%betaQCD('sCoefQlp')
+    InitRun%sCoefQlp = sCoef(1:)
 
    end function InitRun
 
@@ -107,6 +115,10 @@ module RunningClass
       res = self%gammaRSn
     else if ( type(:3) == 'RSp' ) then
       res = self%gammaRSp
+    else if ( type(:3) == 'Qlp' ) then
+      res = self%gammaQp
+    else if ( type(:3) == 'Qln' ) then
+      res = self%gammaQn
     end if
 
   end function gammaR
@@ -126,6 +138,10 @@ module RunningClass
       res = self%sCoefRSn
     else if ( type(:3) == 'RSp' ) then
       res = self%sCoefRSp
+    else if ( type(:3) == 'Qln' ) then
+      res = self%sCoefQln
+    else if ( type(:3) == 'Qlp' ) then
+      res = self%sCoefQlp
     end if
 
   end function sCoef
@@ -379,15 +395,19 @@ module RunningClass
 
 !ccccccccccccccc
 
-  real (dp) function RSMass(self, type, order, R)
+  real (dp) function RSMass(self, type, order, R, lambda, method)
     class (Running)    , intent(in) :: self
-    real (dp)          , intent(in) :: R
+    character (len = *), intent(in) :: method
+    real (dp)          , intent(in) :: R, lambda
     integer            , intent(in) :: order
     character (len = *), intent(in) :: type
     real (dp)        , dimension(4) :: a
-    real (dp)      , dimension(0:4) :: gl, Ql
+    real (dp)      , dimension(0:4) :: gl
+    real (dp)      , dimension(4)   :: Ql
+    real (dp), dimension(0:self%runMass,self%runMass) :: Qlog
     integer                         :: i
-    real (dp)                       :: matching, alphaM, alphaH, alphaR, poch, bR, bm
+    real (dp)                       :: matching, alphaM, alphaH, alphaR, poch, &
+    bR, bm, mu
     real (dp), dimension(self%runMass) :: aHlist, aRlist
 
     matching = 1; RSMass = 0; gl = self%andim%betaQCD('gl'); poch = 1
@@ -412,13 +432,33 @@ module RunningClass
     RSMass = 2 * Pi * self%andim%N12(type) * RSMass/self%beta(0) + &
     self%mH * matching
 
+    if ( type(:3) == 'MSR' .and. method(:2) == 'FO' ) Ql = self%andim%MSRdelta( 'Ql'//type(4:4) )
+
     if ( type(:3) == 'MSR' ) then
 
-      aHlist = PowList(alphaH/Pi, self%runMass)
-      aRlist = PowList(alphaR/Pi, self%runMass)
-      Ql = self%andim%betaQCD( 'Ql'//type(4:4) )
+      if ( method(:2) /= 'FO' ) then
 
-      RSMass = RSMass + sum(  Ql(1:) * ( self%mH * aHlist -  R * aRlist )  ) ! they are evaluated at diffefent alphaS'
+        RSMass = RSMass + self%MSREvol('Ql'//type(4:4), R, lambda, method)
+
+      else if ( method(:6) == 'FOdiff' ) then
+
+        aHlist = self%mH * PowList(alphaH/Pi, self%runMass)
+        aRlist = R       * PowList(alphaR/Pi, self%runMass)
+        RSMass = RSMass + sum(  Ql(:self%runMass) * ( aHlist -  aRlist )  )
+
+      else if ( method(:6) == 'FOsame' ) then
+
+        mu = 2 * (  (2 * lambda - 1) * self%mH/2 + (2 - lambda) * R  )/3
+        Qlog = 0
+        Qlog(0,:) = Ql(:self%runMass); call self%andim%expandAlpha(Qlog)
+
+        Ql(:self%runMass) = &
+        self%mH * matmul( powList0( log(mu/self%mH), self%runMass ), Qlog ) - &
+        R       * matmul( powList0( log(mu/R)      , self%runMass ), Qlog )
+
+        RSMass = RSMass + sum(  Ql(1:self%runMass) * PowList(self%alphaQCD(mu)/Pi, self%runMass)  )
+
+      end if
 
     end if
 
@@ -441,23 +481,6 @@ module RunningClass
       D = exp(-b) * D
 
     end function D
-
-    real (dp) function D2(a,b)
-      real (dp), intent(in) :: a, b
-      real (dp)             :: poch, pow, new
-      integer               :: n
-
-      D2 = b**(-a) * exp(-b) * gamma(a) * cos(pi * a)
-
-      poch = 1; pow = 1
-
-      do n = 0, 100
-        poch = poch * (a + n)
-        new = pow/poch; D2 = D2 + new; if ( abs(new) < prec ) return
-        pow = - b * pow
-      end do
-
-    end function D2
 
   end
 

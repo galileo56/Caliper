@@ -5203,14 +5203,14 @@ end subroutine f90MSRMass
 
 !ccccccccccccccc
 
-subroutine f90RSMass(type, orderAlp, runAlp, order, run, nf, mZ, &
-amZ, mT, muT, mB, muB, mC, muC, R, res)
+subroutine f90RSMass(type, method, orderAlp, runAlp, order, run, nf, mZ, &
+amZ, mT, muT, mB, muB, mC, muC, lambda, R, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
 
-  character (len = *), intent(in) :: type
+  character (len = *), intent(in) :: type, method
   integer           , intent(in ) :: orderAlp, runAlp, order, run, nf
-  real (dp)         , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, muC, R
+  real (dp)         , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, muC, R, lambda
   real (dp)         , intent(out) :: res
   type (Running)                  :: alphaMass
   type (Alpha)                    :: alphaAll
@@ -5225,7 +5225,7 @@ amZ, mT, muT, mB, muB, mC, muC, R, res)
   mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
   alphaMass = Running(nf, run, alphaAll, 1._dp)
-  res       = alphaMass%RSMass( type, order, R )
+  res       = alphaMass%RSMass( type, order, R, lambda, method )
 
 end subroutine f90RSMass
 

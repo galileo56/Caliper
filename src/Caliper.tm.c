@@ -1,6 +1,6 @@
 /*
  * This file automatically produced by /Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mprep from:
- *	/Users/vicent/GitHub/Caliper/src/Caliper.tm
+ *	/Users/vmateu/GitHub/Caliper/src/Caliper.tm
  * mprep Revision 18 Copyright (c) Wolfram Research, Inc. 1990-2013
  */
 
@@ -289,7 +289,7 @@ MLYDEFN( devyield_result, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
-# line 2897 "/Users/vicent/GitHub/Caliper/src/Caliper.tm"
+# line 2897 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
 #include "mathlink.h"
 #include "ftypes.h"
 #include <stdio.h>
@@ -3207,18 +3207,18 @@ double mu, double R){
   return res;
 }
 
-extern double f90rsmass_(char const* type, int* orderAlpha, int* runAlpha,
+extern double f90rsmass_(char const* type, char const* method, int* orderAlpha, int* runAlpha,
 int* order, int* run, int* nf, double* Mz, double* aMz, double* mT, double* muT,
-double* mB, double* muB, double* mC, double* muC, double* R, double* res);
+double* mB, double* muB, double* mC, double* muC, double* lambda, double* R, double* res);
 
-static double rsmass(char const* type, int orderAlpha, int runAlpha, int order,
+static double rsmass(char const* type, char const* method, int orderAlpha, int runAlpha, int order,
 int run, int nf, double Mz, double aMz, double mT, double muT, double mB,
-double muB, double mC, double muC, double R){
+double muB, double mC, double muC, double lambda, double R){
 
   double res;
 
-  f90rsmass_(type, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz,
-  &mT, &muT, &mB, &muB, &mC, &muC, &R, &res);
+  f90rsmass_(type, method, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz,
+  &mT, &muT, &mB, &muB, &mC, &muC, &lambda, &R, &res);
 
   return res;
 }
@@ -4332,7 +4332,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 4336 "/Users/vicent/GitHub/Caliper/src/Caliper.tm.c"
+# line 4336 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
 
 
 void hypgeo P(( double _tp1, double _tp2, double _tp3, double _tp4, double _tp5, double _tp6, double _tp7, double _tp8));
@@ -13690,7 +13690,7 @@ L0:	return res;
 } /* _tr166 */
 
 
-double rsmass P(( const char * _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15));
+double rsmass P(( const char * _tp1, const char * _tp2, int _tp3, int _tp4, int _tp5, int _tp6, int _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15, double _tp16, double _tp17));
 
 #if MLPROTOTYPES
 static int _tr167( MLINK mlp)
@@ -13700,12 +13700,12 @@ static int _tr167(mlp) MLINK mlp;
 {
 	int	res = 0;
 	const char * _tp1;
-	int _tp2;
+	const char * _tp2;
 	int _tp3;
 	int _tp4;
 	int _tp5;
 	int _tp6;
-	double _tp7;
+	int _tp7;
 	double _tp8;
 	double _tp9;
 	double _tp10;
@@ -13714,14 +13714,16 @@ static int _tr167(mlp) MLINK mlp;
 	double _tp13;
 	double _tp14;
 	double _tp15;
+	double _tp16;
+	double _tp17;
 	double _rp0;
 	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
-	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
+	if ( ! MLGetString( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
 	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
 	if ( ! MLGetInteger( mlp, &_tp5) ) goto L4;
 	if ( ! MLGetInteger( mlp, &_tp6) ) goto L5;
-	if ( ! MLGetReal( mlp, &_tp7) ) goto L6;
+	if ( ! MLGetInteger( mlp, &_tp7) ) goto L6;
 	if ( ! MLGetReal( mlp, &_tp8) ) goto L7;
 	if ( ! MLGetReal( mlp, &_tp9) ) goto L8;
 	if ( ! MLGetReal( mlp, &_tp10) ) goto L9;
@@ -13730,13 +13732,16 @@ static int _tr167(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp13) ) goto L12;
 	if ( ! MLGetReal( mlp, &_tp14) ) goto L13;
 	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
-	if ( ! MLNewPacket(mlp) ) goto L15;
+	if ( ! MLGetReal( mlp, &_tp16) ) goto L15;
+	if ( ! MLGetReal( mlp, &_tp17) ) goto L16;
+	if ( ! MLNewPacket(mlp) ) goto L17;
 
-	_rp0 = rsmass(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15);
+	_rp0 = rsmass(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1:	MLReleaseString(mlp, _tp1);
+L17: L16: L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2:	MLReleaseString(mlp, _tp2);
+L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
 } /* _tr167 */
@@ -17518,7 +17523,7 @@ static struct func {
 		{14, 0, _tr164, "polemass" },
 		{13, 0, _tr165, "msbarmasslow" },
 		{18, 0, _tr166, "msrmass" },
-		{15, 0, _tr167, "rsmass" },
+		{17, 0, _tr167, "rsmass" },
 		{20, 0, _tr168, "msrvfns" },
 		{21, 0, _tr169, "msrtop" },
 		{27, 0, _tr170, "nrqcd" },
@@ -18031,9 +18036,9 @@ static const char* evalstrs[] = {
 	", aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of th",
 	"e quark masses with flavor matching below the mass.\"",
 	(const char*)0,
-	"RSMass::usage = \"RSMass[type, orderAlpha, runAlpha, order, run, ",
-	"nf, Mz, aMz, mT, muT, mB, muB, mC, muC, R] computes the RS-schem",
-	"e running of the quark masses.\"",
+	"RSMass::usage = \"RSMass[type, method, orderAlpha, runAlpha, orde",
+	"r, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, R] compu",
+	"tes the RS-scheme running of the quark masses.\"",
 	(const char*)0,
 	"MSRMass::usage = \"MSRMass[type, method, orderAlpha, runAlpha, or",
 	"der, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lamb",
@@ -18900,7 +18905,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"PoleMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_, muT_,                 mB_, muB_, mC_, muC_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC,                  mu}", 164);
 	if (_res) _res = _definepattern(mlp, (char *)"MSbarMassLow[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_,                 muB_, mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 165);
 	if (_res) _res = _definepattern(mlp, (char *)"MSRMass[type_, method_, orderAlpha_, runAlpha_, order_, run_,                 nf_, Mz_, aMz_, mT_,muT_, mB_, muB_, mC_, muC_, lambda_, mu_,                 R_]", (char *)"{type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB,                  mC, muC, lambda, mu, R}", 166);
-	if (_res) _res = _definepattern(mlp, (char *)"RSMass[type_, orderAlpha_, runAlpha_, order_, run_, nf_, Mz_,                 aMz_, mT_, muT_, mB_, muB_, mC_, muC_, R_]", (char *)"{type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT,                  mB, muB, mC, muC, R}", 167);
+	if (_res) _res = _definepattern(mlp, (char *)"RSMass[type_, method_, orderAlpha_, runAlpha_, order_, run_, nf_, Mz_,                 aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_, R_]", (char *)"{type, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT,                  mB, muB, mC, muC, lambda, R}", 167);
 	if (_res) _res = _definepattern(mlp, (char *)"MSRVFNS[up_, type_, method_, orderAlpha_, runAlpha_, order_,                 run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_,                 mu1_, mu2_, R_]", (char *)"{up, type, method, orderAlpha, runAlpha, order, run, nf, Mz,                  aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, R}", 168);
 	if (_res) _res = _definepattern(mlp, (char *)"MSRTop[up_, type_, method_, orderAlpha_, runAlpha_, order_,                 run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_,                 mu1_, mu2_, mu3_, R_]", (char *)"{up, type, method, orderAlpha, runAlpha, order, run, nf, Mz,                  aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, mu3, R}", 169);
 	if (_res) _res = _definepattern(mlp, (char *)"NRQCD[n_, l_, j_, s_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,                 mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_, mu_,                 R_]", (char *)"{n, l, j, s, charm, scheme, average, method, counting, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  lambda1, lambda2, lam, mu, R}", 170);

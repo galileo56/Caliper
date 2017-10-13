@@ -84,7 +84,7 @@ module MatrixElementsClass
     real (dp)                                   :: MSMass, MSLow, alphaB
     real (dp), dimension(3)                     :: DeltaMJet
     real (dp), dimension(4)                     :: deltaMSRn, DeltaMSRp, &
-    deltaMSLow, deltaMS, deltaRS
+    deltaMSLow, deltaMS, deltaRS, deltaRSn, deltaRSp
 
     contains
 
@@ -478,7 +478,8 @@ module MatrixElementsClass
     type (AnomDim)                  :: andim, andimNl, andimH, andimS
     real (dp)                       :: alphaJ, alphaS, mm, alphaR, EuR
     real (dp), dimension(0:4)       :: tab
-    real (dp), dimension(0:4,4)     :: coefMSRp, coefMassLow, coefMSRn, coefMass, coefRS
+    real (dp), dimension(0:4,4)     :: coefMSRp, coefMassLow, coefMSRn, coefMass,&
+    coefRSn, coefRSp
     real (dp), dimension(0:4,3)     :: coefCusp, coefSoft, coefJet, coefHard, &
     coefHm, coefCuspnl, coefCuspS, coefSoftNl, coefBjet
 
@@ -570,12 +571,14 @@ module MatrixElementsClass
         if ( present(Rmass) ) then
           coefMSRp = 0; coefMSRp(0,:) = Rmass * andimNl%MSRDelta('MSRp')
           coefMSRn = 0; coefMSRn(0,:) = Rmass * andimNl%MSRDelta('MSRn')
-          coefRS   = 0; coefRS(0,:)   = Rmass * andimNl%MSRDelta('RS')
+          coefRSn   = 0; coefRSn(0,:) = Rmass * andimNl%MSRDelta('RSn')
+          coefRSp   = 0; coefRSp(0,:) = Rmass * andimNl%MSRDelta('RSp')
           call andimNl%expandAlpha(coefMSRp); call andimNl%expandAlpha(coefMSRn)
           lgRMassList = powList( log(muJ/Rmass), 4 )
           call AddAlpha(coefMSRp, alphaJList)
           call AddAlpha(coefMSRn, alphaJList)
-          call AddAlpha(coefRS  , alphaJList)
+          call AddAlpha(coefRSn , alphaJList)
+          call AddAlpha(coefRSp , alphaJList)
         end if
 
         call AddAlpha( InMatElMass%BJetExp, alphaJList(:3) )
@@ -590,7 +593,8 @@ module MatrixElementsClass
 
           InMatElMass%deltaMSRp = DeltaComputer(coefMSRp, lgRMassList, 0)
           InMatElMass%deltaMSRn = DeltaComputer(coefMSRn, lgRMassList, 0)
-          InMatElMass%deltaRS   = DeltaComputer(coefRS  , lgRMassList, 0)
+          InMatElMass%deltaRSn  = DeltaComputer(coefRSn , lgRMassList, 0)
+          InMatElMass%deltaRSp  = DeltaComputer(coefRSp , lgRMassList, 0)
         end if
       else
 
@@ -1137,7 +1141,8 @@ module MatrixElementsClass
       if ( str(:7) == 'JetMass'    ) bet(:3) = self%deltamJet
       if ( str(:5) == 'MSbar'      ) bet = self%deltaMS
       if ( str(:4) == 'MSRp'       ) bet = self%deltaMSRp
-      if ( str(:2) == 'RS'         ) bet = self%deltaRS
+      if ( str(:3) == 'RSn'        ) bet = self%deltaRSn
+      if ( str(:3) == 'RSp'        ) bet = self%deltaRSp
       if ( str(:4) == 'MSRn'       ) bet = self%deltaMSRn
       if ( str(:8) == 'MSbarLow'   ) bet = self%deltaMSLow
       if ( str(:8) == 'hardMass'   ) bet(:3) = self%HmExp(0,:)

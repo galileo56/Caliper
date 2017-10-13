@@ -40,7 +40,7 @@ module AnomDimClass
     real (dp), dimension(4)       :: sCoefMSRp, sCoefMSRn, betaList, gammaRp, &
     gammaRn, sCoefMSRInc1, gammaRInc1, sCoefMSRInc2, gammaRInc2, gammaRInc3,  &
     sCoefMSRInc3, aRSn, aRSp, sCoefRSn, gammaRSn, sCoefRSp, gammaRSp, aRS,    &
-    Qln, Qlp
+    Qln, Qlp, sCoefQln, sCoefQlp, gammaRQn, gammaRQp
 
   contains
 
@@ -159,8 +159,8 @@ module AnomDimClass
         poch(0:4 + k - n) = PochHammerList( - InAdim%bHat(1) - k, 4 + k - n )
         l = max(n - k, 0)
         suma = sum( InAdim%gl(l:) * signlist(l:)/poch(1+k+l-n:4+k-n) )
-        InAdim%Qln(n) = InAdim%aRSn(n) + InAdim%sCoefMSRn(k+1) * suma * (-1)**k
-        InAdim%Qlp(n) = InAdim%aRSp(n) + InAdim%sCoefMSRp(k+1) * suma * (-1)**k
+        InAdim%Qln(n) = InAdim%Qln(n) + InAdim%sCoefMSRn(k+1) * suma * (-1)**k
+        InAdim%Qlp(n) = InAdim%Qlp(n) + InAdim%sCoefMSRp(k+1) * suma * (-1)**k
       end do
     end do
 
@@ -185,6 +185,12 @@ module AnomDimClass
 
     InAdim%gammaRSp = InAdim%GammaRComputer( InAdim%aRSp )
     InAdim%sCoefRSp = InAdim%sCoefRecursive( InAdim%aRSp )
+
+    InAdim%gammaRQn = InAdim%GammaRComputer( InAdim%Qln )
+    InAdim%sCoefQln  = InAdim%sCoefRecursive( InAdim%Qln )
+
+    InAdim%gammaRQp = InAdim%GammaRComputer( InAdim%Qlp )
+    InAdim%sCoefQlp  = InAdim%sCoefRecursive( InAdim%Qlp )
 
    end function InAdim
 
@@ -901,12 +907,18 @@ module AnomDimClass
     if ( str( :9) == 'sCoefMSRn'       ) bet(1:) = self%sCoefMSRn
     if ( str( :8) == 'sCoefRSn'        ) bet(1:) = self%sCoefRSn
     if ( str( :8) == 'sCoefRSp'        ) bet(1:) = self%sCoefRSp
+    if ( str( :8) == 'sCoefQln'        ) bet(1:) = self%sCoefQln
+    if ( str( :8) == 'sCoefQlp'        ) bet(1:) = self%sCoefQlp
     if ( str( :8) == 'betaList'        ) bet(1:) = self%betaList
     if ( str( :9) == 'gammaRInc1'      ) bet(1:) = self%gammaRInc1
     if ( str(:10) == 'gammaRInc2'      ) bet(1:) = self%gammaRInc2
     if ( str(:10) == 'gammaRInc3'      ) bet(1:) = self%gammaRInc3
     if ( str( :7) == 'gammaRp'         ) bet(1:) = self%gammaRp
     if ( str( :7) == 'gammaRn'         ) bet(1:) = self%gammaRn
+    if ( str( :8) == 'gammaRSn'        ) bet(1:) = self%gammaRSn
+    if ( str( :8) == 'gammaRSp'        ) bet(1:) = self%gammaRSp
+    if ( str( :8) == 'gammaRQn'        ) bet(1:) = self%gammaRQn
+    if ( str( :8) == 'gammaRQp'        ) bet(1:) = self%gammaRQp
     if ( str( :6) == 'betQED'          ) bet(1:) = self%beta0QED
     if ( str( :8) == 'RSpdelta'        ) bet(1:) = self%aRSp
     if ( str( :8) == 'RSndelta'        ) bet(1:) = self%aRSn
@@ -1497,10 +1509,16 @@ end function MatchingAlphaLog
       b = getInverse( self%alphaMatching(self%nf + 1) )
       call alphaReExpand( coef, b(:4) )
 
+    else if ( type(:3) == 'RSn' ) then
+      coef = self%aRSn
+    else if ( type(:3) == 'RSp' ) then
+      coef = self%aRSp
     else if ( type(:2) == 'RS' ) then
-
       coef = self%aRS
-
+    else if ( type(:3) == 'Qln' ) then
+      coef = self%Qln
+    else if ( type(:3) == 'Qlp' ) then
+      coef = self%Qlp
     else if ( type(:5) == 'charm' ) then
 
       coef = MSbarDelta(self%nf - 1, 2, self%err)
