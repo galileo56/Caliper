@@ -78,10 +78,7 @@ module AnomDimClass
     real (dp), optional, intent(in) :: err        ! 4-loop MS-bar to pole conversion error
     real (dp), dimension(0:4)       :: beta2List, beta
     real (dp), dimension(4)         :: betaList
-    real (dp), dimension(-3:6)      :: poch
-    integer                         :: n, k, l
-    integer, dimension(0:4)         :: signlist
-    real (dp)                       :: suma
+    integer                         :: n
 
     InAdim%err = 0; if ( present(err) ) InAdim%err = err
 
@@ -110,8 +107,8 @@ module AnomDimClass
       InAdim%gammaHm(0,2)  =  709.0476903676573_dp -  63.20987654320987_dp * nf
     end if
 
-    betaList = PowList( 1/beta(0)/2, 4 ); InAdim%betaList = betaList
-    beta2List = PowList0( beta(0)/2, 4 ); InAdim%beta2List = beta2List
+    betaList  = PowList( 1/beta(0)/2, 4 ); InAdim%betaList = betaList
+    beta2List = PowList0( beta(0)/2, 4 ) ; InAdim%beta2List = beta2List
 
     InAdim%bHat(0) = 1; InAdim%cCoef(0) = 1
 
@@ -151,29 +148,12 @@ module AnomDimClass
     if (nf >= 5) InAdim%beta0QED = InAdim%beta0QED + 1._dp/3     ! add bottom
     if (nf == 6) InAdim%beta0QED = InAdim%beta0QED + 4._dp/3     ! add top
 
-    InAdim%beta0QED = 4 * InAdim%beta0QED/3; signlist = PowList0(-1,4)
+    InAdim%beta0QED = 4 * InAdim%beta0QED/3
 
-    InAdim%Qln = 0; InAdim%Qlp = 0
+    InAdim%Qln = InAdim%Ql('MSRn', 4, 1._dp)
+    InAdim%Qlp = InAdim%Ql('MSRp', 4, 1._dp)
 
-    do n = 1, 4
-      do k = 0, 3
-        poch(0:4 + k - n) = PochHammerList( - InAdim%bHat(1) - k, 4 + k - n )
-        l = max(n - k, 0)
-        suma = sum( InAdim%gl(l:) * signlist(l:)/poch(1+k+l-n:4+k-n) )
-        InAdim%Qln(n) = InAdim%Qln(n) + InAdim%sCoefMSRn(k+1) * suma * (-1)**k
-        InAdim%Qlp(n) = InAdim%Qlp(n) + InAdim%sCoefMSRp(k+1) * suma * (-1)**k
-      end do
-    end do
-
-    InAdim%Qln = InAdim%Qln * beta2List(1:) * signlist(1:)
-    InAdim%Qlp = InAdim%Qlp * beta2List(1:) * signlist(1:)
-
-    poch(0:-3:-1) = 1/PochHammerList( - InAdim%bHat(1), 3 ) * powList0(-1,3)
-    poch(0:3) = PochHammerList( 1 + InAdim%bHat(1), 3 )
-
-    do n = 1, 4
-      InAdim%aRS(n) = Pi * sum( InAdim%gl * poch(n-1:n-4:-1) ) * beta2List(n - 1)
-    end do
+    InAdim%aRS = InAdim%aNasy('bare', 4, 1._dp)
 
     InAdim%N12p = InAdim%N12SumRule(3, 'Practical', 1._dp)
     InAdim%N12n = InAdim%N12SumRule(3, 'Natural'  , 1._dp)
@@ -985,13 +965,15 @@ module AnomDimClass
 !ccccccccccccccc
 
   real (dp) function N12SumRule(self, order, type, lambda)
-     class (AnomDim)      , intent(in) :: self
-     real (dp)            , intent(in) :: lambda
-     character (len = *)  , intent(in) :: type
-     integer              , intent(in) :: order
+    class (AnomDim)      , intent(in) :: self
+    real (dp)            , intent(in) :: lambda
+    character (len = *)  , intent(in) :: type
+    integer              , intent(in) :: order
 
-     N12SumRule = self%beta(0) * gamma( 1 + self%bHat(1) )/2/Pi * &
-     self%P12(order, type, lambda)
+    N12SumRule = 1; if ( type(:4) == 'bare' ) return
+
+    N12SumRule = self%beta(0) * gamma( 1 + self%bHat(1) )/2/Pi * &
+    self%P12(order, type, lambda)
 
   end function N12SumRule
 
