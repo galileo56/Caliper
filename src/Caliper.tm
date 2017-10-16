@@ -144,6 +144,7 @@
 :Evaluate:  MassIter::usage = "MassIter[n, l, j, s, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu, R] computes the bottom mass from quarkonium energy levels."
 :Evaluate:  MassExpand::usage = "MassExpand[n, l, j, s, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu, R] computes the bottom mass from quarkonium energy levels."
 :Evaluate:  FindMass::usage = "FindMass[ord, n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu, R] fits the quark mass from the quarkonium energy levels."
+:Evaluate:  FindEnergy::usage = "FindEnergy[ord, n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu, R] finds the quarkonium energy levels."
 :Evaluate:  MassError::usage = "MassError[ord, n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x] fits the quark mass from the quarkonium energy levels, including perturbative error."
 :Evaluate:  MassList::usage = "MassList[ord, n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR] makes a list of the quark mass from the quarkonium energy levels in a grid of mu-R values."
 :Evaluate:  NRQCDList::usage = "NRQCDList[n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR] makes a list of the NRQCD prediction for the quarkonium energy levels in a grid of mu-R values."
@@ -2303,6 +2304,21 @@
                  String, String, String, Integer, Integer, Integer, Integer, Integer,
                  Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
                  Real, Real, Real, Real}
+:ReturnType:     Real
+:End:
+
+:Begin:
+:Function:      findenergy
+:Pattern:       FindEnergy[ord_, n_, l_, j_, s_, iter_, charm_, scheme_, average_, method_,
+                counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_,
+                mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_, mu_, R_]
+:Arguments:     {ord, n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha,
+                 runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,
+                 lambda1, lambda2, lam, mu, R}
+:ArgumentTypes: {Integer, Integer, Integer, Integer, Integer, String, String, String,
+                 String, String, String, Integer, Integer, Integer, Integer, Integer,
+                 Real, Real, Real, Real, Real, Real, Real, Real, Real, Real,
+                 Real, Real, Real}
 :ReturnType:     Real
 :End:
 
@@ -5963,6 +5979,30 @@ double lambda1, double lambda2, double lam, double mu, double R){
   f90findmass_(&ord, &n, &l, &j, &s, iter, charm, str, average, method,
   counting, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT,
   &mB, &muB, &mC, &muC, &mass, &lambda1, &lambda2, &lam, &mu, &R, &res);
+
+  return res;
+
+}
+
+extern double f90findenergy_(int* ord, int* n, int* l, int* j, int* s, char const* iter,
+char const* charm, char const* str, char const* average, char const* method, char const* counting,
+int* orderAlpha, int* runAlpha, int* order, int* run, int* nf, double* Mz,
+double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
+double* muC, double* lambda1, double* lambda2, double* lam,
+double* mu, double* R, double* res);
+
+static double findenergy(int ord, int n, int l, int j, int s, char const* iter,
+char const* charm, char const* str, char const* average, char const* method,
+char const* counting, int orderAlpha,
+int runAlpha, int order, int run, int nf, double Mz, double aMz, double mT,
+double muT, double mB, double muB, double mC, double muC,
+double lambda1, double lambda2, double lam, double mu, double R){
+
+  double res;
+
+  f90findenergy_(&ord, &n, &l, &j, &s, iter, charm, str, average, method,
+  counting, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT, &muT,
+  &mB, &muB, &mC, &muC, &lambda1, &lambda2, &lam, &mu, &R, &res);
 
   return res;
 

@@ -30,7 +30,7 @@ module NRQCDClass
     ZeroBin, DeltaCharmBin, MassIter, EnExpand, DeltaCharmBin3, DeltaCharmDer, &
     DeltaCharmExact, DeltaCharmDerBin, MassError, EnError, MassList, NRQCDList, &
     DeltaCharmBinBend, setCharm, SetAlpha, EnDerAlpha, EnDerCharm, UpsilonList, &
-    Quantum, Scales
+    Quantum, Scales, EnFitter
 
   end type NRQCD
 
@@ -582,6 +582,55 @@ module NRQCDClass
     end function FindRoot
 
   end function MassFitter
+
+!ccccccccccccccc
+
+  real (dp) function EnFitter(self, iter, n, order, mu, R, lambda, method, counting)
+    class (NRQCD)      , intent(inout) :: self
+    character (len = *), intent(in)    :: method, iter, counting
+    integer            , intent(in)    :: order, n
+    real (dp)          , intent(in)    :: mu, R, lambda
+    real (dp)        , dimension(0:4) :: list
+    real (dp)                          :: a
+    integer                            :: i
+
+    if ( iter(:10) == 'FixedOrder' ) then
+
+      list = self%En(order, mu, R, lambda, method, counting)
+      EnFitter = sum(  list( :min(4,n) )  )
+
+    else if ( iter(:8) == 'expanded' ) then
+
+      list = self%EnExpand(order, mu, R, 1._dp, lambda, method, counting)
+
+      list(0) = 0.5_dp - list(0); list(1:) = 2 * list(1:)
+
+      EnFitter = 2 * ( list(0) + self%mH )/(   1 + sum(  list( 1:min(4,n) )  )   )
+    end if
+
+    if ( iter(:9) /= 'iterative' ) return
+
+    EnFitter = FindRoot(2 * self%mH)
+
+    do i = 1, 20
+      a = FindRoot(EnFitter);  if ( abs(a - EnFitter) < 1e-10_dp ) exit
+      EnFitter = a
+    end do
+
+  contains
+
+    real (dp) function FindRoot(mass)
+      real (dp), intent(in)     :: mass
+      real (dp), dimension(0:4) :: list
+
+      list = self%MassIter(order, mu, R, mass, lambda, method, counting)
+      list(0) = mass/2 - list(0); list(1:) = 2 * list(1:)/mass
+
+      FindRoot = 2 * ( self%mH + list(0) )/(   1 + sum(  list( 1:min(4,n) )  )   )
+
+    end function FindRoot
+
+  end function EnFitter
 
 !ccccccccccccccc
 
@@ -1943,30 +1992,13 @@ muList, RList, ndim, lambda, method, counting)
   real (dp)                    , intent(in)   :: lambda
   real (dp), dimension(ndim)   , intent(in)   :: muList, RList
   real (dp), dimension(dim)                   :: MassList
-  real (dp), dimension(0:4)                   :: list
   real (dp)                                   :: R, mu
   integer                                     :: i, j
 
   do i = 1, dim
 
     j = UpsilonList(i)%Quantum('n'); mu = muList(j); R = Rlist(j)
-
-    if ( iter(:10) == 'FixedOrder') then
-
-      list = UpsilonList(i)%En(order, mu, R, lambda, method(:8), counting(:5))
-      MassList(i) = sum(  list( :min(4,n) )  )
-
-    else if ( iter(:8) == 'expanded') then
-
-      list = UpsilonList(i)%EnExpand( order, mu, R, datalist(1,j), lambda, &
-      method(:8), counting(:5) )
-
-      list(0) = datalist(1,j)/2 - list(0); list(1:) = 2 * list(1:)/datalist(1,j)
-
-      MassList(i) = 2 * ( list(0) + UpsilonList(i)%scales('mH') )/&
-      (   1 + sum(  list( 1:min(4,n) )  )   )
-
-    end if
+    MassList(i) = UpsilonList(i)%EnFitter(iter, n, order, mu, R, lambda, method, counting)
 
   end do
 
