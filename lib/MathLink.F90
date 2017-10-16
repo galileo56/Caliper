@@ -4559,6 +4559,48 @@ end subroutine f90FindMass
 
 !ccccccccccccccc
 
+subroutine f90FindEnergy(ord, n, l, j, s, iter, charm, scheme, average, method, &
+counting, orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, &
+muC, lambda1, lambda2, lam, mu, R, res)
+
+  use RunningClass;  use AlphaClass;  use constants, only: dp
+  use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
+
+  character (len = *), intent(in ) :: method, scheme, charm, iter, average, counting
+  integer            , intent(in ) :: ord, orderAlp, runAlp, order, run, &
+  nl, n, l, j, s
+  real (dp)          , intent(in ) :: mZ, amZ, mu, mT, muT, mB, muB, mC, muC,&
+  lambda1, lam, R, lambda2
+  real (dp)          , intent(out) :: res
+  character (len = 5)              :: alphaScheme
+  type (NRQCD)                     :: Upsilon
+  type (VFNSMSR)                   :: MSR
+  type (Alpha)                     :: alphaAll
+  type (Running), dimension(2)     :: alphaMass
+  type (AnomDim), dimension(3:6)   :: AnDim
+  integer                          :: i
+
+  alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
+
+  do i = 3, 6
+    AnDim(i) = AnomDim(alphaScheme, i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
+
+  alphaMass = [ Running(nl - 1, run, alphaAll, lambda2), &
+  Running(nl, run, alphaAll, lambda1) ]
+
+  MSR     = VFNSMSR(alphaMass)
+  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+
+  res = Upsilon%EnFitter( iter(:10), ord, order, mu, R, lam, method(:8), counting(:5) )
+
+end subroutine f90FindEnergy
+
+!ccccccccccccccc
+
 subroutine f90MassError(ord, n, l, j, s, iter, charm, scheme, average, method,&
 counting, orderAlp, runAlp, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,&
 mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x, res)
@@ -4742,7 +4784,7 @@ end subroutine f90UpsilonList
 
 !ccccccccccccccc
 
-subroutine f90Chi2NRQCD(qnList, datalist, m, charm, scheme, average, method,  &
+subroutine f90Chi2NRQCD(qnList, datalist, m, iter, charm, scheme, average, method,  &
 counting, orderAlp, runAlp, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, &
 muC, lambda1, lambda2, lam, muList, RList, ndim, res)
 
@@ -4750,7 +4792,7 @@ muC, lambda1, lambda2, lam, muList, RList, ndim, res)
   use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
   real (dp)               , intent(out) :: res
-  character (len = *)      , intent(in) :: method, scheme, charm, average, counting
+  character (len = *)      , intent(in) :: method, scheme, charm, average, counting, iter
   integer , dimension(4,m) , intent(in) :: qnList
   real(dp), dimension(2,m) , intent(in) :: dataList
   real(dp), dimension(ndim), intent(in) :: Rlist, muList
@@ -4785,14 +4827,14 @@ muC, lambda1, lambda2, lam, muList, RList, ndim, res)
     qnList(2,i), qnList(3,i), qnList(4,i) )
   end do
 
-  res = Chi2NRQCD(Upsilon, datalist, m, order, n, muList, RList, ndim, &
+  res = Chi2NRQCD(Upsilon, datalist, m, iter, order, n, muList, RList, ndim, &
   lam, method(:8), counting(:5))
 
 end subroutine f90Chi2NRQCD
 
 !ccccccccccccccc
 
-subroutine f90Chi2MinNRQCD(qnList, datalist, m, charm, scheme, average, method,&
+subroutine f90Chi2MinNRQCD(qnList, datalist, m, iter, charm, scheme, average, method,&
 counting, orderAlp, runAlp, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC,  &
 muC, lambda1, lambda2, lam, muList, RList, ndim, res)
 
@@ -4800,7 +4842,7 @@ muC, lambda1, lambda2, lam, muList, RList, ndim, res)
   use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
   real (dp), dimension(3) , intent(out) :: res
-  character (len = *)      , intent(in) :: method, scheme, charm, average, counting
+  character (len = *)      , intent(in) :: method, scheme, charm, average, counting, iter
   integer , dimension(4,m) , intent(in) :: qnList
   real(dp), dimension(2,m) , intent(in) :: dataList
   integer                  , intent(in) :: orderAlp, runAlp, order, run, m, nl, n, ndim
@@ -4838,14 +4880,14 @@ muC, lambda1, lambda2, lam, muList, RList, ndim, res)
 
   if (nl == 5) mH = mT;  if (nl == 4) mH = mB;  if (nl == 3) mH = mC
 
-  res = Chi2MinNRQCD(Upsilon, datalist, m, order, n, mH, muList, RList, ndim, &
+  res = Chi2MinNRQCD(Upsilon, datalist, m, iter, order, n, mH, muList, RList, ndim, &
   lam, method(:8), counting(:5))
 
 end subroutine f90Chi2MinNRQCD
 
 !ccccccccccccccc
 
-subroutine f90Chi2MinAlphaNRQCD(qnList, datalist, m, charm, scheme, average, method,&
+subroutine f90Chi2MinAlphaNRQCD(qnList, datalist, m, iter, charm, scheme, average, method,&
 counting, orderAlp, runAlp, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC,  &
 muC, lambda1, lambda2, lam, muList, RList, ndim, res)
 
@@ -4853,7 +4895,7 @@ muC, lambda1, lambda2, lam, muList, RList, ndim, res)
   use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
   real (dp), dimension(3) , intent(out) :: res
-  character (len = *)      , intent(in) :: method, scheme, charm, average, counting
+  character (len = *)      , intent(in) :: method, scheme, charm, average, counting, iter
   integer , dimension(4,m) , intent(in) :: qnList
   real(dp), dimension(2,m) , intent(in) :: dataList
   integer                  , intent(in) :: orderAlp, runAlp, order, run, m, nl, n, ndim
@@ -4888,14 +4930,14 @@ muC, lambda1, lambda2, lam, muList, RList, ndim, res)
     qnList(2,i), qnList(3,i), qnList(4,i) )
   end do
 
-  res = Chi2MinAlphaNRQCD( Upsilon, datalist, m, order, n, amZ, muList, RList, &
+  res = Chi2MinAlphaNRQCD( Upsilon, datalist, m, iter, order, n, amZ, muList, RList, &
   ndim, lam, method(:8), counting(:5) )
 
 end subroutine f90Chi2MinAlphaNRQCD
 
 !ccccccccccccccc
 
-subroutine f90Chi2MinAlphaMbNRQCD(qnList, datalist, m, charm, scheme, average, &
+subroutine f90Chi2MinAlphaMbNRQCD(qnList, datalist, m, iter, charm, scheme, average, &
 method, counting, orderAlp, runAlp, order, run, n, nl, mZ, amZ, mT, muT, mB, &
 muB, mC, muC, lambda1, lambda2, lam, muList, RList, ndim, res)
 
@@ -4903,7 +4945,7 @@ muB, mC, muC, lambda1, lambda2, lam, muList, RList, ndim, res)
   use AnomDimClass;  use NRQCDClass;  use VFNSMSRClass;  implicit none
 
   real (dp), dimension(6) , intent(out) :: res
-  character (len = *)      , intent(in) :: method, scheme, charm, average, counting
+  character (len = *)      , intent(in) :: method, scheme, charm, average, counting, iter
   integer , dimension(4,m) , intent(in) :: qnList
   real(dp), dimension(2,m) , intent(in) :: dataList
   integer                  , intent(in) :: orderAlp, runAlp, order, run, m, nl, n, ndim
@@ -4941,7 +4983,7 @@ muB, mC, muC, lambda1, lambda2, lam, muList, RList, ndim, res)
 
   if (nl == 5) mH = mT;  if (nl == 4) mH = mB;  if (nl == 3) mH = mC
 
-  res = Chi2MinAlphaMbNRQCD( Upsilon, datalist, m, order, n, mH, amZ, muList, &
+  res = Chi2MinAlphaMbNRQCD( Upsilon, datalist, m, iter, order, n, mH, amZ, muList, &
   RList, ndim, lam, method(:8), counting(:5) )
 
 end subroutine f90Chi2MinAlphaMbNRQCD
