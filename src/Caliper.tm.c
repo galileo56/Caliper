@@ -3523,7 +3523,7 @@ double R1, double deltaR, double epsAlpha, double epsCharm){
 
 }
 
-extern double f90chi2nrqcd_(int* qnlist, double* datalist, int* m, char const* charm,
+extern double f90chi2nrqcd_(int* qnlist, double* datalist, int* m, char const* iter, char const* charm,
 char const* str, char const* average, char const* method, char const* counting,
 int* orderAlpha, int* runAlpha, int* order, int* run, int* n, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
@@ -3531,7 +3531,7 @@ double* muC, double* lambda1, double* lambda2, double* lam, double* mu,
 double* R, int* ndim, double* res);
 
 static double chi2nrqcd(int qnlist[], long len1, double datalist[], long len2,
-int m, char const* charm, char const* str, char const* average, char const* method,
+int m, char const* iter, char const* charm, char const* str, char const* average, char const* method,
 char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
 int n, double Mz, double aMz, double mT, double muT, double mB, double muB,
 double mC, double muC, double lambda1, double lambda2, double lam, double mu[],
@@ -3539,7 +3539,7 @@ long lenMu, double R[], long lenR){
 
   double res; int ndim = lenMu;
 
-  f90chi2nrqcd_(qnlist, datalist, &m, charm, str, average, method, counting,
+  f90chi2nrqcd_(qnlist, datalist, &m, iter, charm, str, average, method, counting,
   &orderAlpha, &runAlpha, &order, &run, &nf, &n, &Mz, &aMz, &mT, &muT, &mB, &muB,
   &mC, &muC, &lambda1, &lambda2, &lam, mu, R, &ndim, &res);
 
@@ -3547,7 +3547,7 @@ long lenMu, double R[], long lenR){
 
 }
 
-extern double f90chi2minnrqcd_(int* qnlist, double* datalist, int* m, char const* charm,
+extern double f90chi2minnrqcd_(int* qnlist, double* datalist, int* m, char const* iter, char const* charm,
 char const* str, char const* average, char const* method, char const* counting,
 int* orderAlpha, int* runAlpha, int* order, int* run, int* n, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
@@ -3555,7 +3555,7 @@ double* muC, double* lambda1, double* lambda2, double* lam, double* mu,
 double* R, int* ndim, double* res);
 
 static void chi2minnrqcd(int qnlist[], long len1, double datalist[], long len2,
-int m, char const* charm, char const* str, char const* average, char const* method,
+int m, char const* iter, char const* charm, char const* str, char const* average, char const* method,
 char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
 int n, double Mz, double aMz, double mT, double muT, double mB, double muB,
 double mC, double muC, double lambda1, double lambda2, double lam, double mu[],
@@ -3563,7 +3563,7 @@ long lenMu, double R[], long lenR){
 
   double res[3]; int ndim = lenMu;
 
-  f90chi2minnrqcd_(qnlist, datalist, &m, charm, str, average, method, counting,
+  f90chi2minnrqcd_(qnlist, datalist, &m, iter, charm, str, average, method, counting,
   &orderAlpha, &runAlpha, &order, &run, &nf, &n, &Mz, &aMz, &mT, &muT, &mB, &muB,
   &mC, &muC, &lambda1, &lambda2, &lam, mu, R, &ndim, res);
 
@@ -3571,7 +3571,7 @@ long lenMu, double R[], long lenR){
 
 }
 
-extern double f90chi2minalphanrqcd_(int* qnlist, double* datalist, int* m, char const* charm,
+extern double f90chi2minalphanrqcd_(int* qnlist, double* datalist, int* m, char const* iter, char const* charm,
 char const* str, char const* average, char const* method, char const* counting,
 int* orderAlpha, int* runAlpha, int* order, int* run, int* n, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
@@ -3579,7 +3579,7 @@ double* muC, double* lambda1, double* lambda2, double* lam, double* mu,
 double* R, int* ndim, double* res);
 
 static void chi2minalphanrqcd(int qnlist[], long len1, double datalist[], long len2,
-int m, char const* charm, char const* str, char const* average, char const* method,
+int m, char const* iter, char const* charm, char const* str, char const* average, char const* method,
 char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
 int n, double Mz, double aMz, double mT, double muT, double mB, double muB,
 double mC, double muC, double lambda1, double lambda2, double lam, double mu[],
@@ -3587,7 +3587,7 @@ long lenMu, double R[], long lenR){
 
   double res[3]; int ndim = lenMu;
 
-  f90chi2minalphanrqcd_(qnlist, datalist, &m, charm, str, average, method, counting,
+  f90chi2minalphanrqcd_(qnlist, datalist, &m, iter, charm, str, average, method, counting,
   &orderAlpha, &runAlpha, &order, &run, &nf, &n, &Mz, &aMz, &mT, &muT, &mB, &muB,
   &mC, &muC, &lambda1, &lambda2, &lam, mu, R, &ndim, res);
 
@@ -3595,7 +3595,7 @@ long lenMu, double R[], long lenR){
 
 }
 
-extern double f90chi2minalphambnrqcd_(int* qnlist, double* datalist, int* m, char const* charm,
+extern double f90chi2minalphambnrqcd_(int* qnlist, double* datalist, int* m, char const* iter, char const* charm,
 char const* str, char const* average, char const* method, char const* counting,
 int* orderAlpha, int* runAlpha, int* order, int* run, int* n, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
@@ -3603,7 +3603,7 @@ double* muC, double* lambda1, double* lambda2, double* lam, double* mu,
 double* R, int* ndim, double* res);
 
 static void chi2minalphambnrqcd(int qnlist[], long len1, double datalist[], long len2,
-int m, char const* charm, char const* str, char const* average, char const* method,
+int m, char const* iter, char const* charm, char const* str, char const* average, char const* method,
 char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
 int n, double Mz, double aMz, double mT, double muT, double mB, double muB,
 double mC, double muC, double lambda1, double lambda2, double lam, double mu[],
@@ -3611,7 +3611,7 @@ long lenMu, double R[], long lenR){
 
   double res[6]; int ndim = lenMu;
 
-  f90chi2minalphambnrqcd_(qnlist, datalist, &m, charm, str, average, method, counting,
+  f90chi2minalphambnrqcd_(qnlist, datalist, &m, iter, charm, str, average, method, counting,
   &orderAlpha, &runAlpha, &order, &run, &nf, &n, &Mz, &aMz, &mT, &muT, &mB, &muB,
   &mC, &muC, &lambda1, &lambda2, &lam, mu, R, &ndim, res);
 
@@ -14971,7 +14971,7 @@ L0:	return res;
 } /* _tr184 */
 
 
-double chi2nrqcd P(( int * _tp1, long _tpl1, double * _tp2, long _tpl2, int _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, int _tp9, int _tp10, int _tp11, int _tp12, int _tp13, int _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double * _tp26, long _tpl26, double * _tp27, long _tpl27));
+double chi2nrqcd P(( int * _tp1, long _tpl1, double * _tp2, long _tpl2, int _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, const char * _tp9, int _tp10, int _tp11, int _tp12, int _tp13, int _tp14, int _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double * _tp27, long _tpl27, double * _tp28, long _tpl28));
 
 #if MLPROTOTYPES
 static int _tr185( MLINK mlp)
@@ -14990,13 +14990,13 @@ static int _tr185(mlp) MLINK mlp;
 	const char * _tp6;
 	const char * _tp7;
 	const char * _tp8;
-	int _tp9;
+	const char * _tp9;
 	int _tp10;
 	int _tp11;
 	int _tp12;
 	int _tp13;
 	int _tp14;
-	double _tp15;
+	int _tp15;
 	double _tp16;
 	double _tp17;
 	double _tp18;
@@ -15007,10 +15007,11 @@ static int _tr185(mlp) MLINK mlp;
 	double _tp23;
 	double _tp24;
 	double _tp25;
-	double * _tp26;
-	long _tpl26;
+	double _tp26;
 	double * _tp27;
 	long _tpl27;
+	double * _tp28;
+	long _tpl28;
 	double _rp0;
 	if ( ! MLGetIntegerList( mlp, &_tp1, &_tpl1) ) goto L0;
 	if ( ! MLGetRealList( mlp, &_tp2, &_tpl2) ) goto L1;
@@ -15020,13 +15021,13 @@ static int _tr185(mlp) MLINK mlp;
 	if ( ! MLGetString( mlp, &_tp6) ) goto L5;
 	if ( ! MLGetString( mlp, &_tp7) ) goto L6;
 	if ( ! MLGetString( mlp, &_tp8) ) goto L7;
-	if ( ! MLGetInteger( mlp, &_tp9) ) goto L8;
+	if ( ! MLGetString( mlp, &_tp9) ) goto L8;
 	if ( ! MLGetInteger( mlp, &_tp10) ) goto L9;
 	if ( ! MLGetInteger( mlp, &_tp11) ) goto L10;
 	if ( ! MLGetInteger( mlp, &_tp12) ) goto L11;
 	if ( ! MLGetInteger( mlp, &_tp13) ) goto L12;
 	if ( ! MLGetInteger( mlp, &_tp14) ) goto L13;
-	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
+	if ( ! MLGetInteger( mlp, &_tp15) ) goto L14;
 	if ( ! MLGetReal( mlp, &_tp16) ) goto L15;
 	if ( ! MLGetReal( mlp, &_tp17) ) goto L16;
 	if ( ! MLGetReal( mlp, &_tp18) ) goto L17;
@@ -15037,17 +15038,19 @@ static int _tr185(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
 	if ( ! MLGetReal( mlp, &_tp24) ) goto L23;
 	if ( ! MLGetReal( mlp, &_tp25) ) goto L24;
-	if ( ! MLGetRealList( mlp, &_tp26, &_tpl26) ) goto L25;
+	if ( ! MLGetReal( mlp, &_tp26) ) goto L25;
 	if ( ! MLGetRealList( mlp, &_tp27, &_tpl27) ) goto L26;
-	if ( ! MLNewPacket(mlp) ) goto L27;
+	if ( ! MLGetRealList( mlp, &_tp28, &_tpl28) ) goto L27;
+	if ( ! MLNewPacket(mlp) ) goto L28;
 
-	_rp0 = chi2nrqcd(_tp1, _tpl1, _tp2, _tpl2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tpl26, _tp27, _tpl27);
+	_rp0 = chi2nrqcd(_tp1, _tpl1, _tp2, _tpl2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tp27, _tpl27, _tp28, _tpl28);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
+L28:	MLReleaseReal64List(mlp, _tp28, _tpl28);
 L27:	MLReleaseReal64List(mlp, _tp27, _tpl27);
-L26:	MLReleaseReal64List(mlp, _tp26, _tpl26);
-L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(mlp, _tp8);
+L26: L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9:	MLReleaseString(mlp, _tp9);
+L8:	MLReleaseString(mlp, _tp8);
 L7:	MLReleaseString(mlp, _tp7);
 L6:	MLReleaseString(mlp, _tp6);
 L5:	MLReleaseString(mlp, _tp5);
@@ -15059,7 +15062,7 @@ L0:	return res;
 } /* _tr185 */
 
 
-void chi2minnrqcd P(( int * _tp1, long _tpl1, double * _tp2, long _tpl2, int _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, int _tp9, int _tp10, int _tp11, int _tp12, int _tp13, int _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double * _tp26, long _tpl26, double * _tp27, long _tpl27));
+void chi2minnrqcd P(( int * _tp1, long _tpl1, double * _tp2, long _tpl2, int _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, const char * _tp9, int _tp10, int _tp11, int _tp12, int _tp13, int _tp14, int _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double * _tp27, long _tpl27, double * _tp28, long _tpl28));
 
 #if MLPROTOTYPES
 static int _tr186( MLINK mlp)
@@ -15078,13 +15081,13 @@ static int _tr186(mlp) MLINK mlp;
 	const char * _tp6;
 	const char * _tp7;
 	const char * _tp8;
-	int _tp9;
+	const char * _tp9;
 	int _tp10;
 	int _tp11;
 	int _tp12;
 	int _tp13;
 	int _tp14;
-	double _tp15;
+	int _tp15;
 	double _tp16;
 	double _tp17;
 	double _tp18;
@@ -15095,10 +15098,11 @@ static int _tr186(mlp) MLINK mlp;
 	double _tp23;
 	double _tp24;
 	double _tp25;
-	double * _tp26;
-	long _tpl26;
+	double _tp26;
 	double * _tp27;
 	long _tpl27;
+	double * _tp28;
+	long _tpl28;
 	if ( ! MLGetIntegerList( mlp, &_tp1, &_tpl1) ) goto L0;
 	if ( ! MLGetRealList( mlp, &_tp2, &_tpl2) ) goto L1;
 	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
@@ -15107,13 +15111,13 @@ static int _tr186(mlp) MLINK mlp;
 	if ( ! MLGetString( mlp, &_tp6) ) goto L5;
 	if ( ! MLGetString( mlp, &_tp7) ) goto L6;
 	if ( ! MLGetString( mlp, &_tp8) ) goto L7;
-	if ( ! MLGetInteger( mlp, &_tp9) ) goto L8;
+	if ( ! MLGetString( mlp, &_tp9) ) goto L8;
 	if ( ! MLGetInteger( mlp, &_tp10) ) goto L9;
 	if ( ! MLGetInteger( mlp, &_tp11) ) goto L10;
 	if ( ! MLGetInteger( mlp, &_tp12) ) goto L11;
 	if ( ! MLGetInteger( mlp, &_tp13) ) goto L12;
 	if ( ! MLGetInteger( mlp, &_tp14) ) goto L13;
-	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
+	if ( ! MLGetInteger( mlp, &_tp15) ) goto L14;
 	if ( ! MLGetReal( mlp, &_tp16) ) goto L15;
 	if ( ! MLGetReal( mlp, &_tp17) ) goto L16;
 	if ( ! MLGetReal( mlp, &_tp18) ) goto L17;
@@ -15124,16 +15128,18 @@ static int _tr186(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
 	if ( ! MLGetReal( mlp, &_tp24) ) goto L23;
 	if ( ! MLGetReal( mlp, &_tp25) ) goto L24;
-	if ( ! MLGetRealList( mlp, &_tp26, &_tpl26) ) goto L25;
+	if ( ! MLGetReal( mlp, &_tp26) ) goto L25;
 	if ( ! MLGetRealList( mlp, &_tp27, &_tpl27) ) goto L26;
-	if ( ! MLNewPacket(mlp) ) goto L27;
+	if ( ! MLGetRealList( mlp, &_tp28, &_tpl28) ) goto L27;
+	if ( ! MLNewPacket(mlp) ) goto L28;
 
-	chi2minnrqcd(_tp1, _tpl1, _tp2, _tpl2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tpl26, _tp27, _tpl27);
+	chi2minnrqcd(_tp1, _tpl1, _tp2, _tpl2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tp27, _tpl27, _tp28, _tpl28);
 
 	res = 1;
+L28:	MLReleaseReal64List(mlp, _tp28, _tpl28);
 L27:	MLReleaseReal64List(mlp, _tp27, _tpl27);
-L26:	MLReleaseReal64List(mlp, _tp26, _tpl26);
-L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(mlp, _tp8);
+L26: L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9:	MLReleaseString(mlp, _tp9);
+L8:	MLReleaseString(mlp, _tp8);
 L7:	MLReleaseString(mlp, _tp7);
 L6:	MLReleaseString(mlp, _tp6);
 L5:	MLReleaseString(mlp, _tp5);
@@ -15145,7 +15151,7 @@ L0:	return res;
 } /* _tr186 */
 
 
-void chi2minalphanrqcd P(( int * _tp1, long _tpl1, double * _tp2, long _tpl2, int _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, int _tp9, int _tp10, int _tp11, int _tp12, int _tp13, int _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double * _tp26, long _tpl26, double * _tp27, long _tpl27));
+void chi2minalphanrqcd P(( int * _tp1, long _tpl1, double * _tp2, long _tpl2, int _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, const char * _tp9, int _tp10, int _tp11, int _tp12, int _tp13, int _tp14, int _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double * _tp27, long _tpl27, double * _tp28, long _tpl28));
 
 #if MLPROTOTYPES
 static int _tr187( MLINK mlp)
@@ -15164,13 +15170,13 @@ static int _tr187(mlp) MLINK mlp;
 	const char * _tp6;
 	const char * _tp7;
 	const char * _tp8;
-	int _tp9;
+	const char * _tp9;
 	int _tp10;
 	int _tp11;
 	int _tp12;
 	int _tp13;
 	int _tp14;
-	double _tp15;
+	int _tp15;
 	double _tp16;
 	double _tp17;
 	double _tp18;
@@ -15181,10 +15187,11 @@ static int _tr187(mlp) MLINK mlp;
 	double _tp23;
 	double _tp24;
 	double _tp25;
-	double * _tp26;
-	long _tpl26;
+	double _tp26;
 	double * _tp27;
 	long _tpl27;
+	double * _tp28;
+	long _tpl28;
 	if ( ! MLGetIntegerList( mlp, &_tp1, &_tpl1) ) goto L0;
 	if ( ! MLGetRealList( mlp, &_tp2, &_tpl2) ) goto L1;
 	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
@@ -15193,13 +15200,13 @@ static int _tr187(mlp) MLINK mlp;
 	if ( ! MLGetString( mlp, &_tp6) ) goto L5;
 	if ( ! MLGetString( mlp, &_tp7) ) goto L6;
 	if ( ! MLGetString( mlp, &_tp8) ) goto L7;
-	if ( ! MLGetInteger( mlp, &_tp9) ) goto L8;
+	if ( ! MLGetString( mlp, &_tp9) ) goto L8;
 	if ( ! MLGetInteger( mlp, &_tp10) ) goto L9;
 	if ( ! MLGetInteger( mlp, &_tp11) ) goto L10;
 	if ( ! MLGetInteger( mlp, &_tp12) ) goto L11;
 	if ( ! MLGetInteger( mlp, &_tp13) ) goto L12;
 	if ( ! MLGetInteger( mlp, &_tp14) ) goto L13;
-	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
+	if ( ! MLGetInteger( mlp, &_tp15) ) goto L14;
 	if ( ! MLGetReal( mlp, &_tp16) ) goto L15;
 	if ( ! MLGetReal( mlp, &_tp17) ) goto L16;
 	if ( ! MLGetReal( mlp, &_tp18) ) goto L17;
@@ -15210,16 +15217,18 @@ static int _tr187(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
 	if ( ! MLGetReal( mlp, &_tp24) ) goto L23;
 	if ( ! MLGetReal( mlp, &_tp25) ) goto L24;
-	if ( ! MLGetRealList( mlp, &_tp26, &_tpl26) ) goto L25;
+	if ( ! MLGetReal( mlp, &_tp26) ) goto L25;
 	if ( ! MLGetRealList( mlp, &_tp27, &_tpl27) ) goto L26;
-	if ( ! MLNewPacket(mlp) ) goto L27;
+	if ( ! MLGetRealList( mlp, &_tp28, &_tpl28) ) goto L27;
+	if ( ! MLNewPacket(mlp) ) goto L28;
 
-	chi2minalphanrqcd(_tp1, _tpl1, _tp2, _tpl2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tpl26, _tp27, _tpl27);
+	chi2minalphanrqcd(_tp1, _tpl1, _tp2, _tpl2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tp27, _tpl27, _tp28, _tpl28);
 
 	res = 1;
+L28:	MLReleaseReal64List(mlp, _tp28, _tpl28);
 L27:	MLReleaseReal64List(mlp, _tp27, _tpl27);
-L26:	MLReleaseReal64List(mlp, _tp26, _tpl26);
-L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(mlp, _tp8);
+L26: L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9:	MLReleaseString(mlp, _tp9);
+L8:	MLReleaseString(mlp, _tp8);
 L7:	MLReleaseString(mlp, _tp7);
 L6:	MLReleaseString(mlp, _tp6);
 L5:	MLReleaseString(mlp, _tp5);
@@ -15231,7 +15240,7 @@ L0:	return res;
 } /* _tr187 */
 
 
-void chi2minalphambnrqcd P(( int * _tp1, long _tpl1, double * _tp2, long _tpl2, int _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, int _tp9, int _tp10, int _tp11, int _tp12, int _tp13, int _tp14, double _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double * _tp26, long _tpl26, double * _tp27, long _tpl27));
+void chi2minalphambnrqcd P(( int * _tp1, long _tpl1, double * _tp2, long _tpl2, int _tp3, const char * _tp4, const char * _tp5, const char * _tp6, const char * _tp7, const char * _tp8, const char * _tp9, int _tp10, int _tp11, int _tp12, int _tp13, int _tp14, int _tp15, double _tp16, double _tp17, double _tp18, double _tp19, double _tp20, double _tp21, double _tp22, double _tp23, double _tp24, double _tp25, double _tp26, double * _tp27, long _tpl27, double * _tp28, long _tpl28));
 
 #if MLPROTOTYPES
 static int _tr188( MLINK mlp)
@@ -15250,13 +15259,13 @@ static int _tr188(mlp) MLINK mlp;
 	const char * _tp6;
 	const char * _tp7;
 	const char * _tp8;
-	int _tp9;
+	const char * _tp9;
 	int _tp10;
 	int _tp11;
 	int _tp12;
 	int _tp13;
 	int _tp14;
-	double _tp15;
+	int _tp15;
 	double _tp16;
 	double _tp17;
 	double _tp18;
@@ -15267,10 +15276,11 @@ static int _tr188(mlp) MLINK mlp;
 	double _tp23;
 	double _tp24;
 	double _tp25;
-	double * _tp26;
-	long _tpl26;
+	double _tp26;
 	double * _tp27;
 	long _tpl27;
+	double * _tp28;
+	long _tpl28;
 	if ( ! MLGetIntegerList( mlp, &_tp1, &_tpl1) ) goto L0;
 	if ( ! MLGetRealList( mlp, &_tp2, &_tpl2) ) goto L1;
 	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
@@ -15279,13 +15289,13 @@ static int _tr188(mlp) MLINK mlp;
 	if ( ! MLGetString( mlp, &_tp6) ) goto L5;
 	if ( ! MLGetString( mlp, &_tp7) ) goto L6;
 	if ( ! MLGetString( mlp, &_tp8) ) goto L7;
-	if ( ! MLGetInteger( mlp, &_tp9) ) goto L8;
+	if ( ! MLGetString( mlp, &_tp9) ) goto L8;
 	if ( ! MLGetInteger( mlp, &_tp10) ) goto L9;
 	if ( ! MLGetInteger( mlp, &_tp11) ) goto L10;
 	if ( ! MLGetInteger( mlp, &_tp12) ) goto L11;
 	if ( ! MLGetInteger( mlp, &_tp13) ) goto L12;
 	if ( ! MLGetInteger( mlp, &_tp14) ) goto L13;
-	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
+	if ( ! MLGetInteger( mlp, &_tp15) ) goto L14;
 	if ( ! MLGetReal( mlp, &_tp16) ) goto L15;
 	if ( ! MLGetReal( mlp, &_tp17) ) goto L16;
 	if ( ! MLGetReal( mlp, &_tp18) ) goto L17;
@@ -15296,16 +15306,18 @@ static int _tr188(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp23) ) goto L22;
 	if ( ! MLGetReal( mlp, &_tp24) ) goto L23;
 	if ( ! MLGetReal( mlp, &_tp25) ) goto L24;
-	if ( ! MLGetRealList( mlp, &_tp26, &_tpl26) ) goto L25;
+	if ( ! MLGetReal( mlp, &_tp26) ) goto L25;
 	if ( ! MLGetRealList( mlp, &_tp27, &_tpl27) ) goto L26;
-	if ( ! MLNewPacket(mlp) ) goto L27;
+	if ( ! MLGetRealList( mlp, &_tp28, &_tpl28) ) goto L27;
+	if ( ! MLNewPacket(mlp) ) goto L28;
 
-	chi2minalphambnrqcd(_tp1, _tpl1, _tp2, _tpl2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tpl26, _tp27, _tpl27);
+	chi2minalphambnrqcd(_tp1, _tpl1, _tp2, _tpl2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15, _tp16, _tp17, _tp18, _tp19, _tp20, _tp21, _tp22, _tp23, _tp24, _tp25, _tp26, _tp27, _tpl27, _tp28, _tpl28);
 
 	res = 1;
+L28:	MLReleaseReal64List(mlp, _tp28, _tpl28);
 L27:	MLReleaseReal64List(mlp, _tp27, _tpl27);
-L26:	MLReleaseReal64List(mlp, _tp26, _tpl26);
-L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9: L8:	MLReleaseString(mlp, _tp8);
+L26: L25: L24: L23: L22: L21: L20: L19: L18: L17: L16: L15: L14: L13: L12: L11: L10: L9:	MLReleaseString(mlp, _tp9);
+L8:	MLReleaseString(mlp, _tp8);
 L7:	MLReleaseString(mlp, _tp7);
 L6:	MLReleaseString(mlp, _tp6);
 L5:	MLReleaseString(mlp, _tp5);
@@ -17693,10 +17705,10 @@ static struct func {
 		{33, 0, _tr182, "nrqcdlist" },
 		{33, 0, _tr183, "upsilonlist" },
 		{31, 0, _tr184, "corrmat" },
-		{27, 0, _tr185, "chi2nrqcd" },
-		{27, 0, _tr186, "chi2minnrqcd" },
-		{27, 0, _tr187, "chi2minalphanrqcd" },
-		{27, 0, _tr188, "chi2minalphambnrqcd" },
+		{28, 0, _tr185, "chi2nrqcd" },
+		{28, 0, _tr186, "chi2minnrqcd" },
+		{28, 0, _tr187, "chi2minalphanrqcd" },
+		{28, 0, _tr188, "chi2minalphambnrqcd" },
 		{31, 0, _tr189, "errmat" },
 		{31, 0, _tr190, "errmatrices" },
 		{34, 0, _tr191, "nrqcderror" },
@@ -18290,29 +18302,29 @@ static const char* evalstrs[] = {
 	"of the masses and derivatives wrt alpha and mc, perturbative unc",
 	"ertainties and covariance matrix.\"",
 	(const char*)0,
-	"Chi2NRQCD::usage = \"Chi2NRQCD[qnlist, datalist, charm, scheme, a",
-	"verage, method, counting, orderAlpha, runAlpha, order, run, n, n",
-	"l, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu",
-	", R] Computes the chi2 value with respect of the heavy quark mas",
-	"s for quarkonium.\"",
-	(const char*)0,
-	"Chi2MinNRQCD::usage = \"Chi2MinNRQCD[qnlist, datalist, charm, sch",
+	"Chi2NRQCD::usage = \"Chi2NRQCD[qnlist, datalist, iter, charm, sch",
 	"eme, average, method, counting, orderAlpha, runAlpha, order, run",
 	", n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, l",
-	"am, mu, R] minimizes the chi2 value with respect of the heavy qu",
-	"ark mass and alphaS(mZ) for quarkonium.\"",
+	"am, mu, R] Computes the chi2 value with respect of the heavy qua",
+	"rk mass for quarkonium.\"",
+	(const char*)0,
+	"Chi2MinNRQCD::usage = \"Chi2MinNRQCD[qnlist, datalist, iter, char",
+	"m, scheme, average, method, counting, orderAlpha, runAlpha, orde",
+	"r, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lamb",
+	"da2, lam, mu, R] minimizes the chi2 value with respect of the he",
+	"avy quark mass and alphaS(mZ) for quarkonium.\"",
 	(const char*)0,
 	"Chi2MinAlphaNRQCD::usage = \"Chi2MinAlphaNRQCD[qnlist, datalist, ",
-	"charm, scheme, average, method, counting, orderAlpha, runAlpha, ",
-	"order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, ",
-	"lambda2, lam, mu, R] minimizes the chi2 value with respect to al",
-	"phaS(mZ) for quarkonium.\"",
+	"iter, charm, scheme, average, method, counting, orderAlpha, runA",
+	"lpha, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lam",
+	"bda1, lambda2, lam, mu, R] minimizes the chi2 value with respect",
+	" to alphaS(mZ) for quarkonium.\"",
 	(const char*)0,
 	"Chi2MinAlphaMbNRQCD::usage = \"Chi2MinAlphaMbNRQCD[qnlist, datali",
-	"st, charm, scheme, average, method, counting, orderAlpha, runAlp",
-	"ha, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambd",
-	"a1, lambda2, lam, mu, R] minimizes the chi2 value for quarkonium",
-	".\"",
+	"st, iter, charm, scheme, average, method, counting, orderAlpha, ",
+	"runAlpha, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,",
+	" lambda1, lambda2, lam, mu, R] minimizes the chi2 value for quar",
+	"konium.\"",
 	(const char*)0,
 	"ErrMat::usage = \"ErrMat[qnlist, charm, scheme, average, method, ",
 	"counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT",
@@ -19095,10 +19107,10 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"NRQCDList[n_, l_, j_, s_, iter_, charm_, scheme_, average_,                 method_, counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,                 mT_, muT_, mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_,                 lam_, mu0_, mu1_, deltaMu_, R0_, R1_, deltaR_]", (char *)"{n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR}", 182);
 	if (_res) _res = _definepattern(mlp, (char *)"UpsilonList[n_, l_, j_, s_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,                 mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_, mu0_,                 mu1_, deltaMu_, R0_, R1_, deltaR_, epsAlpha_, epsCharm_]", (char *)"{n, l, j, s, charm, scheme, average, method, counting, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR,                  epsAlpha, epsCharm}", 183);
 	if (_res) _res = _definepattern(mlp, (char *)"CorrMat[qnlist_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,                 mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_, mu0_,                 mu1_, deltaMu_, R0_, R1_, deltaR_, epsAlpha_, epsCharm_]", (char *)"{Flatten[qnlist], Length[qnlist], charm, scheme, average, method,                  counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT,                  muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu0, mu1, deltaMu,                  R0, R1, deltaR, epsAlpha, epsCharm}", 184);
-	if (_res) _res = _definepattern(mlp, (char *)"Chi2NRQCD[qnlist_, datalist_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, n_, nl_, mZ_,                 amZ_, mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_,                 mu_, R_]", (char *)"{Flatten[qnlist], Flatten[datalist], Length[qnlist], charm,                  scheme, average, method, counting, orderAlpha, runAlpha, order,                  run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1,                  lambda2, lam, mu, R}", 185);
-	if (_res) _res = _definepattern(mlp, (char *)"Chi2MinNRQCD[qnlist_, datalist_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, n_, nl_, mZ_,                 amZ_, mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_,                 mu_, R_]", (char *)"{Flatten[qnlist], Flatten[datalist], Length[qnlist], charm,                  scheme, average, method, counting, orderAlpha, runAlpha, order,                  run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1,                  lambda2, lam, mu, R}", 186);
-	if (_res) _res = _definepattern(mlp, (char *)"Chi2MinAlphaNRQCD[qnlist_, datalist_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, n_, nl_, mZ_,                 amZ_, mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_,                 mu_, R_]", (char *)"{Flatten[qnlist], Flatten[datalist], Length[qnlist], charm,                  scheme, average, method, counting, orderAlpha, runAlpha, order,                  run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1,                  lambda2, lam, mu, R}", 187);
-	if (_res) _res = _definepattern(mlp, (char *)"Chi2MinAlphaMbNRQCD[qnlist_, datalist_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, n_, nl_, mZ_,                 amZ_, mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_,                 mu_, R_]", (char *)"{Flatten[qnlist], Flatten[datalist], Length[qnlist], charm,                  scheme, average, method, counting, orderAlpha, runAlpha, order,                  run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1,                  lambda2, lam, mu, R}", 188);
+	if (_res) _res = _definepattern(mlp, (char *)"Chi2NRQCD[qnlist_, datalist_, iter_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, n_, nl_, mZ_,                 amZ_, mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_,                 mu_, R_]", (char *)"{Flatten[qnlist], Flatten[datalist], Length[qnlist], iter, charm,                  scheme, average, method, counting, orderAlpha, runAlpha, order,                  run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1,                  lambda2, lam, mu, R}", 185);
+	if (_res) _res = _definepattern(mlp, (char *)"Chi2MinNRQCD[qnlist_, datalist_, iter_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, n_, nl_, mZ_,                 amZ_, mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_,                 mu_, R_]", (char *)"{Flatten[qnlist], Flatten[datalist], Length[qnlist], iter, charm,                  scheme, average, method, counting, orderAlpha, runAlpha, order,                  run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1,                  lambda2, lam, mu, R}", 186);
+	if (_res) _res = _definepattern(mlp, (char *)"Chi2MinAlphaNRQCD[qnlist_, datalist_, iter_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, n_, nl_, mZ_,                 amZ_, mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_,                 mu_, R_]", (char *)"{Flatten[qnlist], Flatten[datalist], Length[qnlist], iter, charm,                  scheme, average, method, counting, orderAlpha, runAlpha, order,                  run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1,                  lambda2, lam, mu, R}", 187);
+	if (_res) _res = _definepattern(mlp, (char *)"Chi2MinAlphaMbNRQCD[qnlist_, datalist_, iter_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, n_, nl_, mZ_,                 amZ_, mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_,                 mu_, R_]", (char *)"{Flatten[qnlist], Flatten[datalist], Length[qnlist], iter, charm,                  scheme, average, method, counting, orderAlpha, runAlpha, order,                  run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1,                  lambda2, lam, mu, R}", 188);
 	if (_res) _res = _definepattern(mlp, (char *)"ErrMat[qnlist_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,                 mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_, mu0_,                 mu1_, deltaMu_, R0_, R1_, deltaR_, epsAlpha_, epsCharm_]", (char *)"{Flatten[qnlist], Length[qnlist], charm, scheme, average, method, counting, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR,                  epsAlpha, epsCharm}", 189);
 	if (_res) _res = _definepattern(mlp, (char *)"ErrMatrices[qnlist_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,                 mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_, mu0_,                 mu1_, deltaMu_, R0_, R1_, deltaR_, epsAlpha_, epsCharm_]", (char *)"{Flatten[qnlist], Length[qnlist], charm, scheme, average, method, counting, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR,                  epsAlpha, epsCharm}", 190);
 	if (_res) _res = _definepattern(mlp, (char *)"NRQCDError[n_, l_, j_, s_, iter_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_,                 mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_, lam_, mu0_,                 mu1_, deltaMu_, R0_, R1_, deltaR_, x_]", (char *)"{n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR,                  x}", 191);

@@ -30,7 +30,7 @@ module NRQCDClass
     ZeroBin, DeltaCharmBin, MassIter, EnExpand, DeltaCharmBin3, DeltaCharmDer, &
     DeltaCharmExact, DeltaCharmDerBin, MassError, EnError, MassList, NRQCDList, &
     DeltaCharmBinBend, setCharm, SetAlpha, EnDerAlpha, EnDerCharm, UpsilonList, &
-    Quantum
+    Quantum, Scales
 
   end type NRQCD
 
@@ -223,6 +223,20 @@ module NRQCDClass
     if ( str(:1) == 'j' ) Quantum = self%j
 
   end function Quantum
+
+!ccccccccccccccc
+
+  real (dp) function scales(self, str)
+    class (NRQCD)      , intent(inout) :: self
+    character (len = *), intent(in)    :: str
+
+    scales = 0
+
+    if ( str(:2) == 'mH'  ) scales = self%mH
+    if ( str(:2) == 'mC'  ) scales = self%mC
+    if ( str(:3) == 'muC' ) scales = self%muC
+
+  end function scales
 
 !ccccccccccccccc
 
@@ -1861,9 +1875,9 @@ module NRQCDClass
   deltaR, lambda, method, counting, epsAlpha, epsCharm, massList, corMat)
 
     type (NRQCD), dimension(dim), intent(inout) :: UpsilonList
-    character (len = *)          , intent(in)    :: method, counting
-    integer                      , intent(in)    :: n, dim
-    real (dp)                    , intent(in)    :: lambda, mu0, mu1, R1, deltaMu, &
+    character (len = *)          , intent(in)   :: method, counting
+    integer                      , intent(in)   :: n, dim
+    real (dp)                    , intent(in)   :: lambda, mu0, mu1, R1, deltaMu, &
     deltaR, epsAlpha, epsCharm, R0
 
     real (dp), dimension( dim, 5, 5 )  , intent(out) :: massList
@@ -1919,12 +1933,12 @@ module NRQCDClass
 
 !ccccccccccccccc
 
-real (dp) function Chi2NRQCD(UpsilonList, datalist, dim, order, n, muList, &
-RList, ndim, lambda, method, counting)
+real (dp) function Chi2NRQCD(UpsilonList, datalist, dim, iter, order, n, &
+muList, RList, ndim, lambda, method, counting)
 
   type (NRQCD), dimension(dim), intent(inout) :: UpsilonList
   real (dp) , dimension(2,dim), intent(in)    :: datalist
-  character (len = *)          , intent(in)   :: method, counting
+  character (len = *)          , intent(in)   :: method, counting, iter
   integer                      , intent(in)   :: order, dim, n, ndim
   real (dp)                    , intent(in)   :: lambda
   real (dp), dimension(ndim)   , intent(in)   :: muList, RList
@@ -1934,9 +1948,26 @@ RList, ndim, lambda, method, counting)
   integer                                     :: i, j
 
   do i = 1, dim
+
     j = UpsilonList(i)%Quantum('n'); mu = muList(j); R = Rlist(j)
-    list = UpsilonList(i)%En(order, mu, R, lambda, method(:8), counting(:5))
-    MassList(i) = sum(  list( :min(4,n) )  )
+
+    if ( iter(:10) == 'FixedOrder') then
+
+      list = UpsilonList(i)%En(order, mu, R, lambda, method(:8), counting(:5))
+      MassList(i) = sum(  list( :min(4,n) )  )
+
+    else if ( iter(:8) == 'expanded') then
+
+      list = UpsilonList(i)%EnExpand( order, mu, R, datalist(1,j), lambda, &
+      method(:8), counting(:5) )
+
+      list(0) = datalist(1,j)/2 - list(0); list(1:) = 2 * list(1:)/datalist(1,j)
+
+      MassList(i) = 2 * ( list(0) + UpsilonList(i)%scales('mH') )/&
+      (   1 + sum(  list( 1:min(4,n) )  )   )
+
+    end if
+
   end do
 
   Chi2NRQCD = sum(   (  ( MassList - datalist(1,:) )/datalist(2,:)  )**2   )
@@ -1945,12 +1976,12 @@ end function Chi2NRQCD
 
 !ccccccccccccccc
 
-function Chi2MinNRQCD(UpsilonList, datalist, dim, order, n, mH, muList, RList, &
-ndim, lambda, method, counting) result(res)
+function Chi2MinNRQCD(UpsilonList, datalist, dim, iter, order, n, mH, muList, &
+RList, ndim, lambda, method, counting) result(res)
 
 type (NRQCD), dimension(dim), intent(inout) :: UpsilonList
 real (dp) , dimension(2,dim), intent(in)    :: datalist
-character (len = *)          , intent(in)   :: method, counting
+character (len = *)          , intent(in)   :: method, counting, iter
 integer                      , intent(in)   :: order, dim, n, ndim
 real (dp)                    , intent(in)   :: lambda, mH
 real (dp), dimension(ndim)   , intent(in)   :: muList, RList
@@ -1988,8 +2019,8 @@ contains
       call UpsilonList(j)%setMass( mass(1) )
     end do
 
-    chi2 = Chi2NRQCD(UpsilonList, datalist, dim, order, n, muList, RList, ndim, &
-    lambda, method, counting)
+    chi2 = Chi2NRQCD(UpsilonList, datalist, dim, iter, order, n, muList, RList, &
+    ndim, lambda, method, counting)
 
   end function chi2
 
@@ -1997,12 +2028,12 @@ end function Chi2MinNRQCD
 
 !ccccccccccccccc
 
-function Chi2MinAlphaNRQCD(UpsilonList, datalist, dim, order, n, alpha, muList, &
-RList, ndim, lambda, method, counting) result(res)
+function Chi2MinAlphaNRQCD(UpsilonList, datalist, dim, iter, order, n, alpha, &
+muList, RList, ndim, lambda, method, counting) result(res)
 
 type (NRQCD), dimension(dim), intent(inout) :: UpsilonList
 real (dp) , dimension(2,dim), intent(in)    :: datalist
-character (len = *)          , intent(in)   :: method, counting
+character (len = *)          , intent(in)   :: method, counting, iter
 integer                      , intent(in)   :: order, dim, n, ndim
 real (dp)                    , intent(in)   :: lambda, alpha
 real (dp), dimension(ndim)   , intent(in)   :: muList, RList
@@ -2040,8 +2071,8 @@ contains
       call UpsilonList(j)%setAlpha( mass(1) )
     end do
 
-    chi2 = Chi2NRQCD(UpsilonList, datalist, dim, order, n, muList, RList, ndim, &
-    lambda, method, counting)
+    chi2 = Chi2NRQCD(UpsilonList, datalist, dim, iter, order, n, muList, RList, &
+    ndim, lambda, method, counting)
 
   end function chi2
 
@@ -2049,12 +2080,12 @@ end function Chi2MinAlphaNRQCD
 
 !ccccccccccccccc
 
-function Chi2MinAlphaMbNRQCD(UpsilonList, datalist, dim, order, n, mH, alpha, &
-muList, RList, ndim, lambda, method, counting) result(res)
+function Chi2MinAlphaMbNRQCD(UpsilonList, datalist, dim, iter, order, n, mH, &
+alpha, muList, RList, ndim, lambda, method, counting) result(res)
 
 type (NRQCD), dimension(dim), intent(inout) :: UpsilonList
 real (dp) , dimension(2,dim), intent(in)    :: datalist
-character (len = *)          , intent(in)   :: method, counting
+character (len = *)          , intent(in)   :: method, counting, iter
 integer                      , intent(in)   :: order, dim, n, ndim
 real (dp)                    , intent(in)   :: lambda, mH, alpha
 real (dp), dimension(ndim)   , intent(in)   :: muList, RList
@@ -2111,7 +2142,7 @@ contains
       call UpsilonList(j)%setAlpha( x(2) )
     end do
 
-    chi2 = Chi2NRQCD(UpsilonList, datalist, dim, order, n, muList, RList, ndim, &
+    chi2 = Chi2NRQCD(UpsilonList, datalist, dim, iter, order, n, muList, RList, ndim, &
     lambda, method, counting)
 
   end function chi2

@@ -149,10 +149,10 @@
 :Evaluate:  NRQCDList::usage = "NRQCDList[n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR] makes a list of the NRQCD prediction for the quarkonium energy levels in a grid of mu-R values."
 :Evaluate:  UpsilonList::usage = "UpsilonList[n, l, j, s, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm] makes a list of the NRQCD prediction for the quarkonium energy levels and their derivatives wrt alpha(mZ) and mC, in a grid of mu-R values."
 :Evaluate:  CorrMat::usage = "CorrMat[qnlist, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm] Computes the average values of the masses and derivatives wrt alpha and mc, perturbative uncertainties and covariance matrix."
-:Evaluate:  Chi2NRQCD::usage = "Chi2NRQCD[qnlist, datalist, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu, R] Computes the chi2 value with respect of the heavy quark mass for quarkonium."
-:Evaluate:  Chi2MinNRQCD::usage = "Chi2MinNRQCD[qnlist, datalist, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu, R] minimizes the chi2 value with respect of the heavy quark mass and alphaS(mZ) for quarkonium."
-:Evaluate:  Chi2MinAlphaNRQCD::usage = "Chi2MinAlphaNRQCD[qnlist, datalist, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu, R] minimizes the chi2 value with respect to alphaS(mZ) for quarkonium."
-:Evaluate:  Chi2MinAlphaMbNRQCD::usage = "Chi2MinAlphaMbNRQCD[qnlist, datalist, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu, R] minimizes the chi2 value for quarkonium."
+:Evaluate:  Chi2NRQCD::usage = "Chi2NRQCD[qnlist, datalist, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu, R] Computes the chi2 value with respect of the heavy quark mass for quarkonium."
+:Evaluate:  Chi2MinNRQCD::usage = "Chi2MinNRQCD[qnlist, datalist, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu, R] minimizes the chi2 value with respect of the heavy quark mass and alphaS(mZ) for quarkonium."
+:Evaluate:  Chi2MinAlphaNRQCD::usage = "Chi2MinAlphaNRQCD[qnlist, datalist, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu, R] minimizes the chi2 value with respect to alphaS(mZ) for quarkonium."
+:Evaluate:  Chi2MinAlphaMbNRQCD::usage = "Chi2MinAlphaMbNRQCD[qnlist, datalist, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu, R] minimizes the chi2 value for quarkonium."
 :Evaluate:  ErrMat::usage = "ErrMat[qnlist, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm] Computes the average values of the masses and derivatives wrt alpha and mc, perturbative uncertainties and covariance matrix."
 :Evaluate:  ErrMatrices::usage = "ErrMatrices[qnlist, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm] Computes the average values of the masses and derivatives wrt alpha and mc, perturbative uncertainties and covariance matrix."
 :Evaluate:  NRQCDError::usage = "NRQCDError[n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x] computes the quarkonium energy levels, including perturbative error."
@@ -2391,15 +2391,15 @@
 
 :Begin:
 :Function:      chi2nrqcd
-:Pattern:       Chi2NRQCD[qnlist_, datalist_, charm_, scheme_, average_, method_,
+:Pattern:       Chi2NRQCD[qnlist_, datalist_, iter_, charm_, scheme_, average_, method_,
                 counting_, orderAlpha_, runAlpha_, order_, run_, n_, nl_, mZ_,
                 amZ_, mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_,
                 mu_, R_]
-:Arguments:     {Flatten[qnlist], Flatten[datalist], Length[qnlist], charm,
+:Arguments:     {Flatten[qnlist], Flatten[datalist], Length[qnlist], iter, charm,
                  scheme, average, method, counting, orderAlpha, runAlpha, order,
                  run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1,
                  lambda2, lam, mu, R}
-:ArgumentTypes: {IntegerList, RealList, Integer, String, String, String,
+:ArgumentTypes: {IntegerList, RealList, Integer, String, String, String, String,
                  String, String, Integer, Integer, Integer, Integer, Integer,
                  Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
                  Real, Real, RealList, RealList}
@@ -2408,15 +2408,15 @@
 
 :Begin:
 :Function:      chi2minnrqcd
-:Pattern:       Chi2MinNRQCD[qnlist_, datalist_, charm_, scheme_, average_, method_,
+:Pattern:       Chi2MinNRQCD[qnlist_, datalist_, iter_, charm_, scheme_, average_, method_,
                 counting_, orderAlpha_, runAlpha_, order_, run_, n_, nl_, mZ_,
                 amZ_, mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_,
                 mu_, R_]
-:Arguments:     {Flatten[qnlist], Flatten[datalist], Length[qnlist], charm,
+:Arguments:     {Flatten[qnlist], Flatten[datalist], Length[qnlist], iter, charm,
                  scheme, average, method, counting, orderAlpha, runAlpha, order,
                  run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1,
                  lambda2, lam, mu, R}
-:ArgumentTypes: {IntegerList, RealList, Integer, String, String, String,
+:ArgumentTypes: {IntegerList, RealList, Integer, String, String, String, String,
                  String, String, Integer, Integer, Integer, Integer, Integer,
                  Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
                  Real, Real, RealList, RealList}
@@ -2425,15 +2425,15 @@
 
 :Begin:
 :Function:      chi2minalphanrqcd
-:Pattern:       Chi2MinAlphaNRQCD[qnlist_, datalist_, charm_, scheme_, average_, method_,
+:Pattern:       Chi2MinAlphaNRQCD[qnlist_, datalist_, iter_, charm_, scheme_, average_, method_,
                 counting_, orderAlpha_, runAlpha_, order_, run_, n_, nl_, mZ_,
                 amZ_, mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_,
                 mu_, R_]
-:Arguments:     {Flatten[qnlist], Flatten[datalist], Length[qnlist], charm,
+:Arguments:     {Flatten[qnlist], Flatten[datalist], Length[qnlist], iter, charm,
                  scheme, average, method, counting, orderAlpha, runAlpha, order,
                  run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1,
                  lambda2, lam, mu, R}
-:ArgumentTypes: {IntegerList, RealList, Integer, String, String, String,
+:ArgumentTypes: {IntegerList, RealList, Integer, String, String, String, String,
                  String, String, Integer, Integer, Integer, Integer, Integer,
                  Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
                  Real, Real, RealList, RealList}
@@ -2442,15 +2442,15 @@
 
 :Begin:
 :Function:      chi2minalphambnrqcd
-:Pattern:       Chi2MinAlphaMbNRQCD[qnlist_, datalist_, charm_, scheme_, average_, method_,
+:Pattern:       Chi2MinAlphaMbNRQCD[qnlist_, datalist_, iter_, charm_, scheme_, average_, method_,
                 counting_, orderAlpha_, runAlpha_, order_, run_, n_, nl_, mZ_,
                 amZ_, mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_,
                 mu_, R_]
-:Arguments:     {Flatten[qnlist], Flatten[datalist], Length[qnlist], charm,
+:Arguments:     {Flatten[qnlist], Flatten[datalist], Length[qnlist], iter, charm,
                  scheme, average, method, counting, orderAlpha, runAlpha, order,
                  run, n, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1,
                  lambda2, lam, mu, R}
-:ArgumentTypes: {IntegerList, RealList, Integer, String, String, String,
+:ArgumentTypes: {IntegerList, RealList, Integer, String, String, String, String,
                  String, String, Integer, Integer, Integer, Integer, Integer,
                  Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
                  Real, Real, RealList, RealList}
@@ -6163,7 +6163,7 @@ double R1, double deltaR, double epsAlpha, double epsCharm){
 
 }
 
-extern double f90chi2nrqcd_(int* qnlist, double* datalist, int* m, char const* charm,
+extern double f90chi2nrqcd_(int* qnlist, double* datalist, int* m, char const* iter, char const* charm,
 char const* str, char const* average, char const* method, char const* counting,
 int* orderAlpha, int* runAlpha, int* order, int* run, int* n, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
@@ -6171,7 +6171,7 @@ double* muC, double* lambda1, double* lambda2, double* lam, double* mu,
 double* R, int* ndim, double* res);
 
 static double chi2nrqcd(int qnlist[], long len1, double datalist[], long len2,
-int m, char const* charm, char const* str, char const* average, char const* method,
+int m, char const* iter, char const* charm, char const* str, char const* average, char const* method,
 char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
 int n, double Mz, double aMz, double mT, double muT, double mB, double muB,
 double mC, double muC, double lambda1, double lambda2, double lam, double mu[],
@@ -6179,7 +6179,7 @@ long lenMu, double R[], long lenR){
 
   double res; int ndim = lenMu;
 
-  f90chi2nrqcd_(qnlist, datalist, &m, charm, str, average, method, counting,
+  f90chi2nrqcd_(qnlist, datalist, &m, iter, charm, str, average, method, counting,
   &orderAlpha, &runAlpha, &order, &run, &nf, &n, &Mz, &aMz, &mT, &muT, &mB, &muB,
   &mC, &muC, &lambda1, &lambda2, &lam, mu, R, &ndim, &res);
 
@@ -6187,7 +6187,7 @@ long lenMu, double R[], long lenR){
 
 }
 
-extern double f90chi2minnrqcd_(int* qnlist, double* datalist, int* m, char const* charm,
+extern double f90chi2minnrqcd_(int* qnlist, double* datalist, int* m, char const* iter, char const* charm,
 char const* str, char const* average, char const* method, char const* counting,
 int* orderAlpha, int* runAlpha, int* order, int* run, int* n, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
@@ -6195,7 +6195,7 @@ double* muC, double* lambda1, double* lambda2, double* lam, double* mu,
 double* R, int* ndim, double* res);
 
 static void chi2minnrqcd(int qnlist[], long len1, double datalist[], long len2,
-int m, char const* charm, char const* str, char const* average, char const* method,
+int m, char const* iter, char const* charm, char const* str, char const* average, char const* method,
 char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
 int n, double Mz, double aMz, double mT, double muT, double mB, double muB,
 double mC, double muC, double lambda1, double lambda2, double lam, double mu[],
@@ -6203,7 +6203,7 @@ long lenMu, double R[], long lenR){
 
   double res[3]; int ndim = lenMu;
 
-  f90chi2minnrqcd_(qnlist, datalist, &m, charm, str, average, method, counting,
+  f90chi2minnrqcd_(qnlist, datalist, &m, iter, charm, str, average, method, counting,
   &orderAlpha, &runAlpha, &order, &run, &nf, &n, &Mz, &aMz, &mT, &muT, &mB, &muB,
   &mC, &muC, &lambda1, &lambda2, &lam, mu, R, &ndim, res);
 
@@ -6211,7 +6211,7 @@ long lenMu, double R[], long lenR){
 
 }
 
-extern double f90chi2minalphanrqcd_(int* qnlist, double* datalist, int* m, char const* charm,
+extern double f90chi2minalphanrqcd_(int* qnlist, double* datalist, int* m, char const* iter, char const* charm,
 char const* str, char const* average, char const* method, char const* counting,
 int* orderAlpha, int* runAlpha, int* order, int* run, int* n, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
@@ -6219,7 +6219,7 @@ double* muC, double* lambda1, double* lambda2, double* lam, double* mu,
 double* R, int* ndim, double* res);
 
 static void chi2minalphanrqcd(int qnlist[], long len1, double datalist[], long len2,
-int m, char const* charm, char const* str, char const* average, char const* method,
+int m, char const* iter, char const* charm, char const* str, char const* average, char const* method,
 char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
 int n, double Mz, double aMz, double mT, double muT, double mB, double muB,
 double mC, double muC, double lambda1, double lambda2, double lam, double mu[],
@@ -6227,7 +6227,7 @@ long lenMu, double R[], long lenR){
 
   double res[3]; int ndim = lenMu;
 
-  f90chi2minalphanrqcd_(qnlist, datalist, &m, charm, str, average, method, counting,
+  f90chi2minalphanrqcd_(qnlist, datalist, &m, iter, charm, str, average, method, counting,
   &orderAlpha, &runAlpha, &order, &run, &nf, &n, &Mz, &aMz, &mT, &muT, &mB, &muB,
   &mC, &muC, &lambda1, &lambda2, &lam, mu, R, &ndim, res);
 
@@ -6235,7 +6235,7 @@ long lenMu, double R[], long lenR){
 
 }
 
-extern double f90chi2minalphambnrqcd_(int* qnlist, double* datalist, int* m, char const* charm,
+extern double f90chi2minalphambnrqcd_(int* qnlist, double* datalist, int* m, char const* iter, char const* charm,
 char const* str, char const* average, char const* method, char const* counting,
 int* orderAlpha, int* runAlpha, int* order, int* run, int* n, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC,
@@ -6243,7 +6243,7 @@ double* muC, double* lambda1, double* lambda2, double* lam, double* mu,
 double* R, int* ndim, double* res);
 
 static void chi2minalphambnrqcd(int qnlist[], long len1, double datalist[], long len2,
-int m, char const* charm, char const* str, char const* average, char const* method,
+int m, char const* iter, char const* charm, char const* str, char const* average, char const* method,
 char const* counting, int orderAlpha, int runAlpha, int order, int run, int nf,
 int n, double Mz, double aMz, double mT, double muT, double mB, double muB,
 double mC, double muC, double lambda1, double lambda2, double lam, double mu[],
@@ -6251,7 +6251,7 @@ long lenMu, double R[], long lenR){
 
   double res[6]; int ndim = lenMu;
 
-  f90chi2minalphambnrqcd_(qnlist, datalist, &m, charm, str, average, method, counting,
+  f90chi2minalphambnrqcd_(qnlist, datalist, &m, iter, charm, str, average, method, counting,
   &orderAlpha, &runAlpha, &order, &run, &nf, &n, &Mz, &aMz, &mT, &muT, &mB, &muB,
   &mC, &muC, &lambda1, &lambda2, &lam, mu, R, &ndim, res);
 
