@@ -1987,10 +1987,10 @@ muList, RList, ndim, lambda, method, counting)
 
   type (NRQCD), dimension(dim), intent(inout) :: UpsilonList
   real (dp) , dimension(2,dim), intent(in)    :: datalist
-  character (len = *)          , intent(in)   :: method, counting, iter
-  integer                      , intent(in)   :: order, dim, n, ndim
-  real (dp)                    , intent(in)   :: lambda
-  real (dp), dimension(ndim)   , intent(in)   :: muList, RList
+  character (len = *)         , intent(in)    :: method, counting, iter
+  integer                     , intent(in)    :: order, dim, n, ndim
+  real (dp)                   , intent(in)    :: lambda
+  real (dp), dimension(ndim)  , intent(in)    :: muList, RList
   real (dp), dimension(dim)                   :: MassList
   real (dp)                                   :: R, mu
   integer                                     :: i, j

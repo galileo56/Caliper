@@ -1844,6 +1844,36 @@ end function MatchingAlphaLog
 
   end function MSbarDelta
 
+! ccccccccccccccc
+
+  pure real(dp) function MSbarDeltaCoefs(n, str)
+    integer            , intent(in) :: n
+    character (len = *), intent(in) :: str
+
+    MSbarDeltaCoefs = 0
+
+    if (n == 1) MSbarDeltaCoefs = 4._dp/3
+    if (n == 2) then
+      if ( str(:1) == 'g'  ) MSbarDeltaCoefs = 13.33982910125516_dp
+      if ( str(:2) == 'nl' ) MSbarDeltaCoefs = - 1.041366911171631_dp
+      if ( str(:2) == 'nh' ) MSbarDeltaCoefs = 0.10356715567659536_dp
+    else if (n == 2) then
+      if ( str(:1) == 'g'    ) MSbarDeltaCoefs = 188.67172035165487_dp
+      if ( str(:4) == 'nlnh' ) then
+        MSbarDeltaCoefs = 0.022243482163948114_dp
+      else if ( str(:3) == 'nl2' ) then
+        MSbarDeltaCoefs = 0.6526907490815437_dp
+      else if ( str(:2) == 'nl' ) then
+        MSbarDeltaCoefs = - 26.677375174269212_dp
+      else if ( str(:3) == 'nh2' ) then
+        MSbarDeltaCoefs = 0.06408045019609998_dp
+      else if ( str(:2) == 'nh' ) then
+        MSbarDeltaCoefs = 1.8591544419385237_dp
+      end if
+    end if
+
+  end function MSbarDeltaCoefs
+
 !ccccccccccccccc pole - MSbar mass with m(mu)
 
   pure function MSbarDeltaPiece(nl, nh) result(coef)
