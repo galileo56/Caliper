@@ -4424,7 +4424,7 @@ lambda1, lambda2, lam, mu, R, res)
   Running(nl, run, alphaAll, lambda1) ]
 
   MSR     = VFNSMSR(alphaMass)
-  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+  Upsilon = NRQCD( charm(:7), scheme(:5), average(:3), MSR, n, l, j, s )
 
   res = Upsilon%En( order, mu, R, lam, method(:8), counting(:5) )
 
@@ -4466,7 +4466,7 @@ lambda1, lambda2, lam, mu, R, eps, res)
   Running(nl, run, alphaAll, lambda1) ]
 
   MSR     = VFNSMSR(alphaMass)
-  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+  Upsilon = NRQCD( charm(:7), scheme(:5), average(:3), MSR, n, l, j, s )
 
   res = Upsilon%EnDerCharm( order, mu, R, lam, method(:8), counting(:5), eps )
 
@@ -4508,7 +4508,7 @@ lambda1, lambda2, lam, mu, R, eps, res)
   Running(nl, run, alphaAll, lambda1) ]
 
   MSR     = VFNSMSR(alphaMass)
-  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+  Upsilon = NRQCD( charm(:7), scheme(:5), average(:3), MSR, n, l, j, s )
 
   res = Upsilon%EnDerAlpha( order, mu, R, lam, method(:8), counting(:5), eps )
 
@@ -4550,7 +4550,7 @@ muC, mass, lambda1, lambda2, lam, mu, R, res)
   Running(nl, run, alphaAll, lambda1) ]
 
   MSR     = VFNSMSR(alphaMass)
-  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+  Upsilon = NRQCD( charm(:7), scheme(:5), average(:3), MSR, n, l, j, s )
 
   res = Upsilon%MassFitter( iter(:10), ord, order, mu, R, mass, &
   lam, method(:8), counting(:5) )
@@ -4593,7 +4593,7 @@ muC, lambda1, lambda2, lam, mu, R, res)
   Running(nl, run, alphaAll, lambda1) ]
 
   MSR     = VFNSMSR(alphaMass)
-  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+  Upsilon = NRQCD( charm(:7), scheme(:5), average(:3), MSR, n, l, j, s )
 
   res = Upsilon%EnFitter( iter(:10), ord, order, mu, R, lam, method(:8), counting(:5) )
 
@@ -4635,7 +4635,7 @@ mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x, res)
   Running(nl, run, alphaAll, lambda1) ]
 
   MSR     = VFNSMSR(alphaMass)
-  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+  Upsilon = NRQCD( charm(:7), scheme(:5), average(:3), MSR, n, l, j, s )
 
   res = Upsilon%MassError( iter(:10), ord, order, mu0, mu1, &
   deltaMu, R0, R1, deltaR, x, mass, lam, method(:8), counting(:5) )
@@ -4681,7 +4681,7 @@ mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, res)
   Running(nl, run, alphaAll, lambda1) ]
 
   MSR     = VFNSMSR(alphaMass)
-  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+  Upsilon = NRQCD( charm(:7), scheme(:5), average(:3), MSR, n, l, j, s )
 
   res = Upsilon%MassList( iter(:10), ord, order, mu0, mu1, &
   deltaMu, R0, R1, deltaR, mass, lam, method(:8), counting(:5) )
@@ -4727,7 +4727,7 @@ mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, res)
   Running(nl, run, alphaAll, lambda1) ]
 
   MSR     = VFNSMSR(alphaMass)
-  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+  Upsilon = NRQCD( charm(:7), scheme(:5), average(:3), MSR, n, l, j, s )
 
   res = Upsilon%NRQCDList( iter(:10), order, mu0, mu1, &
   deltaMu, R0, R1, deltaR, mass, lam, method(:8), counting(:5) )
@@ -4775,7 +4775,7 @@ res)
   Running(nl, run, alphaAll, lambda1) ]
 
   MSR     = VFNSMSR(alphaMass)
-  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+  Upsilon = NRQCD( charm(:7), scheme(:5), average(:3), MSR, n, l, j, s )
 
   res = Upsilon%UpsilonList( order, mu0, mu1, deltaMu, R0, R1, deltaR, &
   lam, method(:8), counting(:5), epsAlpha, epsCharm )
@@ -4823,7 +4823,7 @@ muC, lambda1, lambda2, lam, muList, RList, ndim, res)
   MSR = VFNSMSR(alphaMass)
 
   do i = 1, m
-    Upsilon(i) = NRQCD( charm(:4), scheme(:5), average(:3), MSR, qnList(1,i), &
+    Upsilon(i) = NRQCD( charm(:7), scheme(:5), average(:3), MSR, qnList(1,i), &
     qnList(2,i), qnList(3,i), qnList(4,i) )
   end do
 
@@ -4874,7 +4874,7 @@ muC, lambda1, lambda2, lam, muList, RList, ndim, res)
   MSR = VFNSMSR(alphaMass)
 
   do i = 1, m
-    Upsilon(i) = NRQCD( charm(:4), scheme(:5), average(:3), MSR, qnList(1,i), &
+    Upsilon(i) = NRQCD( charm(:7), scheme(:5), average(:3), MSR, qnList(1,i), &
     qnList(2,i), qnList(3,i), qnList(4,i) )
   end do
 
@@ -4926,7 +4926,7 @@ muC, lambda1, lambda2, lam, muList, RList, ndim, res)
   MSR = VFNSMSR(alphaMass)
 
   do i = 1, m
-    Upsilon(i) = NRQCD( charm(:4), scheme(:5), average(:3), MSR, qnList(1,i), &
+    Upsilon(i) = NRQCD( charm(:7), scheme(:5), average(:3), MSR, qnList(1,i), &
     qnList(2,i), qnList(3,i), qnList(4,i) )
   end do
 
@@ -4977,7 +4977,7 @@ muB, mC, muC, lambda1, lambda2, lam, muList, RList, ndim, res)
   MSR = VFNSMSR(alphaMass)
 
   do i = 1, m
-    Upsilon(i) = NRQCD( charm(:4), scheme(:5), average(:3), MSR, qnList(1,i), &
+    Upsilon(i) = NRQCD( charm(:7), scheme(:5), average(:3), MSR, qnList(1,i), &
     qnList(2,i), qnList(3,i), qnList(4,i) )
   end do
 
@@ -5030,7 +5030,7 @@ corMat)
   MSR = VFNSMSR(alphaMass)
 
   do i = 1, m
-    Upsilon(i) = NRQCD( charm(:4), scheme(:5), average(:3), MSR, qnList(1,i), &
+    Upsilon(i) = NRQCD( charm(:7), scheme(:5), average(:3), MSR, qnList(1,i), &
     qnList(2,i), qnList(3,i), qnList(4,i) )
   end do
 
@@ -5149,7 +5149,7 @@ mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x, res)
   Running(nl, run, alphaAll, lambda1) ]
 
   MSR     = VFNSMSR(alphaMass)
-  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+  Upsilon = NRQCD( charm(:7), scheme(:5), average(:3), MSR, n, l, j, s )
 
   res = Upsilon%EnError( iter(:10), order, mu0, mu1, &
   deltaMu, R0, R1, deltaR, x, mass, lam, method(:8), counting(:5) )
@@ -5192,7 +5192,7 @@ lambda1, lambda2, lam, mu, R, res)
   Running(nl, run, alphaAll, lambda1) ]
 
   MSR     = VFNSMSR(alphaMass)
-  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+  Upsilon = NRQCD( charm(:7), scheme(:5), average(:3), MSR, n, l, j, s )
 
   res = Upsilon%MassIter( order, mu, R, mass, lam, method(:8), counting(:5) )
 
@@ -5234,7 +5234,7 @@ lambda1, lambda2, lam, mu, R, res)
   Running(nl, run, alphaAll, lambda1) ]
 
   MSR     = VFNSMSR(alphaMass)
-  Upsilon = NRQCD( charm(:4), scheme(:5), average(:3), MSR, n, l, j, s )
+  Upsilon = NRQCD( charm(:7), scheme(:5), average(:3), MSR, n, l, j, s )
 
   res = Upsilon%EnExpand( order, mu, R, mass, lam, method(:8), counting(:5) )
 
