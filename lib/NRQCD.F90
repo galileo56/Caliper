@@ -13,7 +13,7 @@ module NRQCDClass
     real (dp), dimension(2)       :: cnl, cnf
     real (dp), dimension(0:4)     :: beta
     character (len = 5)           :: scheme
-    character (len = 4)           :: up
+    character (len = 7)           :: up
     character (len = 3)           :: average
     real (dp)                     :: mH, harm, h2, rat, mC, muC, ratC, amZ
     type (Running)                :: alphaMass
@@ -1075,9 +1075,11 @@ module NRQCDClass
     real (dp), parameter            :: c1 = - 0.8316040946513316_dp, &
     c2 = 0.470_dp, d2 = 1.120_dp, d1 = 1.8316040946513317_dp
 
-    DeltaCharmExact = 0; if ( self%mC <= tiny(1._dp) ) return
+    DeltaCharmExact = 0
 
-    mC = 1._dp/sqrt(1._dp * self%n)
+    if ( self%mC <= tiny(1._dp) .or. self%up(:7) == 'downInf') return
+
+    mC = 1/sqrt(1._dp * self%n)
 
     if ( type(:5) == 'exact' ) then
 
@@ -1434,6 +1436,8 @@ module NRQCDClass
     real (dp)                      :: r, lg
     integer                        :: l
 
+    DeltaCharmBin = 0; if ( self%up(:7) == 'downInf' ) return
+
     if ( self%up(:4) == 'down' ) then
       DeltaCharmBin = self%DeltaCharm(alpha, mb); return
     end if
@@ -1658,7 +1662,7 @@ module NRQCDClass
     real (dp)                    :: lg, r
     integer                      :: l
 
-    DeltaCharmDerBin = 0
+    DeltaCharmDerBin = 0; if ( self%up(:7) == 'downInf' ) return
 
     if ( self%up(:4) == 'down' ) then
       DeltaCharmDerBin = self%DeltaCharmDer(alpha, mb); return
