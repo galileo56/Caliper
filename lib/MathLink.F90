@@ -4256,6 +4256,38 @@ mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, mu, res)
 
 end subroutine f90OptimalR
 
+!ccccccccccccccc
+
+subroutine f90OptimalRVFNS(type, up, n, method, orderAlp, runAlp, order, run, &
+nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, res)
+  use RunningClass;  use AlphaClass;  use VFNSMSRClass;  use constants, only: dp
+  use AnomDimClass;  implicit none
+
+  character (len = *), intent(in ) :: method, type, up
+  integer            , intent(in ) :: orderAlp, runAlp, order, run, nl
+  real (dp)          , intent(in ) :: mZ, amZ, mu1, mu2, mT, muT, mB, muB, mC, &
+  muC, lambda, n
+  real (dp)          , intent(out) :: res
+  type (Running), dimension(2)     :: alphaMass
+  type (VFNSMSR)                   :: MSR
+  type (Alpha)                     :: alphaAll
+  type (AnomDim), dimension(3:6)   :: AnDim
+  integer                          :: i
+
+  do i = 3, 6
+    AnDim(i) = AnomDim('MSbar', i, 0._dp)
+  end do
+
+  alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
+  mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
+
+  alphaMass = [ Running(nl - 1, 0, alphaAll, mu1), Running(nl, 0, alphaAll, mu2) ]
+
+  MSR = VFNSMSR(alphaMass)
+
+  res = MSR%OptimalR( type, up, n, order, lambda, method(:8) )
+
+end subroutine f90OptimalRVFNS
 
 !ccccccccccccccc
 

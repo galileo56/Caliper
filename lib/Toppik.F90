@@ -184,7 +184,7 @@ Module ToppikClass
     consde = 0
 
 ! Delta-part of potential is absorbed by subtracting vzero from the
-!  original energy (shift from the potential to the free Hamiltonian):
+! original energy (shift from the potential to the free Hamiltonian):
 
     ToppikIn%vzero = consde / (2 * pi)**3
 

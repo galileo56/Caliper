@@ -20,7 +20,7 @@ module VFNSMSRClass
     contains
 
     procedure, pass(self), public :: MSRMass, setMass, RunArray, numFlav, &
-    MSRDelta, alphaAll, deltaM, mass, DeltaM2, setCharm, SetAlpha
+    MSRDelta, alphaAll, deltaM, mass, DeltaM2, setCharm, SetAlpha, OptimalR
 
     procedure, pass(self), private :: LowMass, LowRevol
 
@@ -754,6 +754,39 @@ contains
     end function InteAn
 
   end function LowRevol
+
+!ccccccccccccccc
+
+  real (dp) function OptimalR(self, type, up, n, order, lambda, method)
+    class (VFNSMSR)                    , intent(in) :: self
+    character (len = *)                , intent(in) :: type, up
+    real (dp)          , optional      , intent(in) :: lambda
+    character (len = *), optional      , intent(in) :: method
+    integer                            , intent(in) :: order
+    real (dp)                          , intent(in) :: n
+    integer                                         :: IFLAG
+    real (dp)                                       :: a, b, c, alpha
+
+    a = 0.5_dp; b = self%mH
+
+    call DFZERO(root, a, b, c, 1e-9_dp, 1e-9_dp, IFLAG); OptimalR = a
+
+  contains
+
+    real (dp) function root(x)
+      real (dp), intent(in) :: x
+
+      if ( up(:2) == 'up' ) then
+        alpha = self%AlphaMass(2)%alphaQCD(x)
+      else if ( up(:4) == 'down' ) then
+        alpha = self%AlphaMass(1)%alphaQCD(x)
+      end if
+
+      root = n * x - 4 * self%MSRMass(up, type, order, x, lambda, method) * alpha/3
+
+    end function root
+
+  end function OptimalR
 
 !ccccccccccccccc
 

@@ -686,7 +686,7 @@ module RunningClass
     integer                                         :: IFLAG
     real (dp)                                       :: a, b, c
 
-    a = 0.5_dp; b = self%mH
+    a = 0.5_dp; b = mass
 
     call DFZERO(root, a, b, c, 1e-9_dp, 1e-9_dp, IFLAG); OptimalR2 = a
 
