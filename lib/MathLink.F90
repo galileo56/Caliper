@@ -4258,7 +4258,7 @@ end subroutine f90OptimalR
 
 !ccccccccccccccc
 
-subroutine f90OptimalRVFNS(type, up, n, method, orderAlp, runAlp, order, run, &
+subroutine f90OptimalRVFNS(up, type, n, method, orderAlp, runAlp, order, run, &
 nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, res)
   use RunningClass;  use AlphaClass;  use VFNSMSRClass;  use constants, only: dp
   use AnomDimClass;  implicit none
@@ -4269,7 +4269,7 @@ nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, res)
   muC, lambda, n
   real (dp)          , intent(out) :: res
   type (Running), dimension(2)     :: alphaMass
-  type (VFNSMSR)                   :: MSR
+  type (VFNSMSR)                   :: MSRVFNS
   type (Alpha)                     :: alphaAll
   type (AnomDim), dimension(3:6)   :: AnDim
   integer                          :: i
@@ -4281,11 +4281,11 @@ nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2, res)
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, &
   mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
 
-  alphaMass = [ Running(nl - 1, 0, alphaAll, mu1), Running(nl, 0, alphaAll, mu2) ]
+  alphaMass(1) = Running(nl - 1, run, alphaAll, mu2)
+  alphaMass(2) = Running(nl    , run, alphaAll, mu1)
+  MSRVFNS      = VFNSMSR( alphaMass )
 
-  MSR = VFNSMSR(alphaMass)
-
-  res = MSR%OptimalR( type, up, n, order, lambda, method(:8) )
+  res = MSRVFNS%OptimalR( up(:4), type(:4), n, order, lambda, method(:8) )
 
 end subroutine f90OptimalRVFNS
 

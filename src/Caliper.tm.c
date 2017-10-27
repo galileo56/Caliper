@@ -3859,19 +3859,19 @@ double muC, double lambda, double mu){
   return res;
 }
 
-extern double f90optimalrvfns_(char const* type, char const* up, double* n,
+extern double f90optimalrvfns_(char const* up, char const* type, double* n,
 char const* str, int* orderAlpha, int* runAlpha, int* order, int* run, int* nf,
 double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB,
 double* mC, double* muC, double* lambda, double* mu1, double* mu2, double* res);
 
-static double optimalrvfns(char const* type, char const* up, double n,
+static double optimalrvfns(char const* up, char const* type, double n,
 char const* str, int orderAlpha, int runAlpha, int order, int run, int nf,
 double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
 double muC, double lambda, double mu1, double mu2){
 
   double res;
 
-  f90optimalrvfns_(type, up, &n, str, &orderAlpha, &runAlpha, &order, &run,
+  f90optimalrvfns_(up, type, &n, str, &orderAlpha, &runAlpha, &order, &run,
   &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,&lambda, &mu1, &mu2, &res);
 
   return res;
@@ -18544,7 +18544,7 @@ static const char* evalstrs[] = {
 	"m, mu0, mu1, deltaMu, R0, R1, deltaR, x] computes the quarkonium",
 	" energy levels, including perturbative error.\"",
 	(const char*)0,
-	"OptimalRVFNS::usage = \"OptimalRVFNS[type, up, n, method, orderAl",
+	"OptimalRVFNS::usage = \"OptimalRVFNS[up, type, n, method, orderAl",
 	"pha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, mu",
 	"C, lambda, mu1, mu2] computes the Optimal R scale for quarkonium",
 	".\"",
@@ -19321,7 +19321,7 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"ErrMatrices[qnlist_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_,                 mT_, muT_, mB_, muB_, mC_, muC_, lambda1_, lambda2_, lam_, mu0_,                 mu1_, deltaMu_, R0_, R1_, deltaR_, epsAlpha_, epsCharm_]", (char *)"{Flatten[qnlist], Length[qnlist], charm, scheme, average, method, counting, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR,                  epsAlpha, epsCharm}", 191);
 	if (_res) _res = _definepattern(mlp, (char *)"NRQCDError[n_, l_, j_, s_, iter_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_,                 mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_, lam_, mu0_,                 mu1_, deltaMu_, R0_, R1_, deltaR_, x_]", (char *)"{n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR,                  x}", 192);
 	if (_res) _res = _definepattern(mlp, (char *)"OptimalR[type_, n_, method_, orderAlpha_, runAlpha_, order_, run_,                 nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_, mu_]", (char *)"{type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz,                  mT, muT, mB, muB, mC, muC, lambda, mu}", 193);
-	if (_res) _res = _definepattern(mlp, (char *)"OptimalRVFNS[type_, up_, n_, method_, orderAlpha_, runAlpha_,                 order_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_,                 lambda_, mu1_, mu2_]", (char *)"{type, up, n, method, orderAlpha, runAlpha, order, run, nf, Mz,                  aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2}", 194);
+	if (_res) _res = _definepattern(mlp, (char *)"OptimalRVFNS[up_, type_, n_, method_, orderAlpha_, runAlpha_,                 order_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_,                 lambda_, mu1_, mu2_]", (char *)"{up, type, n, method, orderAlpha, runAlpha, order, run, nf, Mz,                  aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2}", 194);
 	if (_res) _res = _definepattern(mlp, (char *)"OptimalR2[n_, orderAlpha_, runAlpha_, order_, run_, nf_, Mz_,                 aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mass_]", (char *)"{n, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB,                  muB, mC, muC, mass}", 195);
 	if (_res) _res = _definepattern(mlp, (char *)"mmfromMSR[type_, orderAlpha_, runAlpha_, order_, run_, nf_, Mz_,                 aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mu_, R_]", (char *)"{type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT,                  mB, muB, mC, muC, mu, R}", 196);
 	if (_res) _res = _definepattern(mlp, (char *)"JetMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, muLambda_, R_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC,                  muC, muLambda, R, mu}", 197);

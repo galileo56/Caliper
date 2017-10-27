@@ -157,7 +157,7 @@
 :Evaluate:  ErrMat::usage = "ErrMat[qnlist, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm] Computes the average values of the masses and derivatives wrt alpha and mc, perturbative uncertainties and covariance matrix."
 :Evaluate:  ErrMatrices::usage = "ErrMatrices[qnlist, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, epsAlpha, epsCharm] Computes the average values of the masses and derivatives wrt alpha and mc, perturbative uncertainties and covariance matrix."
 :Evaluate:  NRQCDError::usage = "NRQCDError[n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x] computes the quarkonium energy levels, including perturbative error."
-:Evaluate:  OptimalRVFNS::usage = "OptimalRVFNS[type, up, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2] computes the Optimal R scale for quarkonium."
+:Evaluate:  OptimalRVFNS::usage = "OptimalRVFNS[up, type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2] computes the Optimal R scale for quarkonium."
 :Evaluate:  OptimalR::usage = "OptimalR[type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda] computes the Optimal R scale for quarkonium."
 :Evaluate:  OptimalR2::usage = "OptimalR2[n, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mass] computes the Optimal R scale for quarkonium."
 :Evaluate:  mmfromMSR::usage = "mmfromMSR[type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
@@ -2539,10 +2539,10 @@
 
 :Begin:
 :Function:      optimalrvfns
-:Pattern:       OptimalRVFNS[type_, up_, n_, method_, orderAlpha_, runAlpha_,
+:Pattern:       OptimalRVFNS[up_, type_, n_, method_, orderAlpha_, runAlpha_,
                 order_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_,
                 lambda_, mu1_, mu2_]
-:Arguments:     {type, up, n, method, orderAlpha, runAlpha, order, run, nf, Mz,
+:Arguments:     {up, type, n, method, orderAlpha, runAlpha, order, run, nf, Mz,
                  aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2}
 :ArgumentTypes: {String, String, Real, String, Integer, Integer, Integer, Integer,
                  Integer, Real, Real, Real, Real, Real, Real, Real, Real, Real,
@@ -6529,19 +6529,19 @@ double muC, double lambda, double mu){
   return res;
 }
 
-extern double f90optimalrvfns_(char const* type, char const* up, double* n,
+extern double f90optimalrvfns_(char const* up, char const* type, double* n,
 char const* str, int* orderAlpha, int* runAlpha, int* order, int* run, int* nf,
 double* Mz, double* aMz, double* mT, double* muT, double* mB, double* muB,
 double* mC, double* muC, double* lambda, double* mu1, double* mu2, double* res);
 
-static double optimalrvfns(char const* type, char const* up, double n,
+static double optimalrvfns(char const* up, char const* type, double n,
 char const* str, int orderAlpha, int runAlpha, int order, int run, int nf,
 double Mz, double aMz, double mT, double muT, double mB, double muB, double mC,
 double muC, double lambda, double mu1, double mu2){
 
   double res;
 
-  f90optimalrvfns_(type, up, &n, str, &orderAlpha, &runAlpha, &order, &run,
+  f90optimalrvfns_(up, type, &n, str, &orderAlpha, &runAlpha, &order, &run,
   &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC, &muC,&lambda, &mu1, &mu2, &res);
 
   return res;
