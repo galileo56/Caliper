@@ -289,7 +289,7 @@ MLYDEFN( devyield_result, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
-# line 2963 "/Users/vicent/GitHub/Caliper/src/Caliper.tm"
+# line 2978 "/Users/vicent/GitHub/Caliper/src/Caliper.tm"
 #include "mathlink.h"
 #include "ftypes.h"
 #include <stdio.h>
@@ -17953,6 +17953,14 @@ static const char* evalstrs[] = {
 	(const char*)0,
 	"Print[\"     Version:           test 1                     \"]",
 	(const char*)0,
+	"amZdef           = 0.1181",
+	(const char*)0,
+	"amZdelt          = 0.0011",
+	(const char*)0,
+	"mCdef            = 1.28",
+	(const char*)0,
+	"mCdelt           = 0.03",
+	(const char*)0,
 	"mZdef            = 91.187",
 	(const char*)0,
 	"Gammadef         = 1553.0647546066",
@@ -17966,6 +17974,32 @@ static const char* evalstrs[] = {
 	"sin2ThetaWPythia = 0.2312",
 	(const char*)0,
 	"aQEDdef          = 0.00781751",
+	(const char*)0,
+	"MUpsilonexp      = {9.399, 9.46030, 9.85944, 9.89278, 9.8993, 9.",
+	"91221, 9.999, 10.02326, 10.1637, 10.2325, 10.25546, 10.2598, 10.",
+	"26865, 10.3552}",
+	(const char*)0,
+	"ErrUpsilon       = {0.0023, 0.00026, 0.00042, 0.00031, 0.0008, 0",
+	".00031, 0.004, 0.00031, 0.0014, 0.0005, 0.0005, 0.0012, 0.0005, ",
+	"0.0005}",
+	(const char*)0,
+	"MJexp            = {2.98034, 3.0969}",
+	(const char*)0,
+	"MJexpErr         = {0.0005, 0.000006}",
+	(const char*)0,
+	"MJexpErr         = {0.0005, 0.000006}",
+	(const char*)0,
+	"MJexpErrdataJ    = {MJexp, MJexpErr} // Transpose",
+	(const char*)0,
+	"Narr             = {1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3};",
+	(const char*)0,
+	"Larr             = {0, 0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 1, 1, 0};",
+	(const char*)0,
+	"Sarr             = {0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1};",
+	(const char*)0,
+	"Jarr             = {0, 1, 0, 1, 1, 2, 0, 1, 2, 0, 1, 1, 2, 1};",
+	(const char*)0,
+	"Quantum          = {Narr, Larr, Sarr, Jarr} // Transpose",
 	(const char*)0,
 	"QSwitch::usage = \"Delta1S[nl, orderAlpha, runAlpha, orderMass, r",
 	"unMass, ord1S, muLam, xLam, method, mZ, aMz, mt, gt, R]\"",
@@ -18883,7 +18917,7 @@ static const char* evalstrs[] = {
 	(const char*)0,
 	(const char*)0
 };
-#define CARDOF_EVALSTRS 230
+#define CARDOF_EVALSTRS 245
 
 static int _definepattern P(( MLINK, char*, char*, int));
 
@@ -19127,6 +19161,21 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _doevalstr( mlp, 224);
 	if (_res) _res = _doevalstr( mlp, 225);
 	if (_res) _res = _doevalstr( mlp, 226);
+	if (_res) _res = _doevalstr( mlp, 227);
+	if (_res) _res = _doevalstr( mlp, 228);
+	if (_res) _res = _doevalstr( mlp, 229);
+	if (_res) _res = _doevalstr( mlp, 230);
+	if (_res) _res = _doevalstr( mlp, 231);
+	if (_res) _res = _doevalstr( mlp, 232);
+	if (_res) _res = _doevalstr( mlp, 233);
+	if (_res) _res = _doevalstr( mlp, 234);
+	if (_res) _res = _doevalstr( mlp, 235);
+	if (_res) _res = _doevalstr( mlp, 236);
+	if (_res) _res = _doevalstr( mlp, 237);
+	if (_res) _res = _doevalstr( mlp, 238);
+	if (_res) _res = _doevalstr( mlp, 239);
+	if (_res) _res = _doevalstr( mlp, 240);
+	if (_res) _res = _doevalstr( mlp, 241);
 	if (_res) _res = _definepattern(mlp, (char *)"HypGeo[a_, b_, c_, z_]", (char *)"{Re[a], Im[a], Re[b], Im[b], Re[c], Im[c], Re[z], Im[z]}", 0);
 	if (_res) _res = _definepattern(mlp, (char *)"CdiGamma[z_]", (char *)"{Re[z], Im[z]}", 1);
 	if (_res) _res = _definepattern(mlp, (char *)"CtriGamma[z_]", (char *)"{Re[z], Im[z]}", 2);
@@ -19356,9 +19405,9 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"NGLKernel[n_, n1_, n2_, width_, w_, mu_, p_]", (char *)"{n, n1, n2, width, w, mu, p}", 226);
 	if (_res) _res = _definepattern(mlp, (char *)"NGLIntegral[nf_, pow_, w1_, w2_]", (char *)"{nf, pow, w1, w2}", 227);
 	if (_res) _res = _definepattern(mlp, (char *)"NGLDoubleIntegral[nf_, pow_, w1_, w2_, r_]", (char *)"{nf, pow, w1, w2, r}", 228);
-	if (_res) _res = _doevalstr( mlp, 227);
-	if (_res) _res = _doevalstr( mlp, 228);
-	if (_res) _res = _doevalstr( mlp, 229);
+	if (_res) _res = _doevalstr( mlp, 242);
+	if (_res) _res = _doevalstr( mlp, 243);
+	if (_res) _res = _doevalstr( mlp, 244);
 	if (_res) _res = MLPutSymbol( mlp, "End");
 	if (_res) _res = MLFlush( mlp);
 	return _res;
