@@ -1,3 +1,4 @@
 /Users/vmateu/GitHub/Caliper/bin/Caliper
 /Users/vmateu/GitHub/Caliper/bin/hello-world
+/Users/vmateu/GitHub/Caliper/bin/Chi2MbNRQCD
 /Users/vmateu/GitHub/Caliper/lib/../lib/liblibCaliper.a

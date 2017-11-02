@@ -83,8 +83,8 @@ endif()
 add_executable(hello-world ${CMAKE_CURRENT_SOURCE_DIR}/src/hello-world.cpp)
 target_link_libraries(hello-world libradreturn libCaliper)
 
-	#add_executable(testprog src/testprog.F90)
-	#target_link_libraries(testprog libCaliper subdir_mods)
+	add_executable(Chi2MbNRQCD ${CMAKE_CURRENT_SOURCE_DIR}/src/Chi2MbNRQCD.F90)
+	target_link_libraries(Chi2MbNRQCD libCaliper subdir_mods)
 
 ###############
 ## INSTALL
@@ -99,5 +99,4 @@ if(Mathematica_MathLink_LIBRARY)
 endif()
 
 install(TARGETS hello-world DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-
-#install(TARGETS testprog DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+install(TARGETS Chi2MbNRQCD DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)

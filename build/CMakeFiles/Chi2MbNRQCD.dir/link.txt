@@ -1,0 +1,1 @@
+/usr/local/bin/gfortran   -Waliasing -Wampersand -Wconversion -Wc-binding-type -Wintrinsics-std -Wtabs -Wintrinsic-shadow -Wline-truncation -Wtarget-lifetime -Winteger-division -Wreal-q-constant -Wunused CMakeFiles/Chi2MbNRQCD.dir/src/Chi2MbNRQCD.F90.o  -o Chi2MbNRQCD lib/liblibCaliper.a libsubdir_mods.a 
