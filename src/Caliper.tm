@@ -5,6 +5,10 @@
 :Evaluate:   Print["     Last modification: 12 - 05 - 2017             "]
 :Evaluate:   Print["     Version:           test 1                     "]
 
+:Evaluate:  amZdef           = 0.1181
+:Evaluate:  amZdelt          = 0.0011
+:Evaluate:  mCdef            = 1.28
+:Evaluate:  mCdelt           = 0.03
 :Evaluate:  mZdef            = 91.187
 :Evaluate:  Gammadef         = 1553.0647546066
 :Evaluate:  gammaZdef        = 2.4952
@@ -12,6 +16,17 @@
 :Evaluate:  gammaZPythia     = 2.5042
 :Evaluate:  sin2ThetaWPythia = 0.2312
 :Evaluate:  aQEDdef          = 0.00781751
+:Evaluate:  MUpsilonexp      = {9.399, 9.46030, 9.85944, 9.89278, 9.8993, 9.91221, 9.999, 10.02326, 10.1637, 10.2325, 10.25546, 10.2598, 10.26865, 10.3552}
+:Evaluate:  ErrUpsilon       = {0.0023, 0.00026, 0.00042, 0.00031, 0.0008, 0.00031, 0.004, 0.00031, 0.0014, 0.0005, 0.0005, 0.0012, 0.0005, 0.0005}
+:Evaluate:  MJexp            = {2.98034, 3.0969}
+:Evaluate:  MJexpErr         = {0.0005, 0.000006}
+:Evaluate:  MJexpErr         = {0.0005, 0.000006}
+:Evaluate:  MJexpErrdataJ    = {MJexp, MJexpErr} // Transpose
+:Evaluate:  Narr             = {1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3};
+:Evaluate:  Larr             = {0, 0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 1, 1, 0};
+:Evaluate:  Sarr             = {0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1};
+:Evaluate:  Jarr             = {0, 1, 0, 1, 1, 2, 0, 1, 2, 0, 1, 1, 2, 1};
+:Evaluate:  Quantum          = {Narr, Larr, Sarr, Jarr} // Transpose
 
 :Evaluate:  QSwitch::usage = "Delta1S[nl, orderAlpha, runAlpha, orderMass, runMass, ord1S, muLam, xLam, method, mZ, aMz, mt, gt, R]"
 :Evaluate:  Delta1S::usage = "Delta1S[nl, orderAlpha, runAlpha, orderMass, runMass, muLam, xLam, method, mZ, aMz, mt, R]"

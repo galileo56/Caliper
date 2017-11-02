@@ -770,12 +770,7 @@ contains
     a = 0.25_dp; b = self%mH
 
     call DFZERO(root, a, b, c, 1e-9_dp, 1e-9_dp, IFLAG); OptimalR = a
-    ! OptimalR = self%MSRMass(up, type, order, OptimalR, lambda, method)
-    !   if ( up(:2) == 'up' ) then
-    !     OptimalR = self%AlphaMass(2)%alphaQCD(OptimalR)
-    !   else if ( up(:4) == 'down' ) then
-    !     OptimalR = self%AlphaMass(1)%alphaQCD(OptimalR)
-    !   end if
+
   contains
 
     real (dp) function root(x)
