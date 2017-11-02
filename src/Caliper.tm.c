@@ -1,6 +1,6 @@
 /*
  * This file automatically produced by /Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mprep from:
- *	/Users/vicent/GitHub/Caliper/src/Caliper.tm
+ *	/Users/vmateu/GitHub/Caliper/src/Caliper.tm
  * mprep Revision 18 Copyright (c) Wolfram Research, Inc. 1990-2013
  */
 
@@ -289,7 +289,7 @@ MLYDEFN( devyield_result, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
-# line 2978 "/Users/vicent/GitHub/Caliper/src/Caliper.tm"
+# line 2978 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
 #include "mathlink.h"
 #include "ftypes.h"
 #include <stdio.h>
@@ -4418,7 +4418,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 4422 "/Users/vicent/GitHub/Caliper/src/Caliper.tm.c"
+# line 4422 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
 
 
 void hypgeo P(( double _tp1, double _tp2, double _tp3, double _tp4, double _tp5, double _tp6, double _tp7, double _tp8));
@@ -17979,9 +17979,9 @@ static const char* evalstrs[] = {
 	"91221, 9.999, 10.02326, 10.1637, 10.2325, 10.25546, 10.2598, 10.",
 	"26865, 10.3552}",
 	(const char*)0,
-	"ErrUpsilon       = {0.0023, 0.00026, 0.00042, 0.00031, 0.0008, 0",
-	".00031, 0.004, 0.00031, 0.0014, 0.0005, 0.0005, 0.0012, 0.0005, ",
-	"0.0005}",
+	"ErrUpsilon       = {0.0023, 0.00026, 0.00052, 0.00040, 0.0008, 0",
+	".00040, 0.004, 0.00031, 0.0014, 0.0006, 0.00055, 0.0012, 0.00055",
+	", 0.0005}",
 	(const char*)0,
 	"MJexp            = {2.98034, 3.0969}",
 	(const char*)0,
