@@ -8,9 +8,10 @@ module ProfilesClass
   type, abstract, public :: Profiles
     private
     integer              :: ns
-    real (dp)            :: muH, mu0, R0, t0, t1, t2, cnt, ts, tmid1, tmid2, eS, eJ, b, &
-                           c11, c12, c21, c22, d11, d12, d21, d22, e11, e12, e21, e31,  &
-                           e22, c31, c32, d31, d32, Q, n0, n1, const, tau2, eH, slope, e32
+    real (dp)            :: muH, mu0, R0, t0, t1, t2, cnt, ts, tmid1, tmid2, &
+    c11, c12, c21, c22, d11, d12, d21, d22, e11, e12, e21, e31, e22, c31, c32,&
+    d31, d32, Q, n0, n1, const, tau2, eH, slope, e32, eS, eJ, b
+
     contains
 
     procedure, pass(self), public   :: Scales, HardScale, Energy, setQ

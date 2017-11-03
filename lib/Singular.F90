@@ -27,7 +27,7 @@ module SingularClass
 
     contains
 
-    final                         :: delete_object
+    ! final                         :: delete_object
     procedure, pass(self), public :: Prefactor, ExpMat, s2rho, s2theta, SetMat, &
     HJMSing, s2log, Resum, wTilde, HJMSing1D, SetRunning, DoubleSing, runOrd,   &
     setAlpha, SetMTop, SetMBottom, SetMCharm, setGammaShift, ESmin, SetHard
@@ -48,7 +48,7 @@ module SingularClass
 
   contains
 
-    final                         :: delete_scales
+    ! final                         :: delete_scales
 
   end type SingularScales
 
@@ -63,7 +63,7 @@ module SingularClass
 
     contains
 
-    final                          :: delete_mass
+    ! final                          :: delete_mass
     procedure, pass(self)          :: SoftMatchingExp, JetNonDist, NonDistMod, &
     SingleSingWidthMod, SingleSingWidthList, NonDistList, SetMass
 
@@ -88,7 +88,7 @@ module SingularClass
 
   contains
 
-    final                                :: delete_mass_scales
+    ! final                                :: delete_mass_scales
     procedure, pass(self)                :: SetEverything
     procedure, pass(self), public        :: setHardMass, NSScales
 
@@ -122,35 +122,35 @@ module SingularClass
 
 !ccccccccccccccc
 
- subroutine delete_object(this)
-   type (SingularMassless) :: this
-     if ( allocated(this%MatEl ) ) deallocate(this%MatEl)
-  end subroutine delete_object
+ ! subroutine delete_object(this)
+ !   type (SingularMassless) :: this
+ !     if ( allocated(this%MatEl ) ) deallocate(this%MatEl)
+ !  end subroutine delete_object
 
 !ccccccccccccccc
 
- subroutine delete_scales(this)
-   type (SingularScales) :: this
-     if ( allocated(this%MatEl ) ) deallocate(this%MatEl)
-  end subroutine delete_scales
+ ! subroutine delete_scales(this)
+ !   type (SingularScales) :: this
+ !     if ( allocated(this%MatEl ) ) deallocate(this%MatEl)
+ !  end subroutine delete_scales
 
 !ccccccccccccccc
 
- subroutine delete_mass(this)
-   type (SingularMass) :: this
-     if ( allocated(this%MatEl  ) ) deallocate(this%MatEl)
-     if ( allocated(this%MassNS ) ) deallocate(this%MassNS)
-
-  end subroutine delete_mass
+ ! subroutine delete_mass(this)
+ !   type (SingularMass) :: this
+ !     if ( allocated(this%MatEl  ) ) deallocate(this%MatEl)
+ !     if ( allocated(this%MassNS ) ) deallocate(this%MassNS)
+ !
+ !  end subroutine delete_mass
 
 !ccccccccccccccc
 
- subroutine delete_mass_scales(this)
-   type (SingularMassScales) :: this
-     if ( allocated(this%MatEl  ) ) deallocate(this%MatEl)
-     if ( allocated(this%MassNS ) ) deallocate(this%MassNS)
-
-  end subroutine delete_mass_scales
+ ! subroutine delete_mass_scales(this)
+ !   type (SingularMassScales) :: this
+ !     if ( allocated(this%MatEl  ) ) deallocate(this%MatEl)
+ !     if ( allocated(this%MassNS ) ) deallocate(this%MassNS)
+ !
+ !  end subroutine delete_mass_scales
 
 !ccccccccccccccc
 

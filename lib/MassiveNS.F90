@@ -26,7 +26,7 @@ module MassiveNSClass
 
    contains
 
-   final                         :: delete_object
+  !  final                         :: delete_object
    procedure, pass(self), public :: JetMassExp, FOMass, HJMNSMass, SetMCharm, &
    MassDelta, MassDeltaShift, numFlav, matElementNS, SetEverything, SetAlpha, &
    SetMBottom, EShape, MassVar, SetMTop, SetMasses, SetAll, Unstable
@@ -47,7 +47,7 @@ module MassiveNSClass
     contains
 
     procedure, pass(self)  , public  :: HJMNSMassScales, orderMass, matElementScales
-    final                            :: delete_Scales
+    ! final                            :: delete_Scales
 
   end type MassiveScales
 
@@ -67,19 +67,19 @@ module MassiveNSClass
 
 !ccccccccccccccc
 
- subroutine delete_object(this)
-   type (MassiveNS) :: this
-     if ( allocated(this%MatEl ) ) deallocate(this%MatEl)
-     if ( allocated(this%MC    ) ) deallocate(this%MC   )
-  end subroutine delete_object
+ ! subroutine delete_object(this)
+ !   type (MassiveNS) :: this
+ !     if ( allocated(this%MatEl ) ) deallocate(this%MatEl)
+ !     if ( allocated(this%MC    ) ) deallocate(this%MC   )
+ !  end subroutine delete_object
 
 !ccccccccccccccc
 
- subroutine delete_scales(this)
-   type (MassiveScales) :: this
-     if ( allocated(this%MatEl ) ) deallocate(this%MatEl)
-     if ( allocated(this%MC    ) ) deallocate(this%MC   )
-  end subroutine delete_scales
+ ! subroutine delete_scales(this)
+ !   type (MassiveScales) :: this
+ !     if ( allocated(this%MatEl ) ) deallocate(this%MatEl)
+ !     if ( allocated(this%MC    ) ) deallocate(this%MC   )
+ !  end subroutine delete_scales
 
 !ccccccccccccccc
 

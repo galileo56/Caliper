@@ -4,8 +4,7 @@ module KernelsClass
   private
 
   public :: KernelsCombine, KernelMatrixList, LogMatrixSum, KerList, DerAdd1, &
-            NGLSum, KernelsSum, AddBinomial, KernelWidth, SumKernelWidth,     &
-            DerSubtract1
+  NGLSum, KernelsSum, AddBinomial, KernelWidth, SumKernelWidth, DerSubtract1
 
 !ccccccccccccccc
 
@@ -18,7 +17,7 @@ module KernelsClass
    contains
 
    procedure, pass(self), public         :: KernelList, dimList, DerList
-   final                                 :: delete_object
+  !  final                                 :: delete_object
 
   end type Kernels
 
@@ -32,11 +31,11 @@ module KernelsClass
 
 !ccccccccccccccc
 
- subroutine delete_object(this)
-   type (Kernels) :: this
-     if ( allocated(this%res       ) ) deallocate(this%res       )
-     if ( allocated(this%DerInvList) ) deallocate(this%DerInvList)
-  end subroutine delete_object
+ ! subroutine delete_object(this)
+ !   type (Kernels) :: this
+ !     if ( allocated(this%res       ) ) deallocate(this%res       )
+ !     if ( allocated(this%DerInvList) ) deallocate(this%DerInvList)
+ !  end subroutine delete_object
 
 !ccccccccccccccc
 

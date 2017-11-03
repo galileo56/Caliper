@@ -15,7 +15,7 @@ module MCtopClass
 
   contains
 
-   final                          :: delete_object
+  !  final                          :: delete_object
    procedure, pass(self), public  :: Distribution, QDist, Delta, maxES, Qval, &
    maxP, BreitUnstable, setMass
 
@@ -27,7 +27,7 @@ module MCtopClass
 
   contains
 
-   final                          :: delete_scales
+  !  final                          :: delete_scales
 
   end type MCScales
 
@@ -47,17 +47,17 @@ contains
 
 !ccccccccccccccc
 
-  subroutine delete_object(self)
-    type (MCtop) :: self
-    if ( allocated(self%coefs) ) deallocate(self%coefs)
-  end subroutine delete_object
+  ! subroutine delete_object(self)
+  !   type (MCtop) :: self
+  !   if ( allocated(self%coefs) ) deallocate(self%coefs)
+  ! end subroutine delete_object
 
 !ccccccccccccccc
 
-  subroutine delete_scales(self)
-    type (MCScales) :: self
-    if ( allocated(self%coefs) ) deallocate(self%coefs)
-  end subroutine delete_scales
+  ! subroutine delete_scales(self)
+  !   type (MCScales) :: self
+  !   if ( allocated(self%coefs) ) deallocate(self%coefs)
+  ! end subroutine delete_scales
 
 !ccccccccccccccc
 

@@ -19,11 +19,11 @@ module NonSingularClass
     real (dp), dimension(:)  , allocatable, private :: interDer2loop, interDer3loop
 
   contains
-  
-    final                                  :: delete_object
+
+    ! final                                  :: delete_object
 
     procedure :: HJMNS2loopFit, ThrustNS3loopFit, HJMNS3loopFit, Interpol2loop, &
-                 ThrustSing2loop, Interpol3loop, NS2loop, ThrustSing3loop
+    ThrustSing2loop, Interpol3loop, NS2loop, ThrustSing3loop
 
   end type NonSingular
 
@@ -37,14 +37,14 @@ module NonSingularClass
 
 !ccccccccccccccc
 
-  subroutine delete_object(this)
-   type(NonSingular) :: this
-     if ( allocated(this%interList2loop) ) deallocate(this%interList2loop)
-     if ( allocated(this%interList3loop) ) deallocate(this%interList3loop)
-     if ( allocated(this%interDer2loop ) ) deallocate(this%interDer2loop )
-     if ( allocated(this%interDer3loop ) ) deallocate(this%interDer3loop )
-
-  end subroutine delete_object
+  ! subroutine delete_object(this)
+  !  type(NonSingular) :: this
+  !    if ( allocated(this%interList2loop) ) deallocate(this%interList2loop)
+  !    if ( allocated(this%interList3loop) ) deallocate(this%interList3loop)
+  !    if ( allocated(this%interDer2loop ) ) deallocate(this%interDer2loop )
+  !    if ( allocated(this%interDer3loop ) ) deallocate(this%interDer3loop )
+  !
+  ! end subroutine delete_object
 
 !ccccccccccccccc
 
@@ -84,7 +84,7 @@ module NonSingularClass
        s2rho = 5.817618283362493_dp + 0.28958722156747796_dp * nf
     case default
        s2rho = 0
-    end select  
+    end select
 
     s2rho = s2rho/4 - 40.68040549378476_dp
 
@@ -170,18 +170,18 @@ module NonSingularClass
      3.97749_dp * s2 + 11.8693_dp * s2rho, 720.287_dp + 3.8974_dp * s2 + 11.7391_dp * s2rho, &
      749.895_dp + 3.85881_dp * s2 + 11.6755_dp * s2rho, 778.156_dp + 3.82098_dp * s2 + &
      11.6125_dp * s2rho, 805.127_dp + 3.78389_dp * s2 + 11.5503_dp * s2rho ]
-     
+
      interListThrust3loop(:,1) = [ 0.3, 0.305, 0.31, 0.3125, 0.315, 0.325, 0.335, 0.345,&
      0.355, 0.365, 0.375, 0.385, 0.395, 0.405, 0.415, 0.425, 0.435, 0.445, 0.455, 0.465, &
      0.475, 0.485, 0.495, 0.5, 0.505, 0.51, 0.515 ]
 
-     interListThrust3loop(:,2) = [ -1699.87_dp + 0.0000538264_dp * s3, -1587.43_dp     & 
+     interListThrust3loop(:,2) = [ -1699.87_dp + 0.0000538264_dp * s3, -1587.43_dp     &
      -0.00036209_dp * s3, -1474.77_dp - 0.000799743_dp * s3, -1418.39_dp             &
      -0.00102629_dp * s3, -1362._dp - 0.00125775_dp * s3, -1552.12_dp, -2179.12_dp,   &
      -3559.86_dp, -4026.42_dp, -4056.19_dp, -3951.16_dp, -3669.09_dp, -3358.12_dp, -3075.06_dp, &
      -2808.38_dp , -2561.97_dp, -2334.96_dp, -2124.33_dp, -1928.75_dp, -1747.01_dp, -1578.01_dp,&
      -1420.75_dp, -1274.35_dp, -1204.55_dp, -1137.57_dp, -1072.92_dp, -1010.49_dp ]
-     
+
      if ( shape(:6) == 'thrust' ) then
 
        InitNonSingular%n2 = 102;  allocate( InitNonSingular%interList2loop(102,2)  )
@@ -190,7 +190,7 @@ module NonSingularClass
 
        InitNonSingular%interList2loop = interListThrust2loop
        InitNonSingular%interList3loop = interListThrust2loop
-       
+
      else if ( shape(:3) == 'HJM' ) then
 
        InitNonSingular%n2 = 153;  allocate( InitNonSingular%interList2loop(153,2)  )
@@ -216,7 +216,7 @@ module NonSingularClass
     class(NonSingular), intent(in) :: self
     real (dp), intent(in) :: er, t
     real (dp), dimension(2) :: beta
-    
+
     beta = 0
 
     if (t <= 0) then
@@ -271,18 +271,18 @@ module NonSingularClass
     real (dp), intent(in) :: t
     real (dp), dimension(2) :: beta
     real (dp) :: aux
-    
+
     if ( t > self%interList2loop(self%n2,1) .or. t < self%interList2loop(1,1) ) then
 
       beta = 0
-      
+
     else
-    
+
       call spline_cubic_val( self%n2, self%interList2loop(:,1), self%interList2loop(:,2), &
       self%interDer2loop, t, beta(1), beta(2), aux )
-    
+
     end if
-  
+
   end function Interpol2loop
 
 !ccccccccccccccc
@@ -291,18 +291,18 @@ module NonSingularClass
     class(NonSingular), intent(in) :: self
     real (dp), intent(in) :: t
     real (dp) :: aux
-    
+
     if ( t > self%interList3loop(1,1) .or. t < self%interList3loop(1,self%n2) ) then
 
       Interpol3loop = 0
-      
+
     else
-    
+
       call spline_cubic_val( self%n2, self%interList3loop(1,:), self%interList3loop(2,:), &
       self%interDer3loop, t, Interpol3loop, aux, aux )
-    
+
     end if
-  
+
   end function Interpol3loop
 
 !ccccccccccccccc
@@ -371,7 +371,7 @@ module NonSingularClass
   real (dp) function ThrustSing3loop(self, t)
     class(NonSingular), intent(in) :: self
     real (dp), intent(in) :: t
-    
+
     integer :: nf2
     real (dp) :: lgt
 
@@ -392,9 +392,9 @@ module NonSingularClass
   function ThrustNS1loop(t) result(beta)
     real (dp), intent(in) :: t
     real (dp), dimension(3) :: beta
-    
+
     real (dp) :: lg, t1, t2, o(4)
-    
+
     if (t <= 0) then
 
       beta = 0._dp
@@ -470,11 +470,11 @@ module NonSingularClass
     else
 
       lt = log(t)
-  
+
       beta(1) = ( - 29.11314324370869 - 13.428738641123346 * lt           &
       - 29.166275841929746 * lt**2 - 4.586460484332804 * lt**3            &
       + 104.2046742967832 * t * lt**3 )
-   
+
       beta(2) = ( - 13.4287386411524489737701060221298                               - &
       58.3325516838740476543989643687382 * lt + (- 13.759381452999948081128422927577 + &
       312.614022890382337038772675441578 * t) * lt**2 +                                &
@@ -546,7 +546,7 @@ module NonSingularClass
     integer :: i
 
     lt = log(t); o(1) = lt
-    
+
     do i = 2, 6
       o(i) = o(1)**i
     end do
@@ -556,7 +556,7 @@ module NonSingularClass
     (7641.643373149764 - 73857.76290961262 * t) * lt**4 + (659.5648803927595 -         &
     17628.676876506346 * t) * lt**5 + (22.289966484133263 - 1188.281878192541 * t +    &
     16035.082280316727 * t**2) * lt**6 )/4
-    
+
     beta(2) = ( 60303.8491264965159643907099962234 + &
     114355.564611099858041143306763843 * o(1) + (64220.5796301318265761892689624801      - &
     77841.2628039704213023242118651979 * t) * o(2) + (15283.2867462995269924874719436048 - &
@@ -578,7 +578,7 @@ module NonSingularClass
 
   real (dp) function ThrustNS3loopErr(t)
     real (dp), intent(in) :: t
-    
+
     real (dp) :: lt, lt2
 
     if (t > 0.315) then
@@ -667,12 +667,12 @@ module NonSingularClass
     real (dp), intent(in) :: t
     real (dp), dimension(2) :: beta
 
-    real (dp) :: lt 
+    real (dp) :: lt
     lt = log(t)
 
     beta(1) = ( - 6847.412797589124 + 403.28576694938266 * self%s2rho -        &
     9270.035609868502 * lt + 546.371559245844 * self%s2rho * lt -              &
-    2349.2073741763643 * lt**2 + 135.64141753046036 * self%s2rho * lt**2 -     & 
+    2349.2073741763643 * lt**2 + 135.64141753046036 * self%s2rho * lt**2 -     &
     175.59127856914506 * lt**3 +  9.914222038931396 * self%s2rho * lt**3 +     &
     3705.7183041666844 * t * lt**3 - 210.34367126583035 * self%s2rho * t * lt**3 )/4
 
@@ -758,7 +758,7 @@ module NonSingularClass
     end if
 
   end function CumThrustSing3loop
-  
+
 !ccccccccccccccc
 
   double precision function CumThrustNS1loop(t)
@@ -770,7 +770,7 @@ module NonSingularClass
 
       CumThrustNS1loop = 0
 
-    else if (t < 1.d-3) then       
+    else if (t < 1.d-3) then
 
       lg = log(t)
 
