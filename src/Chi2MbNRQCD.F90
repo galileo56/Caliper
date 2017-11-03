@@ -24,13 +24,13 @@ Program Chi2MbNRQCD
   read*, fit
   read*, iter, charm, scheme, average, method, counting
   read*, orderAlp, runAlp, order, run, nl, n
-  read*, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lam, lambda2
+  read*, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam
   read*, R0, R1, deltaR, mu0, mu1, deltaMu
 
   print*, dataFile
   print*, iter, charm, scheme, average, method, counting
   print*, orderAlp, runAlp, order, run, nl, n
-  write(*,'(11F10.3)') mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lam, lambda2
+  write(*,'(11F10.4)') mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam
 
   imax = Floor( (mu1 - mu0)/deltaMu ) + 1;  jmax = Floor( (R1 - R0)/deltaR ) + 1
 
@@ -52,7 +52,7 @@ Program Chi2MbNRQCD
 
   MSR = VFNSMSR(alphaMass)
 
-  allocate( Upsilon(1) )
+  allocate( Upsilon(m) )
 
   do i = 1, m
     Upsilon(i) = NRQCD( charm(:7), scheme(:5), average(:3), MSR, qnList(1,i), &
@@ -63,13 +63,13 @@ Program Chi2MbNRQCD
 
   print*,
   if ( fit(:4) == 'mass' ) then
-    print*, "  R     mu    m(m)   DeltaM       chi2"
+    print*, '  R     mu    m(m)   DeltaM       chi2'
     res(1) = mH
   else if ( fit(:9) == 'alphaMass' ) then
-    print*, "  R     mu   m(m)      DeltaM     alpha    DeltaAlpha   rho            chi2"
+    print*, '  R     mu   m(m)      DeltaM     alpha    DeltaAlpha   rho            chi2'
     res2(1:3:2) = [mH, amZ]
   else if ( fit(:5) == 'alpha' ) then
-    print*, "  R     mu     alpha   DeltaAlpha     chi2"
+    print*, '  R     mu     alpha   DeltaAlpha     chi2'
     res(1) = amZ
   end if
   print*,
@@ -85,21 +85,21 @@ Program Chi2MbNRQCD
 
     if ( fit(:4) == 'mass' ) then
 
-      res = Chi2MinNRQCD( Upsilon, dataList, m, iter(:10), order, n, res(1), muList, &
-      RList, ndim, lam, method(:8), counting(:5) )
-      write( *, '(2F6.2,2F8.4,F25.13)' ) mu, R, res
+      res = Chi2MinNRQCD( Upsilon, dataList, m, iter(:10), order, n, res(1),  &
+      muList, RList, ndim, lam, method(:8), counting(:5) )
+      write( *, '(2F6.2,2F9.5,F25.13)' ) mu, R, res
 
     else if ( fit(:9) == 'alphaMass' ) then
 
       res2 = Chi2MinAlphaMbNRQCD( Upsilon, dataList, m, iter(:10), order, n, &
       res2(1), res2(3), muList, RList, ndim, lam, method(:8), counting(:5) )
-      write( *, '(2F6.2,5F10.6,F25.13)' ) mu, R, res2
+      write( *, '(2F6.2,5F11.7,F25.13)' ) mu, R, res2
 
     else if ( fit(:5) == 'alpha' ) then
 
       res = Chi2MinAlphaNRQCD( Upsilon, dataList, m, iter(:10), order, n, res(1), &
       muList, RList, ndim, lam, method(:8), counting(:5) )
-      write( *, '(2F6.2,2F10.6,F25.13)' ) mu, R, res
+      write( *, '(2F6.2,2F11.7,F25.13)' ) mu, R, res
 
     end if
 
@@ -117,7 +117,7 @@ subroutine readData()
   integer                           :: ierror, j
   character (len = 100)             :: readString
 
-  OPEN (UNIT=1,FILE=dataFile, ACCESS = 'SEQUENTIAL',STATUS='OLD')
+  OPEN (UNIT=1, FILE = dataFile, ACCESS = 'SEQUENTIAL', STATUS = 'OLD')
 
   read(1,*) m; read(1,*) ; allocate( dataList(2,m), qnList(4,m) )
 

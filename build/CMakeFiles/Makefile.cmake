@@ -61,6 +61,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
+  "CMakeFiles/MbFinderNRQCD.dir/DependInfo.cmake"
   "CMakeFiles/hello-world.dir/DependInfo.cmake"
   "CMakeFiles/Caliper.dir/DependInfo.cmake"
   "CMakeFiles/Chi2MbNRQCD.dir/DependInfo.cmake"
