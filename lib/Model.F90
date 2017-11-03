@@ -20,7 +20,7 @@ module ModelClass
 
   contains
 
-    final                                 :: delete_object
+    ! final                                 :: delete_object
     procedure, pass(self), public         :: BreitModel, SoftFourier, SetLambda, &
     CumMomentModel, ShapeFun, Taylor, ModelUnstable, BreitModUns
 
@@ -42,16 +42,16 @@ module ModelClass
 
 !ccccccccccccccc
 
-  subroutine delete_object(this)
-    type(Model) :: this
-    if ( allocated(this%EmodCoef) ) deallocate(this%EmodCoef)
-    if ( allocated(this%c)        ) deallocate(this%c       )
-    if ( allocated(this%FourList) ) deallocate(this%FourList)
-    if ( allocated(this%TwoList ) ) deallocate(this%TwoList)
-    if ( allocated(this%ZetaList) ) deallocate(this%ZetaList)
-    if ( allocated(this%DmodList) ) deallocate(this%DmodList)
-    if ( allocated(this%ListFact) ) deallocate(this%ListFact)
-  end subroutine delete_object
+  ! subroutine delete_object(this)
+  !   type(Model) :: this
+  !   if ( allocated(this%EmodCoef) ) deallocate(this%EmodCoef)
+  !   if ( allocated(this%c)        ) deallocate(this%c       )
+  !   if ( allocated(this%FourList) ) deallocate(this%FourList)
+  !   if ( allocated(this%TwoList ) ) deallocate(this%TwoList)
+  !   if ( allocated(this%ZetaList) ) deallocate(this%ZetaList)
+  !   if ( allocated(this%DmodList) ) deallocate(this%DmodList)
+  !   if ( allocated(this%ListFact) ) deallocate(this%ListFact)
+  ! end subroutine delete_object
 
 !ccccccccccccccc
 

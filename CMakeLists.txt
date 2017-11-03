@@ -86,8 +86,11 @@ target_link_libraries(hello-world libradreturn libCaliper)
 	add_executable(Chi2MbNRQCD ${CMAKE_CURRENT_SOURCE_DIR}/src/Chi2MbNRQCD.F90)
 	target_link_libraries(Chi2MbNRQCD libCaliper subdir_mods)
 
-		add_executable(MbFinderNRQCD ${CMAKE_CURRENT_SOURCE_DIR}/src/MbFinderNRQCD.F90)
-		target_link_libraries(MbFinderNRQCD libCaliper subdir_mods)
+	add_executable(MbFinderNRQCD ${CMAKE_CURRENT_SOURCE_DIR}/src/MbFinderNRQCD.F90)
+	target_link_libraries(MbFinderNRQCD libCaliper subdir_mods)
+
+	add_executable(NRQCDGrid ${CMAKE_CURRENT_SOURCE_DIR}/src/NRQCDGrid.F90)
+	target_link_libraries(NRQCDGrid libCaliper subdir_mods)
 
 ###############
 ## INSTALL
@@ -104,3 +107,4 @@ endif()
 install(TARGETS hello-world DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 install(TARGETS Chi2MbNRQCD DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 install(TARGETS MbFinderNRQCD DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+install(TARGETS NRQCDGrid DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)

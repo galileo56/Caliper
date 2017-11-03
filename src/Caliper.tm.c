@@ -289,7 +289,7 @@ MLYDEFN( devyield_result, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
-# line 2978 "/Users/vicent/GitHub/Caliper/src/Caliper.tm"
+# line 2977 "/Users/vicent/GitHub/Caliper/src/Caliper.tm"
 #include "mathlink.h"
 #include "ftypes.h"
 #include <stdio.h>
@@ -17987,8 +17987,6 @@ static const char* evalstrs[] = {
 	(const char*)0,
 	"MJexpErr         = {0.0005, 0.000006}",
 	(const char*)0,
-	"MJexpErr         = {0.0005, 0.000006}",
-	(const char*)0,
 	"MJexpErrdataJ    = {MJexp, MJexpErr} // Transpose",
 	(const char*)0,
 	"Narr             = {1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3};",
@@ -17999,7 +17997,7 @@ static const char* evalstrs[] = {
 	(const char*)0,
 	"Jarr             = {0, 1, 0, 1, 1, 2, 0, 1, 2, 0, 1, 1, 2, 1};",
 	(const char*)0,
-	"Quantum          = {Narr, Larr, Sarr, Jarr} // Transpose",
+	"Quantum          = {Narr, Larr, Jarr, Sarr} // Transpose",
 	(const char*)0,
 	"QSwitch::usage = \"Delta1S[nl, orderAlpha, runAlpha, orderMass, r",
 	"unMass, ord1S, muLam, xLam, method, mZ, aMz, mt, gt, R]\"",
@@ -18917,7 +18915,7 @@ static const char* evalstrs[] = {
 	(const char*)0,
 	(const char*)0
 };
-#define CARDOF_EVALSTRS 245
+#define CARDOF_EVALSTRS 244
 
 static int _definepattern P(( MLINK, char*, char*, int));
 
@@ -19175,7 +19173,6 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _doevalstr( mlp, 238);
 	if (_res) _res = _doevalstr( mlp, 239);
 	if (_res) _res = _doevalstr( mlp, 240);
-	if (_res) _res = _doevalstr( mlp, 241);
 	if (_res) _res = _definepattern(mlp, (char *)"HypGeo[a_, b_, c_, z_]", (char *)"{Re[a], Im[a], Re[b], Im[b], Re[c], Im[c], Re[z], Im[z]}", 0);
 	if (_res) _res = _definepattern(mlp, (char *)"CdiGamma[z_]", (char *)"{Re[z], Im[z]}", 1);
 	if (_res) _res = _definepattern(mlp, (char *)"CtriGamma[z_]", (char *)"{Re[z], Im[z]}", 2);
@@ -19405,9 +19402,9 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"NGLKernel[n_, n1_, n2_, width_, w_, mu_, p_]", (char *)"{n, n1, n2, width, w, mu, p}", 226);
 	if (_res) _res = _definepattern(mlp, (char *)"NGLIntegral[nf_, pow_, w1_, w2_]", (char *)"{nf, pow, w1, w2}", 227);
 	if (_res) _res = _definepattern(mlp, (char *)"NGLDoubleIntegral[nf_, pow_, w1_, w2_, r_]", (char *)"{nf, pow, w1, w2, r}", 228);
+	if (_res) _res = _doevalstr( mlp, 241);
 	if (_res) _res = _doevalstr( mlp, 242);
 	if (_res) _res = _doevalstr( mlp, 243);
-	if (_res) _res = _doevalstr( mlp, 244);
 	if (_res) _res = MLPutSymbol( mlp, "End");
 	if (_res) _res = MLFlush( mlp);
 	return _res;

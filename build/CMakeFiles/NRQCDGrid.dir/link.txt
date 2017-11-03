@@ -1,0 +1,1 @@
+/usr/local/bin/gfortran   -Waliasing -Wampersand -Wconversion -Wc-binding-type -Wintrinsics-std -Wtabs -Wintrinsic-shadow -Wline-truncation -Wtarget-lifetime -Winteger-division -Wreal-q-constant -Wunused CMakeFiles/NRQCDGrid.dir/src/NRQCDGrid.F90.o  -o NRQCDGrid lib/liblibCaliper.a libsubdir_mods.a 

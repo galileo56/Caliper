@@ -56,6 +56,18 @@ CMAKE_BINARY_DIR = /Users/vicent/GitHub/Caliper/build
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/opt/local/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/opt/local/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # Special rule for the target install/local
 install/local: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
@@ -99,18 +111,6 @@ edit_cache:
 edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
-
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/opt/local/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
-
-# Special rule for the target install/strip
-install/strip/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/opt/local/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip/fast
 
 # Special rule for the target install
 install: preinstall
@@ -157,17 +157,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named MbFinderNRQCD
+# Target rules for targets named NRQCDGrid
 
 # Build rule for target.
-MbFinderNRQCD: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 MbFinderNRQCD
-.PHONY : MbFinderNRQCD
+NRQCDGrid: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 NRQCDGrid
+.PHONY : NRQCDGrid
 
 # fast build rule for target.
-MbFinderNRQCD/fast:
-	$(MAKE) -f CMakeFiles/MbFinderNRQCD.dir/build.make CMakeFiles/MbFinderNRQCD.dir/build
-.PHONY : MbFinderNRQCD/fast
+NRQCDGrid/fast:
+	$(MAKE) -f CMakeFiles/NRQCDGrid.dir/build.make CMakeFiles/NRQCDGrid.dir/build
+.PHONY : NRQCDGrid/fast
 
 #=============================================================================
 # Target rules for targets named hello-world
@@ -181,6 +181,19 @@ hello-world: cmake_check_build_system
 hello-world/fast:
 	$(MAKE) -f CMakeFiles/hello-world.dir/build.make CMakeFiles/hello-world.dir/build
 .PHONY : hello-world/fast
+
+#=============================================================================
+# Target rules for targets named MbFinderNRQCD
+
+# Build rule for target.
+MbFinderNRQCD: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 MbFinderNRQCD
+.PHONY : MbFinderNRQCD
+
+# fast build rule for target.
+MbFinderNRQCD/fast:
+	$(MAKE) -f CMakeFiles/MbFinderNRQCD.dir/build.make CMakeFiles/MbFinderNRQCD.dir/build
+.PHONY : MbFinderNRQCD/fast
 
 #=============================================================================
 # Target rules for targets named Caliper
@@ -976,6 +989,33 @@ src/MbFinderNRQCD.F90.s:
 	$(MAKE) -f CMakeFiles/MbFinderNRQCD.dir/build.make CMakeFiles/MbFinderNRQCD.dir/src/MbFinderNRQCD.F90.s
 .PHONY : src/MbFinderNRQCD.F90.s
 
+src/NRQCDGrid.o: src/NRQCDGrid.F90.o
+
+.PHONY : src/NRQCDGrid.o
+
+# target to build an object file
+src/NRQCDGrid.F90.o:
+	$(MAKE) -f CMakeFiles/NRQCDGrid.dir/build.make CMakeFiles/NRQCDGrid.dir/src/NRQCDGrid.F90.o
+.PHONY : src/NRQCDGrid.F90.o
+
+src/NRQCDGrid.i: src/NRQCDGrid.F90.i
+
+.PHONY : src/NRQCDGrid.i
+
+# target to preprocess a source file
+src/NRQCDGrid.F90.i:
+	$(MAKE) -f CMakeFiles/NRQCDGrid.dir/build.make CMakeFiles/NRQCDGrid.dir/src/NRQCDGrid.F90.i
+.PHONY : src/NRQCDGrid.F90.i
+
+src/NRQCDGrid.s: src/NRQCDGrid.F90.s
+
+.PHONY : src/NRQCDGrid.s
+
+# target to generate assembly for a file
+src/NRQCDGrid.F90.s:
+	$(MAKE) -f CMakeFiles/NRQCDGrid.dir/build.make CMakeFiles/NRQCDGrid.dir/src/NRQCDGrid.F90.s
+.PHONY : src/NRQCDGrid.F90.s
+
 src/hello-world.o: src/hello-world.cpp.o
 
 .PHONY : src/hello-world.o
@@ -1009,14 +1049,15 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... install/strip"
+	@echo "... NRQCDGrid"
 	@echo "... install/local"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... hello-world"
 	@echo "... edit_cache"
 	@echo "... MbFinderNRQCD"
-	@echo "... hello-world"
 	@echo "... Caliper"
-	@echo "... install/strip"
 	@echo "... install"
 	@echo "... Chi2MbNRQCD"
 	@echo "... subdir_mods"
@@ -1103,6 +1144,9 @@ help:
 	@echo "... src/MbFinderNRQCD.o"
 	@echo "... src/MbFinderNRQCD.i"
 	@echo "... src/MbFinderNRQCD.s"
+	@echo "... src/NRQCDGrid.o"
+	@echo "... src/NRQCDGrid.i"
+	@echo "... src/NRQCDGrid.s"
 	@echo "... src/hello-world.o"
 	@echo "... src/hello-world.i"
 	@echo "... src/hello-world.s"

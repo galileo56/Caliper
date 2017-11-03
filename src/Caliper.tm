@@ -20,13 +20,12 @@
 :Evaluate:  ErrUpsilon       = {0.0023, 0.00026, 0.00052, 0.00040, 0.0008, 0.00040, 0.004, 0.00031, 0.0014, 0.0006, 0.00055, 0.0012, 0.00055, 0.0005}
 :Evaluate:  MJexp            = {2.98034, 3.0969}
 :Evaluate:  MJexpErr         = {0.0005, 0.000006}
-:Evaluate:  MJexpErr         = {0.0005, 0.000006}
 :Evaluate:  MJexpErrdataJ    = {MJexp, MJexpErr} // Transpose
 :Evaluate:  Narr             = {1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3};
 :Evaluate:  Larr             = {0, 0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 1, 1, 0};
 :Evaluate:  Sarr             = {0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1};
 :Evaluate:  Jarr             = {0, 1, 0, 1, 1, 2, 0, 1, 2, 0, 1, 1, 2, 1};
-:Evaluate:  Quantum          = {Narr, Larr, Sarr, Jarr} // Transpose
+:Evaluate:  Quantum          = {Narr, Larr, Jarr, Sarr} // Transpose
 
 :Evaluate:  QSwitch::usage = "Delta1S[nl, orderAlpha, runAlpha, orderMass, runMass, ord1S, muLam, xLam, method, mZ, aMz, mt, gt, R]"
 :Evaluate:  Delta1S::usage = "Delta1S[nl, orderAlpha, runAlpha, orderMass, runMass, muLam, xLam, method, mZ, aMz, mt, R]"

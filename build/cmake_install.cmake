@@ -107,6 +107,24 @@ file(INSTALL DESTINATION "/Users/vicent/GitHub/Caliper/bin" TYPE EXECUTABLE FILE
   endif()
 endif()
 
+if("${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
+   "/Users/vicent/GitHub/Caliper/bin/NRQCDGrid")
+  if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
+    message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
+  endif()
+  if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
+    message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
+  endif()
+file(INSTALL DESTINATION "/Users/vicent/GitHub/Caliper/bin" TYPE EXECUTABLE FILES "/Users/vicent/GitHub/Caliper/build/NRQCDGrid")
+  if(EXISTS "$ENV{DESTDIR}/Users/vicent/GitHub/Caliper/bin/NRQCDGrid" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}/Users/vicent/GitHub/Caliper/bin/NRQCDGrid")
+    if(CMAKE_INSTALL_DO_STRIP)
+      execute_process(COMMAND "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip" "$ENV{DESTDIR}/Users/vicent/GitHub/Caliper/bin/NRQCDGrid")
+    endif()
+  endif()
+endif()
+
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/Users/vicent/GitHub/Caliper/build/lib/cmake_install.cmake")
