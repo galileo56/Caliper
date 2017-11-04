@@ -24,12 +24,12 @@ Program NRQCDGrid
 
   print*, n, l, j, s
   print*, charm, scheme, average, method, counting
-  print*, orderAlp, runAlp, order, run, nl, n
+  print*, orderAlp, runAlp, order, run, nl
   write(*,'(11F10.4)') mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam
   write(*,'(F12.8)'  ) mass
 
   imax = Floor( (mu1 - mu0)/deltaMu ) + 1;  kmax = Floor( (R1 - R0)/deltaR ) + 1
-  kmax = Floor( (m1 - m0)/deltaM ) + 1
+  mMax = Floor( (m1 - m0)/deltaM ) + 1
 
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 

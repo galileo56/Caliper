@@ -23,8 +23,8 @@
 :Evaluate:  MJexpErrdataJ    = {MJexp, MJexpErr} // Transpose
 :Evaluate:  Narr             = {1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3};
 :Evaluate:  Larr             = {0, 0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 1, 1, 0};
-:Evaluate:  Sarr             = {0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1};
 :Evaluate:  Jarr             = {0, 1, 0, 1, 1, 2, 0, 1, 2, 0, 1, 1, 2, 1};
+:Evaluate:  Sarr             = {0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1};
 :Evaluate:  Quantum          = {Narr, Larr, Jarr, Sarr} // Transpose
 
 :Evaluate:  QSwitch::usage = "Delta1S[nl, orderAlpha, runAlpha, orderMass, runMass, ord1S, muLam, xLam, method, mZ, aMz, mt, gt, R]"

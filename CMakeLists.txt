@@ -33,7 +33,8 @@ endif()
 
 ## additional flags for the fortran compiler - for gfortran
 if("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "GNU")
-    set(addition_fortran "-Waliasing -Wampersand -Wconversion -Wc-binding-type -Wintrinsics-std -Wtabs -Wintrinsic-shadow -Wline-truncation -Wtarget-lifetime -Winteger-division -Wreal-q-constant -Wunused")
+    # set(addition_fortran "-Waliasing -Wampersand -Wconversion -Wc-binding-type -Wintrinsics-std -Wtabs -Wintrinsic-shadow -Wline-truncation -Wtarget-lifetime -Winteger-division -Wreal-q-constant -Wunused")
+    set(addition_fortran "-Wall")
 endif()
 
 ## let the flag changes take effect

@@ -16,7 +16,7 @@ module CumulantClass
 
     contains
 
-    final                                 :: delete_object
+    ! final                                 :: delete_object
     procedure, pass(self), private        :: SetScales
     procedure, pass(self), public         :: ListDistPiece, ListDist, ListBin, &
     Bin, ListBinPiece, FindOrigin, BinPiece
@@ -47,11 +47,11 @@ module CumulantClass
 
 !ccccccccccccccc
 
- subroutine delete_object(this)
-   type (CumulantMassless) :: this
-     if ( allocated(this%Sing ) ) deallocate(this%Sing)
-     if ( allocated(this%Prof ) ) deallocate(this%Prof)
-  end subroutine delete_object
+ ! subroutine delete_object(this)
+ !   type (CumulantMassless) :: this
+ !     if ( allocated(this%Sing ) ) deallocate(this%Sing)
+ !     if ( allocated(this%Prof ) ) deallocate(this%Prof)
+ !  end subroutine delete_object
 
 !ccccccccccccccc
 
