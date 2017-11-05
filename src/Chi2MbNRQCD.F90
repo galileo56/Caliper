@@ -27,7 +27,8 @@ Program Chi2MbNRQCD
   read*, mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam
   read*, R0, R1, deltaR, mu0, mu1, deltaMu
 
-  print*, dataFile
+  print*, trim(dataFile)
+  print*, trim(fit)
   print*, iter, charm, scheme, average, method, counting
   print*, orderAlp, runAlp, order, run, nl, n
   write(*,'(11F10.4)') mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam
@@ -74,13 +75,14 @@ Program Chi2MbNRQCD
   end if
   print*,
 
-  do i = 1, imax
-      mu = mu0 + (i - 1) * deltaMu
-      if (nl == 4) muList = 1.5_dp + 2.5 * (mu - 1)/3
-      if (ndim  > 1 .and. nl == 4) muList(2) = mu
-      if (nl == 3) muList = mu
-    do j = 1, jmax
-      R = R0 + (j - 1) * deltaR
+  do i = 0, imax
+    mu = mu0 + i * deltaMu
+    if (nl == 4) muList = 1.5_dp + 2.5 * (mu - 1)/3
+    if (ndim  > 1 .and. nl == 4) muList(2) = mu
+    if (nl == 3) muList = mu
+
+    do j = 0, jmax
+      R = R0 + j * deltaR
       if (nl == 4) RList = 1.5_dp + 2.5 * (R - 1)/3
       if (ndim  > 1 .and. nl == 4) RList(2) = R
       if (nl == 3) RList = R
@@ -119,7 +121,7 @@ subroutine readData()
   integer                           :: ierror, j
   character (len = 100)             :: readString
 
-  OPEN (UNIT=1, FILE = dataFile, ACCESS = 'SEQUENTIAL', STATUS = 'OLD')
+  OPEN (UNIT = 1, FILE = trim(dataFile), ACCESS = 'SEQUENTIAL', STATUS = 'OLD')
 
   read(1,*) m; read(1,*) ; allocate( dataList(2,m), qnList(4,m) )
 

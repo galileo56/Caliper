@@ -22,7 +22,7 @@ Program MbFinderNRQCD
 
   print*, n, l, j, s
   print*, iter, charm, scheme, average, method, counting
-  print*, orderAlp, runAlp, order, run, nl, n
+  print*, orderAlp, runAlp, order, run, nl, ord
   write(*,'(11F10.4)') mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam
   write(*,'(F12.8)'  ) mass
 
@@ -46,10 +46,10 @@ Program MbFinderNRQCD
 
   print*,; print*, '  R     mu    m(m)'; print*,
 
-  do i = 1, imax
-      mu = mu0 + (i - 1) * deltaMu
-    do k = 1, kmax
-      R = R0 + (k - 1) * deltaR
+  do i = 0, imax
+    mu = mu0 + i * deltaMu
+    do k = 0, kmax
+      R = R0 + k * deltaR
 
       res = Upsilon%MassFitter( iter(:10), ord, order, mu, R, mass, &
       lam, method(:8), counting(:5) )

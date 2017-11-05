@@ -3,4 +3,6 @@
 /Users/vmateu/GitHub/Caliper/bin/Chi2MbNRQCD
 /Users/vmateu/GitHub/Caliper/bin/MbFinderNRQCD
 /Users/vmateu/GitHub/Caliper/bin/NRQCDGrid
+/Users/vmateu/GitHub/Caliper/bin/Chi2NRQCDAnalyzer
+/Users/vmateu/GitHub/Caliper/bin/MbFinderNRQCDAnalyzer
 /Users/vmateu/GitHub/Caliper/lib/../lib/liblibCaliper.a

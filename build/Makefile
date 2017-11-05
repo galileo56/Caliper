@@ -56,29 +56,17 @@ CMAKE_BINARY_DIR = /Users/vmateu/GitHub/Caliper/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/opt/local/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/opt/local/bin/cmake -P cmake_install.cmake
+.PHONY : install
 
-# Special rule for the target install/strip
-install/strip/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/opt/local/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip/fast
-
-# Special rule for the target install/local
-install/local: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/opt/local/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local
-
-# Special rule for the target install/local
-install/local/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/opt/local/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local/fast
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/opt/local/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
 
 # Special rule for the target list_install_components
 list_install_components:
@@ -112,17 +100,29 @@ edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
 
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/opt/local/bin/cmake -P cmake_install.cmake
-.PHONY : install
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/opt/local/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
 
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/opt/local/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/opt/local/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/opt/local/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/opt/local/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -157,19 +157,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named NRQCDGrid
-
-# Build rule for target.
-NRQCDGrid: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 NRQCDGrid
-.PHONY : NRQCDGrid
-
-# fast build rule for target.
-NRQCDGrid/fast:
-	$(MAKE) -f CMakeFiles/NRQCDGrid.dir/build.make CMakeFiles/NRQCDGrid.dir/build
-.PHONY : NRQCDGrid/fast
-
-#=============================================================================
 # Target rules for targets named hello-world
 
 # Build rule for target.
@@ -181,6 +168,32 @@ hello-world: cmake_check_build_system
 hello-world/fast:
 	$(MAKE) -f CMakeFiles/hello-world.dir/build.make CMakeFiles/hello-world.dir/build
 .PHONY : hello-world/fast
+
+#=============================================================================
+# Target rules for targets named Chi2MbNRQCD
+
+# Build rule for target.
+Chi2MbNRQCD: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 Chi2MbNRQCD
+.PHONY : Chi2MbNRQCD
+
+# fast build rule for target.
+Chi2MbNRQCD/fast:
+	$(MAKE) -f CMakeFiles/Chi2MbNRQCD.dir/build.make CMakeFiles/Chi2MbNRQCD.dir/build
+.PHONY : Chi2MbNRQCD/fast
+
+#=============================================================================
+# Target rules for targets named MbFinderNRQCDAnalyzer
+
+# Build rule for target.
+MbFinderNRQCDAnalyzer: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 MbFinderNRQCDAnalyzer
+.PHONY : MbFinderNRQCDAnalyzer
+
+# fast build rule for target.
+MbFinderNRQCDAnalyzer/fast:
+	$(MAKE) -f CMakeFiles/MbFinderNRQCDAnalyzer.dir/build.make CMakeFiles/MbFinderNRQCDAnalyzer.dir/build
+.PHONY : MbFinderNRQCDAnalyzer/fast
 
 #=============================================================================
 # Target rules for targets named MbFinderNRQCD
@@ -196,6 +209,32 @@ MbFinderNRQCD/fast:
 .PHONY : MbFinderNRQCD/fast
 
 #=============================================================================
+# Target rules for targets named Chi2NRQCDAnalyzer
+
+# Build rule for target.
+Chi2NRQCDAnalyzer: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 Chi2NRQCDAnalyzer
+.PHONY : Chi2NRQCDAnalyzer
+
+# fast build rule for target.
+Chi2NRQCDAnalyzer/fast:
+	$(MAKE) -f CMakeFiles/Chi2NRQCDAnalyzer.dir/build.make CMakeFiles/Chi2NRQCDAnalyzer.dir/build
+.PHONY : Chi2NRQCDAnalyzer/fast
+
+#=============================================================================
+# Target rules for targets named NRQCDGrid
+
+# Build rule for target.
+NRQCDGrid: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 NRQCDGrid
+.PHONY : NRQCDGrid
+
+# fast build rule for target.
+NRQCDGrid/fast:
+	$(MAKE) -f CMakeFiles/NRQCDGrid.dir/build.make CMakeFiles/NRQCDGrid.dir/build
+.PHONY : NRQCDGrid/fast
+
+#=============================================================================
 # Target rules for targets named Caliper
 
 # Build rule for target.
@@ -207,19 +246,6 @@ Caliper: cmake_check_build_system
 Caliper/fast:
 	$(MAKE) -f CMakeFiles/Caliper.dir/build.make CMakeFiles/Caliper.dir/build
 .PHONY : Caliper/fast
-
-#=============================================================================
-# Target rules for targets named Chi2MbNRQCD
-
-# Build rule for target.
-Chi2MbNRQCD: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 Chi2MbNRQCD
-.PHONY : Chi2MbNRQCD
-
-# fast build rule for target.
-Chi2MbNRQCD/fast:
-	$(MAKE) -f CMakeFiles/Chi2MbNRQCD.dir/build.make CMakeFiles/Chi2MbNRQCD.dir/build
-.PHONY : Chi2MbNRQCD/fast
 
 #=============================================================================
 # Target rules for targets named subdir_mods
@@ -962,6 +988,33 @@ src/Chi2MbNRQCD.F90.s:
 	$(MAKE) -f CMakeFiles/Chi2MbNRQCD.dir/build.make CMakeFiles/Chi2MbNRQCD.dir/src/Chi2MbNRQCD.F90.s
 .PHONY : src/Chi2MbNRQCD.F90.s
 
+src/Chi2NRQCDAnalyzer.o: src/Chi2NRQCDAnalyzer.F90.o
+
+.PHONY : src/Chi2NRQCDAnalyzer.o
+
+# target to build an object file
+src/Chi2NRQCDAnalyzer.F90.o:
+	$(MAKE) -f CMakeFiles/Chi2NRQCDAnalyzer.dir/build.make CMakeFiles/Chi2NRQCDAnalyzer.dir/src/Chi2NRQCDAnalyzer.F90.o
+.PHONY : src/Chi2NRQCDAnalyzer.F90.o
+
+src/Chi2NRQCDAnalyzer.i: src/Chi2NRQCDAnalyzer.F90.i
+
+.PHONY : src/Chi2NRQCDAnalyzer.i
+
+# target to preprocess a source file
+src/Chi2NRQCDAnalyzer.F90.i:
+	$(MAKE) -f CMakeFiles/Chi2NRQCDAnalyzer.dir/build.make CMakeFiles/Chi2NRQCDAnalyzer.dir/src/Chi2NRQCDAnalyzer.F90.i
+.PHONY : src/Chi2NRQCDAnalyzer.F90.i
+
+src/Chi2NRQCDAnalyzer.s: src/Chi2NRQCDAnalyzer.F90.s
+
+.PHONY : src/Chi2NRQCDAnalyzer.s
+
+# target to generate assembly for a file
+src/Chi2NRQCDAnalyzer.F90.s:
+	$(MAKE) -f CMakeFiles/Chi2NRQCDAnalyzer.dir/build.make CMakeFiles/Chi2NRQCDAnalyzer.dir/src/Chi2NRQCDAnalyzer.F90.s
+.PHONY : src/Chi2NRQCDAnalyzer.F90.s
+
 src/MbFinderNRQCD.o: src/MbFinderNRQCD.F90.o
 
 .PHONY : src/MbFinderNRQCD.o
@@ -988,6 +1041,33 @@ src/MbFinderNRQCD.s: src/MbFinderNRQCD.F90.s
 src/MbFinderNRQCD.F90.s:
 	$(MAKE) -f CMakeFiles/MbFinderNRQCD.dir/build.make CMakeFiles/MbFinderNRQCD.dir/src/MbFinderNRQCD.F90.s
 .PHONY : src/MbFinderNRQCD.F90.s
+
+src/MbFinderNRQCDAnalyzer.o: src/MbFinderNRQCDAnalyzer.F90.o
+
+.PHONY : src/MbFinderNRQCDAnalyzer.o
+
+# target to build an object file
+src/MbFinderNRQCDAnalyzer.F90.o:
+	$(MAKE) -f CMakeFiles/MbFinderNRQCDAnalyzer.dir/build.make CMakeFiles/MbFinderNRQCDAnalyzer.dir/src/MbFinderNRQCDAnalyzer.F90.o
+.PHONY : src/MbFinderNRQCDAnalyzer.F90.o
+
+src/MbFinderNRQCDAnalyzer.i: src/MbFinderNRQCDAnalyzer.F90.i
+
+.PHONY : src/MbFinderNRQCDAnalyzer.i
+
+# target to preprocess a source file
+src/MbFinderNRQCDAnalyzer.F90.i:
+	$(MAKE) -f CMakeFiles/MbFinderNRQCDAnalyzer.dir/build.make CMakeFiles/MbFinderNRQCDAnalyzer.dir/src/MbFinderNRQCDAnalyzer.F90.i
+.PHONY : src/MbFinderNRQCDAnalyzer.F90.i
+
+src/MbFinderNRQCDAnalyzer.s: src/MbFinderNRQCDAnalyzer.F90.s
+
+.PHONY : src/MbFinderNRQCDAnalyzer.s
+
+# target to generate assembly for a file
+src/MbFinderNRQCDAnalyzer.F90.s:
+	$(MAKE) -f CMakeFiles/MbFinderNRQCDAnalyzer.dir/build.make CMakeFiles/MbFinderNRQCDAnalyzer.dir/src/MbFinderNRQCDAnalyzer.F90.s
+.PHONY : src/MbFinderNRQCDAnalyzer.F90.s
 
 src/NRQCDGrid.o: src/NRQCDGrid.F90.o
 
@@ -1049,17 +1129,19 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... install/strip"
-	@echo "... NRQCDGrid"
-	@echo "... install/local"
+	@echo "... install"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... hello-world"
 	@echo "... edit_cache"
-	@echo "... MbFinderNRQCD"
-	@echo "... Caliper"
-	@echo "... install"
 	@echo "... Chi2MbNRQCD"
+	@echo "... MbFinderNRQCDAnalyzer"
+	@echo "... MbFinderNRQCD"
+	@echo "... install/strip"
+	@echo "... Chi2NRQCDAnalyzer"
+	@echo "... install/local"
+	@echo "... NRQCDGrid"
+	@echo "... Caliper"
 	@echo "... subdir_mods"
 	@echo "... libCaliper"
 	@echo "... libradreturn"
@@ -1141,9 +1223,15 @@ help:
 	@echo "... src/Chi2MbNRQCD.o"
 	@echo "... src/Chi2MbNRQCD.i"
 	@echo "... src/Chi2MbNRQCD.s"
+	@echo "... src/Chi2NRQCDAnalyzer.o"
+	@echo "... src/Chi2NRQCDAnalyzer.i"
+	@echo "... src/Chi2NRQCDAnalyzer.s"
 	@echo "... src/MbFinderNRQCD.o"
 	@echo "... src/MbFinderNRQCD.i"
 	@echo "... src/MbFinderNRQCD.s"
+	@echo "... src/MbFinderNRQCDAnalyzer.o"
+	@echo "... src/MbFinderNRQCDAnalyzer.i"
+	@echo "... src/MbFinderNRQCDAnalyzer.s"
 	@echo "... src/NRQCDGrid.o"
 	@echo "... src/NRQCDGrid.i"
 	@echo "... src/NRQCDGrid.s"

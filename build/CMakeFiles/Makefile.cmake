@@ -61,11 +61,13 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/NRQCDGrid.dir/DependInfo.cmake"
   "CMakeFiles/hello-world.dir/DependInfo.cmake"
-  "CMakeFiles/MbFinderNRQCD.dir/DependInfo.cmake"
-  "CMakeFiles/Caliper.dir/DependInfo.cmake"
   "CMakeFiles/Chi2MbNRQCD.dir/DependInfo.cmake"
+  "CMakeFiles/MbFinderNRQCDAnalyzer.dir/DependInfo.cmake"
+  "CMakeFiles/MbFinderNRQCD.dir/DependInfo.cmake"
+  "CMakeFiles/Chi2NRQCDAnalyzer.dir/DependInfo.cmake"
+  "CMakeFiles/NRQCDGrid.dir/DependInfo.cmake"
+  "CMakeFiles/Caliper.dir/DependInfo.cmake"
   "CMakeFiles/subdir_mods.dir/DependInfo.cmake"
   "lib/CMakeFiles/libCaliper.dir/DependInfo.cmake"
   "libC/CMakeFiles/libradreturn.dir/DependInfo.cmake"

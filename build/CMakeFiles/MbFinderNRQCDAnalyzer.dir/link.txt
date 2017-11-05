@@ -1,0 +1,1 @@
+/usr/local/bin/gfortran   -Wall CMakeFiles/MbFinderNRQCDAnalyzer.dir/src/MbFinderNRQCDAnalyzer.F90.o  -o MbFinderNRQCDAnalyzer 
