@@ -54,7 +54,7 @@ Program MbFinderNRQCD
       res = Upsilon%MassFitter( iter(:10), ord, order, mu, R, mass, &
       lam, method(:8), counting(:5) )
 
-      write( *, '(2F6.2,F8.4)' ) mu, R, res
+      write( *, '(2F6.2,F11.7)' ) mu, R, res
 
     end do
   end do

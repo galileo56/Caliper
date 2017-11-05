@@ -76,18 +76,20 @@ Program Chi2MbNRQCD
 
   do i = 1, imax
       mu = mu0 + (i - 1) * deltaMu
-      muList = 1.5_dp + 2.5 * (mu - 1)/3
-      if (ndim  > 1) muList(2) = mu
+      if (nl == 4) muList = 1.5_dp + 2.5 * (mu - 1)/3
+      if (ndim  > 1 .and. nl == 4) muList(2) = mu
+      if (nl == 3) muList = mu
     do j = 1, jmax
       R = R0 + (j - 1) * deltaR
-      RList = 1.5_dp + 2.5 * (R - 1)/3
-      if (ndim  > 1) RList(2) = R
+      if (nl == 4) RList = 1.5_dp + 2.5 * (R - 1)/3
+      if (ndim  > 1 .and. nl == 4) RList(2) = R
+      if (nl == 3) RList = R
 
     if ( fit(:4) == 'mass' ) then
 
       res = Chi2MinNRQCD( Upsilon, dataList, m, iter(:10), order, n, res(1),  &
       muList, RList, ndim, lam, method(:8), counting(:5) )
-      write( *, '(2F6.2,2F9.5,F25.13)' ) mu, R, res
+      write( *, '(2F6.2,2F11.7,F25.13)' ) mu, R, res
 
     else if ( fit(:9) == 'alphaMass' ) then
 
