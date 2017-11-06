@@ -1702,7 +1702,7 @@ module NRQCDClass
       if (self%n == 1) then
 
         if (self%l == 0) then
-          res = 2 - 3 * pi * r/2 + 9 * r**2 - 6 * pi * r**3 + &
+          res = 2 - 3 * pi * r/2 + 9 * r**2 - 6 * pi * r**3 &
           - (3 + 15 * lg) * r**4 - (27._dp/4 + 21 * lg/2) * r**6 - &
           (225._dp/32 + 81 * lg/8) * r**8 - (467._dp/64 + 165 * lg/16) * r**10
         end if

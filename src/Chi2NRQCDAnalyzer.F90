@@ -25,9 +25,14 @@ Program Chi2NRQCDAnalyzer
 
   read*, ; read*, ; read*, ; print*,
 
-  if ( fit(:4) == 'mass'      ) print*, '  m(m)      sigmaExp   sigmaPert      chi2/dof'
-  if ( fit(:9) == 'alphaMass' ) print*, '  alpha     sigmaExp   sigmaPert      chi2/dof'
-  if ( fit(:5) == 'alpha'     ) print*, '  alpha     sigmaExp   sigmaPert      chi2/dof'
+  if ( fit(:4) == 'mass'      ) then
+    print*, '  m(m)      sigmaExp   sigmaPert      chi2/dof'
+  else if ( fit(:9) == 'alphaMass' ) then
+    print*, '  alpha     sigmaExp   sigmaPert      chi2/dof'
+  else if ( fit(:5) == 'alpha'     ) then
+    print*, '  alpha     sigmaExp   sigmaPert      chi2/dof'
+  end if
+
   print*,
 
   OPEN (UNIT = 1, FILE = dataFile, ACCESS = 'SEQUENTIAL', STATUS = 'OLD')
@@ -65,11 +70,11 @@ Program Chi2NRQCDAnalyzer
   if ( fit(:9) /= 'alphaMass' ) then
     write(*,'(3F11.7,F25.13)') mean/i, sigma/i, (maxim - minim)/2, chi2/dof
   else
-    corr = (meanMassAlp - mean * meanAlp)/sqrt(meanMass2 - mean**2)/&
-    sqrt(meanAlp2 - meanAlp**2)
+    corr = (meanMassAlp - mean * meanAlp/i)/sqrt(meanMass2 - mean**2/i)/&
+    sqrt(meanAlp2 - meanAlp**2/i)
 
-    write(*,'(8F11.7,F25.13)') mean/i, sigma/i, (maxim - minim)/2, &
-    meanAlp/i, sigmaAlp/i, (maxAlp - minAlp)/2, meanRho, corr, chi2/dof
+    write(*,'(8F14.7,F25.13)') mean/i, sigma/i, (maxim - minim)/2, &
+    meanAlp/i, sigmaAlp/i, (maxAlp - minAlp)/2, meanRho/i, corr, chi2/dof
 
   end if
 

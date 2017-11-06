@@ -6,5 +6,5 @@ Fortran_FLAGS = -Wall
 
 Fortran_DEFINES = 
 
-Fortran_INCLUDES = -I/Users/vicent/GitHub/Caliper -I/Users/vicent/GitHub/Caliper/include -I/Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mathlink.framework/Headers 
+Fortran_INCLUDES = -I/Users/vmateu/GitHub/Caliper -I/Users/vmateu/GitHub/Caliper/include -I/Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mathlink.framework/Headers 
 
