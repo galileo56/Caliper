@@ -2,14 +2,17 @@ Program Chi2NRQCDAnalyzer
 
   use constants, only: dp; implicit none
   character (len = 15)                    :: method, scheme, charm, average, &
-  counting, iter, fit
+  counting, iter, fit, diag, arg
   character (len = 200)                   :: dataFile, line
   integer                                 :: orderAlp, runAlp, order, run, &
   nl, n, dof, ierror, i
   real (dp)                               :: mZ, amZ, mT, muT, mB, muB, mC,    &
   muC, lambda1, lam, lambda2, mass, err, chi2, mean, maxim, minim, chi, sigma, &
   alpha, rho, errAlp, fact, sigmaAlp, maxAlp, minAlp, meanAlp, meanRho, corr,  &
-  meanMass2, meanAlp2, meanMassAlp, R, mu
+  meanMass2, meanAlp2, meanMassAlp, R, mu, Rfix
+
+  call getArg(1, diag)
+  call getArg(2, arg); read(arg,*) Rfix
 
   read*, dataFile
   read*, fit
@@ -52,7 +55,11 @@ Program Chi2NRQCDAnalyzer
       read(line,*) R, mu, mass, err, alpha, errAlp, rho, chi2
     end if
 
-    if (R > 4 .or. mu > 4) cycle; i = i + 1
+    if (R > 4 .or. mu > 4) cycle
+    if ( diag(:4) == 'diag' .and. abs(R - mu)   > tiny(1._dp) ) cycle
+    if ( diag(:4) == 'Rfix' .and. abs(R - Rfix) > tiny(1._dp) ) cycle
+
+    i = i + 1
 
     fact = sqrt(chi2/dof)
     mean = mean + mass; chi = chi + chi2; sigma = sigma + fact * err
