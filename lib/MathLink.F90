@@ -105,11 +105,11 @@ end subroutine f90RNRQCD
 
 ! cccccccccccccccccccc
 
-subroutine f90A1Pole(nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
+subroutine f90A1Pole(order, En, mtpole, gamtop, asoft, VcsNNLL, musoft, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
   real (dp)          , intent(in)  :: En, mtpole, gamtop, asoft, VcsNNLL, musoft
-  integer            , intent(in)  :: nl, order
+  integer            , intent(in)  :: order
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (ElectroWeak)               :: EW
@@ -202,11 +202,10 @@ end subroutine f90SwitchOff
 
 ! cccccccccccccccccccc
 
-subroutine f90VssLL(nl, ah, as, res)
+subroutine f90VssLL(ah, as, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass;  use VFNSMSRClass; use ElectroWeakClass; implicit none
   real (dp)          , intent(in)  :: ah, as
-  integer            , intent(in)  :: nl
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (ElectroWeak)               :: EW
@@ -232,11 +231,10 @@ end subroutine f90VssLL
 
 ! cccccccccccccccccccc
 
-subroutine f90Vk1sLL(nl, as, au, res)
+subroutine f90Vk1sLL(as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass;  use VFNSMSRClass; use ElectroWeakClass; implicit none
   real (dp)          , intent(in)  :: au, as
-  integer            , intent(in)  :: nl
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (RNRQCD)                    :: NRQCD
@@ -262,11 +260,10 @@ end subroutine f90Vk1sLL
 
 ! cccccccccccccccccccc
 
-subroutine f90Vk2sLL(nl, as, au, res)
+subroutine f90Vk2sLL(as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
   real (dp)          , intent(in)  :: au, as
-  integer            , intent(in)  :: nl
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (RNRQCD)                    :: NRQCD
@@ -292,11 +289,10 @@ end subroutine f90Vk2sLL
 
 ! cccccccccccccccccccc
 
-subroutine f90VkeffsLL(nl, as, au, res)
+subroutine f90VkeffsLL(as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
   real (dp)          , intent(in)  :: au, as
-  integer            , intent(in)  :: nl
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (RNRQCD)                    :: NRQCD
@@ -333,11 +329,10 @@ end subroutine f90VcsLL
 
 ! cccccccccccccccccccc
 
-subroutine f90VrsLL(nl, as, au, res)
+subroutine f90VrsLL(as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
   real (dp)          , intent(in)  :: as, au
-  integer            , intent(in)  :: nl
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (ElectroWeak)               :: EW
@@ -363,11 +358,10 @@ end subroutine f90VrsLL
 
 ! cccccccccccccccccccc
 
-subroutine f90V2sLL(nl, ah, as, au, res)
+subroutine f90V2sLL(ah, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
   real (dp)          , intent(in)  :: as, au, ah
-  integer            , intent(in)  :: nl
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (ElectroWeak)               :: EW
@@ -393,11 +387,10 @@ end subroutine f90V2sLL
 
 ! cccccccccccccccccccc
 
-subroutine f90VceffsNNLL(nl, asNNLL, as, au, res)
+subroutine f90VceffsNNLL(asNNLL, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
   real (dp)          , intent(in)  :: as, au, asNNLL
-  integer            , intent(in)  :: nl
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (ElectroWeak)               :: EW
@@ -423,11 +416,10 @@ end subroutine f90VceffsNNLL
 
 ! cccccccccccccccccccc
 
-subroutine f90XiNLL(nl, ah, as, au, res)
+subroutine f90XiNLL(ah, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
   real (dp)          , intent(in)  :: ah, as, au
-  integer            , intent(in)  :: nl
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (ElectroWeak)               :: EW
@@ -453,11 +445,10 @@ end subroutine f90XiNLL
 
 ! cccccccccccccccccccc
 
-subroutine f90XiNNLLmixUsoft(nl, ah, as, res)
+subroutine f90XiNNLLmixUsoft(ah, as, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
   real (dp)          , intent(in)  :: ah, as
-  integer            , intent(in)  :: nl
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (ElectroWeak)               :: EW
@@ -483,11 +474,10 @@ end subroutine f90XiNNLLmixUsoft
 
 ! cccccccccccccccccccc
 
-subroutine f90MLLc2(nl, ah, au, res)
+subroutine f90MLLc2(ah, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
   real (dp)          , intent(in)  :: ah, au
-  integer            , intent(in)  :: nl
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (ElectroWeak)               :: EW
@@ -513,11 +503,10 @@ end subroutine f90MLLc2
 
 ! cccccccccccccccccccc
 
-subroutine f90MNLLc1(nl, ah, as, au, res)
+subroutine f90MNLLc1(ah, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
   real (dp)          , intent(in)  :: ah, as, au
-  integer            , intent(in)  :: nl
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (ElectroWeak)               :: EW
@@ -543,11 +532,10 @@ end subroutine f90MNLLc1
 
 ! cccccccccccccccccccc
 
-subroutine f90MNLLplusNNLLnonmixc1(nl, ah, as, au, res)
+subroutine f90MNLLplusNNLLnonmixc1(ah, as, au, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
   real (dp)          , intent(in)  :: ah, as, au
-  integer            , intent(in)  :: nl
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (ElectroWeak)               :: EW
@@ -573,11 +561,10 @@ end subroutine f90MNLLplusNNLLnonmixc1
 
 ! cccccccccccccccccccc
 
-subroutine f90MNNLLAllc1InclSoftMixLog(nl, ah, as, au, nu, hh, ss, res)
+subroutine f90MNNLLAllc1InclSoftMixLog(ah, as, au, nu, hh, ss, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
   real (dp)          , intent(in)  :: ah, as, au, nu, hh, ss
-  integer            , intent(in)  :: nl
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (ElectroWeak)               :: EW
@@ -614,11 +601,10 @@ end subroutine f90XiNNLLSoftMixLogc1
 
 ! cccccccccccccccccccc
 
-subroutine f90XiNNLLnonmix(nl, ah, as, au, hh, ss, res)
+subroutine f90XiNNLLnonmix(ah, as, au, hh, ss, res)
   use Constants; use RNRQCDClass; use AnomDimClass; use AlphaClass
   use RunningClass; use VFNSMSRClass; use ElectroWeakClass;  implicit none
   real (dp)          , intent(in)  :: ah, as, au, hh, ss
-  integer            , intent(in)  :: nl
   real (dp)          , intent(out) :: res
   integer                          :: i
   type (ElectroWeak)               :: EW
@@ -4291,12 +4277,12 @@ end subroutine f90OptimalRVFNS
 
 !ccccccccccccccc
 
-subroutine f90OptimalR2(n, orderAlp, runAlp, order, run, nf, mZ, amZ, mT, muT, &
+subroutine f90OptimalR2(n, orderAlp, runAlp, run, nf, mZ, amZ, mT, muT, &
 mB, muB, mC, muC, mass, res)
   use RunningClass;  use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
 
-  integer            , intent(in ) :: orderAlp, runAlp, order, run, nf
+  integer            , intent(in ) :: orderAlp, runAlp, run, nf
   real (dp)          , intent(in ) :: mZ, amZ, mT, muT, mB, muB, mC, muC, n, mass
   real (dp)          , intent(out) :: res
   type (Running)                   :: alphaMass
@@ -6871,7 +6857,7 @@ subroutine f90delta(str, nf, mu, R, res)
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, &
   0._dp, 0._dp, 0._dp, 0._dp, 0._dp, 'analytic', 0._dp)
 
-  MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, &
+  MatEl     = MatrixElementsMass(alphaAll, nf, 0, 0._dp, 0._dp, 0._dp, 0._dp, &
   mu, mu, mu, tiny(1._dp), mu, R, R, 0._dp, 0._dp)
 
   res       = MatEl%delta( str(:12) )
@@ -6942,11 +6928,11 @@ end subroutine f90deltaGap
 
 !ccccccccccccccc
 
-subroutine f90deltaMSbar(orderAlp, runAlp, run, nf, mZ, amZ, mT, muT, mB, &
+subroutine f90deltaMSbar(orderAlp, runAlp, nf, mZ, amZ, mT, muT, mB, &
 muB, mC, muC, mu, res)
   use RunningClass; use AlphaClass;  use MatrixElementsClass
   use constants, only: dp; use AnomDimClass; implicit none
-  integer                , intent(in ) :: orderAlp, runAlp, run, nf
+  integer                , intent(in ) :: orderAlp, runAlp, nf
   real (dp)              , intent(in ) :: mZ, amZ, mu, mT, muT, muB, mB, mC, muC
   real (dp), dimension(4), intent(out) :: res
   type (Alpha)                         :: alphaAll
@@ -6961,7 +6947,7 @@ muB, mC, muC, mu, res)
   alphaAll  = Alpha(AnDim, orderAlp, runAlp, mZ, amZ, mT, muT, &
   mB, muB, mC, muC, 'analytic', 0._dp)
 
-  MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, mu, &
+  MatEl     = MatrixElementsMass(alphaAll, nf, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, mu, &
   tiny(1._dp), mu, mu, mu, muC, muC)
 
   res       = MatEl%delta('MSbar')
@@ -6989,7 +6975,7 @@ subroutine f90CoefMat(str, nf, s3, res)
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, &
                      0._dp, 0._dp, 0._dp)
-  MatEl     = MatrixElementsMass(alphaAll, 5, 0, s3, s3, s3, s3, mu, mu, mu, tiny(1._dp),&
+  MatEl     = MatrixElementsMass(alphaAll, nf, 0, s3, s3, s3, s3, mu, mu, mu, tiny(1._dp),&
                              mu, mu, mu, 0._dp, 0._dp)
   res = MatEl%CoefMat(str)
 
@@ -7014,9 +7000,9 @@ subroutine f90NGLintegral(nf, pow, w1, w2, res)
   end do
 
   alphaAll  = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, &
-                     0._dp, 0._dp, 0._dp)
-  MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, mu, &
-                         tiny(1._dp), mu, mu, mu, 0._dp, 0._dp)
+  0._dp, 0._dp, 0._dp)
+  MatEl     = MatrixElementsMass(alphaAll, nf, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, mu, &
+  tiny(1._dp), mu, mu, mu, 0._dp, 0._dp)
 
  res = MatEl%NGLIntegral(pow, w1, w2)
 
@@ -7053,9 +7039,9 @@ subroutine f90NGLfunction(nf, x, res)
   end do
 
   alphaAll = Alpha(AnDim, 0, 0, 0._dp, 0._dp, 0._dp, 0._dp, 0._dp, &
-                     0._dp, 0._dp, 0._dp)
-  MatEl    = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, mu, &
-                         tiny(1._dp), mu, mu, mu, 0._dp, 0._dp)
+  0._dp, 0._dp, 0._dp)
+  MatEl    = MatrixElementsMass(alphaAll, nf, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, mu, mu, &
+  tiny(1._dp), mu, mu, mu, 0._dp, 0._dp)
   res      = MatEl%NGLfunction(x)
 
 end subroutine f90NGLfunction
@@ -7063,13 +7049,13 @@ end subroutine f90NGLfunction
 !ccccccccccccccc
 
 subroutine f90DiffDeltaGap(str, scheme, order, R0, R, mu0, mu, muLambda, orderAlp, &
-                           runAlp, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, res)
+runAlp, nf, mZ, amZ, mT, muT, mB, muB, mC, muC, res)
   use MatrixElementsClass; use AlphaClass;  use constants, only: dp
   use AnomDimClass;  implicit none
   character (len = *), intent(in ) :: str, scheme
   integer            , intent(in ) :: order, nf, orderAlp, runAlp
-  real (dp)          , intent(in ) :: R0, R, mu0, mu, muLambda, mZ, amZ, mT, muT, mB, &
-                                      muB, mC, muC
+  real (dp)          , intent(in ) :: R0, R, mu0, mu, muLambda, mZ, amZ, mT, &
+  muB, mC, muC, muT, mB
   real (dp)          , intent(out) :: res
   type (Alpha)                     :: alphaAll
   type (MatrixElementsMass)        :: MatEl
@@ -7081,7 +7067,7 @@ subroutine f90DiffDeltaGap(str, scheme, order, R0, R, mu0, mu, muLambda, orderAl
   end do
 
   alphaAll  = Alpha(Andim, orderAlp, runAlp, mZ, amZ, mT, muT, mB, muB, mC, muC, 'analytic', 0._dp)
-  MatEl     = MatrixElementsMass(alphaAll, 5, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, &
+  MatEl     = MatrixElementsMass(alphaAll, nf, 0, 0._dp, 0._dp, 0._dp, 0._dp, mu, &
   mu, mu, tiny(1._dp), mu, mu, mu, muLambda, muLambda)
 
   res       = MatEl%DiffDeltaGap( str(:12), order, R0, R, mu0, mu )

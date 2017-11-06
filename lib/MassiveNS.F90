@@ -1831,9 +1831,9 @@ module MassiveNSClass
     character (len = *), intent(in) :: str
 
     if ( str(:5) == 'shape' ) then
-      EShape = self%shape
+      EShape = self%shape(:6)
     else if ( str(:6) == 'EShape' ) then
-      EShape = self%ES
+      EShape = self%ES(:6)
     end if
 
   end function EShape

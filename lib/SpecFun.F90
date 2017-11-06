@@ -245,10 +245,9 @@ end subroutine f90compass_search
 
 ! cccccccccccccccccccc
 
-function GaussRand(x0, sigma, n) result(list)
+function GaussRand(n) result(list)
   use constants; implicit none
   integer  , intent(in)     :: n
-  real (dp), intent(in)     :: x0, sigma
   real (dp), dimension(2*n) :: list
   integer                   :: i
   real (dp), dimension(2)   :: v

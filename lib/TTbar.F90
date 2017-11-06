@@ -515,8 +515,8 @@ contains
 
 ! ccccccccccc
 
-    complex (dp) function dgggv(a, v, X)
-      real (dp)   , intent(in) :: a, X
+    complex (dp) function dgggv(a, v)
+      real (dp)   , intent(in) :: a
       complex (dp), intent(in) :: v
 
       dgggv = cI - a * ( 1/v + cI * a * TriGam( 1 - cI * a/2/v )/2/v**2 )
@@ -592,7 +592,7 @@ contains
 
     dgkin = inM**2/4/FPi * (  a * ggg(a, v, l2 - 1.5_dp)**2 + a * v**2 + &
     2 * v**2 * ( ggg(a, v, l2 - 0.5_dp) + a * dggga(a, v, l2 - 0.5_dp) + &
-    v/4 *  dgggv(a, v, l2 - 0.5_dp) )  )
+    v/4 *  dgggv(a, v) )  )
 
     end function dgkin
 
@@ -602,7 +602,7 @@ contains
     real (dp)   , intent(in) :: a
     complex (dp), intent(in) :: v
 
-    dggg = - dgggv(a, v, 1._dp)/v
+    dggg = - dgggv(a, v)/v
 
     end function dggg
 

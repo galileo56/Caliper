@@ -50,17 +50,17 @@ module NonSingularClass
 
    type(NonSingular) function InitNonSingular(shape, alphaMass, s3, j3, isoft)
     character (len = *), intent(in) :: shape
-    integer, intent(in) :: isoft
-    type(Running), intent(in)   :: alphaMass
-    real (dp), intent(in) :: s3, j3
+    integer            , intent(in) :: isoft
+    type(Running)      , intent(in) :: alphaMass
+    real (dp)          , intent(in) :: s3, j3
 
     real (dp), dimension(102,2) :: interListThrust2loop
     real (dp), dimension(153,2) :: interListHJM2loop
     real (dp), dimension(18,2)  :: interListHJM3loop
     real (dp), dimension(27,2)  :: interListThrust3loop
-    real (dp) :: s2rho, s2
-    integer :: nf
-    type(AnomDim) :: andim
+    real (dp)                   :: s2rho, s2
+    integer                     :: nf
+    type(AnomDim)               :: andim
 
     andim = alphaMass%adim();         InitNonSingular%andim = andim; nf = andim%numFlav();
     InitNonSingular%s3 = s3 + j3;     InitNonSingular%alphaMass = alphaMass
@@ -763,14 +763,13 @@ module NonSingularClass
 
   double precision function CumThrustNS1loop(t)
     real (dp), intent(in) :: t
-
-    real (dp) :: dilog, lg
+    real (dp)             :: dilog, lg
 
     if (t < 0) then
 
       CumThrustNS1loop = 0
 
-    else if (t < 1.d-3) then
+    else if (t < 1.e-3_dp) then
 
       lg = log(t)
 
@@ -784,6 +783,8 @@ module NonSingularClass
         CumThrustNS1loop = CumThrustNS1loop/2._dp
 
     else if (t < 1._dp/3) then
+
+      lg = log(t)
 
       CumThrustNS1loop = 2 * (  19.739208802178718205055929502123 + 9 * t * (4 + 3 * t) &
       -6._dp*log(1 - 2 * t) * ( -2.27411277760218766275102098006755d-1 + 6 * t + &

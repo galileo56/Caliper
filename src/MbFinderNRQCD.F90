@@ -24,9 +24,9 @@ Program MbFinderNRQCD
   print*, iter, charm, scheme, average, method, counting
   print*, orderAlp, runAlp, order, run, nl, ord
   write(*,'(11F10.4)') mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam
-  write(*,'(F12.8)'  ) mass
+  write(*,'(F13.10)'  ) mass
 
-  imax = Floor( (mu1 - mu0)/deltaMu ) + 1;  kmax = Floor( (R1 - R0)/deltaR ) + 1
+  imax = Floor( (mu1 - mu0)/deltaMu );  kmax = Floor( (R1 - R0)/deltaR )
 
   alphaScheme = 'pole'; if ( scheme(:4) /= 'pole' ) alphaScheme = 'MSbar'
 

@@ -2157,9 +2157,8 @@ module SingularClass
 
 !ccccccccccccccc
 
-  real (dp) function UnstableInt(x, x2)
-    real (dp)          , intent(in) :: x
-    real (dp), optional, intent(in) :: x2
+  real (dp) function UnstableInt(x)
+    real (dp), intent(in) :: x
 
     if ( .not. present(tau2) ) then
       UnstableInt = NoMod(pshift - x) * ModList(i)%ModelUnstable(self%MC, 0, x)

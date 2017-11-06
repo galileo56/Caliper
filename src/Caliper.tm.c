@@ -1,6 +1,6 @@
 /*
  * This file automatically produced by /Applications/Mathematica.app/Contents/SystemFiles/Links/MathLink/DeveloperKit/MacOSX-x86-64/CompilerAdditions/mprep from:
- *	/Users/vmateu/GitHub/Caliper/src/Caliper.tm
+ *	/Users/vicent/GitHub/Caliper/src/Caliper.tm
  * mprep Revision 18 Copyright (c) Wolfram Research, Inc. 1990-2013
  */
 
@@ -289,7 +289,7 @@ MLYDEFN( devyield_result, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
-# line 2977 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm"
+# line 2977 "/Users/vicent/GitHub/Caliper/src/Caliper.tm"
 #include "mathlink.h"
 #include "ftypes.h"
 #include <stdio.h>
@@ -340,46 +340,46 @@ double res[2]; double list[5*360];
  MLEndPacket(stdlink);
 }
 
-extern double f90vssll_(int* nl, double* ah, double* as, double* result);
+extern double f90vssll_(double* ah, double* as, double* result);
 
-static double vssll(int nl, double ah, double as){
-  double res;
+static double vssll(double ah, double as){
+double res;
 
-   f90vssll_(&nl, &ah, &as, &res);
-
-   return res;
-}
-
-extern double f90mnllplusnnllnonmixc1_(int* nl, double* ah, double* as, double* au, double* result);
-
-static double mnllplusnnllnonmixc1(int nl, double ah, double as, double au){
-  double res;
-
-   f90mnllplusnnllnonmixc1_(&nl, &ah, &as, &au, &res);
+   f90vssll_(&ah, &as, &res);
 
    return res;
 }
 
-extern double f90mnnllallc1inclsoftmixlog_(int* nl, double* ah, double* as, double* au,
+extern double f90mnllplusnnllnonmixc1_(double* ah, double* as, double* au, double* result);
+
+static double mnllplusnnllnonmixc1(double ah, double as, double au){
+  double res;
+
+   f90mnllplusnnllnonmixc1_(&ah, &as, &au, &res);
+
+   return res;
+}
+
+extern double f90mnnllallc1inclsoftmixlog_(double* ah, double* as, double* au,
 double* nu, double* hh, double* ss, double* result);
 
-static double mnnllallc1inclsoftmixlog(int nl, double ah, double as, double au,
+static double mnnllallc1inclsoftmixlog(double ah, double as, double au,
 double nu, double hh, double ss){
   double res;
 
-   f90mnnllallc1inclsoftmixlog_(&nl, &ah, &as, &au, &nu, &hh, &ss, &res);
+   f90mnnllallc1inclsoftmixlog_(&ah, &as, &au, &nu, &hh, &ss, &res);
 
    return res;
 }
 
-extern double f90xinnllnonmix_(int* nl, double* ah, double* as, double* au,
+extern double f90xinnllnonmix_(double* ah, double* as, double* au,
 double* hh, double* ss, double* result);
 
-static double xinnllnonmix(int nl, double ah, double as, double au,
+static double xinnllnonmix(double ah, double as, double au,
 double hh, double ss){
   double res;
 
-   f90xinnllnonmix_(&nl, &ah, &as, &au, &hh, &ss, &res);
+   f90xinnllnonmix_(&ah, &as, &au, &hh, &ss, &res);
 
    return res;
 }
@@ -394,114 +394,114 @@ static double xinnllsoftmixlogc1(double ah, double nu, double hh){
    return res;
 }
 
-extern double f90vk1sll_(int* nl, double* ah, double* as, double* result);
+extern double f90vk1sll_(double* ah, double* as, double* result);
 
-static double vk1sll(int nl, double ah, double as){
+static double vk1sll(double ah, double as){
   double res;
 
-   f90vk1sll_(&nl, &ah, &as, &res);
+   f90vk1sll_(&ah, &as, &res);
 
    return res;
 }
 
-extern double f90vk2sll_(int* nl, double* ah, double* as, double* result);
+extern double f90vk2sll_(double* ah, double* as, double* result);
 
-static double vk2sll(int nl, double ah, double as){
+static double vk2sll(double ah, double as){
   double res;
 
-   f90vk2sll_(&nl, &ah, &as, &res);
+   f90vk2sll_(&ah, &as, &res);
 
    return res;
 }
 
-extern double f90vkeffsll_(int* nl, double* ah, double* as, double* result);
+extern double f90vkeffsll_(double* ah, double* as, double* result);
 
-static double vkeffsll(int nl, double ah, double as){
+static double vkeffsll(double ah, double as){
   double res;
 
-   f90vkeffsll_(&nl, &ah, &as, &res);
+   f90vkeffsll_(&ah, &as, &res);
 
    return res;
 }
 
-extern double f90vrsll_(int* nl, double* ah, double* as, double* result);
+extern double f90vrsll_(double* ah, double* as, double* result);
 
-static double vrsll(int nl, double ah, double as){
+static double vrsll(double ah, double as){
   double res;
 
-   f90vrsll_(&nl, &ah, &as, &res);
+   f90vrsll_(&ah, &as, &res);
 
    return res;
 }
 
-extern double f90v2sll_(int* nl, double* ah, double* au, double* as, double* result);
+extern double f90v2sll_(double* ah, double* au, double* as, double* result);
 
-static double v2sll(int nl, double ah, double au, double as){
+static double v2sll(double ah, double au, double as){
   double res;
 
-   f90v2sll_(&nl, &ah, &au, &as, &res);
+   f90v2sll_(&ah, &au, &as, &res);
 
    return res;
 }
 
-extern double f90xinll_(int* nl, double* ah, double* au, double* as, double* result);
+extern double f90xinll_(double* ah, double* au, double* as, double* result);
 
-static double xinll(int nl, double ah, double au, double as){
+static double xinll(double ah, double au, double as){
   double res;
 
-   f90xinll_(&nl, &ah, &au, &as, &res);
+   f90xinll_(&ah, &au, &as, &res);
 
    return res;
 }
 
-extern double f90mnllc1_(int* nl, double* ah, double* au, double* as, double* result);
+extern double f90mnllc1_(double* ah, double* au, double* as, double* result);
 
-static double mnllc1(int nl, double ah, double au, double as){
+static double mnllc1(double ah, double au, double as){
   double res;
 
-   f90mnllc1_(&nl, &ah, &au, &as, &res);
+   f90mnllc1_(&ah, &au, &as, &res);
 
    return res;
 }
 
-extern double f90xinnllmixusoft_(int* nl, double* ah, double* as, double* result);
+extern double f90xinnllmixusoft_(double* ah, double* as, double* result);
 
-static double xinnllmixusoft(int nl, double ah, double as){
+static double xinnllmixusoft(double ah, double as){
   double res;
 
-   f90xinnllmixusoft_(&nl, &ah, &as, &res);
+   f90xinnllmixusoft_(&ah, &as, &res);
 
    return res;
 }
 
-extern double f90mllc2_(int* nl, double* ah, double* as, double* result);
+extern double f90mllc2_(double* ah, double* as, double* result);
 
-static double mllc2(int nl, double ah, double as){
+static double mllc2(double ah, double as){
   double res;
 
-   f90mllc2_(&nl, &ah, &as, &res);
+   f90mllc2_(&ah, &as, &res);
 
    return res;
 }
 
-extern double f90vceffsnnll_(int* nl, double* ah, double* au, double* as, double* result);
+extern double f90vceffsnnll_(double* ah, double* au, double* as, double* result);
 
-static double vceffsnnll(int nl, double ah, double au, double as){
+static double vceffsnnll(double ah, double au, double as){
   double res;
 
-   f90vceffsnnll_(&nl, &ah, &au, &as, &res);
+   f90vceffsnnll_(&ah, &au, &as, &res);
 
    return res;
 }
 
-extern double f90a1pole_(int* nl, int* order, double* En, double* mtpole,
+extern double f90a1pole_(int* order, double* En, double* mtpole,
 double* gamtop, double* asoft, double* VcsNNLL, double* musoft, double* result);
 
-static double a1pole(int nl, int order, double En, double mtpole,
+static double a1pole(int order, double En, double mtpole,
 double gamtop, double asoft, double VcsNNLL, double musoft){
   double res;
 
-   f90a1pole_(&nl, &order, &En, &mtpole, &gamtop, &asoft, &VcsNNLL, &musoft, &res);
+   f90a1pole_(&order, &En, &mtpole, &gamtop, &asoft, &VcsNNLL, &musoft, &res);
 
    return res;
 }
@@ -3878,16 +3878,16 @@ double muC, double lambda, double mu1, double mu2){
 }
 
 extern double f90optimalr2_(double* n, int* orderAlpha, int* runAlpha,
-int* order, int* run, int* nf, double* Mz, double* aMz, double* mT, double* muT,
+int* run, int* nf, double* Mz, double* aMz, double* mT, double* muT,
 double* mB, double* muB, double* mC, double* muC, double* mass, double* res);
 
-static double optimalr2(double n, int orderAlpha, int runAlpha, int order,
+static double optimalr2(double n, int orderAlpha, int runAlpha,
 int run, int nf, double Mz, double aMz, double mT, double muT, double mB,
 double muB, double mC, double muC, double mass){
 
   double res;
 
-  f90optimalr2_(&n, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT,
+  f90optimalr2_(&n, &orderAlpha, &runAlpha, &run, &nf, &Mz, &aMz, &mT,
   &muT, &mB, &muB, &mC, &muC, &mass, &res);
 
   return res;
@@ -3942,16 +3942,16 @@ double muC, double muLambda, double R, double mu){
   return res;
 }
 
-extern double f90deltamsbar_(int* order, int* runAlpha, int* run, int* nf, double* Mz,
+extern double f90deltamsbar_(int* order, int* runAlpha, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
 double* mu, double* res);
 
-static void deltamsbar(int order, int runAlpha, int run, int nf, double Mz, double aMz,
+static void deltamsbar(int order, int runAlpha, int nf, double Mz, double aMz,
 double mT, double muT, double mB, double muB, double mC, double muC, double mu){
 
    double res[4];
 
-   f90deltamsbar_(&order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC,
+   f90deltamsbar_(&order, &runAlpha, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC,
    &muC, &mu, res);
 
    MLPutRealList(stdlink, res, 4);
@@ -4418,7 +4418,7 @@ static double hyperf32exact(double w, double x){
 int main(int argc, char *argv[]){
     return MLMain(argc, argv);
 }
-# line 4422 "/Users/vmateu/GitHub/Caliper/src/Caliper.tm.c"
+# line 4422 "/Users/vicent/GitHub/Caliper/src/Caliper.tm.c"
 
 
 void hypgeo P(( double _tp1, double _tp2, double _tp3, double _tp4, double _tp5, double _tp6, double _tp7, double _tp8));
@@ -4502,7 +4502,7 @@ L0:	return res;
 } /* _tr2 */
 
 
-double xinnllnonmix P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5, double _tp6));
+double xinnllnonmix P(( double _tp1, double _tp2, double _tp3, double _tp4, double _tp5));
 
 #if MLPROTOTYPES
 static int _tr3( MLINK mlp)
@@ -4511,26 +4511,24 @@ static int _tr3(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	double _tp1;
 	double _tp2;
 	double _tp3;
 	double _tp4;
 	double _tp5;
-	double _tp6;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
 	if ( ! MLGetReal( mlp, &_tp4) ) goto L3;
 	if ( ! MLGetReal( mlp, &_tp5) ) goto L4;
-	if ( ! MLGetReal( mlp, &_tp6) ) goto L5;
-	if ( ! MLNewPacket(mlp) ) goto L6;
+	if ( ! MLNewPacket(mlp) ) goto L5;
 
-	_rp0 = xinnllnonmix(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6);
+	_rp0 = xinnllnonmix(_tp1, _tp2, _tp3, _tp4, _tp5);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L6: L5: L4: L3: L2: L1: 
+L5: L4: L3: L2: L1: 
 L0:	return res;
 } /* _tr3 */
 
@@ -4562,7 +4560,7 @@ L0:	return res;
 } /* _tr4 */
 
 
-double mnnllallc1inclsoftmixlog P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5, double _tp6, double _tp7));
+double mnnllallc1inclsoftmixlog P(( double _tp1, double _tp2, double _tp3, double _tp4, double _tp5, double _tp6));
 
 #if MLPROTOTYPES
 static int _tr5( MLINK mlp)
@@ -4571,33 +4569,31 @@ static int _tr5(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	double _tp1;
 	double _tp2;
 	double _tp3;
 	double _tp4;
 	double _tp5;
 	double _tp6;
-	double _tp7;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
 	if ( ! MLGetReal( mlp, &_tp4) ) goto L3;
 	if ( ! MLGetReal( mlp, &_tp5) ) goto L4;
 	if ( ! MLGetReal( mlp, &_tp6) ) goto L5;
-	if ( ! MLGetReal( mlp, &_tp7) ) goto L6;
-	if ( ! MLNewPacket(mlp) ) goto L7;
+	if ( ! MLNewPacket(mlp) ) goto L6;
 
-	_rp0 = mnnllallc1inclsoftmixlog(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7);
+	_rp0 = mnnllallc1inclsoftmixlog(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L7: L6: L5: L4: L3: L2: L1: 
+L6: L5: L4: L3: L2: L1: 
 L0:	return res;
 } /* _tr5 */
 
 
-double mnllplusnnllnonmixc1 P(( int _tp1, double _tp2, double _tp3, double _tp4));
+double mnllplusnnllnonmixc1 P(( double _tp1, double _tp2, double _tp3));
 
 #if MLPROTOTYPES
 static int _tr6( MLINK mlp)
@@ -4606,27 +4602,25 @@ static int _tr6(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	double _tp1;
 	double _tp2;
 	double _tp3;
-	double _tp4;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
-	if ( ! MLGetReal( mlp, &_tp4) ) goto L3;
-	if ( ! MLNewPacket(mlp) ) goto L4;
+	if ( ! MLNewPacket(mlp) ) goto L3;
 
-	_rp0 = mnllplusnnllnonmixc1(_tp1, _tp2, _tp3, _tp4);
+	_rp0 = mnllplusnnllnonmixc1(_tp1, _tp2, _tp3);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L4: L3: L2: L1: 
+L3: L2: L1: 
 L0:	return res;
 } /* _tr6 */
 
 
-double mnllc1 P(( int _tp1, double _tp2, double _tp3, double _tp4));
+double mnllc1 P(( double _tp1, double _tp2, double _tp3));
 
 #if MLPROTOTYPES
 static int _tr7( MLINK mlp)
@@ -4635,27 +4629,25 @@ static int _tr7(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	double _tp1;
 	double _tp2;
 	double _tp3;
-	double _tp4;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
-	if ( ! MLGetReal( mlp, &_tp4) ) goto L3;
-	if ( ! MLNewPacket(mlp) ) goto L4;
+	if ( ! MLNewPacket(mlp) ) goto L3;
 
-	_rp0 = mnllc1(_tp1, _tp2, _tp3, _tp4);
+	_rp0 = mnllc1(_tp1, _tp2, _tp3);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L4: L3: L2: L1: 
+L3: L2: L1: 
 L0:	return res;
 } /* _tr7 */
 
 
-double vceffsnnll P(( int _tp1, double _tp2, double _tp3, double _tp4));
+double vceffsnnll P(( double _tp1, double _tp2, double _tp3));
 
 #if MLPROTOTYPES
 static int _tr8( MLINK mlp)
@@ -4664,22 +4656,20 @@ static int _tr8(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	double _tp1;
 	double _tp2;
 	double _tp3;
-	double _tp4;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
-	if ( ! MLGetReal( mlp, &_tp4) ) goto L3;
-	if ( ! MLNewPacket(mlp) ) goto L4;
+	if ( ! MLNewPacket(mlp) ) goto L3;
 
-	_rp0 = vceffsnnll(_tp1, _tp2, _tp3, _tp4);
+	_rp0 = vceffsnnll(_tp1, _tp2, _tp3);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L4: L3: L2: L1: 
+L3: L2: L1: 
 L0:	return res;
 } /* _tr8 */
 
@@ -4839,7 +4829,7 @@ L0:	return res;
 } /* _tr11 */
 
 
-double a1pole P(( int _tp1, int _tp2, double _tp3, double _tp4, double _tp5, double _tp6, double _tp7, double _tp8));
+double a1pole P(( int _tp1, double _tp2, double _tp3, double _tp4, double _tp5, double _tp6, double _tp7));
 
 #if MLPROTOTYPES
 static int _tr12( MLINK mlp)
@@ -4849,34 +4839,32 @@ static int _tr12(mlp) MLINK mlp;
 {
 	int	res = 0;
 	int _tp1;
-	int _tp2;
+	double _tp2;
 	double _tp3;
 	double _tp4;
 	double _tp5;
 	double _tp6;
 	double _tp7;
-	double _tp8;
 	double _rp0;
 	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
-	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
+	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
 	if ( ! MLGetReal( mlp, &_tp4) ) goto L3;
 	if ( ! MLGetReal( mlp, &_tp5) ) goto L4;
 	if ( ! MLGetReal( mlp, &_tp6) ) goto L5;
 	if ( ! MLGetReal( mlp, &_tp7) ) goto L6;
-	if ( ! MLGetReal( mlp, &_tp8) ) goto L7;
-	if ( ! MLNewPacket(mlp) ) goto L8;
+	if ( ! MLNewPacket(mlp) ) goto L7;
 
-	_rp0 = a1pole(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8);
+	_rp0 = a1pole(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L8: L7: L6: L5: L4: L3: L2: L1: 
+L7: L6: L5: L4: L3: L2: L1: 
 L0:	return res;
 } /* _tr12 */
 
 
-double xinnllmixusoft P(( int _tp1, double _tp2, double _tp3));
+double xinnllmixusoft P(( double _tp1, double _tp2));
 
 #if MLPROTOTYPES
 static int _tr13( MLINK mlp)
@@ -4885,25 +4873,23 @@ static int _tr13(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	double _tp1;
 	double _tp2;
-	double _tp3;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
-	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
-	if ( ! MLNewPacket(mlp) ) goto L3;
+	if ( ! MLNewPacket(mlp) ) goto L2;
 
-	_rp0 = xinnllmixusoft(_tp1, _tp2, _tp3);
+	_rp0 = xinnllmixusoft(_tp1, _tp2);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L3: L2: L1: 
+L2: L1: 
 L0:	return res;
 } /* _tr13 */
 
 
-double mllc2 P(( int _tp1, double _tp2, double _tp3));
+double mllc2 P(( double _tp1, double _tp2));
 
 #if MLPROTOTYPES
 static int _tr14( MLINK mlp)
@@ -4912,25 +4898,23 @@ static int _tr14(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	double _tp1;
 	double _tp2;
-	double _tp3;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
-	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
-	if ( ! MLNewPacket(mlp) ) goto L3;
+	if ( ! MLNewPacket(mlp) ) goto L2;
 
-	_rp0 = mllc2(_tp1, _tp2, _tp3);
+	_rp0 = mllc2(_tp1, _tp2);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L3: L2: L1: 
+L2: L1: 
 L0:	return res;
 } /* _tr14 */
 
 
-double vssll P(( int _tp1, double _tp2, double _tp3));
+double vssll P(( double _tp1, double _tp2));
 
 #if MLPROTOTYPES
 static int _tr15( MLINK mlp)
@@ -4939,20 +4923,18 @@ static int _tr15(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	double _tp1;
 	double _tp2;
-	double _tp3;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
-	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
-	if ( ! MLNewPacket(mlp) ) goto L3;
+	if ( ! MLNewPacket(mlp) ) goto L2;
 
-	_rp0 = vssll(_tp1, _tp2, _tp3);
+	_rp0 = vssll(_tp1, _tp2);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L3: L2: L1: 
+L2: L1: 
 L0:	return res;
 } /* _tr15 */
 
@@ -4980,7 +4962,7 @@ L0:	return res;
 } /* _tr16 */
 
 
-double vrsll P(( int _tp1, double _tp2, double _tp3));
+double vrsll P(( double _tp1, double _tp2));
 
 #if MLPROTOTYPES
 static int _tr17( MLINK mlp)
@@ -4989,25 +4971,23 @@ static int _tr17(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	double _tp1;
 	double _tp2;
-	double _tp3;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
-	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
-	if ( ! MLNewPacket(mlp) ) goto L3;
+	if ( ! MLNewPacket(mlp) ) goto L2;
 
-	_rp0 = vrsll(_tp1, _tp2, _tp3);
+	_rp0 = vrsll(_tp1, _tp2);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L3: L2: L1: 
+L2: L1: 
 L0:	return res;
 } /* _tr17 */
 
 
-double v2sll P(( int _tp1, double _tp2, double _tp3, double _tp4));
+double v2sll P(( double _tp1, double _tp2, double _tp3));
 
 #if MLPROTOTYPES
 static int _tr18( MLINK mlp)
@@ -5016,27 +4996,25 @@ static int _tr18(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	double _tp1;
 	double _tp2;
 	double _tp3;
-	double _tp4;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
-	if ( ! MLGetReal( mlp, &_tp4) ) goto L3;
-	if ( ! MLNewPacket(mlp) ) goto L4;
+	if ( ! MLNewPacket(mlp) ) goto L3;
 
-	_rp0 = v2sll(_tp1, _tp2, _tp3, _tp4);
+	_rp0 = v2sll(_tp1, _tp2, _tp3);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L4: L3: L2: L1: 
+L3: L2: L1: 
 L0:	return res;
 } /* _tr18 */
 
 
-double xinll P(( int _tp1, double _tp2, double _tp3, double _tp4));
+double xinll P(( double _tp1, double _tp2, double _tp3));
 
 #if MLPROTOTYPES
 static int _tr19( MLINK mlp)
@@ -5045,27 +5023,25 @@ static int _tr19(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	double _tp1;
 	double _tp2;
 	double _tp3;
-	double _tp4;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
-	if ( ! MLGetReal( mlp, &_tp4) ) goto L3;
-	if ( ! MLNewPacket(mlp) ) goto L4;
+	if ( ! MLNewPacket(mlp) ) goto L3;
 
-	_rp0 = xinll(_tp1, _tp2, _tp3, _tp4);
+	_rp0 = xinll(_tp1, _tp2, _tp3);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L4: L3: L2: L1: 
+L3: L2: L1: 
 L0:	return res;
 } /* _tr19 */
 
 
-double vk1sll P(( int _tp1, double _tp2, double _tp3));
+double vk1sll P(( double _tp1, double _tp2));
 
 #if MLPROTOTYPES
 static int _tr20( MLINK mlp)
@@ -5074,25 +5050,23 @@ static int _tr20(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	double _tp1;
 	double _tp2;
-	double _tp3;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
-	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
-	if ( ! MLNewPacket(mlp) ) goto L3;
+	if ( ! MLNewPacket(mlp) ) goto L2;
 
-	_rp0 = vk1sll(_tp1, _tp2, _tp3);
+	_rp0 = vk1sll(_tp1, _tp2);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L3: L2: L1: 
+L2: L1: 
 L0:	return res;
 } /* _tr20 */
 
 
-double vk2sll P(( int _tp1, double _tp2, double _tp3));
+double vk2sll P(( double _tp1, double _tp2));
 
 #if MLPROTOTYPES
 static int _tr21( MLINK mlp)
@@ -5101,25 +5075,23 @@ static int _tr21(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	double _tp1;
 	double _tp2;
-	double _tp3;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
-	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
-	if ( ! MLNewPacket(mlp) ) goto L3;
+	if ( ! MLNewPacket(mlp) ) goto L2;
 
-	_rp0 = vk2sll(_tp1, _tp2, _tp3);
+	_rp0 = vk2sll(_tp1, _tp2);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L3: L2: L1: 
+L2: L1: 
 L0:	return res;
 } /* _tr21 */
 
 
-double vkeffsll P(( int _tp1, double _tp2, double _tp3));
+double vkeffsll P(( double _tp1, double _tp2));
 
 #if MLPROTOTYPES
 static int _tr22( MLINK mlp)
@@ -5128,20 +5100,18 @@ static int _tr22(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-	int _tp1;
+	double _tp1;
 	double _tp2;
-	double _tp3;
 	double _rp0;
-	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
+	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetReal( mlp, &_tp2) ) goto L1;
-	if ( ! MLGetReal( mlp, &_tp3) ) goto L2;
-	if ( ! MLNewPacket(mlp) ) goto L3;
+	if ( ! MLNewPacket(mlp) ) goto L2;
 
-	_rp0 = vkeffsll(_tp1, _tp2, _tp3);
+	_rp0 = vkeffsll(_tp1, _tp2);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L3: L2: L1: 
+L2: L1: 
 L0:	return res;
 } /* _tr22 */
 
@@ -15848,7 +15818,7 @@ L0:	return res;
 } /* _tr194 */
 
 
-double optimalr2 P(( double _tp1, int _tp2, int _tp3, int _tp4, int _tp5, int _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14, double _tp15));
+double optimalr2 P(( double _tp1, int _tp2, int _tp3, int _tp4, int _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13, double _tp14));
 
 #if MLPROTOTYPES
 static int _tr195( MLINK mlp)
@@ -15862,7 +15832,7 @@ static int _tr195(mlp) MLINK mlp;
 	int _tp3;
 	int _tp4;
 	int _tp5;
-	int _tp6;
+	double _tp6;
 	double _tp7;
 	double _tp8;
 	double _tp9;
@@ -15871,14 +15841,13 @@ static int _tr195(mlp) MLINK mlp;
 	double _tp12;
 	double _tp13;
 	double _tp14;
-	double _tp15;
 	double _rp0;
 	if ( ! MLGetReal( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
 	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
 	if ( ! MLGetInteger( mlp, &_tp5) ) goto L4;
-	if ( ! MLGetInteger( mlp, &_tp6) ) goto L5;
+	if ( ! MLGetReal( mlp, &_tp6) ) goto L5;
 	if ( ! MLGetReal( mlp, &_tp7) ) goto L6;
 	if ( ! MLGetReal( mlp, &_tp8) ) goto L7;
 	if ( ! MLGetReal( mlp, &_tp9) ) goto L8;
@@ -15887,14 +15856,13 @@ static int _tr195(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp12) ) goto L11;
 	if ( ! MLGetReal( mlp, &_tp13) ) goto L12;
 	if ( ! MLGetReal( mlp, &_tp14) ) goto L13;
-	if ( ! MLGetReal( mlp, &_tp15) ) goto L14;
-	if ( ! MLNewPacket(mlp) ) goto L15;
+	if ( ! MLNewPacket(mlp) ) goto L14;
 
-	_rp0 = optimalr2(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14, _tp15);
+	_rp0 = optimalr2(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13, _tp14);
 
 	res = MLAbort ?
 		MLPutFunction( mlp, "Abort", 0) : MLPutReal( mlp, _rp0);
-L15: L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1: 
+L14: L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1: 
 L0:	return res;
 } /* _tr195 */
 
@@ -16059,7 +16027,7 @@ L0:	return res;
 } /* _tr198 */
 
 
-void deltamsbar P(( int _tp1, int _tp2, int _tp3, int _tp4, double _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12, double _tp13));
+void deltamsbar P(( int _tp1, int _tp2, int _tp3, double _tp4, double _tp5, double _tp6, double _tp7, double _tp8, double _tp9, double _tp10, double _tp11, double _tp12));
 
 #if MLPROTOTYPES
 static int _tr199( MLINK mlp)
@@ -16071,7 +16039,7 @@ static int _tr199(mlp) MLINK mlp;
 	int _tp1;
 	int _tp2;
 	int _tp3;
-	int _tp4;
+	double _tp4;
 	double _tp5;
 	double _tp6;
 	double _tp7;
@@ -16080,11 +16048,10 @@ static int _tr199(mlp) MLINK mlp;
 	double _tp10;
 	double _tp11;
 	double _tp12;
-	double _tp13;
 	if ( ! MLGetInteger( mlp, &_tp1) ) goto L0;
 	if ( ! MLGetInteger( mlp, &_tp2) ) goto L1;
 	if ( ! MLGetInteger( mlp, &_tp3) ) goto L2;
-	if ( ! MLGetInteger( mlp, &_tp4) ) goto L3;
+	if ( ! MLGetReal( mlp, &_tp4) ) goto L3;
 	if ( ! MLGetReal( mlp, &_tp5) ) goto L4;
 	if ( ! MLGetReal( mlp, &_tp6) ) goto L5;
 	if ( ! MLGetReal( mlp, &_tp7) ) goto L6;
@@ -16093,13 +16060,12 @@ static int _tr199(mlp) MLINK mlp;
 	if ( ! MLGetReal( mlp, &_tp10) ) goto L9;
 	if ( ! MLGetReal( mlp, &_tp11) ) goto L10;
 	if ( ! MLGetReal( mlp, &_tp12) ) goto L11;
-	if ( ! MLGetReal( mlp, &_tp13) ) goto L12;
-	if ( ! MLNewPacket(mlp) ) goto L13;
+	if ( ! MLNewPacket(mlp) ) goto L12;
 
-	deltamsbar(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12, _tp13);
+	deltamsbar(_tp1, _tp2, _tp3, _tp4, _tp5, _tp6, _tp7, _tp8, _tp9, _tp10, _tp11, _tp12);
 
 	res = 1;
-L13: L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1: 
+L12: L11: L10: L9: L8: L7: L6: L5: L4: L3: L2: L1: 
 L0:	return res;
 } /* _tr199 */
 
@@ -17714,26 +17680,26 @@ static struct func {
 		{ 8, 0, _tr0, "hypgeo" },
 		{ 2, 0, _tr1, "cdigamma" },
 		{ 2, 0, _tr2, "ctrigamma" },
-		{ 6, 0, _tr3, "xinnllnonmix" },
+		{ 5, 0, _tr3, "xinnllnonmix" },
 		{ 3, 0, _tr4, "xinnllsoftmixlogc1" },
-		{ 7, 0, _tr5, "mnnllallc1inclsoftmixlog" },
-		{ 4, 0, _tr6, "mnllplusnnllnonmixc1" },
-		{ 4, 0, _tr7, "mnllc1" },
-		{ 4, 0, _tr8, "vceffsnnll" },
+		{ 6, 0, _tr5, "mnnllallc1inclsoftmixlog" },
+		{ 3, 0, _tr6, "mnllplusnnllnonmixc1" },
+		{ 3, 0, _tr7, "mnllc1" },
+		{ 3, 0, _tr8, "vceffsnnll" },
 		{19, 0, _tr9, "rnrqcd" },
 		{14, 0, _tr10, "qswitch" },
 		{12, 0, _tr11, "delta1s" },
-		{ 8, 0, _tr12, "a1pole" },
-		{ 3, 0, _tr13, "xinnllmixusoft" },
-		{ 3, 0, _tr14, "mllc2" },
-		{ 3, 0, _tr15, "vssll" },
+		{ 7, 0, _tr12, "a1pole" },
+		{ 2, 0, _tr13, "xinnllmixusoft" },
+		{ 2, 0, _tr14, "mllc2" },
+		{ 2, 0, _tr15, "vssll" },
 		{ 1, 0, _tr16, "vcsll" },
-		{ 3, 0, _tr17, "vrsll" },
-		{ 4, 0, _tr18, "v2sll" },
-		{ 4, 0, _tr19, "xinll" },
-		{ 3, 0, _tr20, "vk1sll" },
-		{ 3, 0, _tr21, "vk2sll" },
-		{ 3, 0, _tr22, "vkeffsll" },
+		{ 2, 0, _tr17, "vrsll" },
+		{ 3, 0, _tr18, "v2sll" },
+		{ 3, 0, _tr19, "xinll" },
+		{ 2, 0, _tr20, "vk1sll" },
+		{ 2, 0, _tr21, "vk2sll" },
+		{ 2, 0, _tr22, "vkeffsll" },
 		{ 3, 0, _tr23, "qfromv" },
 		{ 5, 0, _tr24, "switchoff" },
 		{ 3, 0, _tr25, "vc" },
@@ -17906,11 +17872,11 @@ static struct func {
 		{34, 0, _tr192, "nrqcderror" },
 		{18, 0, _tr193, "optimalr" },
 		{20, 0, _tr194, "optimalrvfns" },
-		{15, 0, _tr195, "optimalr2" },
+		{14, 0, _tr195, "optimalr2" },
 		{16, 0, _tr196, "mmfrommsr" },
 		{16, 0, _tr197, "jetmass" },
 		{16, 0, _tr198, "mmfromjetmass" },
-		{13, 0, _tr199, "deltamsbar" },
+		{12, 0, _tr199, "deltamsbar" },
 		{15, 0, _tr200, "rhad" },
 		{19, 0, _tr201, "sigmahad" },
 		{21, 0, _tr202, "sigmarad" },
@@ -18009,8 +17975,8 @@ static const char* evalstrs[] = {
 	"unAlpha, orderMass, runMass, ord1S, R1S, muLam, xLam, mZ, aMz, Q",
 	", mtpole, gt, h, nu]\"",
 	(const char*)0,
-	"A1Pole::usage = \"A1Pole[nl, order, En, mtpole, gamtop, asoft, Vc",
-	"sNNLL, musoft]\"",
+	"A1Pole::usage = \"A1Pole[order, En, mtpole, gamtop, asoft, VcsNNL",
+	"L, musoft]\"",
 	(const char*)0,
 	"TTbar::usage = \"ttbar[energy, topmass, topgamma, alphas0, mue0, ",
 	"cutn, cutv, c0, c1, c2, cdeltapotc, cdeltapot1, cfullc, cfull1, ",
@@ -18038,39 +18004,38 @@ static const char* evalstrs[] = {
 	(const char*)0,
 	"SwitchOff::usage = \"SwitchOff[q, m, gt, v0, v1]\"",
 	(const char*)0,
-	"VssLL::usage = \"VssLL[nl, ah, as]\"",
+	"VssLL::usage = \"VssLL[ah, as]\"",
 	(const char*)0,
-	"Vk1sLL::usage = \"Vk1sLL[nl, as, au]\"",
+	"Vk1sLL::usage = \"Vk1sLL[as, au]\"",
 	(const char*)0,
-	"Vk2sLL::usage = \"Vk2sLL[nl, ah, as]\"",
+	"Vk2sLL::usage = \"Vk2sLL[ah, as]\"",
 	(const char*)0,
-	"VkeffsLL::usage = \"VkeffsLL[nl, ah, as]\"",
+	"VkeffsLL::usage = \"VkeffsLL[ah, as]\"",
 	(const char*)0,
 	"VcsLL::usage = \"VcsLL[as]\"",
 	(const char*)0,
-	"VrsLL::usage = \"VrsLL[nl, as, au]\"",
+	"VrsLL::usage = \"VrsLL[as, au]\"",
 	(const char*)0,
-	"V2sLL::usage = \"V2sLL[nl, ah, as, au]\"",
+	"V2sLL::usage = \"V2sLL[ah, as, au]\"",
 	(const char*)0,
-	"XiNLL::usage = \"XiNLL[nl, ah, as, au]\"",
+	"XiNLL::usage = \"XiNLL[ah, as, au]\"",
 	(const char*)0,
-	"VceffsNNLL::usage = \"VceffsNNLL[nl, asNNLL, as, au]\"",
+	"VceffsNNLL::usage = \"VceffsNNLL[asNNLL, as, au]\"",
 	(const char*)0,
-	"XiNNLLmixUsoft::usage = \"XiNNLLmixUsoft[nl, ah, as]\"",
+	"XiNNLLmixUsoft::usage = \"XiNNLLmixUsoft[ah, as]\"",
 	(const char*)0,
 	"MLLc2::usage = \"MLLc2[nl, ah, au]\"",
 	(const char*)0,
-	"MNLLc1::usage = \"MNLLc1[nl, ah, as, au]\"",
+	"MNLLc1::usage = \"MNLLc1[ah, as, au]\"",
 	(const char*)0,
-	"MNLLplusNNLLnonmixc1::usage = \"MNLLplusNNLLnonmixc1[nl, ah, as, ",
-	"au]\"",
+	"MNLLplusNNLLnonmixc1::usage = \"MNLLplusNNLLnonmixc1[ah, as, au]\"",
 	(const char*)0,
-	"MNNLLAllc1InclSoftMixLog::usage = \"MNNLLAllc1InclSoftMixLog[nl, ",
-	"ah, as, au, nu, hh, ss]\"",
+	"MNNLLAllc1InclSoftMixLog::usage = \"MNNLLAllc1InclSoftMixLog[ah, ",
+	"as, au, nu, hh, ss]\"",
 	(const char*)0,
 	"XiNNLLSoftMixLogc1::usage = \"XiNNLLSoftMixLogc1[ah, nu, hh]\"",
 	(const char*)0,
-	"XiNNLLnonmix::usage = \"XiNNLLnonmix[nl, ah, as, au, hh, ss]\"",
+	"XiNNLLnonmix::usage = \"XiNNLLnonmix[ah, as, au, hh, ss]\"",
 	(const char*)0,
 	"DeltaBottomCharm::usage = \"DeltaBottomCharm[r1,r2] double massiv",
 	"e bubble\"",
@@ -18585,9 +18550,9 @@ static const char* evalstrs[] = {
 	"a, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda,",
 	" lambda] computes the Optimal R scale for quarkonium.\"",
 	(const char*)0,
-	"OptimalR2::usage = \"OptimalR2[n, orderAlpha, runAlpha, order, ru",
-	"n, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mass] computes the Op",
-	"timal R scale for quarkonium.\"",
+	"OptimalR2::usage = \"OptimalR2[n, orderAlpha, runAlpha, run, nf, ",
+	"Mz, aMz, mT, muT, mB, muB, mC, muC, mass] computes the Optimal R",
+	" scale for quarkonium.\"",
 	(const char*)0,
 	"mmfromMSR::usage = \"mmfromMSR[type, orderAlpha, runAlpha, order,",
 	" run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] compu",
@@ -18764,9 +18729,9 @@ static const char* evalstrs[] = {
 	"TaylorPiece::usage = \"TaylorPiece[c, lambda, k] computes the Tay",
 	"lor coefficients of the shape function\"",
 	(const char*)0,
-	"DeltaMSbar::usage = \"DeltaMSbar[order, runAlpha, run, nf, Mz, aM",
-	"z, mT, muT, mB, muB, mC, muC, mu] computes the running of the qu",
-	"ark masses with flavor matching.\"",
+	"DeltaMSbar::usage = \"DeltaMSbar[order, runAlpha, nf, Mz, aMz, mT",
+	", muT, mB, muB, mC, muC, mu] computes the running of the quark m",
+	"asses with flavor matching.\"",
 	(const char*)0,
 	"JetMass::usage = \"JetMass[orderAlpha, runAlpha, order, run, nf, ",
 	"Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R, mu] computes th",
@@ -19176,26 +19141,26 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"HypGeo[a_, b_, c_, z_]", (char *)"{Re[a], Im[a], Re[b], Im[b], Re[c], Im[c], Re[z], Im[z]}", 0);
 	if (_res) _res = _definepattern(mlp, (char *)"CdiGamma[z_]", (char *)"{Re[z], Im[z]}", 1);
 	if (_res) _res = _definepattern(mlp, (char *)"CtriGamma[z_]", (char *)"{Re[z], Im[z]}", 2);
-	if (_res) _res = _definepattern(mlp, (char *)"XiNNLLnonmix[nl_, ah_, as_, au_, hh_, ss_]", (char *)"{nl, ah, as, au, hh, ss}", 3);
+	if (_res) _res = _definepattern(mlp, (char *)"XiNNLLnonmix[ah_, as_, au_, hh_, ss_]", (char *)"{ah, as, au, hh, ss}", 3);
 	if (_res) _res = _definepattern(mlp, (char *)"XiNNLLSoftMixLogc1[ah_, nu_, hh_]", (char *)"{ah, nu, hh}", 4);
-	if (_res) _res = _definepattern(mlp, (char *)"MNNLLAllc1InclSoftMixLog[nl_, ah_, as_, au_, nu_, hh_, ss_]", (char *)"{nl, ah, as, au, nu, hh, ss}", 5);
-	if (_res) _res = _definepattern(mlp, (char *)"MNLLplusNNLLnonmixc1[nl_, ah_, as_, au_]", (char *)"{nl, ah, as, au}", 6);
-	if (_res) _res = _definepattern(mlp, (char *)"MNLLc1[nl_, ah_, as_, au_]", (char *)"{nl, ah, as, au}", 7);
-	if (_res) _res = _definepattern(mlp, (char *)"VceffsNNLL[nl_, asNNLL_, ah_, as_]", (char *)"{nl, asNNLL, ah, as}", 8);
+	if (_res) _res = _definepattern(mlp, (char *)"MNNLLAllc1InclSoftMixLog[ah_, as_, au_, nu_, hh_, ss_]", (char *)"{ah, as, au, nu, hh, ss}", 5);
+	if (_res) _res = _definepattern(mlp, (char *)"MNLLplusNNLLnonmixc1[ah_, as_, au_]", (char *)"{ah, as, au}", 6);
+	if (_res) _res = _definepattern(mlp, (char *)"MNLLc1[ah_, as_, au_]", (char *)"{ah, as, au}", 7);
+	if (_res) _res = _definepattern(mlp, (char *)"VceffsNNLL[asNNLL_, ah_, as_]", (char *)"{asNNLL, ah, as}", 8);
 	if (_res) _res = _definepattern(mlp, (char *)"rNRQCD[nl_, order_, scheme_, method_, orderAlpha_, runAlpha_,                 orderMass_, runMass_, ord1S_, R1S_, muLam_, xLam_, mZ_, aMz_,                 Q_, mtpole_, gt_, h_, nu_]", (char *)"{nl, order, scheme, method, orderAlpha, runAlpha, orderMass,                 runMass, ord1S, R1S, muLam, xLam, mZ, aMz, Q, mtpole, gt, h, nu}", 9);
 	if (_res) _res = _definepattern(mlp, (char *)"QSwitch[nl_, orderAlpha_, runAlpha_, orderMass_, runMass_, ord1S_,                 muLam_, xLam_, method_, mZ_, aMz_, mt_, gt_, R_]", (char *)"{nl, orderAlpha, runAlpha, orderMass, runMass, ord1S, muLam, xLam,                 method, mZ, aMz, mt, gt, R}", 10);
 	if (_res) _res = _definepattern(mlp, (char *)"Delta1S[nl_, orderAlpha_, runAlpha_, orderMass_, runMass_,                 muLam_, xLam_, method_, mZ_, aMz_, mt_, R_]", (char *)"{nl, orderAlpha, runAlpha, orderMass, runMass, muLam, xLam,                 method, mZ, aMz, mt, R}", 11);
-	if (_res) _res = _definepattern(mlp, (char *)"A1Pole[nl_, order_, En_, mtpole_, gamtop_, asoft_, VcsNNLL_, musoft_]", (char *)"{nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft}", 12);
-	if (_res) _res = _definepattern(mlp, (char *)"XiNNLLmixUsoft[nl_, ah_, au_]", (char *)"{nl, ah, au}", 13);
-	if (_res) _res = _definepattern(mlp, (char *)"MLLc2[nl_, ah_, as_]", (char *)"{nl, ah, as}", 14);
-	if (_res) _res = _definepattern(mlp, (char *)"VssLL[nl_, ah_, as_]", (char *)"{nl, ah, as}", 15);
+	if (_res) _res = _definepattern(mlp, (char *)"A1Pole[order_, En_, mtpole_, gamtop_, asoft_, VcsNNLL_, musoft_]", (char *)"{order, En, mtpole, gamtop, asoft, VcsNNLL, musoft}", 12);
+	if (_res) _res = _definepattern(mlp, (char *)"XiNNLLmixUsoft[ah_, au_]", (char *)"{ah, au}", 13);
+	if (_res) _res = _definepattern(mlp, (char *)"MLLc2[ah_, as_]", (char *)"{ah, as}", 14);
+	if (_res) _res = _definepattern(mlp, (char *)"VssLL[ah_, as_]", (char *)"{ah, as}", 15);
 	if (_res) _res = _definepattern(mlp, (char *)"VcsLL[as_]", (char *)"{as}", 16);
-	if (_res) _res = _definepattern(mlp, (char *)"VrsLL[nl_, as_, au_]", (char *)"{nl, as, au}", 17);
-	if (_res) _res = _definepattern(mlp, (char *)"V2sLL[nl_, ah_, au_, as_]", (char *)"{nl, ah, au, as}", 18);
-	if (_res) _res = _definepattern(mlp, (char *)"XiNLL[nl_, ah_, au_, as_]", (char *)"{nl, ah, au, as}", 19);
-	if (_res) _res = _definepattern(mlp, (char *)"Vk1sLL[nl_, ah_, as_]", (char *)"{nl, ah, as}", 20);
-	if (_res) _res = _definepattern(mlp, (char *)"Vk2sLL[nl_, ah_, as_]", (char *)"{nl, ah, as}", 21);
-	if (_res) _res = _definepattern(mlp, (char *)"VkeffsLL[nl_, ah_, as_]", (char *)"{nl, ah, as}", 22);
+	if (_res) _res = _definepattern(mlp, (char *)"VrsLL[as_, au_]", (char *)"{as, au}", 17);
+	if (_res) _res = _definepattern(mlp, (char *)"V2sLL[ah_, au_, as_]", (char *)"{ah, au, as}", 18);
+	if (_res) _res = _definepattern(mlp, (char *)"XiNLL[ah_, au_, as_]", (char *)"{ah, au, as}", 19);
+	if (_res) _res = _definepattern(mlp, (char *)"Vk1sLL[ah_, as_]", (char *)"{ah, as}", 20);
+	if (_res) _res = _definepattern(mlp, (char *)"Vk2sLL[ah_, as_]", (char *)"{ah, as}", 21);
+	if (_res) _res = _definepattern(mlp, (char *)"VkeffsLL[ah_, as_]", (char *)"{ah, as}", 22);
 	if (_res) _res = _definepattern(mlp, (char *)"QFromV[v_, m_, gt_]", (char *)"{v, m, gt}", 23);
 	if (_res) _res = _definepattern(mlp, (char *)"SwitchOff[q_, m_, gt_, v0_, v1_]", (char *)"{q, m, gt, v0, v1}", 24);
 	if (_res) _res = _definepattern(mlp, (char *)"VC[v_, m_, gt_]", (char *)"{v, m, gt}", 25);
@@ -19368,11 +19333,11 @@ int MLInstall(mlp) MLINK mlp;
 	if (_res) _res = _definepattern(mlp, (char *)"NRQCDError[n_, l_, j_, s_, iter_, charm_, scheme_, average_, method_,                 counting_, orderAlpha_, runAlpha_, order_, run_, nl_, mZ_, amZ_, mT_, muT_,                 mB_, muB_, mC_, muC_, mass_, lambda1_, lambda2_, lam_, mu0_,                 mu1_, deltaMu_, R0_, R1_, deltaR_, x_]", (char *)"{n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha,                  runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC,                  mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR,                  x}", 192);
 	if (_res) _res = _definepattern(mlp, (char *)"OptimalR[type_, n_, method_, orderAlpha_, runAlpha_, order_, run_,                 nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_, lambda_, mu_]", (char *)"{type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz,                  mT, muT, mB, muB, mC, muC, lambda, mu}", 193);
 	if (_res) _res = _definepattern(mlp, (char *)"OptimalRVFNS[up_, type_, n_, method_, orderAlpha_, runAlpha_,                 order_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_, mC_, muC_,                 lambda_, mu1_, mu2_]", (char *)"{up, type, n, method, orderAlpha, runAlpha, order, run, nf, Mz,                  aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2}", 194);
-	if (_res) _res = _definepattern(mlp, (char *)"OptimalR2[n_, orderAlpha_, runAlpha_, order_, run_, nf_, Mz_,                 aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mass_]", (char *)"{n, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB,                  muB, mC, muC, mass}", 195);
+	if (_res) _res = _definepattern(mlp, (char *)"OptimalR2[n_, orderAlpha_, runAlpha_, run_, nf_, Mz_,                 aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mass_]", (char *)"{n, orderAlpha, runAlpha, run, nf, Mz, aMz, mT, muT, mB,                  muB, mC, muC, mass}", 195);
 	if (_res) _res = _definepattern(mlp, (char *)"mmfromMSR[type_, orderAlpha_, runAlpha_, order_, run_, nf_, Mz_,                 aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mu_, R_]", (char *)"{type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT,                  mB, muB, mC, muC, mu, R}", 196);
 	if (_res) _res = _definepattern(mlp, (char *)"JetMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, muLambda_, R_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC,                  muC, muLambda, R, mu}", 197);
 	if (_res) _res = _definepattern(mlp, (char *)"mmFromJetMass[orderAlpha_, runAlpha_, order_, run_, nf_, Mz_, aMz_, mT_,                 muT_, mB_, muB_, mC_, muC_, muLambda_, R_, mu_]", (char *)"{orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC,                  muC, muLambda, R, mu}", 198);
-	if (_res) _res = _definepattern(mlp, (char *)"DeltaMSbar[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,                  mC_, muC_, mu_]", (char *)"{order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 199);
+	if (_res) _res = _definepattern(mlp, (char *)"DeltaMSbar[order_, runAlpha_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,                  mC_, muC_, mu_]", (char *)"{order, runAlpha, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}", 199);
 	if (_res) _res = _definepattern(mlp, (char *)"Rhad[scheme_, orderAlpha_, runAlpha_, order_, nf_, Mz_, aMz_,                 mT_, muT_, mB_, muB_, mC_, muC_, mu_, Q_]", (char *)"{scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB,                  muB, mC, muC, mu, Q}", 200);
 	if (_res) _res = _definepattern(mlp, (char *)"SigmaHad[scheme_, current_, orderAlpha_, runAlpha_, order_,                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,                 muB_, mC_, muC_, mu_, Q_]", (char *)"{scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,                  sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, mu, Q}", 201);
 	if (_res) _res = _definepattern(mlp, (char *)"SigmaRad[scheme_, current_, orderAlpha_, runAlpha_, order_,                 nf_, Mz_, GammaZ_, sin2ThetaW_, aMz_, aMzQED_, mT_, muT_, mB_,                 muB_, mC_, muC_, eH_, Q_, x_, theta_]", (char *)"{scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ,                  sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, eH, Q, x,                  theta}", 202);

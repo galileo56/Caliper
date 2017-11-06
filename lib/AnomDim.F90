@@ -614,7 +614,7 @@ module AnomDimClass
     real (dp)                                 :: a1Pi
     integer                                   :: i
 
-    wTilde = 0; if (order < 0) return
+    wTildeComplex = 0; if (order < 0) return
 
     if (order >= 0) wTilde = gam(0) * log(a1/a0)
 
@@ -719,7 +719,7 @@ module AnomDimClass
     real (dp)                                 :: cd, a1Pi, a1j
     integer                                   :: i, j
 
-    kTilde = 0; if (order < 0) return
+    kTildeComplex = 0; if (order < 0) return
 
     d(0) = gam(0)
 

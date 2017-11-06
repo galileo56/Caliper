@@ -33,7 +33,7 @@ Program Chi2MbNRQCD
   print*, orderAlp, runAlp, order, run, nl, n
   write(*,'(11F10.4)') mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam
 
-  imax = Floor( (mu1 - mu0)/deltaMu ) + 1;  jmax = Floor( (R1 - R0)/deltaR ) + 1
+  imax = Floor( (mu1 - mu0)/deltaMu );  jmax = Floor( (R1 - R0)/deltaR )
 
   call readData(); ndim = maxval( qnList(1,:) ); res = 0; res2 = 0
 
@@ -91,19 +91,19 @@ Program Chi2MbNRQCD
 
       res = Chi2MinNRQCD( Upsilon, dataList, m, iter(:10), order, n, res(1),  &
       muList, RList, ndim, lam, method(:8), counting(:5) )
-      write( *, '(2F6.2,2F11.7,F25.13)' ) mu, R, res
+      write( *, '(2F6.2,2F11.7,F35.13)' ) mu, R, res
 
     else if ( fit(:9) == 'alphaMass' ) then
 
       res2 = Chi2MinAlphaMbNRQCD( Upsilon, dataList, m, iter(:10), order, n, &
       res2(1), res2(3), muList, RList, ndim, lam, method(:8), counting(:5) )
-      write( *, '(2F6.2,5F11.7,F25.13)' ) mu, R, res2
+      write( *, '(2F6.2,5F11.7,F35.13)' ) mu, R, res2
 
     else if ( fit(:5) == 'alpha' ) then
 
       res = Chi2MinAlphaNRQCD( Upsilon, dataList, m, iter(:10), order, n, res(1), &
       muList, RList, ndim, lam, method(:8), counting(:5) )
-      write( *, '(2F6.2,2F11.7,F25.13)' ) mu, R, res
+      write( *, '(2F6.2,2F11.7,F35.13)' ) mu, R, res
 
     end if
 

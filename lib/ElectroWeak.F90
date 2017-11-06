@@ -26,7 +26,7 @@ module ElectroWeakClass
 
 !ccccccccccccccc
 
-   type(ElectroWeak) function InitElectroWeak(mZ, gammaZ, sin2ThetaW)
+   type (ElectroWeak) function InitElectroWeak(mZ, gammaZ, sin2ThetaW)
     real (dp), intent(in)           :: gammaZ, sin2ThetaW
     real (dp), intent(in), optional :: mZ
     real (dp)                       :: sinWein, CosWein, sCWein

@@ -9,7 +9,7 @@ Program Chi2NRQCDAnalyzer
   real (dp)                               :: mZ, amZ, mT, muT, mB, muB, mC,    &
   muC, lambda1, lam, lambda2, mass, err, chi2, mean, maxim, minim, chi, sigma, &
   alpha, rho, errAlp, fact, sigmaAlp, maxAlp, minAlp, meanAlp, meanRho, corr,  &
-  meanMass2, meanAlp2, meanMassAlp
+  meanMass2, meanAlp2, meanMassAlp, R, mu
 
   read*, dataFile
   read*, fit
@@ -23,10 +23,11 @@ Program Chi2NRQCDAnalyzer
   print*, orderAlp, runAlp, order, run, nl, n
   write(*,'(11F10.4)') mZ, amZ, mT, muT, mB, muB, mC, muC, lambda1, lambda2, lam
 
-  read*, ; read*, ; read*,; print*,
-  if ( fit(:4) == 'mass'      ) print*, '  m(m)      simgaExp   sigmaPert      chi2/dof'
-  if ( fit(:9) == 'alphaMass' ) print*, '  alpha     simgaExp   sigmaPert      chi2/dof'
-  if ( fit(:5) == 'alpha'     ) print*, '  alpha     simgaExp   sigmaPert      chi2/dof'
+  read*, ; read*, ; read*, ; print*,
+
+  if ( fit(:4) == 'mass'      ) print*, '  m(m)      sigmaExp   sigmaPert      chi2/dof'
+  if ( fit(:9) == 'alphaMass' ) print*, '  alpha     sigmaExp   sigmaPert      chi2/dof'
+  if ( fit(:5) == 'alpha'     ) print*, '  alpha     sigmaExp   sigmaPert      chi2/dof'
   print*,
 
   OPEN (UNIT = 1, FILE = dataFile, ACCESS = 'SEQUENTIAL', STATUS = 'OLD')
@@ -38,13 +39,15 @@ Program Chi2NRQCDAnalyzer
 
   do
 
-    read(*,'(A)', iostat = ierror) line;  if (ierror == -1) exit;  i = i + 1
+    read(*,'(A)', iostat = ierror) line;  if (ierror == -1) exit
 
     if ( fit(:9) /= 'alphaMass' ) then
-      read(line,*) mass, mass, mass, err, chi2
+      read(line,*) R, mu, mass, err, chi2
     else
-      read(line,*) mass, mass, mass, err, alpha, errAlp, rho, chi2
+      read(line,*) R, mu, mass, err, alpha, errAlp, rho, chi2
     end if
+
+    if (R > 4 .or. mu > 4) cycle; i = i + 1
 
     fact = sqrt(chi2/dof)
     mean = mean + mass; chi = chi + chi2; sigma = sigma + fact * err

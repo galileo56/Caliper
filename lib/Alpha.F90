@@ -9,6 +9,10 @@ module AlphaClass
     module procedure :: PiBetaReal, PiBetaComplex
   end interface PiBeta
 
+  interface alphaGeneric
+    module procedure :: alphaGenericReal, alphaGenericComplex
+  end interface alphaGeneric
+
   interface Iter
     module procedure :: IterReal, IterComplex
   end interface Iter
@@ -27,12 +31,11 @@ module AlphaClass
    contains
 
    generic                          :: alphaQCD     => alphaQCDReal, alphaQCDComplex
-   generic, public                  :: alphaGeneric => alphaGenericReal, alphaGenericComplex
    generic, public                  :: alphaGenericFlavor => alphaGenericRealFlavor, alphaGenericComplexFlavor
 
-   procedure, pass(self)            :: alphaQCDComplex, alphaGenericReal, &
-   alphaGenericComplex, thresholdMatching, alphaGenericRealFlavor, alphaQED,&
-   alphaQCDReal, alphaGenericComplexFlavor
+   procedure, pass(self)            :: alphaQCDReal, alphaGenericComplexFlavor, &
+   alphaQCDComplex, thresholdMatching, alphaGenericRealFlavor, alphaQED
+
 
    procedure, pass(self), public    :: scales, orders, scheme, SetAlpha, SetMTop, &
    SetMBottom, SetMCharm, adim
@@ -134,7 +137,7 @@ module AlphaClass
 
     self%mT = mT; self%muRef(6) = muT; alphaList(0) = 1
 
-    aS = self%alphaGeneric(self%method, self%andim(5), self%run, self%muRef(5),&
+    aS = alphaGeneric(self%method, self%andim(5), self%run, self%muRef(5),&
     self%alphaRef(5), muT)
 
     self%alphaRef(6) = pi * sum(   PowList(aS/Pi, self%n+1) * &
@@ -155,7 +158,7 @@ module AlphaClass
 
     self%mB = mB; self%muRef(4) = muB; alphaList(0) = 1
 
-    aS  = self%alphaGeneric(self%method, self%andim(5), self%run, self%muRef(5),&
+    aS  = alphaGeneric(self%method, self%andim(5), self%run, self%muRef(5),&
     self%alphaRef(5), muB )
 
     self%alphaRef(4) = pi * sum(  self%thresholdMatching( 'down', 5, log(muB/mB) ) &
@@ -180,7 +183,7 @@ module AlphaClass
 
     self%mC = mC; self%muRef(3) = muC; alphaList(0) = 1
 
-    aS  = self%alphaGeneric(self%method, self%andim(4), self%run, self%muRef(4),&
+    aS  = alphaGeneric(self%method, self%andim(4), self%run, self%muRef(4),&
     self%alphaRef(4), muC)
 
     self%alphaRef(3) = pi * sum(  self%thresholdMatching( 'down', 4, log(muC/mC) ) &
@@ -195,7 +198,7 @@ module AlphaClass
 
    pure character (len = 5) function str(self)
     class (Alpha), intent(in) :: self
-    str = self%str
+    str = self%str(:5)
    end function str
 
 !ccccccccccccccc
@@ -211,7 +214,7 @@ module AlphaClass
     if ( self%muRef(5) <= d1mach(1) ) then
       alphaQCDReal = Pi
     else
-      alphaQCDReal = self%alphaGeneric(self%method, self%andim(n), self%run, self%muRef(n), self%alphaRef(n), mu )
+      alphaQCDReal = alphaGeneric(self%method, self%andim(n), self%run, self%muRef(n), self%alphaRef(n), mu )
     end if
 
    end function alphaQCDReal
@@ -229,7 +232,7 @@ module AlphaClass
     if ( self%muRef(5) <= d1mach(1) ) then
       alphaQCDComplex = Pi
     else
-      alphaQCDComplex = self%alphaGeneric(self%method, self%andim(n), self%run, self%muRef(n), self%alphaRef(n), mu )
+      alphaQCDComplex = alphaGeneric(self%method, self%andim(n), self%run, self%muRef(n), self%alphaRef(n), mu )
     end if
 
    end function alphaQCDComplex
@@ -313,7 +316,7 @@ character (len = *), intent(in) :: method
 real (dp)          , intent(in) :: mZ, amZ, mu
 integer            , intent(in) :: nf, run
 
-alphaGenericRealFlavor = self%alphaGeneric( method, self%adim(nf), run, mZ, amZ, mu )
+alphaGenericRealFlavor = alphaGeneric( method, self%adim(nf), run, mZ, amZ, mu )
 
 end function alphaGenericRealFlavor
 
@@ -326,14 +329,13 @@ complex (dp) function alphaGenericComplexFlavor(self, method, run, nf, mZ, amZ, 
   complex (dp)       , intent(in) :: mu
   integer            , intent(in) :: nf, run
 
-  alphaGenericComplexFlavor = self%alphaGeneric( method, self%adim(nf), run, mZ, amZ, mu )
+  alphaGenericComplexFlavor = alphaGeneric( method, self%adim(nf), run, mZ, amZ, mu )
 
 end function alphaGenericComplexFlavor
 
 !ccccccccccccccc
 
- pure real (dp) function alphaGenericReal(self, method, adim, run, mZ, amZ, mu)
-   class (Alpha)            , intent(in) :: self
+ pure real (dp) function alphaGenericReal(method, adim, run, mZ, amZ, mu)
    character (len = *)      , intent(in) :: method
    type (AnomDim)           , intent(in) :: adim
    real (dp)                , intent(in) :: mZ, amZ, mu
@@ -586,8 +588,7 @@ end function alphaGenericComplexFlavor
 
 !ccccccccccccccc
 
-  pure complex (dp) function alphaGenericComplex(self, method, adim, run, mZ, amZ, mu)
-    class (Alpha)            , intent(in) :: self
+  pure complex (dp) function alphaGenericComplex(method, adim, run, mZ, amZ, mu)
     character (len = *)      , intent(in) :: method
     type (AnomDim)           , intent(in) :: adim
     real    (dp)             , intent(in) :: mZ, amZ
@@ -698,7 +699,7 @@ end function alphaGenericComplexFlavor
 
       mod = abs(mu); theta = IMAGPART( log(mu) - log(mod) ); ord = min(run,5)
 
-      alphaGenericComplex = self%alphaGenericReal(method, adim, run, mZ, amZ, mod)
+      alphaGenericComplex = alphaGenericReal(method, adim, run, mZ, amZ, mod)
 
       h = 0.04_dp; n = max(  1, Abs( Nint(theta/h) )  )
 
@@ -829,7 +830,7 @@ end function alphaGenericComplexFlavor
 
    pure character (len = 5) function scheme(self)
     class (Alpha), intent(in) :: self
-    scheme = self%str
+    scheme = self%str(:5)
    end function scheme
 
 !ccccccccccccccc

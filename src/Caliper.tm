@@ -30,7 +30,7 @@
 :Evaluate:  QSwitch::usage = "Delta1S[nl, orderAlpha, runAlpha, orderMass, runMass, ord1S, muLam, xLam, method, mZ, aMz, mt, gt, R]"
 :Evaluate:  Delta1S::usage = "Delta1S[nl, orderAlpha, runAlpha, orderMass, runMass, muLam, xLam, method, mZ, aMz, mt, R]"
 :Evaluate:  rNRQCD::usage = "rNRQCD[nl, order, scheme, method, orderAlpha, runAlpha, orderMass, runMass, ord1S, R1S, muLam, xLam, mZ, aMz, Q, mtpole, gt, h, nu]"
-:Evaluate:  A1Pole::usage = "A1Pole[nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft]"
+:Evaluate:  A1Pole::usage = "A1Pole[order, En, mtpole, gamtop, asoft, VcsNNLL, musoft]"
 :Evaluate:  TTbar::usage = "ttbar[energy, topmass, topgamma, alphas0, mue0, cutn, cutv, c0, c1, c2, cdeltapotc, cdeltapot1, cfullc, cfull1, crm2, kincm, kinca, ijknflg, ijgcflg, kincv, ijvflg] cross section"
 :Evaluate:  TTbarList::usage = "ttbarList[energy, topmass, topgamma, alphas0, mue0, cutn, cutv, c0, c1, c2, cdeltapotc, cdeltapot1, cfullc, cfull1, crm2, kincm, kinca, ijknflg, ijgcflg, kincv, ijvflg] cross section and distribution list"
 :Evaluate:  CdiGamma::usage = "CdiGamma[x]"
@@ -41,22 +41,22 @@
 :Evaluate:  VStar::usage = "VStar[q, m, gt]"
 :Evaluate:  VRootStar::usage = "VRootStar[q, m, gt]"
 :Evaluate:  SwitchOff::usage = "SwitchOff[q, m, gt, v0, v1]"
-:Evaluate:  VssLL::usage = "VssLL[nl, ah, as]"
-:Evaluate:  Vk1sLL::usage = "Vk1sLL[nl, as, au]"
-:Evaluate:  Vk2sLL::usage = "Vk2sLL[nl, ah, as]"
-:Evaluate:  VkeffsLL::usage = "VkeffsLL[nl, ah, as]"
+:Evaluate:  VssLL::usage = "VssLL[ah, as]"
+:Evaluate:  Vk1sLL::usage = "Vk1sLL[as, au]"
+:Evaluate:  Vk2sLL::usage = "Vk2sLL[ah, as]"
+:Evaluate:  VkeffsLL::usage = "VkeffsLL[ah, as]"
 :Evaluate:  VcsLL::usage = "VcsLL[as]"
-:Evaluate:  VrsLL::usage = "VrsLL[nl, as, au]"
-:Evaluate:  V2sLL::usage = "V2sLL[nl, ah, as, au]"
-:Evaluate:  XiNLL::usage = "XiNLL[nl, ah, as, au]"
-:Evaluate:  VceffsNNLL::usage = "VceffsNNLL[nl, asNNLL, as, au]"
-:Evaluate:  XiNNLLmixUsoft::usage = "XiNNLLmixUsoft[nl, ah, as]"
+:Evaluate:  VrsLL::usage = "VrsLL[as, au]"
+:Evaluate:  V2sLL::usage = "V2sLL[ah, as, au]"
+:Evaluate:  XiNLL::usage = "XiNLL[ah, as, au]"
+:Evaluate:  VceffsNNLL::usage = "VceffsNNLL[asNNLL, as, au]"
+:Evaluate:  XiNNLLmixUsoft::usage = "XiNNLLmixUsoft[ah, as]"
 :Evaluate:  MLLc2::usage = "MLLc2[nl, ah, au]"
-:Evaluate:  MNLLc1::usage = "MNLLc1[nl, ah, as, au]"
-:Evaluate:  MNLLplusNNLLnonmixc1::usage = "MNLLplusNNLLnonmixc1[nl, ah, as, au]"
-:Evaluate:  MNNLLAllc1InclSoftMixLog::usage = "MNNLLAllc1InclSoftMixLog[nl, ah, as, au, nu, hh, ss]"
+:Evaluate:  MNLLc1::usage = "MNLLc1[ah, as, au]"
+:Evaluate:  MNLLplusNNLLnonmixc1::usage = "MNLLplusNNLLnonmixc1[ah, as, au]"
+:Evaluate:  MNNLLAllc1InclSoftMixLog::usage = "MNNLLAllc1InclSoftMixLog[ah, as, au, nu, hh, ss]"
 :Evaluate:  XiNNLLSoftMixLogc1::usage = "XiNNLLSoftMixLogc1[ah, nu, hh]"
-:Evaluate:  XiNNLLnonmix::usage = "XiNNLLnonmix[nl, ah, as, au, hh, ss]"
+:Evaluate:  XiNNLLnonmix::usage = "XiNNLLnonmix[ah, as, au, hh, ss]"
 :Evaluate:  DeltaBottomCharm::usage = "DeltaBottomCharm[r1,r2] double massive bubble"
 :Evaluate:  GammaRBottomCharm::usage = "GammaRBottomCharm[r1,r2] R-anomalous dimension from the double massive bubble"
 :Evaluate:  Pi0::usage = "Pi0[z] tree-level massive vacuum polarization function"
@@ -173,7 +173,7 @@
 :Evaluate:  NRQCDError::usage = "NRQCDError[n, l, j, s, iter, charm, scheme, average, method, counting, orderAlpha, runAlpha, order, run, nl, mZ, amZ, mT, muT, mB, muB, mC, muC, mass, lambda1, lambda2, lam, mu0, mu1, deltaMu, R0, R1, deltaR, x] computes the quarkonium energy levels, including perturbative error."
 :Evaluate:  OptimalRVFNS::usage = "OptimalRVFNS[up, type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, lambda, mu1, mu2] computes the Optimal R scale for quarkonium."
 :Evaluate:  OptimalR::usage = "OptimalR[type, n, method, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, lambda] computes the Optimal R scale for quarkonium."
-:Evaluate:  OptimalR2::usage = "OptimalR2[n, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mass] computes the Optimal R scale for quarkonium."
+:Evaluate:  OptimalR2::usage = "OptimalR2[n, orderAlpha, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mass] computes the Optimal R scale for quarkonium."
 :Evaluate:  mmfromMSR::usage = "mmfromMSR[type, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R] computes the MSR practical definition running of the quark masses with flavor matching."
 :Evaluate:  Rhad::usage = "Rhad[scheme, orderAlpha, runAlpha, order, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
 :Evaluate:  SigmaHad::usage = "SigmaHad[scheme, current, orderAlpha, runAlpha, order, nf, Mz, GammaZ, sin2ThetaW, aMz, aMzQED, mT, muT, mB, muB, mC, muC, mu, Q] computes the massless total hadronic cross section."
@@ -215,7 +215,7 @@
 :Evaluate:  MomentModel::usage = "MomentModel[c, lambda, k] computes the shape function"
 :Evaluate:  ModelPiece::usage = "ModelPiece[c, lambda, k, l] computes the shape function"
 :Evaluate:  TaylorPiece::usage = "TaylorPiece[c, lambda, k] computes the Taylor coefficients of the shape function"
-:Evaluate:  DeltaMSbar::usage = "DeltaMSbar[order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
+:Evaluate:  DeltaMSbar::usage = "DeltaMSbar[order, runAlpha, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu] computes the running of the quark masses with flavor matching."
 :Evaluate:  JetMass::usage = "JetMass[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R, mu] computes the Jet Mass running of the quark masses with flavor matching."
 :Evaluate:  mmFromJetMass::usage = "mmFromJetMass[orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, muLambda, R, mu] computes the Jet Mass running of the quark masses with flavor matching."
 :Evaluate:  Singular::usage = "Singular[hard, shape, setup, gap, space, cum, orderAlpha, runAlpha, order, run, nf, j3, s3, G3, mZ, aMz, mT, muT, mB, muB, mC, muC, muLambda, Q, muH, muJ, muS, R, mu, c, lambda, R0, mu0, delta0, h, tau] computes the Singular Thrust and C-parameter distrubution"
@@ -271,9 +271,9 @@
 
 :Begin:
 :Function:      xinnllnonmix
-:Pattern:       XiNNLLnonmix[nl_, ah_, as_, au_, hh_, ss_]
-:Arguments:     {nl, ah, as, au, hh, ss}
-:ArgumentTypes: {Integer, Real, Real, Real, Real, Real}
+:Pattern:       XiNNLLnonmix[ah_, as_, au_, hh_, ss_]
+:Arguments:     {ah, as, au, hh, ss}
+:ArgumentTypes: {Real, Real, Real, Real, Real}
 :ReturnType:    Real
 :End:
 
@@ -287,33 +287,33 @@
 
 :Begin:
 :Function:      mnnllallc1inclsoftmixlog
-:Pattern:       MNNLLAllc1InclSoftMixLog[nl_, ah_, as_, au_, nu_, hh_, ss_]
-:Arguments:     {nl, ah, as, au, nu, hh, ss}
-:ArgumentTypes: {Integer, Real, Real, Real, Real, Real, Real}
+:Pattern:       MNNLLAllc1InclSoftMixLog[ah_, as_, au_, nu_, hh_, ss_]
+:Arguments:     {ah, as, au, nu, hh, ss}
+:ArgumentTypes: {Real, Real, Real, Real, Real, Real}
 :ReturnType:    Real
 :End:
 
 :Begin:
 :Function:      mnllplusnnllnonmixc1
-:Pattern:       MNLLplusNNLLnonmixc1[nl_, ah_, as_, au_]
-:Arguments:     {nl, ah, as, au}
-:ArgumentTypes: {Integer, Real, Real, Real}
+:Pattern:       MNLLplusNNLLnonmixc1[ah_, as_, au_]
+:Arguments:     {ah, as, au}
+:ArgumentTypes: {Real, Real, Real}
 :ReturnType:    Real
 :End:
 
 :Begin:
 :Function:      mnllc1
-:Pattern:       MNLLc1[nl_, ah_, as_, au_]
-:Arguments:     {nl, ah, as, au}
-:ArgumentTypes: {Integer, Real, Real, Real}
+:Pattern:       MNLLc1[ah_, as_, au_]
+:Arguments:     {ah, as, au}
+:ArgumentTypes: {Real, Real, Real}
 :ReturnType:    Real
 :End:
 
 :Begin:
 :Function:      vceffsnnll
-:Pattern:       VceffsNNLL[nl_, asNNLL_, ah_, as_]
-:Arguments:     {nl, asNNLL, ah, as}
-:ArgumentTypes: {Integer, Real, Real, Real}
+:Pattern:       VceffsNNLL[asNNLL_, ah_, as_]
+:Arguments:     {asNNLL, ah, as}
+:ArgumentTypes: {Real, Real, Real}
 :ReturnType:    Real
 :End:
 
@@ -354,33 +354,33 @@
 
 :Begin:
 :Function:      a1pole
-:Pattern:       A1Pole[nl_, order_, En_, mtpole_, gamtop_, asoft_, VcsNNLL_, musoft_]
-:Arguments:     {nl, order, En, mtpole, gamtop, asoft, VcsNNLL, musoft}
-:ArgumentTypes: {Integer, Integer, Real, Real, Real, Real, Real, Real}
+:Pattern:       A1Pole[order_, En_, mtpole_, gamtop_, asoft_, VcsNNLL_, musoft_]
+:Arguments:     {order, En, mtpole, gamtop, asoft, VcsNNLL, musoft}
+:ArgumentTypes: {Integer, Real, Real, Real, Real, Real, Real}
 :ReturnType:    Real
 :End:
 
 :Begin:
 :Function:      xinnllmixusoft
-:Pattern:       XiNNLLmixUsoft[nl_, ah_, au_]
-:Arguments:     {nl, ah, au}
-:ArgumentTypes: {Integer, Real, Real}
+:Pattern:       XiNNLLmixUsoft[ah_, au_]
+:Arguments:     {ah, au}
+:ArgumentTypes: {Real, Real}
 :ReturnType:    Real
 :End:
 
 :Begin:
 :Function:      mllc2
-:Pattern:       MLLc2[nl_, ah_, as_]
-:Arguments:     {nl, ah, as}
-:ArgumentTypes: {Integer, Real, Real}
+:Pattern:       MLLc2[ah_, as_]
+:Arguments:     {ah, as}
+:ArgumentTypes: {Real, Real}
 :ReturnType:    Real
 :End:
 
 :Begin:
 :Function:      vssll
-:Pattern:       VssLL[nl_, ah_, as_]
-:Arguments:     {nl, ah, as}
-:ArgumentTypes: {Integer, Real, Real}
+:Pattern:       VssLL[ah_, as_]
+:Arguments:     {ah, as}
+:ArgumentTypes: {Real, Real}
 :ReturnType:    Real
 :End:
 
@@ -394,49 +394,49 @@
 
 :Begin:
 :Function:      vrsll
-:Pattern:       VrsLL[nl_, as_, au_]
-:Arguments:     {nl, as, au}
-:ArgumentTypes: {Integer, Real, Real}
+:Pattern:       VrsLL[as_, au_]
+:Arguments:     {as, au}
+:ArgumentTypes: {Real, Real}
 :ReturnType:    Real
 :End:
 
 :Begin:
 :Function:      v2sll
-:Pattern:       V2sLL[nl_, ah_, au_, as_]
-:Arguments:     {nl, ah, au, as}
-:ArgumentTypes: {Integer, Real, Real, Real}
+:Pattern:       V2sLL[ah_, au_, as_]
+:Arguments:     {ah, au, as}
+:ArgumentTypes: {Real, Real, Real}
 :ReturnType:    Real
 :End:
 
 :Begin:
 :Function:      xinll
-:Pattern:       XiNLL[nl_, ah_, au_, as_]
-:Arguments:     {nl, ah, au, as}
-:ArgumentTypes: {Integer, Real, Real, Real}
+:Pattern:       XiNLL[ah_, au_, as_]
+:Arguments:     {ah, au, as}
+:ArgumentTypes: {Real, Real, Real}
 :ReturnType:    Real
 :End:
 
 :Begin:
 :Function:      vk1sll
-:Pattern:       Vk1sLL[nl_, ah_, as_]
-:Arguments:     {nl, ah, as}
-:ArgumentTypes: {Integer, Real, Real}
+:Pattern:       Vk1sLL[ah_, as_]
+:Arguments:     {ah, as}
+:ArgumentTypes: {Real, Real}
 :ReturnType:    Real
 :End:
 
 :Begin:
 :Function:      vk2sll
-:Pattern:       Vk2sLL[nl_, ah_, as_]
-:Arguments:     {nl, ah, as}
-:ArgumentTypes: {Integer, Real, Real}
+:Pattern:       Vk2sLL[ah_, as_]
+:Arguments:     {ah, as}
+:ArgumentTypes: {Real, Real}
 :ReturnType:    Real
 :End:
 
 :Begin:
 :Function:      vkeffsll
-:Pattern:       VkeffsLL[nl_, ah_, as_]
-:Arguments:     {nl, ah, as}
-:ArgumentTypes: {Integer, Real, Real}
+:Pattern:       VkeffsLL[ah_, as_]
+:Arguments:     {ah, as}
+:ArgumentTypes: {Real, Real}
 :ReturnType:    Real
 :End:
 
@@ -2566,11 +2566,11 @@
 
 :Begin:
 :Function:      optimalr2
-:Pattern:       OptimalR2[n_, orderAlpha_, runAlpha_, order_, run_, nf_, Mz_,
+:Pattern:       OptimalR2[n_, orderAlpha_, runAlpha_, run_, nf_, Mz_,
                 aMz_, mT_, muT_, mB_, muB_, mC_, muC_, mass_]
-:Arguments:     {n, orderAlpha, runAlpha, order, run, nf, Mz, aMz, mT, muT, mB,
+:Arguments:     {n, orderAlpha, runAlpha, run, nf, Mz, aMz, mT, muT, mB,
                  muB, mC, muC, mass}
-:ArgumentTypes: {Real, Integer, Integer, Integer, Integer, Integer, Real, Real,
+:ArgumentTypes: {Real, Integer, Integer, Integer, Integer, Real, Real,
                  Real, Real, Real, Real, Real, Real, Real}
 :ReturnType:     Real
 :End:
@@ -2610,10 +2610,10 @@
 
 :Begin:
 :Function:      deltamsbar
-:Pattern:       DeltaMSbar[order_, runAlpha_, run_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,
+:Pattern:       DeltaMSbar[order_, runAlpha_, nf_, Mz_, aMz_, mT_, muT_, mB_, muB_,
                  mC_, muC_, mu_]
-:Arguments:     {order, runAlpha, run, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}
-:ArgumentTypes: {Integer, Integer, Integer, Integer, Real, Real, Real, Real, Real, Real,
+:Arguments:     {order, runAlpha, nf, Mz, aMz, mT, muT, mB, muB, mC, muC, mu}
+:ArgumentTypes: {Integer, Integer, Integer, Real, Real, Real, Real, Real, Real,
                  Real, Real, Real}
 :ReturnType:     Manual
 :End:
@@ -3024,46 +3024,46 @@ double res[2]; double list[5*360];
  MLEndPacket(stdlink);
 }
 
-extern double f90vssll_(int* nl, double* ah, double* as, double* result);
+extern double f90vssll_(double* ah, double* as, double* result);
 
-static double vssll(int nl, double ah, double as){
-  double res;
+static double vssll(double ah, double as){
+double res;
 
-   f90vssll_(&nl, &ah, &as, &res);
-
-   return res;
-}
-
-extern double f90mnllplusnnllnonmixc1_(int* nl, double* ah, double* as, double* au, double* result);
-
-static double mnllplusnnllnonmixc1(int nl, double ah, double as, double au){
-  double res;
-
-   f90mnllplusnnllnonmixc1_(&nl, &ah, &as, &au, &res);
+   f90vssll_(&ah, &as, &res);
 
    return res;
 }
 
-extern double f90mnnllallc1inclsoftmixlog_(int* nl, double* ah, double* as, double* au,
+extern double f90mnllplusnnllnonmixc1_(double* ah, double* as, double* au, double* result);
+
+static double mnllplusnnllnonmixc1(double ah, double as, double au){
+  double res;
+
+   f90mnllplusnnllnonmixc1_(&ah, &as, &au, &res);
+
+   return res;
+}
+
+extern double f90mnnllallc1inclsoftmixlog_(double* ah, double* as, double* au,
 double* nu, double* hh, double* ss, double* result);
 
-static double mnnllallc1inclsoftmixlog(int nl, double ah, double as, double au,
+static double mnnllallc1inclsoftmixlog(double ah, double as, double au,
 double nu, double hh, double ss){
   double res;
 
-   f90mnnllallc1inclsoftmixlog_(&nl, &ah, &as, &au, &nu, &hh, &ss, &res);
+   f90mnnllallc1inclsoftmixlog_(&ah, &as, &au, &nu, &hh, &ss, &res);
 
    return res;
 }
 
-extern double f90xinnllnonmix_(int* nl, double* ah, double* as, double* au,
+extern double f90xinnllnonmix_(double* ah, double* as, double* au,
 double* hh, double* ss, double* result);
 
-static double xinnllnonmix(int nl, double ah, double as, double au,
+static double xinnllnonmix(double ah, double as, double au,
 double hh, double ss){
   double res;
 
-   f90xinnllnonmix_(&nl, &ah, &as, &au, &hh, &ss, &res);
+   f90xinnllnonmix_(&ah, &as, &au, &hh, &ss, &res);
 
    return res;
 }
@@ -3078,114 +3078,114 @@ static double xinnllsoftmixlogc1(double ah, double nu, double hh){
    return res;
 }
 
-extern double f90vk1sll_(int* nl, double* ah, double* as, double* result);
+extern double f90vk1sll_(double* ah, double* as, double* result);
 
-static double vk1sll(int nl, double ah, double as){
+static double vk1sll(double ah, double as){
   double res;
 
-   f90vk1sll_(&nl, &ah, &as, &res);
+   f90vk1sll_(&ah, &as, &res);
 
    return res;
 }
 
-extern double f90vk2sll_(int* nl, double* ah, double* as, double* result);
+extern double f90vk2sll_(double* ah, double* as, double* result);
 
-static double vk2sll(int nl, double ah, double as){
+static double vk2sll(double ah, double as){
   double res;
 
-   f90vk2sll_(&nl, &ah, &as, &res);
+   f90vk2sll_(&ah, &as, &res);
 
    return res;
 }
 
-extern double f90vkeffsll_(int* nl, double* ah, double* as, double* result);
+extern double f90vkeffsll_(double* ah, double* as, double* result);
 
-static double vkeffsll(int nl, double ah, double as){
+static double vkeffsll(double ah, double as){
   double res;
 
-   f90vkeffsll_(&nl, &ah, &as, &res);
+   f90vkeffsll_(&ah, &as, &res);
 
    return res;
 }
 
-extern double f90vrsll_(int* nl, double* ah, double* as, double* result);
+extern double f90vrsll_(double* ah, double* as, double* result);
 
-static double vrsll(int nl, double ah, double as){
+static double vrsll(double ah, double as){
   double res;
 
-   f90vrsll_(&nl, &ah, &as, &res);
+   f90vrsll_(&ah, &as, &res);
 
    return res;
 }
 
-extern double f90v2sll_(int* nl, double* ah, double* au, double* as, double* result);
+extern double f90v2sll_(double* ah, double* au, double* as, double* result);
 
-static double v2sll(int nl, double ah, double au, double as){
+static double v2sll(double ah, double au, double as){
   double res;
 
-   f90v2sll_(&nl, &ah, &au, &as, &res);
+   f90v2sll_(&ah, &au, &as, &res);
 
    return res;
 }
 
-extern double f90xinll_(int* nl, double* ah, double* au, double* as, double* result);
+extern double f90xinll_(double* ah, double* au, double* as, double* result);
 
-static double xinll(int nl, double ah, double au, double as){
+static double xinll(double ah, double au, double as){
   double res;
 
-   f90xinll_(&nl, &ah, &au, &as, &res);
+   f90xinll_(&ah, &au, &as, &res);
 
    return res;
 }
 
-extern double f90mnllc1_(int* nl, double* ah, double* au, double* as, double* result);
+extern double f90mnllc1_(double* ah, double* au, double* as, double* result);
 
-static double mnllc1(int nl, double ah, double au, double as){
+static double mnllc1(double ah, double au, double as){
   double res;
 
-   f90mnllc1_(&nl, &ah, &au, &as, &res);
+   f90mnllc1_(&ah, &au, &as, &res);
 
    return res;
 }
 
-extern double f90xinnllmixusoft_(int* nl, double* ah, double* as, double* result);
+extern double f90xinnllmixusoft_(double* ah, double* as, double* result);
 
-static double xinnllmixusoft(int nl, double ah, double as){
+static double xinnllmixusoft(double ah, double as){
   double res;
 
-   f90xinnllmixusoft_(&nl, &ah, &as, &res);
+   f90xinnllmixusoft_(&ah, &as, &res);
 
    return res;
 }
 
-extern double f90mllc2_(int* nl, double* ah, double* as, double* result);
+extern double f90mllc2_(double* ah, double* as, double* result);
 
-static double mllc2(int nl, double ah, double as){
+static double mllc2(double ah, double as){
   double res;
 
-   f90mllc2_(&nl, &ah, &as, &res);
+   f90mllc2_(&ah, &as, &res);
 
    return res;
 }
 
-extern double f90vceffsnnll_(int* nl, double* ah, double* au, double* as, double* result);
+extern double f90vceffsnnll_(double* ah, double* au, double* as, double* result);
 
-static double vceffsnnll(int nl, double ah, double au, double as){
+static double vceffsnnll(double ah, double au, double as){
   double res;
 
-   f90vceffsnnll_(&nl, &ah, &au, &as, &res);
+   f90vceffsnnll_(&ah, &au, &as, &res);
 
    return res;
 }
 
-extern double f90a1pole_(int* nl, int* order, double* En, double* mtpole,
+extern double f90a1pole_(int* order, double* En, double* mtpole,
 double* gamtop, double* asoft, double* VcsNNLL, double* musoft, double* result);
 
-static double a1pole(int nl, int order, double En, double mtpole,
+static double a1pole(int order, double En, double mtpole,
 double gamtop, double asoft, double VcsNNLL, double musoft){
   double res;
 
-   f90a1pole_(&nl, &order, &En, &mtpole, &gamtop, &asoft, &VcsNNLL, &musoft, &res);
+   f90a1pole_(&order, &En, &mtpole, &gamtop, &asoft, &VcsNNLL, &musoft, &res);
 
    return res;
 }
@@ -6562,16 +6562,16 @@ double muC, double lambda, double mu1, double mu2){
 }
 
 extern double f90optimalr2_(double* n, int* orderAlpha, int* runAlpha,
-int* order, int* run, int* nf, double* Mz, double* aMz, double* mT, double* muT,
+int* run, int* nf, double* Mz, double* aMz, double* mT, double* muT,
 double* mB, double* muB, double* mC, double* muC, double* mass, double* res);
 
-static double optimalr2(double n, int orderAlpha, int runAlpha, int order,
+static double optimalr2(double n, int orderAlpha, int runAlpha,
 int run, int nf, double Mz, double aMz, double mT, double muT, double mB,
 double muB, double mC, double muC, double mass){
 
   double res;
 
-  f90optimalr2_(&n, &orderAlpha, &runAlpha, &order, &run, &nf, &Mz, &aMz, &mT,
+  f90optimalr2_(&n, &orderAlpha, &runAlpha, &run, &nf, &Mz, &aMz, &mT,
   &muT, &mB, &muB, &mC, &muC, &mass, &res);
 
   return res;
@@ -6626,16 +6626,16 @@ double muC, double muLambda, double R, double mu){
   return res;
 }
 
-extern double f90deltamsbar_(int* order, int* runAlpha, int* run, int* nf, double* Mz,
+extern double f90deltamsbar_(int* order, int* runAlpha, int* nf, double* Mz,
 double* aMz, double* mT, double* muT, double* mB, double* muB, double* mC, double* muC,
 double* mu, double* res);
 
-static void deltamsbar(int order, int runAlpha, int run, int nf, double Mz, double aMz,
+static void deltamsbar(int order, int runAlpha, int nf, double Mz, double aMz,
 double mT, double muT, double mB, double muB, double mC, double muC, double mu){
 
    double res[4];
 
-   f90deltamsbar_(&order, &runAlpha, &run, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC,
+   f90deltamsbar_(&order, &runAlpha, &nf, &Mz, &aMz, &mT, &muT, &mB, &muB, &mC,
    &muC, &mu, res);
 
    MLPutRealList(stdlink, res, 4);
