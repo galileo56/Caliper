@@ -77,14 +77,14 @@ Program Chi2MbNRQCD
 
   do i = 0, imax
     mu = mu0 + i * deltaMu
-    if (nl == 4) muList = 1.5_dp + 2.5 * (mu - 1)/3
-    if (ndim  > 1 .and. nl == 4) muList(2) = mu
+    if (nl == 4) muList = 1.5_dp + 2.5_dp * (mu - 1)/3
+    if (ndim > 1 .and. nl == 4) muList(2) = mu
     if (nl == 3) muList = mu
 
     do j = 0, jmax
       R = R0 + j * deltaR
-      if (nl == 4) RList = 1.5_dp + 2.5 * (R - 1)/3
-      if (ndim  > 1 .and. nl == 4) RList(2) = R
+      if (nl == 4) RList = 1.5_dp + 2.5_dp * (R - 1)/3
+      if (ndim > 1 .and. nl == 4) RList(2) = R
       if (nl == 3) RList = R
 
     if ( fit(:4) == 'mass' ) then
